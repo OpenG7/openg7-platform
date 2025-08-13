@@ -1,6 +1,7 @@
-**Languages:** [English](#openg7--english) | [Français](#openg7--français)
+**Languages:** [English](#english) | [Français](#francais)
 
-# OpenG7
+<a id="english"></a>
+# OpenG7 — English
 
 > **Current Status**: 🚧 Under construction — We are building a complete ecosystem to connect the economies of the G7 and inspire a new way of managing IT projects in the era of artificial intelligence.
 
@@ -178,7 +179,8 @@ This project is licensed under **Apache-2.0** — see the [LICENSE](LICENSE) fil
 
 ---
 
-# OpenG7
+<a id="francais"></a>
+# OpenG7 - Francais
 
 > **Statut actuel** : 🚧 En construction — Nous bâtissons un écosystème complet pour connecter les économies du G7 et inspirer une nouvelle façon de gérer les projets TI à l’ère de l’intelligence artificielle.
 
