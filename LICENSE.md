@@ -165,7 +165,7 @@ Sous licence Apache, version 2.0 (la « Licence »);
 vous ne pouvez utiliser ce fichier qu’en conformité avec la Licence.
 Vous pouvez obtenir une copie de la Licence à :
 
-http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Sauf si la loi applicable l’exige ou si cela est stipulé par écrit,
 le logiciel distribué sous la Licence est fourni « TEL QUEL »,
