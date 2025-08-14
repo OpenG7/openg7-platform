@@ -1,4 +1,4 @@
-**Languages:** [English](#english) | [Français](#français)
+**Languages:** [English](#english) | [Français](#francais)
 
 <a id="english"></a>
 ## Founder’s Note
