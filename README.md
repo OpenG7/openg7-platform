@@ -135,29 +135,28 @@ All OpenG7 data is hosted on servers located **exclusively in Canada** to ensure
 
 ---
 
-## 💸 Why OpenG7 Chose Wise
+## OpenG7 and International Payments  
 
-OpenG7 needs to receive and send international funds quickly and at low cost. **Wise** offers:
-- **Local multi-currency accounts** (CAD, USD, EUR, GBP, etc.)
-- **Low, transparent fees** with mid-market exchange rates
-- **Fast transfers** in most partner countries
-- Complementarity with our Canadian banks (CDIC-insured deposits)
-- Regulatory compliance (Canada: MSB registered with FINTRAC)
+OpenG7 uses **Wise** as a money transfer solution to receive and send funds internationally, quickly and at low cost.  
 
-> ⚠️ Wise is not a bank; funds are “safeguarded” but not CDIC insured.
+**Benefits of this solution**:  
+- Local multi-currency accounts (CAD, USD, EUR, GBP, etc.)  
+- Transparent fees and mid-market exchange rates  
+- Fast transfers to most partner countries  
+- Complements Canadian banks (CDIC-insured deposits for bank accounts, excluding Wise)  
+- Regulatory compliance: In Canada, Wise is a **FINTRAC-registered MSB**  
+- ⚠️ Wise is not a bank; funds are safeguarded but not CDIC insured  
 
-### 🚀 Accelerating OpenG7 via Wise
+**🚀 Accelerating OpenG7 via Wise**  
+Target: **CAD 1,000,000** for 12–18 months of accelerated development (no maximum).  
+Additional funding will enable us to build a full-time development team and speed up feature delivery.  
 
-Goal: **CAD 1,000,000** for 12–18 months of accelerated development (this amount is not a maximum). Additional funding will allow us to add a full-time development team and further accelerate feature delivery.
+**How to contribute**:  
+- **From Canada (CAD)**: Interac transfer or bank transfer to our Wise CAD account details.  
+- **International**: Local transfer (USD/EUR/GBP) or SWIFT to our Wise account details.  
 
-**How to contribute:**
-1. **From Canada (CAD)**: Interac transfer or bank transfer to our Wise CAD account details.
-2. **International**: local transfer (USD/EUR/GBP) or SWIFT to our Wise account details.
-
-📩 Request account details: **contact@openg7.org** (subject: *Wise Contribution – OpenG7*)
-
-Reference: `OpenG7 – Acceleration Fund`
-
+📩 **Request account details**: contact@openg7.org  
+*(Subject: Wise Contribution – OpenG7)*
 ---
 
 ## 🧩 Financial Governance
@@ -314,28 +313,28 @@ Toutes les données d’OpenG7 sont hébergées sur des serveurs situés **exclu
 
 ---
 
-## 💸 Pourquoi OpenG7 a choisi Wise
+## 🌍 OpenG7 – Paiements internationaux via Wise
 
-OpenG7 doit recevoir et envoyer des fonds à l’international, rapidement et à faible coût. **Wise** offre :
-- **Comptes locaux multi-devises** (CAD, USD, EUR, GBP, etc.)
-- **Frais bas et transparents** avec taux de change mid-market
-- **Virements rapides** dans la majorité des pays partenaires
-- Complémentarité avec nos banques canadiennes (dépôts assurés CDIC)
-- Conformité réglementaire (Canada : MSB enregistré FINTRAC)
+OpenG7 utilise **Wise** comme solution de transfert d’argent pour recevoir et envoyer des fonds à l’international, rapidement et à faible coût.  
 
-> ⚠️ Wise n’est pas une banque ; les fonds sont « safeguarded » mais non assurés CDIC.
+**Avantages de cette solution** :  
+- Comptes locaux multi-devises (CAD, USD, EUR, GBP, etc.)  
+- Frais transparents et taux de change mid-market  
+- Virements rapides vers la majorité des pays partenaires  
+- Complémentarité avec les banques canadiennes (dépôts assurés CDIC pour les comptes bancaires, hors Wise)  
+- Conformité réglementaire : au Canada, Wise est un **MSB enregistré auprès de FINTRAC**  
+- ⚠️ Wise n’est pas une banque ; les fonds sont “safeguarded” mais non assurés CDIC  
 
-### 🚀 Accélérer OpenG7 via Wise
+**🚀 Accélérer OpenG7 via Wise**  
+Objectif : **1 000 000 $ CAD** pour 12–18 mois de développement accéléré (montant non limitatif).  
+Des fonds supplémentaires permettront de constituer une équipe de développement à temps plein et d’accélérer la livraison des fonctionnalités.  
 
-Objectif : **1 000 000 $ CAD** pour 12–18 mois de développement accéléré (ce montant n’est pas un maximum). Un financement supplémentaire permettra d’ajouter une équipe de développement à temps plein et d’accélérer encore la livraison des fonctionnalités.
+**Comment contribuer** :  
+- **Depuis le Canada (CAD)** : virement Interac ou virement bancaire vers nos coordonnées Wise CAD.  
+- **International** : virement local (USD/EUR/GBP) ou SWIFT vers nos coordonnées Wise.  
 
-**Contribuer :**
-1. **Depuis le Canada (CAD)** : virement Interac ou virement bancaire vers nos coordonnées Wise CAD.
-2. **International** : virement local (USD/EUR/GBP) ou SWIFT vers nos coordonnées Wise.
-
-📩 Demande de coordonnées : **contact@openg7.org** (objet : *Contribution Wise – OpenG7*)
-
-Référence : `OpenG7 – Acceleration Fund`
+📩 **Demande de coordonnées** : contact@openg7.org  
+*(Objet : Contribution Wise – OpenG7)*  
 
 ---
 
