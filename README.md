@@ -157,6 +157,7 @@ Additional funding will enable us to build a full-time development team and spee
 
 📩 **Request account details**: contact@openg7.org  
 *(Subject: Wise Contribution – OpenG7)*
+
 ---
 
 ## 🧩 Financial Governance
