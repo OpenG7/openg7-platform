@@ -11,7 +11,7 @@ It all started with a computer gifted by my parents. At a young age, I realized 
 Over the years, I have developed a **holistic vision** of projects—from conception to delivery, through optimization and team management. My experience includes:
 - Leading the complete development of a sports event platform with PerformWeb inc. (development, branding, marketing, logistics).
 - Strategic and operational roles in complex environments (Desjardins, CBC/Radio-Canada, CGI, ZoomMed, health-sector non-profits).
-- Acting as a facilitator and temporary leader to realign critical projects with their objectives and deadlines.
+- Acting as a facilitator to realign critical projects with their objectives and deadlines.
 
 In recent years, the **global economic context** has changed dramatically: trade tariffs imposed by the United States, wars and geopolitical tensions, and the acceleration of globalization.  
 It is in this uncertain climate that the idea came to me: **how can we do things differently—how can we build a Canada and a G7 2.0, adapted to the realities of the 21st century?**  
@@ -37,7 +37,7 @@ Tout a commencé avec un ordinateur offert par mes parents. Très jeune, j’ai 
 Au fil des années, j’ai développé une **vision holistique** des projets : de la conception à la livraison, en passant par l’optimisation et la gestion d’équipe. Mon expérience inclut :
 - Le pilotage complet d’une plateforme événementielle sportive avec PerformWeb inc. (développement, image de marque, marketing, logistique).
 - Des mandats stratégiques et opérationnels dans des environnements complexes (Desjardins, CBC/Radio-Canada, CGI, ZoomMed, OBNL en santé).
-- Un rôle de facilitatrice et de leader temporaire pour réaligner des projets critiques sur leurs objectifs et échéances.
+- Un rôle de facilitatrice pour réaligner des projets critiques sur leurs objectifs et échéances.
 
 Ces dernières années, le **contexte économique mondial** a radicalement changé : tarifs commerciaux imposés par les États-Unis, guerres et tensions géopolitiques, accélération de la mondialisation.  
 C’est dans ce climat incertain que m’est venue l’idée : **comment faire autrement, comment bâtir un Canada et un G7 version 2.0, adaptés aux réalités du XXIe siècle ?**  
