@@ -1,0 +1,304 @@
+:host {
+  display: block;
+}
+
+.opportunity-radar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: clamp(1.75rem, 1.1rem + 1.8vw, 2.5rem);
+  border-radius: 1.75rem;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(2, 6, 23, 0.94) 100%);
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  color: #e2e8f0;
+}
+
+.opportunity-radar__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.opportunity-radar__headline {
+  max-width: 46ch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.opportunity-radar__eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(94, 234, 212, 0.8);
+}
+
+.opportunity-radar__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.9rem);
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.opportunity-radar__score {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.1);
+}
+
+.opportunity-radar__score-chart {
+  width: 3.75rem;
+  height: 3.75rem;
+}
+
+.opportunity-radar__score-track {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.18);
+  stroke-width: 6;
+}
+
+.opportunity-radar__score-meter {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transform-origin: 50% 50%;
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 320ms ease;
+}
+
+.opportunity-radar__score-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.opportunity-radar__layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: center;
+}
+
+.opportunity-radar__actors {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.opportunity-radar__actor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.opportunity-radar__actor-label {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.6);
+}
+
+.opportunity-radar__actor-body {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.opportunity-radar__actor-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.opportunity-radar__actor-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.opportunity-radar__actor-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 12px 32px rgba(14, 165, 233, 0.35);
+}
+
+.opportunity-radar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.opportunity-radar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.22);
+  color: rgba(204, 251, 241, 0.92);
+}
+
+.opportunity-radar__actor--supplier .opportunity-radar__chip {
+  background: rgba(8, 145, 178, 0.22);
+  color: rgba(165, 243, 252, 0.95);
+}
+
+.opportunity-radar__chart {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at top, rgba(14, 165, 233, 0.12), rgba(15, 23, 42, 0.4));
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.opportunity-radar__chart-canvas {
+  width: min(100%, 260px);
+  height: auto;
+}
+
+.opportunity-radar__grid-ring {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.18);
+  stroke-width: 1;
+}
+
+.opportunity-radar__axes {
+  stroke: rgba(148, 163, 184, 0.28);
+  stroke-width: 1;
+}
+
+.opportunity-radar__axis-node {
+  fill: rgba(56, 189, 248, 0.9);
+}
+
+.opportunity-radar__shape {
+  fill: url(#opportunity-radar-fill);
+  stroke: rgba(45, 212, 191, 0.6);
+  stroke-width: 2;
+  transition: opacity 250ms ease;
+}
+
+.opportunity-radar__metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.opportunity-radar__metrics-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.2rem 1.5rem;
+  margin: 0;
+}
+
+.opportunity-radar__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.opportunity-radar__metric-label {
+  margin: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(148, 163, 184, 0.86);
+}
+
+.opportunity-radar__metric-value {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.opportunity-radar__metric-score {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.opportunity-radar__metric-detail {
+  font-size: 0.9rem;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.opportunity-radar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.opportunity-radar__action {
+  padding: 0.75rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.opportunity-radar__action--primary {
+  background: linear-gradient(135deg, #f8fafc 0%, #cbd5f5 100%);
+  color: #0f172a;
+  box-shadow: 0 16px 40px rgba(148, 163, 184, 0.25);
+}
+
+.opportunity-radar__action--primary:hover,
+.opportunity-radar__action--primary:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 42px rgba(148, 163, 184, 0.28);
+}
+
+.opportunity-radar__action--secondary {
+  background: rgba(34, 211, 238, 0.18);
+  color: rgba(165, 243, 252, 0.95);
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+.opportunity-radar__action--secondary:hover,
+.opportunity-radar__action--secondary:focus-visible {
+  background: rgba(34, 211, 238, 0.28);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .opportunity-radar {
+    padding: 1.75rem 1.25rem 2.25rem;
+  }
+
+  .opportunity-radar__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .opportunity-radar__score {
+    align-self: flex-end;
+  }
+}

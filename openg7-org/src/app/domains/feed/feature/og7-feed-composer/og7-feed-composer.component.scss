@@ -1,0 +1,127 @@
+.feed-composer {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, rgba(37, 99, 235, 0.08), rgba(59, 130, 246, 0.12));
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.feed-composer__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.feed-composer__channels {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.feed-composer__channel {
+  border: none;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  background: rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.feed-composer__channel--active {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.feed-composer__textarea {
+  min-height: 8rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  padding: 1rem;
+  font-size: 1rem;
+  resize: vertical;
+  background: #fff;
+}
+
+.feed-composer__textarea:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.feed-composer__help {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.7);
+  font-size: 0.875rem;
+}
+
+.feed-composer__tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.feed-composer__tag {
+  border: none;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  background: rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+}
+
+.feed-composer__errors,
+.feed-composer__warnings {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.feed-composer__errors {
+  color: #b91c1c;
+}
+
+.feed-composer__warnings {
+  color: #b45309;
+}
+
+.feed-composer__footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.feed-composer__submit,
+.feed-composer__clear {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.feed-composer__submit {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.feed-composer__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.feed-composer__clear {
+  background: transparent;
+  color: #1e293b;
+}
+
+@media (max-width: 720px) {
+  .feed-composer__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .feed-composer__submit,
+  .feed-composer__clear {
+    width: 100%;
+  }
+}

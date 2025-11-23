@@ -1,0 +1,101 @@
+<section class="og7-importation-collaboration" data-og7="importation-collaboration">
+  <header>
+    <h2>{{ 'pages.importation.collaboration.title' | translate }}</h2>
+    <p>{{ 'pages.importation.collaboration.subtitle' | translate }}</p>
+  </header>
+
+  <div class="og7-importation-collaboration__grid">
+    <section class="og7-importation-collaboration__watchlists">
+      <header>
+        <h3>{{ 'pages.importation.collaboration.watchlists.title' | translate }}</h3>
+      </header>
+      <form *ngIf="viewModel.canManageWatchlists" (submit)="$event.preventDefault(); submitWatchlist()">
+        <label>
+          <span>{{ 'pages.importation.collaboration.watchlists.newLabel' | translate }}</span>
+          <input
+            type="text"
+            [(ngModel)]="watchlistName"
+            name="watchlistName"
+            placeholder="{{ 'pages.importation.collaboration.watchlists.placeholder' | translate }}"
+          />
+        </label>
+        <button type="submit">{{ 'pages.importation.collaboration.watchlists.create' | translate }}</button>
+      </form>
+      <p *ngIf="viewModel.error" class="og7-importation-collaboration__error">{{ viewModel.error }}</p>
+      <div class="og7-importation-collaboration__watchlist-grid">
+        <article *ngFor="let watchlist of viewModel.watchlists; trackBy: trackWatchlist">
+          <header>
+            <h4>{{ watchlist.name }}</h4>
+            <span>{{ watchlist.owner }}</span>
+          </header>
+          <p>{{ watchlist.filtersSummary }}</p>
+          <p class="og7-importation-collaboration__timestamp">
+            {{ 'pages.importation.collaboration.watchlists.updated' | translate:{ date: watchlist.updatedAt } }}
+          </p>
+        </article>
+        <p *ngIf="!viewModel.watchlists.length" class="og7-importation-collaboration__empty">
+          {{ 'pages.importation.collaboration.watchlists.empty' | translate }}
+        </p>
+      </div>
+    </section>
+
+    <section class="og7-importation-collaboration__annotations">
+      <header>
+        <h3>{{ 'pages.importation.collaboration.annotations.title' | translate }}</h3>
+      </header>
+      <ul>
+        <li *ngFor="let annotation of viewModel.annotations; trackBy: trackAnnotation">
+          <div class="og7-importation-collaboration__annotation-header">
+            <span class="og7-importation-collaboration__author">{{ annotation.author }}</span>
+            <time>{{ annotation.createdAt }}</time>
+          </div>
+          <p>{{ annotation.excerpt }}</p>
+          <p *ngIf="annotation.relatedLabel" class="og7-importation-collaboration__tag">{{ annotation.relatedLabel }}</p>
+        </li>
+      </ul>
+      <p *ngIf="!viewModel.annotations.length" class="og7-importation-collaboration__empty">
+        {{ 'pages.importation.collaboration.annotations.empty' | translate }}
+      </p>
+    </section>
+
+    <section class="og7-importation-collaboration__schedule" *ngIf="viewModel.canScheduleReports">
+      <header>
+        <h3>{{ 'pages.importation.collaboration.schedule.title' | translate }}</h3>
+      </header>
+      <form (submit)="$event.preventDefault(); submitSchedule()">
+        <label>
+          <span>{{ 'pages.importation.collaboration.schedule.recipients' | translate }}</span>
+          <input
+            type="text"
+            name="recipients"
+            [(ngModel)]="scheduleDraft.recipients"
+            placeholder="a@openg7.org, b@openg7.org"
+          />
+        </label>
+        <div class="og7-importation-collaboration__schedule-grid">
+          <label>
+            <span>{{ 'pages.importation.collaboration.schedule.format' | translate }}</span>
+            <select name="format" [(ngModel)]="scheduleDraft.format">
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+              <option value="look">Looker</option>
+            </select>
+          </label>
+          <label>
+            <span>{{ 'pages.importation.collaboration.schedule.frequency' | translate }}</span>
+            <select name="frequency" [(ngModel)]="scheduleDraft.frequency">
+              <option value="weekly">{{ 'pages.importation.collaboration.schedule.weekly' | translate }}</option>
+              <option value="monthly">{{ 'pages.importation.collaboration.schedule.monthly' | translate }}</option>
+              <option value="quarterly">{{ 'pages.importation.collaboration.schedule.quarterly' | translate }}</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>{{ 'pages.importation.collaboration.schedule.notes' | translate }}</span>
+          <textarea name="notes" rows="3" [(ngModel)]="scheduleDraft.notes"></textarea>
+        </label>
+        <button type="submit">{{ 'pages.importation.collaboration.schedule.submit' | translate }}</button>
+      </form>
+    </section>
+  </div>
+</section>

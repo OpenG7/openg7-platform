@@ -1,0 +1,107 @@
+<section
+  class="og7-compliance space-y-4 rounded-3xl bg-card p-6 text-sm text-body ring-card shadow-card"
+>
+  <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+    <div class="space-y-2">
+      <h3 class="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-subtle">
+        {{ 'attachments.title' | translate }}
+      </h3>
+      <p class="text-xs text-subtle">{{ 'attachments.subtitle' | translate }}</p>
+    </div>
+    <span
+      class="og7-compliance__counter badge-tertiary"
+    >
+      {{ 'attachments.count' | translate:{ value: selectionCount() } }}
+    </span>
+  </header>
+
+  <ul class="space-y-3">
+    <li>
+      <label class="og7-compliance__item">
+        <input
+          type="checkbox"
+          class="og7-compliance__checkbox"
+          [checked]="ndaChecked()"
+          [disabled]="disabled()"
+          (change)="onNdaToggle($event)"
+        />
+        <div class="og7-compliance__content">
+          <div class="og7-compliance__header">
+            <span class="og7-compliance__title text-title">{{ 'attachments.nda.title' | translate }}</span>
+            <span
+              class="og7-compliance__status"
+              [class.og7-compliance__status--active]="ndaChecked()"
+            >
+              {{ ndaChecked() ? ('attachments.selected' | translate) : ('attachments.optional' | translate) }}
+            </span>
+          </div>
+          <p class="og7-compliance__description text-subtle">{{ 'attachments.nda.description' | translate }}</p>
+          <div class="og7-compliance__actions">
+            <button
+              type="button"
+              class="og7-compliance__toggle"
+              [disabled]="disabled()"
+              (click)="toggleNda()"
+            >
+              {{ ndaChecked() ? ('attachments.deselect' | translate) : ('attachments.select' | translate) }}
+            </button>
+            @if (ndaPreview(); as link) {
+              <a
+                class="og7-compliance__preview link-primary"
+                [href]="link"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ 'attachments.preview' | translate }}
+              </a>
+            }
+          </div>
+        </div>
+      </label>
+    </li>
+
+    <li>
+      <label class="og7-compliance__item">
+        <input
+          type="checkbox"
+          class="og7-compliance__checkbox"
+          [checked]="rfqChecked()"
+          [disabled]="disabled()"
+          (change)="onRfqToggle($event)"
+        />
+        <div class="og7-compliance__content">
+          <div class="og7-compliance__header">
+            <span class="og7-compliance__title text-title">{{ 'attachments.rfq.title' | translate }}</span>
+            <span
+              class="og7-compliance__status"
+              [class.og7-compliance__status--active]="rfqChecked()"
+            >
+              {{ rfqChecked() ? ('attachments.selected' | translate) : ('attachments.optional' | translate) }}
+            </span>
+          </div>
+          <p class="og7-compliance__description text-subtle">{{ 'attachments.rfq.description' | translate }}</p>
+          <div class="og7-compliance__actions">
+            <button
+              type="button"
+              class="og7-compliance__toggle"
+              [disabled]="disabled()"
+              (click)="toggleRfq()"
+            >
+              {{ rfqChecked() ? ('attachments.deselect' | translate) : ('attachments.select' | translate) }}
+            </button>
+            @if (rfqPreview(); as link) {
+              <a
+                class="og7-compliance__preview"
+                [href]="link"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ 'attachments.preview' | translate }}
+              </a>
+            }
+          </div>
+        </div>
+      </label>
+    </li>
+  </ul>
+</section>

@@ -1,0 +1,24 @@
+<section
+  class="bg-white py-16"
+  data-og7="home-filters"
+  role="region"
+  aria-labelledby="home-filters-heading"
+>
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
+    <header class="space-y-3">
+      <p class="text-sm font-semibold uppercase tracking-[0.35em] text-slate-500">
+        {{ 'home.filters.kicker' | translate }}
+      </p>
+      <h2 id="home-filters-heading" class="text-3xl font-semibold text-slate-900 sm:text-4xl">
+        {{ 'home.filters.title' | translate }}
+      </h2>
+      <p class="max-w-3xl text-base text-slate-600">
+        {{ 'home.filters.description' | translate }}
+      </p>
+    </header>
+
+    <div class="rounded-3xl border border-slate-200 bg-slate-50/70 p-6 shadow-sm backdrop-blur">
+      <div data-og7="filters"></div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,237 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "province-on",
+      "properties": {
+        "id": "province-on",
+        "layer": "province",
+        "code": "ON",
+        "name": { "fr": "Ontario", "en": "Ontario" }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-95.16, 56.9],
+            [-79.0, 56.9],
+            [-74.1, 45.2],
+            [-79.5, 41.7],
+            [-95.16, 45.2],
+            [-95.16, 56.9]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "province-qc",
+      "properties": {
+        "id": "province-qc",
+        "layer": "province",
+        "code": "QC",
+        "name": { "fr": "Québec", "en": "Quebec" }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-79.0, 62.0],
+            [-57.0, 62.0],
+            [-57.0, 45.0],
+            [-74.1, 45.0],
+            [-79.0, 56.9],
+            [-79.0, 62.0]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "province-bc",
+      "properties": {
+        "id": "province-bc",
+        "layer": "province",
+        "code": "BC",
+        "name": { "fr": "Colombie-Britannique", "en": "British Columbia" }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-139.0, 60.0],
+            [-114.0, 60.0],
+            [-114.0, 48.5],
+            [-130.0, 48.5],
+            [-139.0, 54.0],
+            [-139.0, 60.0]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "flow-canada-europe-agri",
+      "properties": {
+        "id": "flow-canada-europe-agri",
+        "layer": "flow",
+        "partner": "canada-to-europe",
+        "tradeMode": "export",
+        "sectorId": "agri-food"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-75.6972, 45.4215],
+          [-45.0, 56.0],
+          [2.2137, 46.2276]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "flow-canada-europe-cleantech",
+      "properties": {
+        "id": "flow-canada-europe-cleantech",
+        "layer": "flow",
+        "partner": "canada-to-europe",
+        "tradeMode": "export",
+        "sectorId": "cleantech"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-75.6972, 45.4215],
+          [-41.0, 49.0],
+          [2.0, 47.0]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "flow-canada-europe-digital",
+      "properties": {
+        "id": "flow-canada-europe-digital",
+        "layer": "flow",
+        "partner": "canada-to-europe",
+        "tradeMode": "export",
+        "sectorId": "digital-services"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-75.6972, 45.4215],
+          [-38.0, 44.0],
+          [3.1, 45.0]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "flow-canada-domestic-agri",
+      "properties": {
+        "id": "flow-canada-domestic-agri",
+        "layer": "flow",
+        "partner": "canada",
+        "tradeMode": "export",
+        "sectorId": "agri-food"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-75.6972, 45.4215],
+          [-100.0, 55.5],
+          [-119.5, 50.5]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "flow-canada-domestic-energy",
+      "properties": {
+        "id": "flow-canada-domestic-energy",
+        "layer": "flow",
+        "partner": "canada",
+        "tradeMode": "export",
+        "sectorId": "energy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-75.6972, 45.4215],
+          [-98.0, 52.0],
+          [-114.0, 53.0]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "flow-canada-domestic-digital",
+      "properties": {
+        "id": "flow-canada-domestic-digital",
+        "layer": "flow",
+        "partner": "canada",
+        "tradeMode": "export",
+        "sectorId": "digital-services"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-75.6972, 45.4215],
+          [-85.0, 48.0],
+          [-79.3832, 43.6532]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "flow-canada-domestic-life-sciences",
+      "properties": {
+        "id": "flow-canada-domestic-life-sciences",
+        "layer": "flow",
+        "partner": "canada",
+        "tradeMode": "export",
+        "sectorId": "life-sciences"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-75.6972, 45.4215],
+          [-73.0, 47.5],
+          [-73.5673, 45.5017]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hub-origin",
+      "properties": {
+        "id": "origin",
+        "layer": "hub",
+        "name": "Canada Hub",
+        "role": "origin",
+        "partner": "canada"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.6972, 45.4215]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hub-canada-to-europe",
+      "properties": {
+        "id": "canada-to-europe",
+        "layer": "hub",
+        "name": "Europe",
+        "role": "partner",
+        "partner": "canada-to-europe"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.2137, 46.2276]
+      }
+    }
+  ]
+}

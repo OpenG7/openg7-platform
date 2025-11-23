@@ -1,0 +1,617 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OpenG7 API",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:1337"
+    }
+  ],
+  "paths": {
+    "/api/sectors": {
+      "get": {
+        "summary": "List sectors",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/provinces": {
+      "get": {
+        "summary": "List provinces",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/companies": {
+      "get": {
+        "summary": "List companies",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/exchanges": {
+      "get": {
+        "summary": "List exchanges",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/homepage": {
+      "get": {
+        "summary": "Get homepage",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/statistics": {
+      "get": {
+        "summary": "Fetch statistics summaries",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "interprovincial",
+                "international",
+                "all"
+              ]
+            }
+          },
+          {
+            "name": "intrant",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "energy",
+                "agriculture",
+                "manufacturing",
+                "services"
+              ]
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "province",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/billing/plans": {
+      "get": {
+        "summary": "List billing plans",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BillingPlan"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "count"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Province": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Sector": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "CompanyCapacity": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "label"
+        ]
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "suspended"
+            ]
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "secondaryLogoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "capacities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompanyCapacity"
+            }
+          },
+          "sector": {
+            "$ref": "#/components/schemas/Sector",
+            "nullable": true
+          },
+          "province": {
+            "$ref": "#/components/schemas/Province",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status"
+        ]
+      },
+      "Exchange": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "sourceProvince": {
+            "type": "integer"
+          },
+          "targetProvince": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "value",
+          "unit",
+          "sourceProvince",
+          "targetProvince"
+        ]
+      },
+      "BillingPlanPrice": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "month",
+              "year"
+            ]
+          }
+        },
+        "required": [
+          "amount",
+          "currency",
+          "interval"
+        ]
+      },
+      "BillingPlanCapabilities": {
+        "type": "object",
+        "properties": {
+          "premiumVisibility": {
+            "type": "boolean"
+          },
+          "priorityAnalytics": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "premiumVisibility",
+          "priorityAnalytics"
+        ]
+      },
+      "BillingPlan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "free",
+              "premium"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "internal",
+              "stripe"
+            ]
+          },
+          "price": {
+            "$ref": "#/components/schemas/BillingPlanPrice"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/BillingPlanCapabilities"
+          },
+          "i18nKey": {
+            "type": "string"
+          },
+          "highlight": {
+            "type": "boolean"
+          },
+          "available": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "tier",
+          "provider",
+          "price",
+          "features",
+          "capabilities",
+          "i18nKey",
+          "highlight",
+          "available"
+        ]
+      },
+      "StatisticsSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "interprovincial",
+              "international",
+              "all"
+            ]
+          },
+          "intrant": {
+            "type": "string",
+            "enum": [
+              "all",
+              "energy",
+              "agriculture",
+              "manufacturing",
+              "services"
+            ]
+          },
+          "value": {
+            "type": "number",
+            "nullable": true
+          },
+          "change": {
+            "type": "number",
+            "nullable": true
+          },
+          "unitKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "titleKey": {
+            "type": "string"
+          },
+          "descriptionKey": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string",
+            "nullable": true
+          },
+          "province": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "scope",
+          "intrant",
+          "titleKey",
+          "descriptionKey"
+        ]
+      },
+      "StatisticsInsight": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "interprovincial",
+              "international",
+              "all"
+            ]
+          },
+          "intrant": {
+            "type": "string",
+            "enum": [
+              "all",
+              "energy",
+              "agriculture",
+              "manufacturing",
+              "services"
+            ]
+          },
+          "titleKey": {
+            "type": "string"
+          },
+          "descriptionKey": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string",
+            "nullable": true
+          },
+          "province": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "scope",
+          "intrant",
+          "titleKey",
+          "descriptionKey"
+        ]
+      },
+      "StatisticsSnapshot": {
+        "type": "object",
+        "properties": {
+          "totalFlows": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalFlowsUnitKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "activeCorridors": {
+            "type": "integer"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "activeCorridors"
+        ]
+      },
+      "StatisticsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "summaries": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StatisticsSummary"
+                }
+              },
+              "insights": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StatisticsInsight"
+                }
+              },
+              "snapshot": {
+                "$ref": "#/components/schemas/StatisticsSnapshot",
+                "nullable": true
+              },
+              "availablePeriods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "availableProvinces": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "summaries",
+              "insights",
+              "availablePeriods",
+              "availableProvinces"
+            ]
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "filters": {
+                "type": "object",
+                "properties": {
+                  "scope": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "intrant": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "period": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "province": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiToken": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiToken": []
+    }
+  ]
+}

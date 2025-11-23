@@ -1,0 +1,15 @@
+{
+  "name": "@openg7/tooling",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "validate-selectors": "./bin/validate-selectors.mjs"
+  },
+  "exports": {
+    "./check-server": "./src/check-server.js"
+  },
+  "scripts": {
+    "validate:selectors": "node ./bin/validate-selectors.mjs"
+  }
+}

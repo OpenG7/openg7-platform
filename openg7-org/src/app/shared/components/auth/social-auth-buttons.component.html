@@ -1,0 +1,27 @@
+<button
+  type="button"
+  class="flex items-center justify-center gap-2 rounded border border-slate-300 px-4 py-2 font-medium transition hover:bg-slate-50"
+  data-og7="auth-social-microsoft"
+  (click)="startSignIn('microsoft')"
+  [disabled]="disabled() || !!inProgress()"
+  [attr.aria-busy]="inProgress() === 'microsoft'"
+>
+  {{ 'auth.continueWithMicrosoft' | translate }}
+</button>
+<button
+  type="button"
+  class="flex items-center justify-center gap-2 rounded border border-slate-300 px-4 py-2 font-medium transition hover:bg-slate-50"
+  data-og7="auth-social-google"
+  (click)="startSignIn('google')"
+  [disabled]="disabled() || !!inProgress()"
+  [attr.aria-busy]="inProgress() === 'google'"
+>
+  {{ 'auth.continueWithGoogle' | translate }}
+</button>
+<p
+  *ngIf="inProgress() as provider"
+  class="text-sm text-slate-600"
+  data-og7="auth-social-progress"
+>
+  {{ 'auth.sso.progress' | translate: { provider: ('auth.sso.' + provider) | translate } }}
+</p>

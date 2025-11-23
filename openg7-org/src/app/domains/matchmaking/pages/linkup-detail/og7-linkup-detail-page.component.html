@@ -1,0 +1,140 @@
+<section class="og7-linkup-detail">
+  <a class="og7-linkup-detail__back" routerLink="/linkups">
+    {{ 'pages.linkups.detail.backToList' | translate }}
+  </a>
+
+  <ng-container *ngIf="linkup() as linkup; else notFound">
+    <header class="og7-linkup-detail__header">
+      <div>
+        <p class="og7-linkup-detail__eyebrow">{{ 'pages.linkups.detail.eyebrow' | translate }}</p>
+        <h1 class="og7-linkup-detail__title">{{ headerTitle() }}</h1>
+        <p class="og7-linkup-detail__summary">{{ linkup.summary }}</p>
+      </div>
+      <div class="og7-linkup-detail__status-block">
+        <span class="og7-linkup-status" [ngClass]="statusClass(linkup.status)">
+          {{ statusLabel(linkup.status) | translate }}
+        </span>
+        <span class="og7-linkup-detail__mode">
+          {{ tradeModeLabel(linkup.tradeMode) | translate }}
+        </span>
+        <dl class="og7-linkup-detail__meta">
+          <div>
+            <dt>{{ 'pages.linkups.detail.reference' | translate }}</dt>
+            <dd>{{ linkup.reference }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'pages.linkups.detail.createdAt' | translate }}</dt>
+            <dd>{{ linkup.createdAt | date: 'd MMM y, HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'pages.linkups.detail.updatedAt' | translate }}</dt>
+            <dd>{{ linkup.updatedAt | date: 'd MMM y, HH:mm' }}</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <section class="og7-linkup-detail__grid">
+      <article class="og7-linkup-detail__card">
+        <h2>{{ 'pages.linkups.detail.companyA.title' | translate }}</h2>
+        <p class="og7-linkup-detail__card-name">{{ linkup.companyA.name }}</p>
+        <ul class="og7-linkup-detail__card-list">
+          <li>
+            <span>{{ 'pages.linkups.detail.company.location' | translate }}</span>
+            <strong>{{ linkup.companyA.province }}</strong>
+          </li>
+          <li>
+            <span>{{ 'pages.linkups.detail.company.sector' | translate }}</span>
+            <strong>{{ linkup.companyA.sector }}</strong>
+          </li>
+          <li *ngIf="linkup.companyA.channel">
+            <span>{{ 'pages.linkups.detail.company.channel' | translate }}</span>
+            <strong>{{ linkup.companyA.channel }}</strong>
+          </li>
+        </ul>
+      </article>
+
+      <article class="og7-linkup-detail__card">
+        <h2>{{ 'pages.linkups.detail.companyB.title' | translate }}</h2>
+        <p class="og7-linkup-detail__card-name">{{ linkup.companyB.name }}</p>
+        <ul class="og7-linkup-detail__card-list">
+          <li>
+            <span>{{ 'pages.linkups.detail.company.location' | translate }}</span>
+            <strong>{{ linkup.companyB.province }}</strong>
+          </li>
+          <li>
+            <span>{{ 'pages.linkups.detail.company.sector' | translate }}</span>
+            <strong>{{ linkup.companyB.sector }}</strong>
+          </li>
+          <li *ngIf="linkup.companyB.channel">
+            <span>{{ 'pages.linkups.detail.company.channel' | translate }}</span>
+            <strong>{{ linkup.companyB.channel }}</strong>
+          </li>
+        </ul>
+      </article>
+
+      <article class="og7-linkup-detail__card og7-linkup-detail__card--highlight">
+        <h2>{{ 'pages.linkups.detail.scope.title' | translate }}</h2>
+        <dl class="og7-linkup-detail__scope">
+          <div>
+            <dt>{{ 'pages.linkups.detail.scope.primarySector' | translate }}</dt>
+            <dd>{{ linkup.primarySector }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'pages.linkups.detail.scope.tradeMode' | translate }}</dt>
+            <dd>{{ tradeModeLabel(linkup.tradeMode) | translate }}</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="og7-linkup-detail__section">
+      <div class="og7-linkup-detail__section-header">
+        <h2>{{ 'pages.linkups.detail.timeline.title' | translate }}</h2>
+        <p>{{ 'pages.linkups.detail.timeline.description' | translate }}</p>
+      </div>
+      <ol class="og7-linkup-detail__timeline">
+        <li *ngFor="let entry of sortedTimeline()">
+          <span class="og7-linkup-detail__timeline-date">{{ entry.date | date: 'd MMM y' }}</span>
+          <div class="og7-linkup-detail__timeline-content">
+            <p>{{ entry.summary }}</p>
+            <small *ngIf="entry.channel || entry.author">
+              <span *ngIf="entry.channel">{{ entry.channel }}</span>
+              <span *ngIf="entry.channel && entry.author"> · </span>
+              <span *ngIf="entry.author">{{ entry.author }}</span>
+            </small>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="og7-linkup-detail__section">
+      <div class="og7-linkup-detail__section-header">
+        <h2>{{ 'pages.linkups.detail.notes.title' | translate }}</h2>
+        <p>{{ 'pages.linkups.detail.notes.description' | translate }}</p>
+      </div>
+      <div *ngIf="notes().length; else emptyNotes" class="og7-linkup-detail__notes">
+        <article *ngFor="let note of notes()" class="og7-linkup-detail__note">
+          <header>
+            <span class="og7-linkup-detail__note-author">{{ note.author }}</span>
+            <span class="og7-linkup-detail__note-date">{{ note.date | date: 'd MMM y, HH:mm' }}</span>
+          </header>
+          <p>{{ note.content }}</p>
+        </article>
+      </div>
+      <ng-template #emptyNotes>
+        <p class="og7-linkup-detail__notes-empty">{{ 'pages.linkups.detail.notes.empty' | translate }}</p>
+      </ng-template>
+    </section>
+  </ng-container>
+
+  <ng-template #notFound>
+    <div class="og7-linkup-detail__not-found">
+      <h1>{{ 'pages.linkups.detail.notFound.title' | translate }}</h1>
+      <p>{{ 'pages.linkups.detail.notFound.description' | translate }}</p>
+      <a routerLink="/linkups" class="og7-linkup-detail__back-link">
+        {{ 'pages.linkups.detail.backToList' | translate }}
+      </a>
+    </div>
+  </ng-template>
+</section>

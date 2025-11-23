@@ -1,0 +1,72 @@
+<section class="notification-panel" data-og7="notification-panel">
+  <header class="notification-panel__header">
+    <div>
+      <h3 class="notification-panel__title">
+        {{ 'notifications.panel.title' | translate }}
+      </h3>
+      <p class="notification-panel__subtitle">
+        {{ 'notifications.panel.subtitle' | translate: { unread: unreadCount(), total: totalCount() } }}
+      </p>
+    </div>
+    <div class="notification-panel__header-actions">
+      <button type="button" (click)="markAllRead()" [disabled]="!hasUnread()">
+        {{ 'notifications.panel.markAllRead' | translate }}
+      </button>
+      <button type="button" (click)="clear()" [disabled]="totalCount() === 0">
+        {{ 'notifications.panel.clearAll' | translate }}
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="lastDeliveryError(); let deliveryError" class="notification-panel__alert" role="alert">
+    <mat-icon fontSet="material-symbols-outlined" fontIcon="mail"></mat-icon>
+    <div>
+      <p>
+        {{ 'notifications.panel.deliveryError' | translate: { message: deliveryError } }}
+      </p>
+      <button type="button" (click)="resetDeliveryError()">
+        {{ 'notifications.panel.dismissDeliveryError' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <ul *ngIf="notifications().length; else empty" class="notification-panel__list">
+    <li
+      *ngFor="let item of notifications(); trackBy: trackById"
+      class="notification-panel__item"
+      [class.notification-panel__item--unread]="!item.read"
+    >
+      <div class="notification-panel__item-icon" [ngClass]="'notification-panel__item-icon--' + item.type">
+        <mat-icon fontSet="material-symbols-outlined" [fontIcon]="iconFor(item.type)"></mat-icon>
+      </div>
+      <div class="notification-panel__item-body">
+        <div class="notification-panel__item-header">
+          <span class="notification-panel__item-title">
+            {{ item.title || ('notifications.types.' + item.type | translate) }}
+          </span>
+          <time class="notification-panel__item-time">
+            {{ item.createdAt | date: 'shortTime' }}
+          </time>
+        </div>
+        <p class="notification-panel__item-message">{{ item.message }}</p>
+        <div class="notification-panel__item-meta" *ngIf="item.source">
+          <span>
+            {{ 'notifications.panel.source' | translate: { source: item.source } }}
+          </span>
+        </div>
+      </div>
+      <div class="notification-panel__item-actions">
+        <button type="button" (click)="markRead(item.id)" [disabled]="item.read">
+          {{ 'notifications.panel.markRead' | translate }}
+        </button>
+        <button type="button" (click)="dismiss(item.id)">
+          {{ 'notifications.panel.dismiss' | translate }}
+        </button>
+      </div>
+    </li>
+  </ul>
+
+  <ng-template #empty>
+    <p class="notification-panel__empty">{{ 'notifications.panel.empty' | translate }}</p>
+  </ng-template>
+</section>

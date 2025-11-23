@@ -1,0 +1,250 @@
+<ng-template #primaryTemplate>
+  <div og7PanelPrimary>
+    @defer (when partnerPanelOpen()) {
+      <div class="og7-intro-panel space-y-10">
+        <header class="og7-intro-panel__header">
+          <div class="og7-intro-panel__header-accent"></div>
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div class="space-y-4">
+              <p class="og7-intro-panel__overtitle">
+                {{ 'introBillboard.title' | translate }}
+              </p>
+              <div class="flex flex-col gap-4">
+                <div class="flex flex-wrap items-center gap-4">
+                  <h2 class="og7-intro-panel__title">
+                    {{ 'introBillboard.heroDiscipline' | translate }}
+                  </h2>
+                  <span class="og7-intro-panel__score">
+                    <span class="og7-intro-panel__score-indicator"></span>
+                    {{ 'introBillboard.scoreBadge' | translate:{ value: scorePercent() } }}
+                  </span>
+                </div>
+                <p class="og7-intro-panel__subtitle">
+                  {{ subtitle() }}
+                </p>
+                <div class="og7-intro-panel__meta">
+                  @if (distanceText()) {
+                    <span>
+                      {{ distanceText() }}
+                    </span>
+                  }
+                  @if (co2Text()) {
+                    <span>
+                      {{ co2Text() }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="og7-intro-panel__content space-y-8">
+          <og7-intro-stepper
+            [partnerPanelOpen]="partnerPanelOpen()"
+            [messageTemplate]="messageStepTemplate"
+            [complianceTemplate]="complianceTemplateRef"
+            [schedulerTemplate]="schedulerTemplateRef"
+            [logisticsTemplate]="incotermsTemplateRef"
+            [pipelineTemplate]="pipelineTemplateRef"
+            [financingTemplate]="financingTemplateRef"
+            [ctaTemplate]="ctaRailTemplateRef"
+            [pipelineSteps]="pipelineSteps()"
+            [financingData]="financingBanner()"
+            (messageChange)="onIntroChange($event)"
+          ></og7-intro-stepper>
+
+          @if (connectionError(); as errorKey) {
+            <div class="og7-intro-panel__error">
+              {{ errorKey | translate }}
+            </div>
+          }
+
+          <section class="og7-intro-panel__summary">
+            <h3>{{ 'introBillboard.logisticsSummaryTitle' | translate }}</h3>
+            <p>{{ logisticsSummary() }}</p>
+          </section>
+        </div>
+      </div>
+    } @placeholder {
+      <div class="space-y-6" aria-hidden="true">
+        <div class="h-6 w-32 rounded-full bg-slate-200/60 animate-pulse"></div>
+        <div class="h-10 w-64 rounded-full bg-slate-200/40 animate-pulse"></div>
+        <div class="h-40 rounded-3xl bg-slate-200/30 animate-pulse"></div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #ctaRailTemplate>
+  <div og7PanelCtaRail>
+    @defer (when partnerPanelOpen()) {
+      <ng-container *ngTemplateOutlet="ctaRailTemplateRef"></ng-container>
+    } @placeholder {
+      <div class="flex flex-col gap-3" aria-hidden="true">
+        <div class="h-5 w-24 rounded-full bg-slate-200/60 animate-pulse"></div>
+        <div class="h-12 rounded-2xl bg-slate-200/30 animate-pulse"></div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #pipelineTemplate>
+  <div og7PanelPipeline>
+    @defer (when partnerPanelOpen()) {
+      <ng-container *ngTemplateOutlet="pipelineTemplateRef"></ng-container>
+    } @placeholder {
+      <div class="space-y-3" aria-hidden="true">
+        <div class="h-5 w-28 rounded-full bg-slate-200/60 animate-pulse"></div>
+        <div class="h-24 rounded-3xl bg-slate-200/30 animate-pulse"></div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #incotermsTemplate>
+  <div og7PanelIncoterms>
+    @defer (when partnerPanelOpen()) {
+      <ng-container *ngTemplateOutlet="incotermsTemplateRef"></ng-container>
+    } @placeholder {
+      <div class="space-y-3" aria-hidden="true">
+        <div class="h-5 w-28 rounded-full bg-slate-200/60 animate-pulse"></div>
+        <div class="h-20 rounded-3xl bg-slate-200/30 animate-pulse"></div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #financingTemplate>
+  <div og7PanelFinancing>
+    @defer (when partnerPanelOpen()) {
+      <ng-container *ngTemplateOutlet="financingTemplateRef"></ng-container>
+    } @placeholder {
+      <div class="space-y-3" aria-hidden="true">
+        <div class="h-5 w-32 rounded-full bg-slate-200/60 animate-pulse"></div>
+        <div class="h-24 rounded-3xl bg-slate-200/30 animate-pulse"></div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #complianceTemplate>
+  <div og7PanelCompliance>
+    @defer (when partnerPanelOpen()) {
+      <ng-container *ngTemplateOutlet="complianceTemplateRef"></ng-container>
+    } @placeholder {
+      <div class="space-y-3" aria-hidden="true">
+        <div class="h-5 w-32 rounded-full bg-slate-200/60 animate-pulse"></div>
+        <div class="h-20 rounded-3xl bg-slate-200/30 animate-pulse"></div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #schedulerTemplate>
+  <div og7PanelScheduler>
+    @defer (when partnerPanelOpen()) {
+      <ng-container *ngTemplateOutlet="schedulerTemplateRef"></ng-container>
+    } @placeholder {
+      <div class="space-y-3" aria-hidden="true">
+        <div class="h-5 w-32 rounded-full bg-slate-200/60 animate-pulse"></div>
+        <div class="h-24 rounded-3xl bg-slate-200/30 animate-pulse"></div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #messageStepTemplate>
+  <div class="flex flex-col gap-4 rounded-3xl border border-white/10 bg-slate-950/70 p-6 text-sm text-slate-200 shadow-inner">
+    <h3 class="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-200/80">{{ 'introBillboard.briefingTitle' | translate }}</h3>
+    <dl class="space-y-3">
+      <div class="flex items-start justify-between gap-3">
+        <dt class="text-xs uppercase tracking-[0.25em] text-slate-400">{{ 'introBillboard.matchBuyer' | translate }}</dt>
+        <dd class="text-right font-semibold text-slate-100">{{ matchSelected()?.buyer?.name }}</dd>
+      </div>
+      <div class="flex items-start justify-between gap-3">
+        <dt class="text-xs uppercase tracking-[0.25em] text-slate-400">{{ 'introBillboard.matchSupplier' | translate }}</dt>
+        <dd class="text-right font-semibold text-slate-100">{{ matchSelected()?.seller?.name }}</dd>
+      </div>
+      <div class="flex items-start justify-between gap-3">
+        <dt class="text-xs uppercase tracking-[0.25em] text-slate-400">{{ 'introBillboard.matchCommodity' | translate }}</dt>
+        <dd class="text-right font-semibold text-slate-100">{{ matchTitle() }}</dd>
+      </div>
+    </dl>
+  </div>
+</ng-template>
+
+<ng-template #ctaRailTemplateRef>
+  @if (stepperRef(); as stepper) {
+    <og7-cta-rail
+      [creating]="creating()"
+      [disabled]="
+        creating() ||
+        !stepper.readyToSend() ||
+        !buyerProfile() ||
+        !supplierProfile() ||
+        !matchSelected()
+      "
+      [ready]="
+        stepper.readyToSend() &&
+        !!buyerProfile() &&
+        !!supplierProfile() &&
+        !!matchSelected()
+      "
+      [success]="successState()"
+      [attachments]="stepper.attachmentsSelected()"
+      [slotsCount]="stepper.meetingSlotsCount()"
+      (sendIntro)="sendIntroduction()"
+      (proposeSlots)="handleSchedulerShortcut()"
+      (toggleAttachments)="handleComplianceShortcut()"
+    ></og7-cta-rail>
+  }
+</ng-template>
+
+<ng-template #complianceTemplateRef>
+  @if (stepperRef(); as stepper) {
+    <og7-compliance-checklist
+      [ndaSelected]="stepper.attachmentsSelected().includes('nda')"
+      [rfqSelected]="stepper.attachmentsSelected().includes('rfq')"
+      [ndaPreviewUrl]="ndaPreviewLink()"
+      [rfqPreviewUrl]="rfqPreviewLink()"
+      (ndaChange)="handleNdaChange($event)"
+      (rfqChange)="handleRfqChange($event)"
+    ></og7-compliance-checklist>
+  }
+</ng-template>
+
+<ng-template #schedulerTemplateRef>
+  @if (stepperRef(); as stepper) {
+    <og7-meeting-scheduler
+      [slots]="stepper.meetingSlots()"
+      (slotsChange)="handleSlotsUpdated($event)"
+    ></og7-meeting-scheduler>
+  }
+</ng-template>
+
+<ng-template #incotermsTemplateRef>
+  @if (stepperRef(); as stepper) {
+    <og7-incoterms-ribbon
+      [selectedTransports]="stepper.selectedTransports()"
+      [selectedIncoterm]="stepper.selectedIncoterm()"
+      (transportsChange)="handleTransportsChange($event)"
+      (incotermChange)="handleIncotermChange($event)"
+    ></og7-incoterms-ribbon>
+  }
+</ng-template>
+
+<ng-template #pipelineTemplateRef>
+  <og7-scoreboard-pipeline
+    [steps]="pipelineSteps()"
+    [creating]="creating()"
+    [startedAt]="pipelineStart()"
+  ></og7-scoreboard-pipeline>
+</ng-template>
+
+<ng-template #financingTemplateRef>
+  <og7-financing-banner
+    [banner]="financingBanner()"
+    (ctaClicked)="handleFinancingCta($event)"
+  ></og7-financing-banner>
+</ng-template>

@@ -1,0 +1,156 @@
+:host {
+  display: block;
+}
+
+.feed-card {
+  background: var(--og7-surface, #fff);
+  border-radius: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+:host(.is-highlighted) .feed-card {
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+  transform: translateY(-2px);
+}
+
+.feed-card__header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.feed-card__avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.feed-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.feed-card__author {
+  margin: 0;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.feed-card__timestamp {
+  margin: 0;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.feed-card__pin {
+  font-size: 1.25rem;
+}
+
+.feed-card__content p {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.feed-card__needs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  list-style: none;
+}
+
+.feed-card__needs li {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.feed-card__province {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: #0f172a;
+}
+
+.feed-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feed-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.feed-card__badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.05);
+  font-size: 0.75rem;
+}
+
+.feed-card__badge--urgent {
+  background: rgba(234, 88, 12, 0.15);
+  color: #9a3412;
+}
+
+.feed-card__badge--pending {
+  background: rgba(59, 130, 246, 0.18);
+  color: #1d4ed8;
+}
+
+.feed-card__badge--error {
+  background: rgba(248, 113, 113, 0.22);
+  color: #b91c1c;
+}
+
+.feed-card__badge--warning {
+  background: rgba(234, 179, 8, 0.2);
+  color: #854d0e;
+}
+
+.feed-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.feed-card__action {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.feed-card__action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feed-card__action:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}

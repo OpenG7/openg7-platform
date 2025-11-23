@@ -2,104 +2,116 @@
 
 Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-translate`) et Tailwind.
 
-## Sections cœur (Page d’accueil)
+## Registry des composants Angular (selectors officiels)
 
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-site-header>` | src/app/components/layout/site-header.component.ts | En-tête sticky (logo, nav, recherche, CTA, langue) |
-| `<og7-hero-section>` | src/app/components/hero/hero-section.component.ts | Héros 2 colonnes (mission + carte) |
-| `<og7-trade-map>` | src/app/components/map/trade-map.component.ts | Carte Leaflet, viewport, intégration surcouches |
-| `<og7-filters-toolbar>` | src/app/components/search/filters-toolbar.component.ts | Barre de filtres (province, secteur, import/export…) |
-| `<og7-company-table>` | src/app/components/directory/company-table.component.ts | Tableau/bottin, tri, pagination |
-| `<og7-company-drawer>` | src/app/components/directory/company-drawer.component.ts | Tiroir détails + Échanges |
-| `<og7-insights-strip>` | src/app/components/insights/insights-strip.component.ts | KPIs et tendances |
-| `<og7-onboarding-wizard>` | src/app/components/cta/onboarding-wizard.component.ts | Wizard inscription 3 étapes |
+| Catégorie | Canonical selector | Current selector in code | Component class | File path | Status | Notes |
+|-----------|--------------------|--------------------------|-----------------|-----------|--------|-------|
+| Layout / nav / a11y | og7-shell-root | og7-shell-root | AppComponent | openg7-org/src/app/app.component.ts | ok | Bootstrap Angular sur le selector og7- prefixed. |
+| Layout / nav / a11y | og7-site-header | og7-site-header | SiteHeaderComponent | openg7-org/src/app/shared/components/layout/site-header.component.ts | ok |  |
+| Layout / nav / a11y | og7-notification-panel | og7-notification-panel | NotificationPanelComponent | openg7-org/src/app/shared/components/layout/notification-panel.component.ts | ok |  |
+| Layout / nav / a11y | og7-under-construction-banner | og7-under-construction-banner | UnderConstructionBannerComponent | openg7-org/src/app/shared/components/layout/under-construction-banner.component.ts | ok |  |
+| Layout / nav / a11y | og7-onboarding-flow | og7-onboarding-flow | Og7OnboardingFlowComponent | openg7-org/src/app/shared/components/layout/og7-onboarding-flow.component.ts | ok |  |
+| Layout / nav / a11y | og7-modal-container | og7-modal-container | Og7ModalContainerComponent | openg7-org/src/app/core/ui/modal/og7-modal-container.component.ts | ok |  |
+| Conformité & i18n / Auth | og7-i18n-language-switch | og7-i18n-language-switch | LanguageSwitchComponent | openg7-org/src/app/shared/components/i18n/language-switch.component.ts | ok | Aligné sur le préfixe og7- (kebab-case). |
+| Conformité & i18n / Auth | og7-compliance-checklist | og7-compliance-checklist | Og7ComplianceChecklistComponent | openg7-org/src/app/shared/components/connection/og7-compliance-checklist.component.ts | ok |  |
+| Conformité & i18n / Auth | og7-social-auth-buttons | og7-social-auth-buttons | SocialAuthButtonsComponent | openg7-org/src/app/shared/components/auth/social-auth-buttons.component.ts | ok |  |
+| Conformité & i18n / Auth | og7-subscription-plans | og7-subscription-plans | SubscriptionPlansComponent | openg7-org/src/app/shared/components/billing/subscription-plans.component.ts | ok |  |
+| Commerce & entreprises | og7-company-registration-form | og7-company-registration-form | CompanyRegistrationFormComponent | openg7-org/src/app/company-registration-form/components/company-registration-form/company-registration-form.component.ts | ok |  |
+| Commerce & entreprises | og7-companies-import-page | og7-companies-import-page | CompaniesImportPageComponent | openg7-org/src/app/import/companies-import-page/companies-import-page.component.ts | ok |  |
+| Commerce & entreprises | og7-entreprise | og7-entreprise | Og7EntrepriseComponent | openg7-org/src/app/domains/enterprise/entreprise/og7-entreprise.component.ts | ok |  |
+| Hero & marketing | og7-hero-section | og7-hero-section | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section.component.ts | ok | Selector Angular aligné (og7-hero-section). |
+| Hero & marketing | og7-hero-copy | og7-hero-copy | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy.component.ts | ok | Selector Angular aligné (og7-hero-copy). |
+| Hero & marketing | og7-hero-ctas | og7-hero-ctas | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas.component.ts | ok | Selector Angular aligné (og7-hero-ctas). |
+| Hero & marketing | og7-hero-stats | og7-hero-stats | HeroStatsComponent | openg7-org/src/app/shared/components/hero/hero-stats.component.ts | ok |  |
+| Hero & marketing | og7-home-hero-section | og7-home-hero-section | HomeHeroSectionComponent | openg7-org/src/app/domains/home/feature/home-hero-section.component.ts | ok |  |
+| Hero & marketing | og7-financing-banner | og7-financing-banner | Og7FinancingBannerComponent | openg7-org/src/app/shared/components/financing/og7-financing-banner.component.ts | ok |  |
+| Hero & marketing | og7-cta-rail | og7-cta-rail | Og7CtaRailComponent | openg7-org/src/app/shared/components/cta/og7-cta-rail.component.ts | ok |  |
+| Hero & marketing | og7-dual-qr-panel | og7-dual-qr-panel | Og7DualQrPanelComponent | openg7-org/src/app/shared/components/qr/og7-dual-qr-panel.component.ts | ok |  |
+| Hero & marketing | og7-intro-billboard-content | og7-intro-billboard-content | Og7IntroBillboardContentComponent | openg7-org/src/app/domains/matchmaking/sections/og7-intro-billboard-content.component.ts | ok |  |
+| Hero & marketing | og7-home-page | og7-home-page | Og7HomePageComponent | openg7-org/src/app/domains/home/pages/home/og7-home-page.component.ts | ok |  |
+| Carte & data viz | og7-map-trade | og7-map-trade | TradeMapComponent | openg7-org/src/app/shared/components/map/trade-map.component.ts | ok | Selector Angular aligné (og7-map-trade). |
+| Carte & data viz | og7-map-basemap-toggle | og7-map-basemap-toggle | BasemapToggleComponent | openg7-org/src/app/shared/components/map/controls/basemap-toggle.component.ts | ok | Selector Angular aligné (og7-map-basemap-toggle). |
+| Carte & data viz | og7-map-zoom-control | og7-map-zoom-control | ZoomControlComponent | openg7-org/src/app/shared/components/map/controls/zoom-control.component.ts | ok | Selector Angular aligné (og7-map-zoom-control). |
+| Carte & data viz | og7-map-legend | og7-map-legend | MapLegendComponent | openg7-org/src/app/shared/components/map/legend/map-legend.component.ts | ok | Selector Angular aligné (og7-map-legend). |
+| Carte & data viz | og7-map-kpi-badges | og7-map-kpi-badges | MapKpiBadgesComponent | openg7-org/src/app/shared/components/map/kpi/map-kpi-badges.component.ts | ok | Selector Angular aligné (og7-map-kpi-badges). |
+| Carte & data viz | og7-map-sector-chips | og7-map-sector-chips | MapSectorChipsComponent | openg7-org/src/app/shared/components/map/filters/map-sector-chips.component.ts | ok | Selector Angular aligné (og7-map-sector-chips). |
+| Carte & data viz | og7-map-frame | og7-map-frame | Og7MapFrameComponent | openg7-org/src/app/shared/components/map-frame/og7-map-frame.component.ts | ok |  |
+| Carte & data viz | og7-home-map-section | og7-home-map-section | HomeMapSectionComponent | openg7-org/src/app/domains/home/feature/home-map-section.component.ts | ok |  |
+| Carte & data viz | og7-importation-flow-map-panel | og7-importation-flow-map-panel | ImportationFlowMapPanelComponent | openg7-org/src/app/domains/importation/components/flow-map-panel/importation-flow-map-panel.component.ts | ok |  |
+| Carte & data viz | og7-opportunity-mini-map | og7-opportunity-mini-map | OpportunityMiniMapComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-mini-map/opportunity-mini-map.component.ts | ok |  |
+| Carte & data viz | og7-opportunity-radar | og7-opportunity-radar | OpportunityRadarComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-radar/opportunity-radar.component.ts | ok |  |
+| Carte & data viz | og7-opportunity-subway | og7-opportunity-subway | OpportunitySubwayComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-subway/opportunity-subway.component.ts | ok |  |
+| Recherche & filtres | og7-filters-toolbar | [data-og7="filters"] | GlobalFiltersComponent | openg7-org/src/app/shared/components/filters/global-filters.component.ts | ok | Livré via l’attribut `[data-og7="filters"]`; pas de rename Angular supplémentaire prévu. |
+| Recherche & filtres | og7-company-table | [data-og7="company-table"] | CompanyTableComponent | openg7-org/src/app/shared/components/company/company-table.component.ts | ok | Selector data-og7 déjà exposé en production. |
+| Recherche & filtres | og7-company-detail | [data-og7="company-detail"] | CompanyDetailComponent | openg7-org/src/app/shared/components/company/company-detail.component.ts | ok | Selector data-og7 déjà exposé en production. |
+| Recherche & filtres | og7-home-filters-section | og7-home-filters-section | HomeFiltersSectionComponent | openg7-org/src/app/domains/home/feature/home-filters-section.component.ts | ok |  |
+| Recherche & filtres | og7-search-field | og7-search-field | Og7SearchFieldComponent | openg7-org/src/app/shared/components/search/og7-search-field.component.ts | ok |  |
+| Recherche & filtres | og7-quick-search-modal | og7-quick-search-modal | QuickSearchModalComponent | openg7-org/src/app/domains/search/feature/quick-search-modal/quick-search-modal.component.ts | ok |  |
+| Recherche & filtres | og7-quick-search-result-item | og7-quick-search-result-item | QuickSearchResultItemComponent | openg7-org/src/app/domains/search/feature/quick-search-modal/quick-search-result-item.component.ts | ok |  |
+| Recherche & filtres | og7-quick-search-section-skeleton | og7-quick-search-section-skeleton | QuickSearchSectionSkeletonComponent | openg7-org/src/app/domains/search/feature/quick-search-modal/quick-search-section-skeleton.component.ts | ok |  |
+| Recherche & filtres | og7-scoreboard-pipeline | og7-scoreboard-pipeline | Og7ScoreboardPipelineComponent | openg7-org/src/app/shared/components/pipeline/og7-scoreboard-pipeline.component.ts | ok |  |
+| Recherche & filtres | og7-filters-sector-carousel | og7-filters-sector-carousel | SectorCarouselComponent | openg7-org/src/app/shared/components/filters/sector-carousel.component.ts | ok | Selector Angular aligné (og7-filters-sector-carousel). |
+| Matchmaking & réseau | og7-matchmaking-introduction-message-editor | og7-matchmaking-introduction-message-editor | IntroductionMessageEditorComponent | openg7-org/src/app/domains/matchmaking/og7-mise-en-relation/components/introduction-message-editor.component.ts | ok | Selector Angular aligné (og7- prefixed, kebab-case). |
+| Matchmaking & réseau | og7-intro-stepper | og7-intro-stepper | Og7IntroStepperComponent | openg7-org/src/app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component.ts | ok |  |
+| Matchmaking & réseau | og7-linkup-detail-page | og7-linkup-detail-page | Og7LinkupDetailPageComponent | openg7-org/src/app/domains/matchmaking/pages/linkup-detail/og7-linkup-detail-page.component.ts | ok |  |
+| Matchmaking & réseau | og7-linkup-history-page | og7-linkup-history-page | Og7LinkupHistoryPageComponent | openg7-org/src/app/domains/matchmaking/pages/linkup-history/og7-linkup-history-page.component.ts | ok |  |
+| Matchmaking & réseau | og7-linkup-page | og7-linkup-page | Og7LinkupPageComponent | openg7-org/src/app/domains/matchmaking/pages/linkup/og7-linkup-page.component.ts | ok |  |
+| Matchmaking & réseau | og7-meeting-scheduler | og7-meeting-scheduler | Og7MeetingSchedulerComponent | openg7-org/src/app/shared/components/connection/og7-meeting-scheduler.component.ts | ok |  |
+| Matchmaking & réseau | og7-partner-details-card | og7-partner-details-card | Og7PartnerDetailsCardComponent | openg7-org/src/app/shared/components/partner/og7-partner-details-card.component.ts | ok |  |
+| Matchmaking & réseau | og7-partner-details-panel | og7-partner-details-panel | PartnerDetailsPanelComponent | openg7-org/src/app/shared/components/partner/partner-details-panel.component.ts | ok |  |
+| Matchmaking & réseau | og7-partner-quick-actions | og7-partner-quick-actions | PartnerQuickActionsComponent | openg7-org/src/app/domains/partners/partners/ui/partner-quick-actions.component.ts | ok |  |
+| Flux & social | og7-feed-card | og7-feed-card | Og7FeedCardComponent | openg7-org/src/app/domains/feed/feature/og7-feed-card/og7-feed-card.component.ts | ok |  |
+| Flux & social | og7-feed-composer | og7-feed-composer | Og7FeedComposerComponent | openg7-org/src/app/domains/feed/feature/og7-feed-composer/og7-feed-composer.component.ts | ok |  |
+| Flux & social | og7-feed-post-drawer | og7-feed-post-drawer | Og7FeedPostDrawerComponent | openg7-org/src/app/domains/feed/feature/og7-feed-post-drawer/og7-feed-post-drawer.component.ts | ok |  |
+| Flux & social | og7-feed-replies | og7-feed-replies | Og7FeedRepliesComponent | openg7-org/src/app/domains/feed/feature/og7-feed-replies/og7-feed-replies.component.ts | ok |  |
+| Flux & social | og7-feed-stream | og7-feed-stream | Og7FeedStreamComponent | openg7-org/src/app/domains/feed/feature/og7-feed-stream/og7-feed-stream.component.ts | ok |  |
+| Importation & supply chain | og7-importation-collaboration-hub | og7-importation-collaboration-hub | ImportationCollaborationHubComponent | openg7-org/src/app/domains/importation/components/collaboration-hub/importation-collaboration-hub.component.ts | ok |  |
+| Importation & supply chain | og7-importation-commodity-section | og7-importation-commodity-section | ImportationCommoditySectionComponent | openg7-org/src/app/domains/importation/components/commodity-section/importation-commodity-section.component.ts | ok |  |
+| Importation & supply chain | og7-importation-knowledge-section | og7-importation-knowledge-section | ImportationKnowledgeSectionComponent | openg7-org/src/app/domains/importation/components/knowledge-section/importation-knowledge-section.component.ts | ok |  |
+| Importation & supply chain | og7-importation-overview-header | og7-importation-overview-header | ImportationOverviewHeaderComponent | openg7-org/src/app/domains/importation/components/overview-header/importation-overview-header.component.ts | ok |  |
+| Importation & supply chain | og7-importation-supplier-intel | og7-importation-supplier-intel | ImportationSupplierIntelComponent | openg7-org/src/app/domains/importation/components/supplier-intel/importation-supplier-intel.component.ts | ok |  |
+| Importation & supply chain | og7-incoterms-ribbon | og7-incoterms-ribbon | Og7IncotermsRibbonComponent | openg7-org/src/app/shared/components/logistics/og7-incoterms-ribbon.component.ts | ok |  |
+| Opportunités & analytics | og7-opportunity-compact-kpi-list | og7-opportunity-compact-kpi-list | OpportunityCompactKpiListComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-compact-kpi-list/opportunity-compact-kpi-list.component.ts | ok |  |
+| Opportunités & analytics | og7-opportunity-impact-banner | og7-opportunity-impact-banner | OpportunityImpactBannerComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-impact-banner/opportunity-impact-banner.component.ts | ok |  |
+| Opportunités & analytics | og7-home-statistics-section | og7-home-statistics-section | HomeStatisticsSectionComponent | openg7-org/src/app/domains/home/feature/home-statistics-section.component.ts | ok |  |
 
-### Surcouches carte (Étape 2)
+## Registry des sélecteurs [data-og7*] (hooks UI & tests)
 
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-map-legend>` | src/app/components/map/map-legend.component.ts | Légende secteurs cliquable |
-| `<og7-map-sector-chips>` | src/app/components/map/map-sector-chips.component.ts | Chips secteurs sous la carte |
-| `<og7-map-kpi-badges>` | src/app/components/map/map-kpi-badges.component.ts | Badges KPI overlay |
-| `<og7-map-zoom-control>` | src/app/components/map/map-zoom-control.component.ts | Contrôles +/−, recentrage |
-| `<og7-map-basemap-toggle>` | src/app/components/map/map-basemap-toggle.component.ts | Changement fond de carte |
-| `<og7-map-flows-layer>` | src/app/components/map/map-flows-layer.component.ts | Filaments animés |
-| `<og7-map-markers-layer>` | src/app/components/map/map-markers-layer.component.ts | Marqueurs/cluster |
-| `<og7-map-highlight-layer>` | src/app/components/map/map-highlight-layer.component.ts | Surbrillance non bloquante |
-| `<og7-map-tooltip>` | src/app/components/map/map-tooltip.component.ts | Infobulle accessible |
-| `<og7-map-aria-live>` | src/app/components/map/map-aria-live.component.ts | Live region (lecteurs d’écran) |
-| `<og7-map-layers-menu>` | src/app/components/map/map-layers-menu.component.ts | Sélecteur de calques |
-| `<og7-map-share-link>` | src/app/components/map/map-share-link.component.ts | Lien partage état carte |
-| `<og7-map-snapshot>` | src/app/components/map/map-snapshot.component.ts | Export PNG |
+| Catégorie | data-og7 / data-og7-id | Used in component | File path | Status | Notes |
+|-----------|------------------------|-------------------|----------|--------|-------|
+| Hooks génériques | [data-og7="*"] | — | — | planned | Backlog (garde-fou global à ajouter lors du prochain cycle E2E). |
+| Hooks génériques | [data-og7="action"] | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas.component.html | ok | Utilisé pour tracer les CTA (data-og7="action"). |
+| Layout / nav / a11y | [data-og7="app"] | AppComponent | openg7-org/src/app/app.component.ts | planned | À ajouter dans le template racine (actuel : data-og7="app-shell"). |
+| Layout / nav / a11y | [data-og7="site-header"] | SiteHeaderComponent | openg7-org/src/app/shared/components/layout/site-header.component.html | ok | Hook déjà appliqué sur l’en-tête. |
+| Layout / nav / a11y | [data-og7="announcement-bar"] | — | — | planned | Barre d’annonce optionnelle (non implémentée). |
+| Conformité & i18n / Auth | [data-og7="language-switch"] | LanguageSwitchComponent | openg7-org/src/app/shared/components/i18n/language-switch.component.html | ok | Livré via data-og7-id="language-switch" sur le composant. |
+| Conformité & i18n / Auth | [data-og7="auth-login"] | LoginPage | openg7-org/src/app/domains/auth/pages/login.page.html | ok | Présent sur la page de connexion. |
+| Conformité & i18n / Auth | [data-og7="auth-register"] | RegisterPage | openg7-org/src/app/domains/auth/pages/register.page.html | ok | Présent sur la page d’inscription. |
+| Conformité & i18n / Auth | [data-og7="access-denied"] | AccessDeniedPage | openg7-org/src/app/domains/auth/pages/access-denied.page.html | ok | Présent sur la page d’accès refusé. |
+| Conformité & i18n / Auth | [data-og7="user-profile"] | ProfilePage | openg7-org/src/app/domains/account/pages/profile.page.html | ok | Présent sur la page profil. |
+| Hero & marketing | [data-og7="hero"] | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section.component.ts | ok | Selector actuel du composant. |
+| Hero & marketing | [data-og7="hero-copy"] | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy.component.ts | ok |  |
+| Hero & marketing | [data-og7="hero-ctas"] | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas.component.ts | ok |  |
+| Hero & marketing | [data-og7="announcement-bar"] | — | — | planned | Doublon volontaire pour l’UI marketing (pas encore utilisé). |
+| Carte & data viz | [data-og7="trade-map"] | TradeMapComponent | openg7-org/src/app/shared/components/map/trade-map.component.ts | ok |  |
+| Carte & data viz | [data-og7="map-basemap-toggle"] | BasemapToggleComponent | openg7-org/src/app/shared/components/map/controls/basemap-toggle.component.ts | ok |  |
+| Carte & data viz | [data-og7="map-zoom-control"] | ZoomControlComponent | openg7-org/src/app/shared/components/map/controls/zoom-control.component.ts | ok |  |
+| Carte & data viz | [data-og7="map-legend"] | MapLegendComponent | openg7-org/src/app/shared/components/map/legend/map-legend.component.ts | ok |  |
+| Carte & data viz | [data-og7="map-kpi-badges"] | MapKpiBadgesComponent | openg7-org/src/app/shared/components/map/kpi/map-kpi-badges.component.ts | ok |  |
+| Carte & data viz | [data-og7="map-sector-chips"] | MapSectorChipsComponent | openg7-org/src/app/shared/components/map/filters/map-sector-chips.component.ts | ok |  |
+| Carte & data viz | [data-og7="map-layer"] | TradeMapComponent | openg7-org/src/app/shared/components/map/trade-map.component.html | ok | Kebab-case + suffixe explicite, couplé à `data-og7-layer="flows|markers|highlight"`. |
+| Carte & data viz | [data-og7="map-tooltip"] | TradeMapComponent | openg7-org/src/app/shared/components/map/trade-map.component.html | ok | Kebab-case, aligné sur le hook d’instrumentation prévu pour la carte. |
+| Carte & data viz | [data-og7="map-aria-live"] | TradeMapComponent | openg7-org/src/app/shared/components/map/trade-map.component.html | ok | Kebab-case + rôle ARIA, conforme à la convention. |
+| Recherche & filtres | [data-og7="filters"][data-og7-id="filters-group"] | GlobalFiltersComponent | openg7-org/src/app/shared/components/filters/global-filters.component.ts | ok |  |
+| Recherche & filtres | [data-og7="filters"][data-og7-id="sector-carousel"] | SectorCarouselComponent | openg7-org/src/app/shared/components/filters/sector-carousel.component.ts | ok |  |
+| Recherche & filtres | [data-og7="search-box"] | SiteHeaderComponent | openg7-org/src/app/shared/components/layout/site-header.component.ts | planned | Nom en kebab-case aligné sur la convention data-og7 ; sera branché avec l’omnibox. |
+| Commerce & entreprises | [data-og7="company-table"] | CompanyTableComponent | openg7-org/src/app/shared/components/company/company-table.component.ts | ok |  |
+| Commerce & entreprises | [data-og7="company-detail"] | CompanyDetailComponent | openg7-org/src/app/shared/components/company/company-detail.component.ts | ok |  |
 
-## Éléments transversaux
+### Convention de nommage (vérifiée)
 
-### Layout / nav / a11y
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-app-shell>` | src/app/components/layout/app-shell.component.ts | Conteneur racine (slots) |
-| `<og7-quick-nav>` | src/app/components/layout/quick-nav.component.ts | Mini-barre d’ancres au scroll |
-| `<og7-site-footer>` | src/app/components/layout/site-footer.component.ts | Pied de page riche |
-| `<og7-skip-links>` | src/app/components/a11y/skip-links.component.ts | Liens “aller au contenu” |
-| `<og7-breadcrumbs>` | src/app/components/navigation/breadcrumbs.component.ts | Fil d’Ariane (hors home) |
-| `<og7-scroll-top>` | src/app/components/navigation/scroll-top.component.ts | Remonter en haut |
-
-### Recherche & tri
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-search-box>` | src/app/components/search/search-box.component.ts | Omnibox (synchro filtres) |
-| `<og7-search-suggestions>` | src/app/components/search/search-suggestions.component.ts | Suggestions Strapi |
-| `<og7-sort-dropdown>` | src/app/components/search/sort-dropdown.component.ts | Tri (pertinence, A→Z, etc.) |
-| `<og7-pagination>` | src/app/components/directory/pagination.component.ts | Pagination générique |
-| `<og7-export-menu>` | src/app/components/directory/export-menu.component.ts | Export CSV/JSON |
-
-### Feedback, overlays, états
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-loading-bar>` | src/app/components/feedback/loading-bar.component.ts | Progression données |
-| `<og7-toast-center>` | src/app/components/feedback/toast-center.component.ts | Notifications |
-| `<og7-modal-host>` | src/app/components/overlays/modal-host.component.ts | Hôte modales |
-| `<og7-drawer-host>` | src/app/components/overlays/drawer-host.component.ts | Hôte tiroirs |
-| `<og7-skeleton>` | src/app/components/placeholders/skeleton.component.ts | Squelettes UI |
-| `<og7-empty-state>` | src/app/components/placeholders/empty-state.component.ts | Aucun résultat |
-| `<og7-error-state>` | src/app/components/placeholders/error-state.component.ts | Erreur data |
-| `<og7-offline-banner>` | src/app/components/feedback/offline-banner.component.ts | Hors-ligne (PWA) |
-
-### Conformité & i18n
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-cookie-consent>` | src/app/components/compliance/cookie-consent.component.ts | Consentement cookies |
-| `<og7-consent-settings>` | src/app/components/compliance/consent-settings.component.ts | Préférences consentement |
-| `<og7-accessibility-menu>` | src/app/components/a11y/accessibility-menu.component.ts | Réglages accessibilité |
-| `<og7-locale-banner>` | src/app/components/i18n/locale-banner.component.ts | Suggestion langue |
-
-### Marketing / engagement
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-trust-strip>` | src/app/components/trust/trust-strip.component.ts | Confiance & conformité |
-| `<og7-partner-logos>` | src/app/components/trust/partner-logos.component.ts | Logos partenaires |
-| `<og7-press-logos>` | src/app/components/trust/press-logos.component.ts | Logos médias |
-| `<og7-news-feed>` | src/app/components/news/news-feed.component.ts | Nouvelles & MAJ |
-| `<og7-newsletter-form>` | src/app/components/forms/newsletter-form.component.ts | Formulaire infolettre |
-| `<og7-contact-form>` | src/app/components/forms/contact-form.component.ts | Formulaire contact |
-| `<og7-faq-accordion>` | src/app/components/content/faq-accordion.component.ts | FAQ pliable |
-
-### Médias
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-image>` | src/app/components/media/image.component.ts | Wrapper image (lazy/LQIP) |
-| `<og7-video-embed>` | src/app/components/media/video-embed.component.ts | Intégration vidéo |
-
-### Pages système
-| Selector | Fichier | Rôle |
-|---|---|---|
-| `<og7-not-found>` | src/app/components/system/not-found.component.ts | 404 |
-| `<og7-server-error>` | src/app/components/system/server-error.component.ts | 500 |
-| `<og7-maintenance>` | src/app/components/system/maintenance.component.ts | Maintenance |
-
----
-
+- **Prefixes** : `data-og7="…"` pour les hooks de test, `data-og7-id` ou `data-og7-layer` pour les sous-éléments ; les selectors Angular restent préfixés `og7-` côté `@Component`.
+- **Forme** : toujours en **kebab-case**, sans camelCase ni espaces. Les entrées récemment clôturées (`map-layer`, `map-tooltip`, `map-aria-live`, `search-box`) respectent cette règle et alignent leurs sous-clés (`flows|markers|highlight`) ou futures implémentations (omnibox) sur le même schéma.
 ## 1) Sélecteurs **HTML** (registre officiel)
 > Liste **exhaustive** des sélecteurs stables à implémenter. Chaque entrée précise : le sélecteur, le composant Angular, le fichier, le rôle UX et les events.
 
@@ -115,25 +127,25 @@ Implémenter les composants et sélecteurs listés (app, site-header, announceme
 - **App container**  
   - Selector : `[data-og7="app"]`  
   - Composant : `AppComponent`  
-  - Fichier : `src/app/app.component.ts`  
+  - Fichier : `openg7-org/src/app/app.component.ts`  
   - Rôle : conteneur racine, shell SSR
 - **En-tête (site-header)**  
   - Selector : `[data-og7="site-header"]`  
   - Composant : `SiteHeaderComponent` (standalone)  
-  - Fichier : `src/app/components/layout/site-header.component.ts`  
+  - Fichier : `openg7-org/src/app/components/layout/site-header.component.ts`  
   - Rôle : repères, langue, recherche, CTA “S’inscrire”
 - **Barre d’annonce (announcement-bar)**  
   - Selector : `[data-og7="announcement-bar"]`  
   - Composant : `AnnouncementBarComponent`  
-  - Fichier : `src/app/components/layout/announcement-bar.component.ts`
+  - Fichier : `openg7-org/src/app/components/layout/announcement-bar.component.ts`
 - **Sélecteur de langue**  
   - Selector : `[data-og7="language-switch"]`  
   - Composant : `LanguageSwitchComponent`  
-  - Fichier : `src/app/components/i18n/language-switch.component.ts`
+  - Fichier : `openg7-org/src/app/components/i18n/language-switch.component.ts`
 - **Boîte de recherche (omnibox)**  
   - Selector : `[data-og7="search-box"]`  
   - Composant : `SearchBoxComponent`  
-  - Fichier : `src/app/components/search/search-box.component.ts`  
+  - Fichier : `openg7-org/src/app/components/search/search-box.component.ts`  
   - Events : `submit`, `input`
 
 ### 1.2 — Section Héros (Mission + Carte animée)
@@ -148,15 +160,15 @@ Construire la section héros (hero, hero-copy, hero-ctas) avec les CTAs `[data-o
 - **Section héros**  
   - Selector : `[data-og7="hero"]`  
   - Composant : `HeroSectionComponent`  
-  - Fichier : `src/app/components/hero/hero-section.component.ts`
+  - Fichier : `openg7-org/src/app/components/hero/hero-section.component.ts`
 - **Copie héros**  
   - Selector : `[data-og7="hero-copy"]`  
   - Composant : `HeroCopyComponent`  
-  - Fichier : `src/app/components/hero/hero-copy.component.ts`
+  - Fichier : `openg7-org/src/app/components/hero/hero-copy.component.ts`
 - **CTAs héros**  
   - Selector : `[data-og7="hero-ctas"]`  
   - Composant : `HeroCtasComponent`  
-  - Fichier : `src/app/components/hero/hero-ctas.component.ts`  
+  - Fichier : `openg7-org/src/app/components/hero/hero-ctas.component.ts`  
   - Sous-actions (boutons) :  
     - Voir secteurs : `[data-og7="action"] [data-og7-id="view-sectors"]`  
     - Mode pro : `[data-og7="action"] [data-og7-id="pro-mode"]`  
@@ -175,27 +187,27 @@ Intégrer la carte (Leaflet) et ses contrôles (basemap-toggle, zoom-control, le
 - **Carte de commerce**  
   - Selector : `[data-og7="trade-map"]`  
   - Composant : `TradeMapComponent`  
-  - Fichier : `src/app/components/map/trade-map.component.ts`
+  - Fichier : `openg7-org/src/app/components/map/trade-map.component.ts`
 - **Basemap toggle**  
   - Selector : `[data-og7="map-basemap-toggle"]`  
   - Composant : `BasemapToggleComponent`  
-  - Fichier : `src/app/components/map/controls/basemap-toggle.component.ts`
+  - Fichier : `openg7-org/src/app/components/map/controls/basemap-toggle.component.ts`
 - **Zoom control**  
   - Selector : `[data-og7="map-zoom-control"]`  
   - Composant : `ZoomControlComponent`  
-  - Fichier : `src/app/components/map/controls/zoom-control.component.ts`
+  - Fichier : `openg7-org/src/app/components/map/controls/zoom-control.component.ts`
 - **Légende**  
   - Selector : `[data-og7="map-legend"]`  
   - Composant : `MapLegendComponent`  
-  - Fichier : `src/app/components/map/legend/map-legend.component.ts`
+  - Fichier : `openg7-org/src/app/components/map/legend/map-legend.component.ts`
 - **KPI badges**  
   - Selector : `[data-og7="map-kpi-badges"]`  
   - Composant : `MapKpiBadgesComponent`  
-  - Fichier : `src/app/components/map/kpi/map-kpi-badges.component.ts`
+  - Fichier : `openg7-org/src/app/components/map/kpi/map-kpi-badges.component.ts`
 - **Chips secteurs**  
   - Selector : `[data-og7="map-sector-chips"]`  
   - Composant : `MapSectorChipsComponent`  
-  - Fichier : `src/app/components/map/filters/map-sector-chips.component.ts`
+  - Fichier : `openg7-org/src/app/components/map/filters/map-sector-chips.component.ts`
 - **Bouton “plus” (chips)**  
   - Selector : `[data-og7="map-sector-chips"] [data-og7-id="more"]`
 - **Couches / Layers**  
@@ -219,7 +231,7 @@ Implémenter la barre de filtres globaux, le mode Import/Export, le carousel de 
 - **Filtres globaux**  
   - Selector : `[data-og7="filters"]`  
   - Composant : `GlobalFiltersComponent`  
-  - Fichier : `src/app/components/filters/global-filters.component.ts`
+  - Fichier : `openg7-org/src/app/components/filters/global-filters.component.ts`
 - **Filtre Import/Export**  
   - Selector : `[data-og7="filters"] [data-og7-id="trade-mode"]`
 - **Carousel secteurs**  
@@ -227,11 +239,11 @@ Implémenter la barre de filtres globaux, le mode Import/Export, le carousel de 
 - **Tableau entreprises (Mat-Table)**  
   - Selector : `[data-og7="company-table"]`  
   - Composant : `CompanyTableComponent`  
-  - Fichier : `src/app/components/company/company-table.component.ts`
+  - Fichier : `openg7-org/src/app/components/company/company-table.component.ts`
 - **Détail entreprise (drawer)**  
   - Selector : `[data-og7="company-detail"]`  
   - Composant : `CompanyDetailComponent`  
-  - Fichier : `src/app/components/company/company-detail.component.ts`
+  - Fichier : `openg7-org/src/app/components/company/company-detail.component.ts`
 
 ### 1.5 — Comptes & accès
 
@@ -258,17 +270,17 @@ Prototyper login/register/profile/access-denied avec formulaires réactifs typé
 - Portée: `front (Angular)`
 
 ### Description
-Exposer les sélecteurs NgRx globaux (auth, user, catalog, map) dans `src/app/state/**`. Typage strict, tests unitaires basiques.
+Exposer les sélecteurs NgRx globaux (auth, user, catalog, map) dans `openg7-org/src/app/state/**`. Typage strict, tests unitaires basiques.
 
 > À exposer via `selectXxx` dans des fichiers `*.selectors.ts`. À utiliser seulement pour l’état **global** (auth, user, catalogue, carte).
 
-- **Auth** (`src/app/state/auth/`)
+- **Auth** (`openg7-org/src/app/state/auth/`)
   - `selectAuthState`, `selectIsAuthenticated`, `selectUser`, `selectUserRoles`, `selectJwtExp`
-- **User** (`src/app/state/user/`)
+- **User** (`openg7-org/src/app/state/user/`)
   - `selectUserProfile`, `selectUserPermissions`
-- **Catalogue** (`src/app/state/catalog/`)
+- **Catalogue** (`openg7-org/src/app/state/catalog/`)
   - `selectSectors`, `selectProvinces`, `selectCompanies`, `selectCompanyById(id)`
-- **Carte** (`src/app/state/map/`)
+- **Carte** (`openg7-org/src/app/state/map/`)
   - `selectMapReady`, `selectFilteredFlows`, `selectActiveSector`, `selectMapKpis`
 
 ---
@@ -280,12 +292,12 @@ Exposer les sélecteurs NgRx globaux (auth, user, catalog, map) dans `src/app/st
 - Portée: `front (Angular)`
 
 ### Description
-Créer l’arborescence `src/app/core/*` (auth, http, security, config). Fournir services et types partagés nécessaires aux Guards/Interceptors/Policies.
+Créer l’arborescence `openg7-org/src/app/core/*` (auth, http, security, config). Fournir services et types partagés nécessaires aux Guards/Interceptors/Policies.
 
 > Créer les fichiers et implémenter la logique de sécurité côté client.
 
 ```
-src/app/
+openg7-org/src/app/
 ├─ app.config.ts
 ├─ app.routes.ts
 ├─ core/
@@ -413,8 +425,8 @@ Ajouter `token-storage.service.ts`, `rbac.policy.ts`, `crypto.service.ts`, `dom-
 ### Description
 Configurer `app.routes.ts` (lazy routes + canMatch) et `app.config.ts` (HTTP_INTERCEPTORS, TranslateLoader, TransferState). Garantir l’absence d’accès DOM au module-load.
 
-- `src/app/app.routes.ts` : routes lazy, `canMatch` sur segments protégés.  
-- `src/app/app.config.ts` : providers globaux (HTTP_INTERCEPTORS, TranslateLoader, TransferState).  
+- `openg7-org/src/app/app.routes.ts` : routes lazy, `canMatch` sur segments protégés.  
+- `openg7-org/src/app/app.config.ts` : providers globaux (HTTP_INTERCEPTORS, TranslateLoader, TransferState).  
 - SSR : **aucune** API `window` au module load ; tester `isPlatformBrowser` dans les effets/constructeurs si besoin.
 
 ---
@@ -506,7 +518,7 @@ yarn seed:dev                 # optionnel: script node pour forcer les seeds
 ### Description
 Fournir `environment.tokens.ts` et `app.config.provider.ts` (lecture `window.__OG7_CONFIG__` côté browser, `process.env` côté SSR). Exposer `API_URL`, `I18N_PREFIX`, `FEATURE_FLAGS`.
 
-`src/app/core/config/environment.tokens.ts` expose des **InjectionTokens** :  
+`openg7-org/src/app/core/config/environment.tokens.ts` expose des **InjectionTokens** :  
 - `API_URL` : URL de Strapi (ex.: `https://api.openg7.org`)  
 - `I18N_PREFIX` : `/assets/i18n/`  
 - `FEATURE_FLAGS` : dictionnaire typé (pro-mode, experimental-map, etc.)
@@ -524,7 +536,7 @@ Fournir `environment.tokens.ts` et `app.config.provider.ts` (lecture `window.__O
 ### Description
 Standardiser l’ordre d’exécution (arbo sécurité → composants → signals → NgRx → i18n → interceptors → guards → SSR → seeds → tests). À cocher avant merge.
 
-1. **Créer** l’arborescence d’accès & sécurité (section 3) sous `src/app/...`.
+1. **Créer** l’arborescence d’accès & sécurité (section 3) sous `openg7-org/src/app/...`.
 2. **Générer** les composants listés en 1) avec leurs **selectors HTML** respectifs.
 3. **Implémenter** les **signals** locaux & formulaires typés dans chaque composant.
 4. **Brancher** NgRx uniquement pour `auth`, `user`, `catalog`, `map` (selectors section 2).
@@ -533,7 +545,9 @@ Standardiser l’ordre d’exécution (arbo sécurité → composants → signal
 7. **Protéger** les routes (`canMatch` + RBAC UI).
 8. **Configurer** SSR (TransferState, aucun accès direct à `window`).
 9. **Côté Strapi** : créer les fichiers de **seed** (section 5), rendre les scripts **idempotents**.
-10. **Écrire** des tests rapides (E2E/ciblage via `data-og7*`).
+10. **Valider l'artefact contrat** : commiter `packages/contracts/spec/openapi.json` après tout changement de schéma (obligatoire avant la revue).
+11. **Préparer les déploiements** : exécuter `yarn predeploy:cms-cache` et `yarn prebuild:web` avec les variables d'environnement de la cible (préprod/prod) pour vérifier les caches CMS, les tokens read-only et les flags runtime.
+12. **Écrire** des tests rapides (E2E/ciblage via `data-og7*`).
 
 ---
 
@@ -541,7 +555,7 @@ Standardiser l’ordre d’exécution (arbo sécurité → composants → signal
 
 ### 8.1 — Route protégée (canMatch)
 ```ts
-// src/app/app.routes.ts
+// openg7-org/src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthGuard } from './core/auth/auth.guard';
@@ -561,7 +575,7 @@ export const routes: Routes = [
 
 ### 8.2 — Sélecteur HTML dans un composant
 ```ts
-// src/app/components/map/controls/zoom-control.component.ts
+// openg7-org/src/app/components/map/controls/zoom-control.component.ts
 @Component({
   selector: 'og7-map-zoom-control',
   standalone: true,
@@ -581,7 +595,7 @@ export class ZoomControlComponent {
 
 ### 8.3 — NgRx selector
 ```ts
-// src/app/state/map/map.selectors.ts
+// openg7-org/src/app/state/map/map.selectors.ts
 export const selectMapState = createFeatureSelector<MapState>('map');
 export const selectFilteredFlows = createSelector(
   selectMapState,
@@ -616,21 +630,22 @@ export const selectFilteredFlows = createSelector(
 Formaliser le contrat Front/CMS (endpoints, CORS, tokens RO). Toute PR qui change un schéma ou un endpoint doit mettre à jour AGENTS.md et `@openg7/contracts`.
 
 
-> **Pourquoi** : éviter toute ambiguïté entre le **front Angular** (`openg7-org`) et le **CMS/API Strapi** (`openg7-cms`).  
+> **Pourquoi** : éviter toute ambiguïté entre le **front Angular** (`openg7-org`) et le workspace Strapi officiel (`strapi`).
 > **Règle d’or** : AGENTS.md est la **spec vivante** des deux projets ; un commit qui touche l’un doit respecter le **contrat** ci-dessous.
 
 ## 1) Monorepo & chemins
 ```
 /openG7/
-  ├─ openg7-org/   # Front Angular 19 (src/app/...)
-  └─ openg7-cms/   # Strapi (strapi/src/...)
+  ├─ openg7-org/   # Front Angular 19 (openg7-org/src/app/...)
+  └─ strapi/       # Strapi v5+ contenu métier (voir docs/strapi-workspaces.md)
 ```
-- Chemins **front** documentés ici commencent par `src/app/...` (Angular).
+- Chemins **front** documentés ici commencent par `openg7-org/src/app/...` (Angular).
 - Chemins **CMS** documentés ici commencent par `strapi/...` (Strapi).
 
 ## 2) Contrat d’API (read-only par défaut)
-**Base URL** (dev) : `http://localhost:1337`  
+**Base URL** (dev) : `http://localhost:1337`
 **Auth** : *API Token* (Strapi **Read-Only**) → `Authorization: Bearer <token>`
+Le contrat OpenAPI est versionné dans `packages/contracts/spec/openapi.json`.
 
 | Ressource        | Endpoint (GET)                 | Query params conseillés           | Notes                               |
 |------------------|--------------------------------|-----------------------------------|-------------------------------------|
@@ -646,17 +661,19 @@ Formaliser le contrat Front/CMS (endpoints, CORS, tokens RO). Toute PR qui chang
 ```
 
 ## 3) Variables d’environnement (mapping)
-**Front (Angular)** — `src/app/core/config/environment.tokens.ts` :  
+**Front (Angular)** — `openg7-org/src/app/core/config/environment.tokens.ts` :  
 - `API_URL` → ex. `http://localhost:1337`
 - `API_TOKEN` → *Read-Only Token* (dev uniquement)
 
-**CMS (Strapi)** — `openg7-cms/.env` :  
-- `HOST=0.0.0.0`, `PORT=1337`  
-- (auto-générées au 1er boot) `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `JWT_SECRET`  
-- En prod : configurez la base de données et les CORS.
+**CMS (Strapi)** — `strapi/.env` :
+- `HOST=0.0.0.0`, `PORT=1337`
+- `STRAPI_API_READONLY_TOKEN=<token>`
+- `CORS_ORIGIN=http://localhost:4200`
+- (auto-générées au 1er boot) `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `JWT_SECRET`
+- En prod : configurez la base de données, Redis et les CORS.
 
 ## 4) CORS & sécurité
-- **Strapi** `config/middlewares.ts` doit autoriser l’origine Angular dev : `http://localhost:4200`.
+- **Strapi** `config/middlewares.ts` autorise les origines via `CORS_ORIGIN` (`http://localhost:4200` en dev).
 - **Front** : ne **stocke pas** de JWT long terme ; privilégier **API Token RO** ou endpoints *Public*.
 - **RBAC** : règles UI (masquage) côté Angular **≠** permissions Strapi (serveur). Toujours restreindre côté Strapi.
 
@@ -670,7 +687,7 @@ Formaliser le contrat Front/CMS (endpoints, CORS, tokens RO). Toute PR qui chang
 | Seeds | Mocks front pour dev offline | **`strapi/src/seed/*.ts`** (idempotents) |
 
 ## 6) Processus dev (local)
-- **CMS** : `cd openg7-cms && yarn strapi develop` → admin `:1337/admin`
+- **CMS Strapi** : `yarn dev:cms` (ou `cd strapi && yarn strapi develop`) → admin `:1337/admin`
 - **Front** : `cd openg7-org && yarn start` → app `:4200`  
 - Docker : voir `docker-compose.dev.yml` à la racine.
 
@@ -680,9 +697,9 @@ Formaliser le contrat Front/CMS (endpoints, CORS, tokens RO). Toute PR qui chang
 - **Done** (CMS) : seeds rejouables, permissions définies, collections renseignées (au moins 3 enregistrements démo).
 
 ## 8) Check de cohérence (script)
-Ajouter `tools/validate-api.mjs` pour vérifier la reachability des endpoints déclarés :
+Ajouter `packages/tooling/bin/validate-api.mjs` pour vérifier la reachability des endpoints déclarés :
 ```js
-// tools/validate-api.mjs
+// packages/tooling/bin/validate-api.mjs
 import fetch from 'node-fetch';
 const base = process.env.OG7_API_URL || 'http://localhost:1337';
 const token = process.env.OG7_API_TOKEN || '';
@@ -693,10 +710,10 @@ for (const e of endpoints) { const r = await fetch(base+e, { headers }); if (!r.
 if (errs.length) { console.error('API KO:\n'+errs.join('\n')); process.exit(1); }
 console.log('API OK');
 ```
-`package.json` : `"validate:api": "node tools/validate-api.mjs"` (à brancher en CI).
+`package.json` : `"validate:api": "node packages/tooling/bin/validate-api.mjs"` (à brancher en CI) ou `"validate:api": "yarn workspace @openg7/tooling validate:api"` si le script est ajouté dans ce workspace.
 
 ---
-_MAJ : 2025-09-10 02:39:17Z_
+_MAJ : 2025-09-12 15:35:46Z_
 
 
 ---
@@ -708,7 +725,7 @@ Attaque où un site tiers tente de **forcer** une requête authentifiée à votr
 - **Pertinent surtout si l’auth passe par cookies**. Avec **API Token** (Bearer) en front, le risque est fortement réduit.
 - **Front (Angular)** : un `csrf.interceptor.ts` ajoute un header de jeton uniquement pour les méthodes **POST/PUT/PATCH/DELETE** et **même‑origine**.
   ```ts
-  // src/app/core/http/csrf.interceptor.ts
+  // openg7-org/src/app/core/http/csrf.interceptor.ts
   import {{ HttpInterceptorFn }} from '@angular/common/http';
   import {{ inject }} from '@angular/core';
   const READ = new Set(['GET','HEAD','OPTIONS']);
@@ -736,7 +753,7 @@ Contrôle d’accès basé sur les **rôles**.
 ---
 
 ## 🔁 Notes de migration “connexions → (UI) Échanges / (code) flows”
-- **Composant** : `<og7-map-connection-layer>` → `<og7-map-flows-layer>` ; fichier `src/app/components/map/map-flows-layer.component.ts`.
+- **Composant** : `<og7-map-connection-layer>` → `<og7-map-flows-layer>` ; fichier `openg7-org/src/app/components/map/map-flows-layer.component.ts`.
 - **Sélecteurs HTML** : `[data-og7-id="connections"]` → `[data-og7-id="flows"]`.
 - **NgRx** : `selectFilteredConnections` → `selectFilteredFlows` ; `filteredConnections` → `filteredFlows`.
 - **Seeds Strapi** : `06-exchanges.ts` (remplace l’ancien `06-connections.ts`).
@@ -847,52 +864,77 @@ Content-Security-Policy: require-trusted-types-for 'script'; trusted-types angul
 - Portée: `front (Angular)`
 
 ### Description
-Ajouter `tools/validate-selectors.mjs` et workflow CI pour vérifier la présence de tous les sélecteurs `[data-og7*]` déclarés dans AGENTS.md.
+Ajouter le script `@openg7/tooling:validate-selectors` et workflow CI pour vérifier la présence de tous les sélecteurs `[data-og7*]` déclarés dans AGENTS.md.
 
 
 Ajoutez le script suivant et branchez-le en CI pour garantir que **tous** les sélecteurs déclarés dans `AGENTS.md` existent réellement dans le code.
 
-**Fichier** : `tools/validate-selectors.mjs`
+**Fichier** : `packages/tooling/bin/validate-selectors.mjs`
 ```js
-// tools/validate-selectors.mjs
-import { readFileSync, readdirSync } from 'fs';
-import { join, extname } from 'path';
+// packages/tooling/bin/validate-selectors.mjs
+import { readFileSync, readdirSync } from 'node:fs';
+import { dirname, extname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const md = readFileSync('AGENTS.md', 'utf8');
-
-// Récupère tous les [data-og7="..."] et [data-og7-id="..."]
-const selMain = [...md.matchAll(/\[data-og7="([^"]+)"\]/g)].map(m => m[1]);
-const selIds  = [...md.matchAll(/\[data-og7-id="([^"]+)"\]/g)].map(m => m[1]);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(__dirname, '..', '..', '..');
+const agentsPath = resolve(repoRoot, 'AGENTS.md');
+const appDir = resolve(repoRoot, 'openg7-org', 'src', 'app');
 
 function readAll(dir) {
   const items = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const p = join(dir, entry.name);
-    if (entry.isDirectory()) items.push(...readAll(p));
-    else if (['.ts','.html','.json'].includes(extname(p))) {
-      items.push([p, readFileSync(p, 'utf8')]);
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory() && entry.name !== 'node_modules') {
+      items.push(...readAll(fullPath));
+    } else if (['.ts', '.html', '.json'].includes(extname(fullPath))) {
+      items.push([fullPath, readFileSync(fullPath, 'utf8')]);
     }
   }
   return items;
 }
 
-const files = readAll('src/app');
+function loadSelectors(markdown) {
+  const og7Matches = [...markdown.matchAll(/\[data-og7="([\w-]+)"\]/g)].map(match => match[1]);
+  const og7IdMatches = [...markdown.matchAll(/\[data-og7-id="([\w-]+)"\]/g)].map(match => match[1]);
+
+  const uniqueOg7 = new Set(og7Matches);
+  const uniqueOg7Ids = new Set(og7IdMatches.filter(id => !['connections', 'more'].includes(id)));
+
+  return {
+    og7: Array.from(uniqueOg7),
+    og7Ids: Array.from(uniqueOg7Ids),
+  };
+}
+
+function attributeExists(files, attribute, value) {
+  const needle = `${attribute}="${value}"`;
+  return files.some(([, contents]) => contents.includes(needle));
+}
+
+const markdown = readFileSync(agentsPath, 'utf8');
+const { og7, og7Ids } = loadSelectors(markdown);
+const files = readAll(appDir);
 const missing = [];
 
-function existsAttr(attr, val) {
-  const needle = attr + '="' + val + '"';
-  return files.some(([_, c]) => c.includes(needle));
+for (const selector of og7) {
+  if (!attributeExists(files, 'data-og7', selector)) {
+    missing.push(`data-og7="${selector}"`);
+  }
 }
 
-for (const s of selMain) if (!existsAttr('data-og7', s)) missing.push(`data-og7="${s}"`);
-for (const s of selIds)  if (!existsAttr('data-og7-id', s)) missing.push(`data-og7-id="${s}"`);
+for (const selector of og7Ids) {
+  if (!attributeExists(files, 'data-og7-id', selector) && !attributeExists(files, 'data-og7-layer', selector)) {
+    missing.push(`data-og7-id="${selector}"`);
+  }
+}
 
 if (missing.length) {
-  console.error('Sélecteurs manquants dans src/app:\n- ' + missing.join('\n- '));
+  console.error('Sélecteurs manquants dans openg7-org/src/app:\n- ' + missing.join('\n- '));
   process.exit(1);
-} else {
-  console.log('OK: tous les sélecteurs d’AGENTS.md existent dans le code.');
 }
+
+console.log('OK: tous les sélecteurs d’AGENTS.md existent dans le code.');
 ```
 
 **CI GitHub** : `.github/workflows/ci-validate.yml`
@@ -913,7 +955,7 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci || yarn install --frozen-lockfile
-      - run: node tools/validate-selectors.mjs
+      - run: yarn workspace @openg7/tooling validate:selectors
 
   validate-api:
     runs-on: ubuntu-latest
@@ -942,13 +984,13 @@ jobs:
 Initialiser `packages/contracts` avec génération de types via OpenAPI. Publier localement en workspace et consommer côté Angular/Strapi.
 
 
-> Objectif : centraliser **les types TypeScript** Strapi (et éventuellement un petit **catalogue d’endpoints**) dans un **package workspace** partagé entre **openg7-cms** et **openg7-org**.
+> Objectif : centraliser **les types TypeScript** Strapi (et éventuellement un petit **catalogue d’endpoints**) dans un **package workspace** partagé entre `strapi` et `openg7-org`.
 
 ### Arbo monorepo (workspaces)
 ```
 /openG7/
-  ├─ openg7-org/            # Front Angular 19 (src/app/...)
-  ├─ openg7-cms/            # Strapi (strapi/src/...)
+  ├─ openg7-org/            # Front Angular 19 (openg7-org/src/app/...)
+  ├─ strapi/                # Strapi v5 officiel (strapi/src/...)
   └─ packages/
      └─ contracts/          # <= @openg7/contracts
 ```
@@ -958,10 +1000,10 @@ Initialiser `packages/contracts` avec génération de types via OpenAPI. Publier
 {
   "name": "openg7",
   "private": true,
-  "workspaces": ["openg7-org", "openg7-cms", "packages/*"],
+  "workspaces": ["openg7-org", "strapi", "packages/*"],
   "scripts": {
     "dev:web": "yarn --cwd openg7-org start",
-    "dev:cms": "yarn --cwd openg7-cms strapi develop",
+    "dev:cms": "yarn workspace @openg7/strapi dev",
     "dev:all": "concurrently \"yarn dev:cms\" \"yarn dev:web\"",
     "codegen": "yarn --cwd packages/contracts run codegen"
   }
@@ -1047,10 +1089,10 @@ export const endpoints = {
 }
 ```
 
-**src/app/core/api/strapi-client.ts**
+**openg7-org/src/app/core/api/strapi-client.ts**
 ```ts
 import { inject, Injectable, signal } from '@angular/core';
-import { API_URL, API_TOKEN } from 'src/app/core/config/environment.tokens';
+import { API_URL, API_TOKEN } from 'openg7-org/src/app/core/config/environment.tokens';
 import type { StrapiList, Province, Sector, Company, Exchange } from '@openg7/contracts';
 import { endpoints } from '@openg7/contracts';
 
@@ -1094,7 +1136,7 @@ _MAJ (sections workspaces & contracts) : 2025-09-10 20:26:33Z_
 
 | Domaine | Cible / Règle | Comment vérifier |
 |---|---|---|
-| **Perf (Web Vitals)** | LCP ≤ **2.5s**, CLS ≤ **0.1**, INP ≤ **200ms** | Lighthouse CI, Web Vitals (`src/app/core/observability/metrics.service.ts`) |
+| **Perf (Web Vitals)** | LCP ≤ **2.5s**, CLS ≤ **0.1**, INP ≤ **200ms** | Lighthouse CI, Web Vitals (`openg7-org/src/app/core/observability/metrics.service.ts`) |
 | **Carte (flows)** | ≥ **40 fps** desktop, filtrage local ≤ **200ms**, rendu initial ≤ **1.5s** | Profiler navigateur, logs perf personnalisés |
 | **Accessibilité** | WCAG 2.1 AA : focus visible, aria-live carte, **focus trap** drawer | Playwright + axe (tests E2E) |
 | **Sécurité** | **CSP** + **Trusted Types** activés en prod ; **CSRF** côté même-origine ; **RBAC** API strict | En-têtes HTTP, tests d’intégration API |
@@ -1107,7 +1149,7 @@ _MAJ (sections workspaces & contracts) : 2025-09-10 20:26:33Z_
 
 - **Règle** : *Aucun accès DOM* (window/document) **au module-load**. Toujours vérifier l’environnement.
 
-**src/app/core/utils/is-browser.ts**
+**openg7-org/src/app/core/utils/is-browser.ts**
 ```ts
 export function isBrowser(): boolean {
   return typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -1120,7 +1162,7 @@ Utiliser `isBrowser()` dans les services/composants qui manipulent le DOM ou `lo
 
 # StrapiClient — cache TTL + retry/backoff (signal-first)
 
-**src/app/core/api/strapi-client.ts** (ajouts proposés)
+**openg7-org/src/app/core/api/strapi-client.ts** (ajouts proposés)
 ```ts
 // ...imports existants
 @Injectable({ providedIn: 'root' })
@@ -1157,11 +1199,11 @@ export class StrapiClient {
 
 # Feature Flags front (cache local + invalidation)
 
-**src/app/core/feature-flags/feature-flags.service.ts**
+**openg7-org/src/app/core/feature-flags/feature-flags.service.ts**
 ```ts
 import { inject, Injectable, signal } from '@angular/core';
-import { API_URL } from 'src/app/core/config/environment.tokens';
-import { isBrowser } from 'src/app/core/utils/is-browser';
+import { API_URL } from 'openg7-org/src/app/core/config/environment.tokens';
+import { isBrowser } from 'openg7-org/src/app/core/utils/is-browser';
 
 type Flags = Record<string, boolean>;
 const KEY = 'og7:flags:v1'; // bump version pour invalider
@@ -1195,7 +1237,7 @@ export class FeatureFlagsService {
 - **Carte** : les contrôles doivent êtres focusables (tabindex), **flèches** = zoom, `Enter` = activer.  
 - **Drawer** : trap focus + retour focus à l’élément déclencheur.
 
-**src/app/components/company/company-detail.component.ts** (extrait focus)
+**openg7-org/src/app/components/company/company-detail.component.ts** (extrait focus)
 ```ts
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 
@@ -1211,7 +1253,7 @@ export class CompanyDetailComponent implements AfterViewInit, OnDestroy {
 }
 ```
 
-**src/app/components/map/controls/zoom-control.component.ts** (handlers clavier)
+**openg7-org/src/app/components/map/controls/zoom-control.component.ts** (handlers clavier)
 ```ts
 onKey(e: KeyboardEvent, dir: 'in'|'out') {
   if (e.key === 'Enter' || e.key === ' ') this.zoom(dir);
@@ -1304,7 +1346,7 @@ export default ({ strapi }) => ({
 });
 ```
 
-**src/app/pages/preview.page.ts** (front)
+**openg7-org/src/app/pages/preview.page.ts** (front)
 ```ts
 // Appel fetch sur /api/homepage/preview avec token (via API_URL), affichage sections sans cache
 ```
@@ -1336,7 +1378,7 @@ export default {
 
 # Tests de contrat (front)
 
-**src/app/core/api/strapi-client.spec.ts**
+**openg7-org/src/app/core/api/strapi-client.spec.ts**
 ```ts
 import { StrapiClient } from './strapi-client';
 
@@ -1373,8 +1415,28 @@ it('exchanges shape minimal', async () => {
 
 # Carte — lignes directrices performance (flows)
 
-- ≤ **10k** arêtes : rendu Canvas/GL direct OK ; > **10k** : tuiles **MVT** (vector tiles).  
-- Simplifier les géométries au-delà d’un zoom donné ; paginer les “companies” visibles.  
-- AC : 40 fps desktop, 30 fps laptop milieu de gamme ; filtrage ≤ 200 ms.  
+- ≤ **10k** arêtes : rendu Canvas/GL direct OK ; > **10k** : tuiles **MVT** (vector tiles).
+- Simplifier les géométries au-delà d’un zoom donné ; paginer les “companies” visibles.
+- AC : 40 fps desktop, 30 fps laptop milieu de gamme ; filtrage ≤ 200 ms.
 
-_MAJ (enhanced) : 2025-09-10 20:47:57Z_
+---
+
+## 8) Tests & validations locales (Angular + Strapi)
+
+### Étape AGENTS
+- ID: **AG-8**
+- Portée: `repo complet`
+
+### Description
+Exécuter systématiquement les scripts de validation **avant** d’ouvrir une PR. Ils verrouillent les selectors, la génération des contrats et l’état des seeds Strapi. Utiliser les commandes suivantes depuis la racine :
+
+1. `yarn lint` — lint global (`eslint.config.mjs`, TS strict).
+2. `yarn format:check` — vérifier que Prettier n’a rien à reformater (évite les diffs inutiles).
+3. `yarn validate:selectors` — s’assure que les sélecteurs `[data-og7="*"]` déclarés ci-dessus sont synchronisés avec le tooling.
+4. `yarn codegen && yarn test` — met à jour `packages/contracts` puis exécute les tests générés.
+5. `yarn predeploy:cms-cache` — rejoue les seeds Strapi localement pour garantir l’idempotence.
+6. `yarn prebuild:web` — build SSR + tests front (prérequis à `build:web`).
+
+> ⚠️ Tout échec doit être corrigé **avant commit**. Documentez les écarts (ex.: seeds conditionnels) directement dans la PR.
+
+_MAJ (enhanced) : 2025-09-13 10:15:00Z_

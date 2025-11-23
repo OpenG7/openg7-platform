@@ -1,0 +1,51 @@
+<section class="og7-importation" data-og7="importation">
+  <ng-container *ngIf="overviewVm() as overview">
+    <og7-importation-overview-header
+      [viewModel]="overview"
+      (periodGranularityChange)="onPeriodGranularityChange($event)"
+      (periodValueChange)="onPeriodValueChange($event)"
+      (originScopeChange)="onOriginScopeChange($event)"
+      (originCodesChange)="onOriginCodesChange($event)"
+      (hsSectionToggle)="onHsSectionToggle($event)"
+      (compareModeToggle)="onCompareToggle()"
+      (compareWithChange)="onCompareWithChange($event)"
+    ></og7-importation-overview-header>
+  </ng-container>
+
+  <div class="og7-importation__grid">
+    <ng-container *ngIf="flowVm() as flow">
+      <og7-importation-flow-map-panel
+        [viewModel]="flow"
+        (timelineSelect)="onTimelineSelect($event)"
+        (timelinePlayToggle)="onTimelinePlayToggle()"
+        (originSelect)="onOriginSelect($event)"
+        (compareTargetChange)="onCompareTargetChange($event)"
+      ></og7-importation-flow-map-panel>
+    </ng-container>
+
+    <ng-container *ngIf="commodityVm() as commodity">
+      <og7-importation-commodity-section
+        [viewModel]="commodity"
+        (tabChange)="onCommodityTabChange($event)"
+        (commoditySelect)="onCommoditySelect($event)"
+        (exportRequest)="onExportRequest($event)"
+      ></og7-importation-commodity-section>
+    </ng-container>
+
+    <ng-container *ngIf="supplierVm() as supplier">
+      <og7-importation-supplier-intel [viewModel]="supplier"></og7-importation-supplier-intel>
+    </ng-container>
+
+    <ng-container *ngIf="collaborationVm() as collaboration">
+      <og7-importation-collaboration-hub
+        [viewModel]="collaboration"
+        (createWatchlist)="onCreateWatchlist($event)"
+        (scheduleReport)="onScheduleReport($event)"
+      ></og7-importation-collaboration-hub>
+    </ng-container>
+
+    <ng-container *ngIf="knowledgeVm() as knowledge">
+      <og7-importation-knowledge-section [viewModel]="knowledge"></og7-importation-knowledge-section>
+    </ng-container>
+  </div>
+</section>

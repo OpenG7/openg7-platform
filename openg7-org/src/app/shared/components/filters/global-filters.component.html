@@ -1,0 +1,47 @@
+<div
+  class="flex flex-col gap-8"
+  role="group"
+  [attr.aria-labelledby]="tradeModeLabelId"
+  [attr.aria-describedby]="groupDescriptionId"
+  [attr.data-og7-id]="'filters-group'"
+>
+  <div class="space-y-2">
+    <label
+      class="block text-sm font-medium text-slate-700"
+      [attr.for]="tradeModeSelectId"
+      [attr.id]="tradeModeLabelId"
+    >
+      {{ 'home.filters.tradeModeLabel' | translate }}
+    </label>
+    <p class="text-sm text-slate-500" [attr.id]="groupDescriptionId">
+      {{ 'home.filters.tradeModeDescription' | translate }}
+    </p>
+    <select
+      class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+      [id]="tradeModeSelectId"
+      data-og7-id="trade-mode"
+      [value]="filters.tradeMode()"
+      (change)="onMode($event)"
+      [attr.aria-describedby]="groupDescriptionId"
+    >
+      <option *ngFor="let option of tradeModeOptions" [value]="option.value">
+        {{ option.labelKey | translate }}
+      </option>
+    </select>
+  </div>
+
+  <div class="space-y-2">
+    <h3 class="text-sm font-medium text-slate-700" [attr.id]="sectorLabelId">
+      {{ 'home.filters.sectorLabel' | translate }}
+    </h3>
+    <p class="text-sm text-slate-500" [attr.id]="sectorDescriptionId">
+      {{ 'home.filters.sectorDescription' | translate }}
+    </p>
+    <og7-filters-sector-carousel
+      data-og7-id="sector-carousel"
+      [sectors]="sectors"
+      [ariaLabelledBy]="sectorLabelId"
+      [describedBy]="sectorDescriptionId"
+    ></og7-filters-sector-carousel>
+  </div>
+</div>

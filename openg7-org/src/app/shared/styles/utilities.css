@@ -1,0 +1,124 @@
+:root {
+  --og7-ring-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.bg-page {
+  background-color: var(--og7-color-page);
+}
+
+.bg-surface {
+  background-color: var(--og7-color-surface);
+}
+
+.bg-surface-muted {
+  background-color: var(--og7-color-surface-muted);
+}
+
+.bg-card {
+  background-color: var(--og7-color-card);
+}
+
+.text-title {
+  color: var(--og7-color-title);
+}
+
+.text-body {
+  color: var(--og7-color-body);
+}
+
+.text-subtle {
+  color: var(--og7-color-subtle);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: var(--og7-color-on-primary);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.8rem 1.8rem;
+  box-shadow: 0 16px 40px -32px rgba(37, 99, 235, 0.65);
+  transition: transform var(--og7-transition-base), box-shadow var(--og7-transition-base);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-primary:focus-visible:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 24px 60px -28px rgba(37, 99, 235, 0.6);
+}
+
+.btn-primary:focus-visible {
+  outline: 3px solid rgba(56, 189, 248, 0.35);
+  outline-offset: 2px;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.badge-tertiary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  background-color: var(--og7-color-tertiary-soft);
+  color: var(--og7-color-tertiary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.95rem;
+}
+
+.ring-card {
+  --og7-ring-shadow: 0 0 0 1px var(--og7-ring-color);
+  box-shadow: var(--og7-ring-shadow);
+}
+
+.shadow-e1 {
+  box-shadow: var(--og7-ring-shadow, 0 0 0 0 rgba(0, 0, 0, 0)), var(--og7-shadow-e1);
+}
+
+.shadow-card {
+  box-shadow: var(--og7-ring-shadow, 0 0 0 0 rgba(0, 0, 0, 0)), var(--og7-shadow-card);
+}
+
+.card-hover {
+  transition: transform var(--og7-transition-base), box-shadow var(--og7-transition-base), background-color var(--og7-transition-base);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  background-color: var(--og7-color-card-hover);
+  box-shadow: var(--og7-ring-shadow, 0 0 0 0 rgba(0, 0, 0, 0)), var(--og7-shadow-card);
+}
+
+.focus-outline {
+  outline: none;
+}
+
+.focus-outline:focus-visible {
+  outline: 3px solid var(--og7-ring-focus);
+  outline-offset: 2px;
+}
+
+.link-primary {
+  color: var(--og7-color-primary);
+  font-weight: 600;
+}
+
+.link-primary:hover {
+  color: color-mix(in srgb, var(--og7-color-primary) 75%, #ffffff 25%);
+}
+
+[data-og7="app-shell"] {
+  background-color: var(--og7-color-page);
+  color: var(--og7-color-body);
+  font-family: var(--og7-font-family-base);
+}

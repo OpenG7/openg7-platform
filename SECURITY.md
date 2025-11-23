@@ -1,49 +1,35 @@
 **Languages:** [English](#english) | [Français](#francais)
 
 <a id="english"></a>
-# Security Policy
+# OpenG7
 
-## Reporting a Vulnerability
+Open-source platform to explore and analyze **interprovincial economic flows** (Angular front-end + Strapi CMS).  
+This monorepo contains the front-end app, the CMS, and the API contracts.
 
-If you discover a security vulnerability in OpenG7, please help us by following this process:
+## Getting Started
 
-1. **Do not publicly disclose** the vulnerability before it has been addressed.
-2. Send an email to **contact@openg7.org** with the following details:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Any suggested remediation
-3. We will acknowledge your report within 48 hours and provide an estimated timeline for resolution.
+1. Install dependencies: `yarn install`
+2. Start Strapi: `yarn dev:cms` (local API on http://localhost:1337)
+3. Start the Angular front-end: `yarn dev:web` (UI on http://localhost:4200)
+4. Need a Strapi admin account? Set `STRAPI_ADMIN_EMAIL` / `STRAPI_ADMIN_PASSWORD` in your local `.env`, then create it from the admin screen.
 
-## Supported Versions
+> On Windows, `Run-Installer-pwsh.cmd` executes `install-dev-basics_robuste.ps1` to prepare the environment (PowerShell 5 in administrator mode, install/validation of Node.js LTS, Yarn, Git, UTF-8 encoding), then offers a menu to launch the main `yarn` commands.
 
-Security updates will be applied to the latest stable release of OpenG7.
+Detailed guides live in `docs/`:
+- `docs/getting-started.md`: quick onboarding and useful scripts  
+- `docs/frontend/`: Angular signal-first architecture, `[data-og7]` selectors  
+- `docs/strapi/`: CMS conventions and idempotent seeds  
+- `docs/first-contribution.md`: checklist for your first PR  
+- `docs/roadmap.md`: public roadmap and priorities  
 
-## Responsible Disclosure
+## Contributing
 
-We ask that you act in good faith and give us a reasonable amount of time to address the issue before publicly disclosing it.
+Read `CONTRIBUTING.md` to understand the development flow, the checks to run before opening a PR, and the secrets management policy.  
+The `CODE_OF_CONDUCT.md` applies to all community spaces.  
+A “first contribution” guide is available in `docs/first-contribution.md`.
 
----
+### Public Channels & Support
 
-<a id="francais"></a>
-# Politique de sécurité
-
-## Signaler une vulnérabilité
-
-Si vous découvrez une vulnérabilité de sécurité dans OpenG7, veuillez nous aider en suivant ce processus :
-
-1. **Ne divulguez pas publiquement** la vulnérabilité avant qu’elle n’ait été corrigée.
-2. Envoyez un courriel à **contact@openg7.org** avec les détails suivants :
-   - Description de la vulnérabilité
-   - Étapes pour la reproduire
-   - Impact potentiel
-   - Toute suggestion de correction
-3. Nous accuserons réception de votre rapport dans un délai de 48 heures et nous fournirons un calendrier estimatif pour la résolution.
-
-## Versions prises en charge
-
-Les mises à jour de sécurité seront appliquées à la dernière version stable d’OpenG7.
-
-## Divulgation responsable
-
-Nous vous demandons d’agir de bonne foi et de nous accorder un délai raisonnable pour corriger le problème avant de le divulguer publiquement.
+- **GitHub Issues**: bugs, feature requests, docs (templates provided, `needs-triage` label by default).  
+- **GitHub Discussions**: general questions or exploratory ideas.  
+- **Support & governance**: see `SUPPORT.md` for response times, escalation paths, and the decisio

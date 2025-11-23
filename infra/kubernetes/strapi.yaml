@@ -1,0 +1,498 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: strapi-cache-config
+  labels:
+    app: openg7-strapi-cache
+data:
+  default.vcl.tpl: |
+    vcl 4.1;
+
+    backend strapi {
+      .host = "${STRAPI_BACKEND_HOST}";
+      .port = "${STRAPI_BACKEND_PORT}";
+      .first_byte_timeout = 30s;
+      .between_bytes_timeout = 30s;
+    }
+
+    acl purgers {
+      "127.0.0.1";
+    }
+
+    sub vcl_recv {
+      if (req.method == "PURGE") {
+        if (req.http.X-Purge-Token != "${PURGE_TOKEN}") {
+          return (synth(403, "Invalid purge token"));
+        }
+        ban("req.http.host == " + req.http.host + " && req.url == " + req.url);
+        return (synth(200, "Purged"));
+      }
+
+      if (req.method != "GET" && req.method != "HEAD") {
+        return (pass);
+      }
+
+      if (req.url ~ "^/admin" ||
+          req.url ~ "^/content-manager" ||
+          req.http.Authorization ||
+          req.http.Cookie ~ "strapi.sid") {
+        return (pass);
+      }
+
+      if (req.url ~ "\?_" || req.url ~ "preview=true") {
+        return (pass);
+      }
+
+      return (hash);
+    }
+
+    sub vcl_hash {
+      hash_data(req.url);
+      if (req.http.Accept-Language) {
+        hash_data(req.http.Accept-Language);
+      }
+      if (req.http.Authorization) {
+        hash_data(req.http.Authorization);
+      }
+    }
+
+    sub vcl_backend_response {
+      if (beresp.ttl <= 0s || beresp.http.Set-Cookie) {
+        set beresp.ttl = 0s;
+        return (deliver);
+      }
+
+      if (bereq.url ~ "^/api/") {
+        set beresp.ttl = 300s;
+        set beresp.grace = 60s;
+      }
+    }
+
+    sub vcl_deliver {
+      set resp.http.X-Cache = obj.hits > 0 ? "HIT" : "MISS";
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: strapi-shared-config
+  labels:
+    app: openg7-strapi
+data:
+  STRAPI_ENV: production
+  NODE_ENV: production
+  STRAPI_SESSION_DRIVER: redis
+  STRAPI_SESSION_TTL: "86400000"
+  STRAPI_SESSION_COOKIE_SAMESITE: lax
+  STRAPI_SESSION_COOKIE_SECURE: "true"
+  STRAPI_SESSION_REDIS_PREFIX: "strapi:sess:"
+  RATE_LIMIT_ENABLED: "true"
+  RATE_LIMIT_INTERVAL_MS: "60000"
+  RATE_LIMIT_MAX: "250"
+  RATE_LIMIT_PREFIX: "strapi::rl::"
+  STRAPI_SEED_AUTO: "false"
+  DATABASE_CLIENT: postgres
+  DATABASE_HOST: openg7-postgres
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: openg7_cms
+  DATABASE_SCHEMA: public
+  DATABASE_POOL_MIN: "2"
+  DATABASE_POOL_MAX: "20"
+  UPLOAD_PROVIDER: aws-s3
+  UPLOAD_S3_BUCKET: openg7-strapi-media
+  UPLOAD_S3_REGION: ca-central-1
+  UPLOAD_S3_ENDPOINT: https://s3.ca-central-1.amazonaws.com
+  UPLOAD_S3_BASE_URL: https://cdn.openg7.org/cms
+  UPLOAD_S3_ACL: private
+  UPLOAD_S3_FORCE_PATH_STYLE: "false"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openg7-strapi
+  labels:
+    app: openg7-strapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: openg7-strapi
+  template:
+    metadata:
+      labels:
+        app: openg7-strapi
+    spec:
+      containers:
+        - name: strapi
+          image: ghcr.io/openg7/openg7-strapi:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1337
+              name: http
+          envFrom:
+            - configMapRef:
+                name: strapi-shared-config
+            - secretRef:
+                name: strapi-database
+            - secretRef:
+                name: strapi-admin-secrets
+            - secretRef:
+                name: strapi-upload
+            - secretRef:
+                name: openg7-redis-secret
+          env:
+            - name: APP_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: strapi-admin-secrets
+                  key: app-keys
+            - name: SESSION_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: strapi-admin-secrets
+                  key: session-keys
+            - name: REDIS_HOST
+              value: openg7-redis
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: openg7-redis-secret
+                  key: password
+          readinessProbe:
+            httpGet:
+              path: /_health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /_health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1500m
+              memory: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openg7-strapi-cache
+  labels:
+    app: openg7-strapi-cache
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: openg7-strapi-cache
+  template:
+    metadata:
+      labels:
+        app: openg7-strapi-cache
+    spec:
+      containers:
+        - name: varnish
+          image: varnish:7.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: STRAPI_BACKEND_HOST
+              value: openg7-strapi
+            - name: STRAPI_BACKEND_PORT
+              value: "80"
+            - name: PURGE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: strapi-cache-secrets
+                  key: purge-token
+          command:
+            - /bin/sh
+            - -c
+            - >-
+              envsubst '$$STRAPI_BACKEND_HOST $$STRAPI_BACKEND_PORT $$PURGE_TOKEN' < /etc/varnish/templates/default.vcl.tpl > /etc/varnish/default.vcl
+              && varnishd -F -f /etc/varnish/default.vcl -s malloc,512m
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: varnish-config
+              mountPath: /etc/varnish/templates
+            - name: varnish-runtime
+              mountPath: /etc/varnish
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: varnish-config
+          configMap:
+            name: strapi-cache-config
+        - name: varnish-runtime
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openg7-strapi
+  labels:
+    app: openg7-strapi
+spec:
+  type: ClusterIP
+  selector:
+    app: openg7-strapi
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openg7-strapi-cache
+  labels:
+    app: openg7-strapi-cache
+spec:
+  selector:
+    app: openg7-strapi-cache
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openg7-strapi
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "25m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+  labels:
+    app: openg7-strapi
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cms.openg7.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openg7-strapi-cache
+                port:
+                  name: http
+  tls:
+    - hosts:
+        - cms.openg7.org
+      secretName: openg7-strapi-tls
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: openg7-strapi
+  labels:
+    app: openg7-strapi
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: openg7-strapi
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: strapi-seed-job
+  labels:
+    app: openg7-strapi
+spec:
+  template:
+    metadata:
+      labels:
+        job: strapi-seed
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: seed
+          image: ghcr.io/openg7/openg7-strapi:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: strapi-shared-config
+            - secretRef:
+                name: strapi-database
+            - secretRef:
+                name: strapi-admin-secrets
+            - secretRef:
+                name: strapi-upload
+            - secretRef:
+                name: openg7-redis-secret
+          env:
+            - name: APP_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: strapi-admin-secrets
+                  key: app-keys
+            - name: SESSION_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: strapi-admin-secrets
+                  key: session-keys
+            - name: REDIS_HOST
+              value: openg7-redis
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: openg7-redis-secret
+                  key: password
+            - name: STRAPI_SEED_AUTO
+              value: "false"
+          command: ["/bin/sh", "-c", "yarn seed:dev"]
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: strapi-database
+  labels:
+    app: openg7-strapi
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-openg7
+    kind: ClusterSecretStore
+  target:
+    name: strapi-database
+    creationPolicy: Owner
+  data:
+    - secretKey: DATABASE_HOST
+      remoteRef:
+        key: kv/openg7/strapi/database
+        property: host
+    - secretKey: DATABASE_PORT
+      remoteRef:
+        key: kv/openg7/strapi/database
+        property: port
+    - secretKey: DATABASE_NAME
+      remoteRef:
+        key: kv/openg7/strapi/database
+        property: name
+    - secretKey: DATABASE_SCHEMA
+      remoteRef:
+        key: kv/openg7/strapi/database
+        property: schema
+    - secretKey: DATABASE_USERNAME
+      remoteRef:
+        key: kv/openg7/strapi/database
+        property: username
+    - secretKey: DATABASE_PASSWORD
+      remoteRef:
+        key: kv/openg7/strapi/database
+        property: password
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: strapi-admin-secrets
+  labels:
+    app: openg7-strapi
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-openg7
+    kind: ClusterSecretStore
+  target:
+    name: strapi-admin-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: app-keys
+      remoteRef:
+        key: kv/openg7/strapi/admin
+        property: appKeys
+    - secretKey: session-keys
+      remoteRef:
+        key: kv/openg7/strapi/admin
+        property: sessionKeys
+    - secretKey: STRAPI_ADMIN_EMAIL
+      remoteRef:
+        key: kv/openg7/strapi/admin
+        property: email
+    - secretKey: STRAPI_ADMIN_PASSWORD
+      remoteRef:
+        key: kv/openg7/strapi/admin
+        property: password
+    - secretKey: STRAPI_API_READONLY_TOKEN
+      remoteRef:
+        key: kv/openg7/strapi/admin
+        property: readonlyToken
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: strapi-upload
+  labels:
+    app: openg7-strapi
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-openg7
+    kind: ClusterSecretStore
+  target:
+    name: strapi-upload
+    creationPolicy: Owner
+  data:
+    - secretKey: UPLOAD_S3_ACCESS_KEY_ID
+      remoteRef:
+        key: kv/openg7/strapi/upload
+        property: accessKeyId
+    - secretKey: UPLOAD_S3_SECRET_ACCESS_KEY
+      remoteRef:
+        key: kv/openg7/strapi/upload
+        property: secretAccessKey
+    - secretKey: UPLOAD_S3_BASE_URL
+      remoteRef:
+        key: kv/openg7/strapi/upload
+        property: baseUrl
+      optional: true
+    - secretKey: UPLOAD_S3_ENDPOINT
+      remoteRef:
+        key: kv/openg7/strapi/upload
+        property: endpoint
+      optional: true
+    - secretKey: UPLOAD_S3_PREFIX
+      remoteRef:
+        key: kv/openg7/strapi/upload
+        property: prefix
+      optional: true

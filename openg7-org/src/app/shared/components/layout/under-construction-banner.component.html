@@ -1,0 +1,32 @@
+<section
+  *ngIf="!hidden()"
+  data-og7="under-construction-banner"
+  class="border-b border-amber-300/60 bg-amber-50 text-amber-900"
+  role="region"
+  [attr.aria-labelledby]="titleId"
+  [attr.aria-describedby]="descriptionId"
+>
+  <div
+    class="mx-auto flex w-full max-w-7xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8"
+  >
+    <div class="space-y-1">
+      <p
+        class="text-xs font-semibold uppercase tracking-[0.25em] text-amber-600"
+        [attr.id]="titleId"
+      >
+        {{ 'banner.underConstruction.title' | translate }}
+      </p>
+      <p class="text-sm text-amber-800" [attr.id]="descriptionId">
+        {{ 'banner.underConstruction.message' | translate }}
+      </p>
+    </div>
+    <button
+      *ngIf="dismissible()"
+      type="button"
+      class="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-amber-300 bg-white px-3 py-1.5 text-sm font-medium text-amber-700 shadow-sm transition hover:bg-amber-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50"
+      (click)="dismiss()"
+    >
+      {{ 'banner.underConstruction.dismiss' | translate }}
+    </button>
+  </div>
+</section>

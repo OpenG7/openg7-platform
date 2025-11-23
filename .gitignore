@@ -1,0 +1,71 @@
+# --- Monorepo OpenG7 --------------------------------------------------------
+# Node workspaces
+**/node_modules/
+
+# Package managers / Yarn 3 (nodeLinker: node-modules)
+.pnp.*
+.yarn/install-state.gz
+.yarn/unplugged/
+.yarn/build-state.yml
+# Garder ces sous-dossiers Yarn si tu les utilises
+.yarn/*
+!.yarn/plugins/
+!.yarn/releases/
+!.yarn/sdks/
+!.yarn/patches/
+
+# Logs
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+
+# OS / Editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.iml
+
+# --- Angular app ------------------------------------------------------------
+# /openG7/openg7-org/ (src/app/...)
+openg7-org/.angular/
+openg7-org/dist/
+openg7-org/coverage/
+openg7-org/public/runtime-config.js
+
+# --- Strapi CMS -------------------------------------------------------------
+# /openG7/openg7-cms/ (strapi/src/...)
+openg7-cms/.tmp/
+openg7-cms/.cache/
+openg7-cms/build/
+openg7-cms/coverage/
+# Uploads locaux (si provider local en dev)
+openg7-cms/public/uploads/
+# Exports/backup éventuels
+openg7-cms/exports/
+# DB locale éventuelle
+openg7-cms/data/
+openg7-cms/*.db
+openg7-cms/*.sqlite
+# Env Strapi
+openg7-cms/.env
+openg7-cms/.env.*
+# Legacy/new Strapi workspaces rely on the root Yarn lockfile
+strapi-legacy/yarn.lock
+strapi/yarn.lock
+strapi/.strapi-updater.json
+
+# --- Générique build & tests -----------------------------------------------
+**/dist/
+**/build/
+**/coverage/
+docs/reference/
+
+# --- Variables d'environnement (partout) -----------------------------------
+.env
+.env.*
+!.env.example

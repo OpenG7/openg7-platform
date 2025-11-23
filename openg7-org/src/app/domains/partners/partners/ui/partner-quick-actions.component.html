@@ -1,0 +1,74 @@
+<section
+  class="rounded-2xl border border-yellow-400/80 bg-slate-900/40 p-4 text-yellow-300 shadow-lg shadow-yellow-900/20 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md md:sticky md:top-6 md:w-[260px] md:self-start"
+  aria-labelledby="partner-quick-actions-heading"
+>
+  <div class="space-y-4">
+    <header class="space-y-2">
+      <p
+        id="partner-quick-actions-heading"
+        class="text-xs font-semibold uppercase tracking-[0.4em] text-yellow-200/70"
+      >
+        {{ 'partner.quickActions.title' | translate }}
+      </p>
+      <p class="text-[0.8rem] leading-relaxed text-yellow-200/70">
+        @if (partnerName(); as name) {
+          {{ 'partner.quickActions.scanWithName' | translate: { name } }}
+        } @else {
+          {{ 'partner.quickActions.scan' | translate }}
+        }
+      </p>
+    </header>
+
+    @if (partnerName()) {
+      <p class="text-sm font-semibold text-yellow-100/90">
+        {{ partnerName() }}
+      </p>
+    }
+
+    <div class="rounded-xl bg-white/5 p-3">
+      <og7-dual-qr-panel
+        class="w-full"
+        [buyerLink]="shareUrl()"
+        [buyerLabel]="'partner.quickActions.scanSingle'"
+        [microCopy]="'partner.quickActions.openLink'"
+        [showSupplierPanel]="false"
+      ></og7-dual-qr-panel>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        class="rounded-full px-3 py-1.5 text-xs font-medium text-yellow-200 ring-1 ring-yellow-400/60 transition hover:bg-yellow-400/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/60"
+        (click)="downloadPng()"
+        [attr.aria-label]="'partner.quickActions.download' | translate"
+      >
+        {{ 'partner.quickActions.download' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="rounded-full px-3 py-1.5 text-xs font-medium text-yellow-200 ring-1 ring-yellow-400/60 transition hover:bg-yellow-400/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/60"
+        (click)="copyLink()"
+        [attr.aria-label]="copied() ? ('partner.quickActions.copied' | translate) : ('partner.quickActions.copy' | translate)"
+        aria-live="polite"
+      >
+        @if (copied()) {
+          {{ 'partner.quickActions.copied' | translate }}
+        } @else {
+          {{ 'partner.quickActions.copy' | translate }}
+        }
+      </button>
+    </div>
+
+    @if (connectLink(); as link) {
+      <a
+        id="partner-quick-actions-connect-link"
+        class="block rounded-xl border border-yellow-400/80 px-4 py-3 text-center text-sm font-semibold text-yellow-100 transition hover:bg-yellow-400/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/60"
+        [routerLink]="link"
+        [attr.aria-label]="'partner.quickActions.connect' | translate"
+      >
+        {{ 'partner.quickActions.connect' | translate }}
+      </a>
+    }
+  </div>
+</section>

@@ -1,0 +1,62 @@
+<form class="feed-composer" (ngSubmit)="handleSubmit()" role="form" aria-describedby="composer-help">
+  <header class="feed-composer__header">
+    <h2>{{ 'feed.composer.title' | translate }}</h2>
+    <nav
+      class="feed-composer__channels"
+      [attr.aria-label]="'feed.composer.channelLabel' | translate"
+    >
+      <button
+        type="button"
+        *ngFor="let option of channels"
+        class="feed-composer__channel"
+        [class.feed-composer__channel--active]="channel() === option"
+        (click)="setChannel(option)"
+      >
+        {{ ('feed.composer.channel.' + option) | translate }}
+      </button>
+    </nav>
+  </header>
+
+  <textarea
+    #composerTextarea
+    class="feed-composer__textarea"
+    [placeholder]="placeholder() | translate"
+    [value]="draftValue()"
+    (input)="updateDraft($any($event.target).value || '')"
+    [attr.aria-invalid]="errors().length > 0"
+    minlength="3"
+    maxlength="5000"
+    required
+  ></textarea>
+
+  <p id="composer-help" class="feed-composer__help">
+    {{ 'feed.composer.help' | translate }}
+  </p>
+
+  <div class="feed-composer__tags" *ngIf="needTypes().length">
+    <button
+      type="button"
+      *ngFor="let need of needTypes()"
+      class="feed-composer__tag"
+      (click)="toggleNeedType(need)"
+    >
+      #{{ need }}
+    </button>
+  </div>
+
+  <ul *ngIf="errors().length" class="feed-composer__errors" role="alert">
+    <li *ngFor="let error of errors()">{{ error | translate }}</li>
+  </ul>
+  <ul *ngIf="warnings().length" class="feed-composer__warnings" role="status">
+    <li *ngFor="let warning of warnings()">{{ warning | translate }}</li>
+  </ul>
+
+  <footer class="feed-composer__footer">
+    <button type="submit" class="feed-composer__submit" [disabled]="!canSubmit()">
+      {{ submitting() ? ('feed.composer.submitting' | translate) : ('feed.composer.submit' | translate) }}
+    </button>
+    <button type="button" class="feed-composer__clear" (click)="clearDraft()">
+      {{ 'feed.composer.clear' | translate }}
+    </button>
+  </footer>
+</form>

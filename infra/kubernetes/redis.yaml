@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openg7-redis
+  labels:
+    app: openg7-redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: redis
+      name: redis
+  clusterIP: None
+  selector:
+    app: openg7-redis
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: openg7-redis
+  labels:
+    app: openg7-redis
+spec:
+  serviceName: openg7-redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openg7-redis
+  template:
+    metadata:
+      labels:
+        app: openg7-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.2-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+              name: redis
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: openg7-redis-secret
+                  key: password
+          command: ["/bin/sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\" --appendonly yes"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          livenessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "-a", "$(REDIS_PASSWORD)", "PING"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      securityContext:
+        fsGroup: 999
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard

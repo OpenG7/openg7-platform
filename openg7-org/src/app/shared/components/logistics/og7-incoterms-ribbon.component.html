@@ -1,0 +1,45 @@
+<section class="rounded-3xl bg-card p-6 md:p-7 text-body ring-card shadow-card">
+  <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+    <div class="flex-1 space-y-4">
+      <h3 class="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-subtle">{{ 'introBillboard.logisticsTitle' | translate }}</h3>
+      <p class="text-sm leading-relaxed text-body/80">{{ 'introBillboard.logisticsSubtitle' | translate }}</p>
+
+      <div class="mt-4 flex flex-wrap gap-3">
+        @for (option of transportOptions; track option.mode) {
+          <button
+            type="button"
+            class="inline-flex items-center gap-3 rounded-2xl px-4 py-2 text-sm font-semibold transition focus-outline card-hover"
+            [ngClass]="transportClass(option.mode)"
+            (click)="onTransportToggle(option.mode)"
+            [attr.aria-pressed]="isSelectedTransport(option.mode)"
+          >
+            <span class="text-xl">{{ option.icon }}</span>
+            <span class="text-title">{{ option.labelKey | translate }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="flex-1 rounded-2xl bg-surface px-5 py-6 ring-card shadow-card">
+      <h4 class="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-subtle">{{ 'introBillboard.incotermTitle' | translate }}</h4>
+      <div class="mt-4 grid gap-3">
+        @for (option of incotermOptions; track option.code) {
+          <button
+            type="button"
+            class="rounded-2xl px-4 py-3 text-left transition focus-outline card-hover"
+            [ngClass]="incotermClass(option.code)"
+            (click)="onIncotermSelect(option.code)"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm font-semibold text-title">{{ option.labelKey | translate }}</span>
+              @if (isIncotermSelected(option.code)) {
+                <span class="badge-tertiary">{{ 'introBillboard.selected' | translate }}</span>
+              }
+            </div>
+            <p class="mt-2 text-xs leading-relaxed text-subtle">{{ option.descriptionKey | translate }}</p>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</section>

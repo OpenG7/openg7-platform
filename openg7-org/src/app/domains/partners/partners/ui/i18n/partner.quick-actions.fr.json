@@ -1,0 +1,17 @@
+{
+  "partner": {
+    "quickActions": {
+      "title": "Actions rapides",
+      "scan": "Scannez ce code QR généré pour le partenaire sélectionné.",
+      "scanWithName": "Scannez ce code QR généré pour {{ name }}.",
+      "scanSingle": "Scanner — accès rapide",
+      "scanBuyer": "Scanner — accès acheteur",
+      "scanSupplier": "Scanner — accès fournisseur",
+      "openLink": "Ouvrir le lien de partage",
+      "download": "Télécharger",
+      "copy": "Copier le lien",
+      "copied": "Copié ✓",
+      "connect": "Mise en relation"
+    }
+  }
+}

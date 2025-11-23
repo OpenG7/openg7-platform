@@ -1,0 +1,84 @@
+<section class="og7-importation-commodities" data-og7="importation-commodities">
+  <header>
+    <h2>{{ 'pages.importation.commodities.title' | translate }}</h2>
+    <nav
+      class="og7-importation-commodities__tabs"
+      [attr.aria-label]="'pages.importation.commodities.tabs.label' | translate"
+    >
+      <button
+        type="button"
+        *ngFor="let tab of viewModel.tabs; trackBy: trackTab"
+        [class.is-active]="tab.id === viewModel.activeTab"
+        (click)="onTabChange(tab.id)"
+      >
+        {{ tab.label | translate }}
+        <span aria-hidden="true">({{ tab.count }})</span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="og7-importation-commodities__table" *ngIf="!viewModel.loading; else loading">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'pages.importation.commodities.columns.product' | translate }}</th>
+          <th scope="col">{{ 'pages.importation.commodities.columns.hs' | translate }}</th>
+          <th scope="col">{{ 'pages.importation.commodities.columns.value' | translate }}</th>
+          <th scope="col">{{ 'pages.importation.commodities.columns.delta' | translate }}</th>
+          <th scope="col">{{ 'pages.importation.commodities.columns.risk' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let row of viewModel.rows; trackBy: trackRow"
+          (click)="onRowSelect(row)"
+          [class.is-selected]="row.id === viewModel.selectedCommodityId"
+        >
+          <th scope="row">{{ row.label }}</th>
+          <td>{{ row.hsCode }}</td>
+          <td>{{ row.value | number:'1.0-0' }}</td>
+          <td [class.is-negative]="(row.yoyDelta ?? 0) < 0">{{ formatDelta(row.yoyDelta) }}</td>
+          <td>{{ row.riskScore != null ? row.riskScore.toFixed(1) : '—' }}</td>
+        </tr>
+        <tr *ngIf="!viewModel.rows.length">
+          <td colspan="5" class="og7-importation-commodities__empty">
+            {{ 'pages.importation.commodities.empty' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #loading>
+    <p class="og7-importation-commodities__loading">{{ 'pages.importation.commodities.loading' | translate }}</p>
+  </ng-template>
+
+  <section
+    *ngIf="viewModel.selectedCommodityFlags.length"
+    class="og7-importation-commodities__flags"
+    aria-live="polite"
+  >
+    <h3>{{ 'pages.importation.commodities.flags.title' | translate }}</h3>
+    <article *ngFor="let flag of viewModel.selectedCommodityFlags; trackBy: trackFlag">
+      <header>
+        <span class="og7-importation-commodities__severity" [attr.data-level]="flag.severity">
+          {{ 'pages.importation.commodities.flags.level.' + flag.severity | translate }}
+        </span>
+        <h4>{{ flag.title }}</h4>
+      </header>
+      <p>{{ flag.description }}</p>
+      <p *ngIf="flag.recommendedAction" class="og7-importation-commodities__action">
+        {{ flag.recommendedAction }}
+      </p>
+    </article>
+  </section>
+
+  <footer class="og7-importation-commodities__actions" *ngIf="viewModel.canExport">
+    <span>{{ 'pages.importation.commodities.export.label' | translate }}</span>
+    <div class="og7-importation-commodities__export-buttons">
+      <button type="button" (click)="onExport('csv')">CSV</button>
+      <button type="button" (click)="onExport('json')">JSON</button>
+      <button type="button" (click)="onExport('look')">Looker</button>
+    </div>
+  </footer>
+</section>

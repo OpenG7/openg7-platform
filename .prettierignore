@@ -1,0 +1,16 @@
+node_modules
+.dist
+build
+coverage
+.next
+out
+.tmp
+.tmp-build
+.strapi
+.yarn
+.pnp.*
+**/*.d.ts
+**/dist
+**/build
+**/.angular
+**/.stryker-tmp

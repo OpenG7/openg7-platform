@@ -1,0 +1,15 @@
+<og7-home-hero-section [stats]="keyMetrics()"></og7-home-hero-section>
+<og7-home-statistics-section [stats]="keyMetrics()"></og7-home-statistics-section>
+<og7-home-map-section></og7-home-map-section>
+<og7-home-filters-section></og7-home-filters-section>
+
+<og7-opportunity-matches-section
+  #matchesSection
+  class="block"
+  [matches]="matches()"
+  [loading]="loading()"
+  [error]="error()"
+  (connectRequested)="onConnectRequested($event)"
+  (retryRequested)="onRetryRequested()"
+  (matchSelected)="onMatchSelected($event)"
+></og7-opportunity-matches-section>

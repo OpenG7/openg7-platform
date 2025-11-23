@@ -1,0 +1,35 @@
+<div class="feed-drawer" *ngIf="visible()">
+  <div class="feed-drawer__backdrop" (click)="handleBackdropClick()" aria-hidden="true"></div>
+  <section
+    class="feed-drawer__panel"
+    role="dialog"
+    [attr.aria-modal]="true"
+    [attr.aria-labelledby]="'feed-drawer-title'"
+  >
+    <header class="feed-drawer__header">
+      <h2 id="feed-drawer-title">{{ post()?.author?.displayName || '' }}</h2>
+      <p>{{ post()?.createdAt | jsonDateAgo }}</p>
+      <button
+        type="button"
+        class="feed-drawer__close"
+        (click)="closed.emit()"
+        [attr.aria-label]="'feed.drawer.close' | translate"
+      >
+        ✕
+      </button>
+    </header>
+
+    <article class="feed-drawer__content">
+      <p>{{ post()?.content }}</p>
+      <ul *ngIf="post()?.attachments?.length" class="feed-drawer__attachments">
+        <li *ngFor="let attachment of post()?.attachments">
+          <a [href]="attachment.url" target="_blank" rel="noopener">
+            {{ attachment.title || attachment.url }}
+          </a>
+        </li>
+      </ul>
+    </article>
+
+    <og7-feed-replies [replies]="post()?.replies || []"></og7-feed-replies>
+  </section>
+</div>

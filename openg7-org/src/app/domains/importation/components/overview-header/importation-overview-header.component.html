@@ -1,0 +1,135 @@
+<section class="og7-importation-overview" data-og7="importation-overview">
+  <nav class="og7-importation-overview__breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li *ngFor="let crumb of viewModel.breadcrumb; let last = last">
+        <a *ngIf="crumb.link && !last" [routerLink]="crumb.link">{{ crumb.label | translate }}</a>
+        <span *ngIf="!crumb.link || last" [class.og7-importation-overview__breadcrumb-current]="last">
+          {{ crumb.label | translate }}
+        </span>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="og7-importation-overview__hero">
+    <header>
+      <p class="og7-importation-overview__eyebrow">{{ 'pages.importation.eyebrow' | translate }}</p>
+      <h1>{{ viewModel.title | translate }}</h1>
+      <div class="og7-importation-overview__meta" *ngIf="viewModel.meta as meta">
+        <div>
+          <span class="og7-importation-overview__meta-label">{{ 'pages.importation.meta.lastUpdated' | translate }}</span>
+          <span>{{ meta.lastUpdated || ('pages.importation.meta.unknown' | translate) }}</span>
+        </div>
+        <div>
+          <span class="og7-importation-overview__meta-label">{{ 'pages.importation.meta.provider' | translate }}</span>
+          <span>{{ meta.dataProvider || ('pages.importation.meta.unknown' | translate) }}</span>
+        </div>
+        <div>
+          <span class="og7-importation-overview__meta-label">{{ 'pages.importation.meta.coverage' | translate }}</span>
+          <span>{{ meta.coverageLabel || ('pages.importation.meta.unknown' | translate) }}</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="og7-importation-overview__filters" aria-labelledby="importationFiltersHeading">
+      <h2 id="importationFiltersHeading" class="sr-only">{{ 'pages.importation.filters.title' | translate }}</h2>
+      <fieldset>
+        <legend>{{ 'pages.importation.filters.period.title' | translate }}</legend>
+        <div class="og7-importation-overview__segmented">
+          <button
+            type="button"
+            *ngFor="let option of viewModel.filters.granularityOptions; trackBy: trackOption"
+            [class.is-active]="option.id === viewModel.filters.filters.periodGranularity"
+            (click)="onGranularitySelect(option.id)"
+          >
+            {{ option.label | translate }}
+          </button>
+        </div>
+        <label class="og7-importation-overview__input">
+          <span>{{ 'pages.importation.filters.period.value' | translate }}</span>
+          <input
+            type="text"
+            [value]="viewModel.filters.filters.periodValue || ''"
+            (blur)="periodValueChange.emit($any($event.target).value || null)"
+            placeholder="2024-Q1"
+          />
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>{{ 'pages.importation.filters.origin.title' | translate }}</legend>
+        <div class="og7-importation-overview__chips">
+          <button
+            type="button"
+            *ngFor="let option of viewModel.filters.originOptions; trackBy: trackOption"
+            [class.is-active]="option.id === viewModel.filters.filters.originScope"
+            (click)="onOriginScopeSelect(option.id)"
+          >
+            <span>{{ option.label | translate }}</span>
+            <small>{{ option.description | translate }}</small>
+          </button>
+        </div>
+        <label class="og7-importation-overview__input" *ngIf="viewModel.filters.filters.originScope === 'custom'">
+          <span>{{ 'pages.importation.filters.origin.codes' | translate }}</span>
+          <input
+            type="text"
+            [value]="viewModel.filters.originCodes.join(', ')"
+            (blur)="onOriginCodesBlur($any($event.target).value || '')"
+            placeholder="US, MX, EU"
+          />
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>{{ 'pages.importation.filters.hs.title' | translate }}</legend>
+        <div class="og7-importation-overview__chips og7-importation-overview__chips--hs">
+          <button
+            type="button"
+            *ngFor="let section of viewModel.filters.hsSectionOptions; trackBy: trackOption"
+            [class.is-active]="viewModel.filters.filters.hsSections.includes(section.id)"
+            (click)="onHsSectionToggle(section.id)"
+          >
+            {{ section.label | translate }}
+          </button>
+        </div>
+      </fieldset>
+
+      <div class="og7-importation-overview__compare">
+        <label class="og7-importation-overview__switch">
+          <input type="checkbox" [checked]="viewModel.filters.filters.compareMode" (change)="onCompareToggle()" />
+          <span>{{ 'pages.importation.filters.compare.label' | translate }}</span>
+        </label>
+        <input
+          type="text"
+          class="og7-importation-overview__compare-input"
+          [disabled]="!viewModel.filters.filters.compareMode"
+          [value]="viewModel.filters.filters.compareWith || ''"
+          (blur)="onCompareWithChange($any($event.target).value || '')"
+          placeholder="2023-Q4"
+        />
+      </div>
+    </section>
+  </div>
+
+  <section class="og7-importation-overview__kpis" aria-label="Key performance indicators">
+    <article *ngFor="let kpi of viewModel.kpis; trackBy: trackKpi" class="og7-importation-overview__kpi">
+      <header>
+        <span class="og7-importation-overview__kpi-label">{{ kpi.label | translate }}</span>
+        <span class="og7-importation-overview__kpi-value">{{ kpi.value }}</span>
+      </header>
+      <div class="og7-importation-overview__kpi-delta" *ngIf="kpi.deltaLabel">
+        <span [class.is-positive]="(kpi.delta ?? 0) >= 0" [class.is-negative]="(kpi.delta ?? 0) < 0">
+          {{ kpi.deltaLabel }}
+        </span>
+      </div>
+      <div class="og7-importation-overview__sparkline" role="presentation" aria-hidden="true">
+        <span
+          *ngFor="let point of kpi.sparkline; let idx = index"
+          [style.--spark-height]="sparklineHeight(kpi, idx) + '%'"
+        ></span>
+      </div>
+      <p class="og7-importation-overview__kpi-tooltip" *ngIf="kpi.tooltip">
+        {{ kpi.tooltip | translate }}
+      </p>
+    </article>
+  </section>
+</section>

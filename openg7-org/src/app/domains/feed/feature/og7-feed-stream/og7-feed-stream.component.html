@@ -1,0 +1,56 @@
+<section class="feed-stream" [attr.aria-busy]="loading()">
+  <div class="feed-stream__status" role="status">
+    <span>{{ connectionLabel() | translate }}</span>
+    <button type="button" (click)="handleRefresh()">
+      {{ 'feed.stream.refresh' | translate }}
+    </button>
+  </div>
+
+  <div *ngIf="bannerVisible()" class="feed-stream__banner" role="alert">
+    <span>{{ 'feed.stream.newPosts' | translate:{ count: unreadCount() } }}</span>
+    <button type="button" (click)="refresh.emit()">{{ 'feed.stream.showNew' | translate }}</button>
+  </div>
+
+  <div *ngIf="onboardingVisible()" class="feed-stream__coachmark" role="note">
+    {{ 'feed.stream.onboarding' | translate }}
+    <button type="button" (click)="handleRefresh()">{{ 'feed.stream.onboardingAction' | translate }}</button>
+  </div>
+
+  <og7-feed-composer></og7-feed-composer>
+
+  <div class="feed-stream__filters" *ngIf="hasFilters()">
+    <span class="feed-stream__filters-label">{{ 'feed.stream.filters' | translate }}</span>
+    <ul class="feed-stream__chips">
+      <li *ngIf="selectedProvince()">{{ selectedProvince() }}</li>
+      <li *ngFor="let sector of activeSectors()">{{ sector }}</li>
+      <li *ngFor="let need of needTypes()">#{{ need }}</li>
+    </ul>
+    <button type="button" class="feed-stream__filters-clear" (click)="clearFilters()">
+      {{ 'feed.stream.clearFilters' | translate }}
+    </button>
+  </div>
+
+  <p *ngIf="error()" class="feed-stream__error" role="alert">{{ error() }}</p>
+
+  <ul class="feed-stream__list">
+    <li *ngFor="let post of posts(); trackBy: trackPost">
+      <og7-feed-card
+        [post]="post"
+        (view)="handleViewPost($event)"
+        (reply)="handleViewPost($event)"
+        (share)="handleViewPost($event)"
+        (like)="handleViewPost($event)"
+      ></og7-feed-card>
+    </li>
+  </ul>
+
+  <div #sentinel class="feed-stream__sentinel" aria-hidden="true">
+    <span *ngIf="loading()">{{ 'feed.stream.loading' | translate }}</span>
+  </div>
+
+  <og7-feed-post-drawer
+    [post]="selectedPost()"
+    [open]="!!selectedPost()"
+    (closed)="handleCloseDrawer()"
+  ></og7-feed-post-drawer>
+</section>

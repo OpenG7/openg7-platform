@@ -1,0 +1,61 @@
+<section class="min-h-screen bg-slate-950 pb-16 pt-20 text-yellow-100">
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 items-start gap-8 md:grid-cols-[1fr_280px]">
+      <div class="space-y-6">
+        <header class="space-y-4">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-yellow-400/80">
+            {{ 'partner.profilePage.headerKicker' | translate }}
+          </p>
+          <h1 class="text-3xl font-semibold text-yellow-50 sm:text-4xl">
+            @if (partner(); as entity) {
+              {{ entity.legalName }}
+            } @else if (loading()) {
+              <span class="inline-flex h-8 w-48 animate-pulse rounded bg-white/10"></span>
+            } @else {
+              {{ 'partner.panel.unavailable' | translate }}
+            }
+          </h1>
+          <p class="max-w-2xl text-sm leading-relaxed text-yellow-200/70">
+            @if (mission(); as description) {
+              {{ description }}
+            } @else if (!loading()) {
+              {{ 'partner.profilePage.missionFallback' | translate }}
+            }
+          </p>
+        </header>
+
+        @if (highlights().length) {
+          <section class="space-y-3">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-yellow-300/80">
+              {{ 'partner.profilePage.highlightsTitle' | translate }}
+            </h2>
+            <ul class="space-y-2 text-sm text-yellow-100/80">
+              @for (item of highlights(); track item) {
+                <li class="flex items-start gap-2">
+                  <span class="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-yellow-400"></span>
+                  <span>{{ item }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (!loading() && !partner()) {
+          <p class="rounded-2xl border border-yellow-400/40 bg-slate-900/60 p-4 text-sm text-yellow-200/70">
+            {{ 'partner.profilePage.notFound' | translate }}
+          </p>
+        }
+      </div>
+
+      @if (partnerId(); as id) {
+        <og7-partner-quick-actions [partnerId]="id" [partnerName]="partnerName()"></og7-partner-quick-actions>
+      }
+    </div>
+
+    <section class="rounded-3xl border border-yellow-400/20 bg-slate-900/40 p-6">
+      <p class="text-sm text-yellow-200/70">
+        {{ 'partner.profilePage.placeholderBody' | translate }}
+      </p>
+    </section>
+  </div>
+</section>

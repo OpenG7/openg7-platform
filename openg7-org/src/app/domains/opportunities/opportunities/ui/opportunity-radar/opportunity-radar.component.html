@@ -1,0 +1,157 @@
+<article
+  class="opportunity-radar"
+  [attr.aria-labelledby]="titleId()"
+  [attr.aria-describedby]="scoreId()"
+  [attr.data-score-tone]="scoreTone()"
+>
+  <header class="opportunity-radar__header">
+    <div class="opportunity-radar__headline">
+      <p class="opportunity-radar__eyebrow">{{ 'opportunities.timeline.prototypeLabel' | translate }}</p>
+      <h3 class="opportunity-radar__title" [id]="titleId()">{{ vm().title }}</h3>
+    </div>
+    <div
+      class="opportunity-radar__score"
+      role="img"
+      [id]="scoreId()"
+      [attr.aria-label]="'opportunities.timeline.scoreLabel' | translate:{ value: scoreLabel() }"
+    >
+      <svg viewBox="0 0 72 72" class="opportunity-radar__score-chart" aria-hidden="true">
+        <defs>
+          <linearGradient id="opportunity-radar-score-high" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#34d399" />
+            <stop offset="100%" stop-color="#22d3ee" />
+          </linearGradient>
+          <linearGradient id="opportunity-radar-score-medium" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#fbbf24" />
+            <stop offset="100%" stop-color="#38bdf8" />
+          </linearGradient>
+          <linearGradient id="opportunity-radar-score-low" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f97316" />
+            <stop offset="100%" stop-color="#facc15" />
+          </linearGradient>
+        </defs>
+        <circle class="opportunity-radar__score-track" cx="36" cy="36" r="28"></circle>
+        <circle
+          class="opportunity-radar__score-meter"
+          cx="36"
+          cy="36"
+          r="28"
+          [attr.stroke-dasharray]="175.93"
+          [attr.stroke-dashoffset]="scoreStrokeDashoffset()"
+          [attr.stroke]="scoreStroke()"
+        ></circle>
+      </svg>
+      <span class="opportunity-radar__score-value">{{ scoreLabel() }}</span>
+    </div>
+  </header>
+
+  <section class="opportunity-radar__layout">
+    <div class="opportunity-radar__actors">
+      <div class="opportunity-radar__actor">
+        <p class="opportunity-radar__actor-label">{{ 'opportunities.timeline.buyer' | translate }}</p>
+        <div class="opportunity-radar__actor-body">
+          @if (vm().buyer.logoUrl) {
+            <img
+              class="opportunity-radar__actor-logo"
+              [src]="vm().buyer.logoUrl!"
+              [alt]="vm().buyer.name"
+              loading="lazy"
+              decoding="async"
+            />
+          }
+          <div class="opportunity-radar__actor-content">
+            <p class="opportunity-radar__actor-name">{{ vm().buyer.name }}</p>
+            <div class="opportunity-radar__chips" role="list">
+              <span class="opportunity-radar__chip" role="listitem">{{ vm().buyer.provinceLabelKey | translate }}</span>
+              <span class="opportunity-radar__chip" role="listitem">{{ vm().buyer.sectorLabelKey | translate }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="opportunity-radar__actor opportunity-radar__actor--supplier">
+        <p class="opportunity-radar__actor-label">{{ 'opportunities.timeline.supplier' | translate }}</p>
+        <div class="opportunity-radar__actor-body">
+          <div class="opportunity-radar__actor-content">
+            <p class="opportunity-radar__actor-name">{{ vm().supplier.name }}</p>
+            <div class="opportunity-radar__chips" role="list">
+              <span class="opportunity-radar__chip" role="listitem">{{ vm().supplier.provinceLabelKey | translate }}</span>
+              <span class="opportunity-radar__chip" role="listitem">{{ vm().supplier.sectorLabelKey | translate }}</span>
+            </div>
+          </div>
+          @if (vm().supplier.logoUrl) {
+            <img
+              class="opportunity-radar__actor-logo"
+              [src]="vm().supplier.logoUrl!"
+              [alt]="vm().supplier.name"
+              loading="lazy"
+              decoding="async"
+            />
+          }
+        </div>
+      </div>
+    </div>
+
+    <figure
+      class="opportunity-radar__chart"
+      role="img"
+      [attr.aria-label]="'opportunities.radar.chartLabel' | translate"
+      [attr.aria-describedby]="titleId()"
+    >
+      <svg viewBox="0 0 120 120" class="opportunity-radar__chart-canvas">
+        <defs>
+          <radialGradient id="opportunity-radar-fill" cx="50%" cy="50%" r="75%">
+            <stop offset="0%" stop-color="rgba(45, 212, 191, 0.25)" />
+            <stop offset="100%" stop-color="rgba(56, 189, 248, 0.05)" />
+          </radialGradient>
+        </defs>
+        <g class="opportunity-radar__grid">
+          @for (polygon of gridPolygons(); track polygon) {
+            <polygon class="opportunity-radar__grid-ring" [attr.points]="polygon"></polygon>
+          }
+        </g>
+        <g class="opportunity-radar__axes">
+          @for (axis of axisGeometry(); track axis.id) {
+            <line class="opportunity-radar__axis-line" x1="60" y1="60" [attr.x2]="axis.line.x2" [attr.y2]="axis.line.y2"></line>
+            <circle class="opportunity-radar__axis-node" [attr.cx]="axis.point.x" [attr.cy]="axis.point.y" r="3"></circle>
+          }
+        </g>
+        <polygon class="opportunity-radar__shape" [attr.points]="polygonPoints()"></polygon>
+      </svg>
+      <figcaption class="visually-hidden">{{ 'opportunities.radar.legendHint' | translate }}</figcaption>
+    </figure>
+  </section>
+
+  <section class="opportunity-radar__metrics" [attr.aria-label]="'opportunities.radar.metricsLabel' | translate">
+    <dl class="opportunity-radar__metrics-list">
+      @for (axis of axisGeometry(); track axis.id) {
+        <div class="opportunity-radar__metric" [attr.data-axis-id]="axis.id">
+          <dt class="opportunity-radar__metric-label">{{ axis.labelKey | translate }}</dt>
+          <dd class="opportunity-radar__metric-value">
+            <span class="opportunity-radar__metric-score">{{ axis.value }}%</span>
+            @if (axis.detail) {
+              <span class="opportunity-radar__metric-detail">{{ axis.detail }}</span>
+            }
+          </dd>
+        </div>
+      }
+    </dl>
+  </section>
+
+  <footer class="opportunity-radar__actions">
+    <button
+      type="button"
+      class="opportunity-radar__action opportunity-radar__action--primary"
+      (click)="emitViewSheet()"
+    >
+      {{ 'opportunities.timeline.viewSheet' | translate }}
+    </button>
+    <button
+      type="button"
+      class="opportunity-radar__action opportunity-radar__action--secondary"
+      (click)="emitConnect()"
+    >
+      {{ 'opportunities.timeline.connect' | translate }}
+    </button>
+  </footer>
+</article>

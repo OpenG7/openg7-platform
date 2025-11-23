@@ -1,0 +1,40 @@
+<ng-container *ngIf="modal() as state">
+  <div
+    class="fixed inset-0 z-[1050]"
+    role="dialog"
+    [attr.aria-modal]="true"
+    [attr.aria-label]="state.options.ariaLabel ?? null"
+  >
+    <div
+      class="absolute inset-0 transition-opacity"
+      *ngIf="state.options.backdrop"
+      [ngClass]="backdropClasses(state)"
+      (click)="onBackdrop(state)"
+      aria-hidden="true"
+    ></div>
+
+    <div
+      class="absolute inset-0 flex px-4 py-8 sm:px-6"
+      [ngClass]="positionClasses(state)"
+      (click)="onContainerClick(state)"
+    >
+      <div
+        class="pointer-events-auto w-full"
+        [ngClass]="panelClasses(state)"
+        [ngStyle]="panelStyles(state)"
+        (click)="$event.stopPropagation()"
+      >
+        <ng-container *ngIf="asTemplate(state) as tpl; else componentTpl">
+          <ng-container *ngTemplateOutlet="tpl; context: state.context"></ng-container>
+        </ng-container>
+        <ng-template #componentTpl>
+          <ng-container *ngIf="asComponent(state) as componentType">
+            <ng-container
+              *ngComponentOutlet="componentType; injector: childInjector(state)"
+            ></ng-container>
+          </ng-container>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</ng-container>

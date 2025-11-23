@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+[data-og7='statistics-snapshot'] {
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.25);
+}
+
+[data-og7='statistics-filter-bar'] button {
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}

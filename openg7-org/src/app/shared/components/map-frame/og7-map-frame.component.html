@@ -1,0 +1,39 @@
+<div
+  #container
+  class="og7-map-frame__container"
+  (pointermove)="handlePointerMove($event)"
+  (pointerleave)="resetTilt()"
+  (pointercancel)="resetTilt()"
+>
+  <div class="og7-map-frame__halo"></div>
+  <div
+    class="og7-map-frame__tilt"
+    [class.og7-map-frame__tilt--active]="tiltActive()"
+    [style.transform]="tiltTransform()"
+  >
+    <div class="og7-map-frame__surface">
+      <div class="og7-map-frame__content">
+        <ng-content></ng-content>
+      </div>
+      <svg
+        class="og7-map-frame__wave"
+        viewBox="0 0 1600 200"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <defs>
+          <linearGradient [attr.id]="waveGradientId" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2563eb" stop-opacity="0.35"></stop>
+            <stop offset="65%" stop-color="#2563eb" stop-opacity="0.12"></stop>
+            <stop offset="100%" stop-color="#2563eb" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+        <path
+          d="M0,60 C180,120 420,20 800,110 C1180,200 1380,80 1600,130 L1600,200 L0,200 Z"
+          [attr.fill]="'url(#' + waveGradientId + ')'"
+        ></path>
+      </svg>
+    </div>
+  </div>
+</div>

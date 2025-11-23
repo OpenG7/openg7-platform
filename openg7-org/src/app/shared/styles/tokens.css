@@ -1,0 +1,93 @@
+:root {
+  color-scheme: light;
+  --og7-font-family-base: 'Inter', 'Roboto', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --og7-color-page: #f8fafc;
+  --og7-color-surface: #ffffff;
+  --og7-color-surface-muted: #f1f5f9;
+  --og7-color-card: #ffffff;
+  --og7-color-card-hover: #f8fbff;
+  --og7-color-border: rgba(148, 163, 184, 0.28);
+  --og7-ring-color: rgba(148, 163, 184, 0.38);
+  --og7-ring-focus: rgba(37, 99, 235, 0.35);
+
+  --og7-color-title: #0f172a;
+  --og7-color-body: #334155;
+  --og7-color-subtle: #64748b;
+
+  --og7-color-primary: #2563eb;
+  --og7-color-on-primary: #ffffff;
+  --og7-color-primary-soft: rgba(37, 99, 235, 0.12);
+
+  --og7-color-tertiary: #38bdf8;
+  --og7-color-on-tertiary: #0f172a;
+  --og7-color-tertiary-soft: rgba(56, 189, 248, 0.12);
+
+  --og7-color-success: #16a34a;
+  --og7-color-warning: #f59e0b;
+  --og7-color-error: #ef4444;
+  --og7-color-national: #b91c1c;
+
+  --og7-color-divider: rgba(148, 163, 184, 0.24);
+
+  --og7-shadow-e1: 0 32px 90px -48px rgba(15, 23, 42, 0.25);
+  --og7-shadow-card: 0 24px 64px -40px rgba(15, 23, 42, 0.18);
+
+  --md-sys-color-primary: var(--og7-color-primary);
+  --md-sys-color-on-primary: var(--og7-color-on-primary);
+  --md-sys-color-surface: var(--og7-color-surface);
+  --md-sys-color-on-surface: var(--og7-color-title);
+  --md-sys-color-tertiary: var(--og7-color-tertiary);
+  --md-sys-color-on-tertiary: var(--og7-color-on-tertiary);
+  --md-sys-color-success: var(--og7-color-success);
+  --md-sys-color-warning: var(--og7-color-warning);
+  --md-sys-color-error: var(--og7-color-error);
+}
+
+.dark {
+  color-scheme: dark;
+  --og7-color-page: #0f172a;
+  --og7-color-surface: #111827;
+  --og7-color-surface-muted: #1e293b;
+  --og7-color-card: #1f2937;
+  --og7-color-card-hover: #273449;
+  --og7-color-border: rgba(148, 163, 184, 0.35);
+  --og7-ring-color: rgba(56, 189, 248, 0.45);
+  --og7-ring-focus: rgba(56, 189, 248, 0.55);
+
+  --og7-color-title: #e2e8f0;
+  --og7-color-body: #cbd5f5;
+  --og7-color-subtle: #94a3b8;
+
+  --og7-color-primary: #3b82f6;
+  --og7-color-on-primary: #0b1120;
+  --og7-color-primary-soft: rgba(59, 130, 246, 0.18);
+
+  --og7-color-tertiary: #38bdf8;
+  --og7-color-on-tertiary: #02121f;
+  --og7-color-tertiary-soft: rgba(56, 189, 248, 0.2);
+
+  --og7-color-success: #22c55e;
+  --og7-color-warning: #fbbf24;
+  --og7-color-error: #f87171;
+  --og7-color-national: #f87171;
+
+  --og7-color-divider: rgba(51, 65, 85, 0.65);
+
+  --og7-shadow-e1: 0 32px 80px -45px rgba(2, 6, 23, 0.65);
+  --og7-shadow-card: 0 18px 64px -40px rgba(2, 6, 23, 0.6);
+
+  --md-sys-color-primary: var(--og7-color-primary);
+  --md-sys-color-on-primary: var(--og7-color-on-primary);
+  --md-sys-color-surface: var(--og7-color-surface);
+  --md-sys-color-on-surface: var(--og7-color-title);
+  --md-sys-color-tertiary: var(--og7-color-tertiary);
+  --md-sys-color-on-tertiary: var(--og7-color-on-tertiary);
+  --md-sys-color-success: var(--og7-color-success);
+  --md-sys-color-warning: var(--og7-color-warning);
+  --md-sys-color-error: var(--og7-color-error);
+}
+
+:root, .dark {
+  --og7-transition-base: 160ms ease;
+}

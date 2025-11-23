@@ -1,0 +1,190 @@
+<section
+  class="mx-auto flex w-full max-w-md flex-col gap-6 rounded-xl bg-white/70 p-6 shadow-sm ring-1 ring-slate-100 backdrop-blur dark:bg-slate-900/40 dark:ring-slate-800"
+  data-og7="auth-login-shell"
+>
+  <header class="flex flex-col gap-3" data-og7="auth-login-header">
+    <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-50">
+      {{ 'auth.login.title' | translate }}
+    </h1>
+    <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+      {{ loginSubtitleKey() | translate }}
+    </p>
+    <div
+      class="flex flex-col gap-1 rounded-lg border border-indigo-100 bg-indigo-50/70 p-4 text-xs text-indigo-700 dark:border-indigo-500/40 dark:bg-indigo-500/10 dark:text-indigo-200"
+      data-og7="auth-login-security-note"
+    >
+      <span class="font-semibold uppercase tracking-wide text-[0.75rem]">
+        {{ 'auth.login.securityTitle' | translate }}
+      </span>
+      <span>{{ 'auth.login.securityCopy' | translate }}</span>
+    </div>
+  </header>
+
+  @if (authMode() === 'sso-only') {
+    <section
+      class="flex flex-col gap-4 rounded-lg border border-slate-200 bg-slate-50/60 p-4 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-200"
+      data-og7="auth-login-sso-helper"
+    >
+      <p class="font-medium">
+        {{ 'auth.login.ssoOnlyHelperTitle' | translate }}
+      </p>
+      <p class="leading-relaxed">
+        {{ 'auth.login.ssoOnlyHelperBody' | translate }}
+      </p>
+      <a
+        class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 dark:text-indigo-300 dark:hover:text-indigo-200"
+        [routerLink]="['/faq']"
+        fragment="sso"
+        data-og7="auth-login-sso-helper-link"
+      >
+        {{ 'auth.login.ssoOnlyHelperCta' | translate }}
+      </a>
+    </section>
+  }
+
+  @if (authMode() !== 'local-only') {
+    <og7-social-auth-buttons [disabled]="loading()" [redirectUrl]="redirectTarget()" />
+  }
+
+  @if (authMode() === 'hybrid') {
+    <div class="text-center text-xs font-medium uppercase tracking-wider text-slate-400" data-og7="auth-login-divider">
+      {{ 'auth.or' | translate }}
+    </div>
+  }
+
+  <div
+    class="min-h-[3rem] rounded-lg border border-transparent bg-transparent px-4 py-3 text-sm text-red-600 empty:hidden dark:text-red-300"
+    aria-live="assertive"
+    role="alert"
+    data-og7="auth-login-api-error"
+  >
+    @if (apiError(); as error) {
+      {{ error | translate }}
+    }
+  </div>
+
+  @if (authMode() !== 'sso-only') {
+    <form
+      [formGroup]="form"
+      data-og7="auth-login"
+      (ngSubmit)="onSubmit()"
+      novalidate
+      class="flex flex-col gap-5"
+    >
+      <div class="flex flex-col gap-2">
+        <label
+          class="text-sm font-medium text-slate-700 dark:text-slate-200"
+          for="auth-login-email"
+        >
+          {{ 'auth.email' | translate }}
+        </label>
+        <input
+          id="auth-login-email"
+          type="email"
+          formControlName="email"
+          #emailInput
+          inputmode="email"
+          autocomplete="username"
+          [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          [attr.aria-describedby]="form.controls.email.invalid ? emailErrorId : null"
+          class="h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <p
+            class="text-sm text-red-600"
+            [id]="emailErrorId"
+            data-og7="auth-login-email-error"
+            role="alert"
+            aria-live="polite"
+          >
+            @if (form.controls.email.hasError('required')) {
+              {{ 'auth.errors.emailRequired' | translate }}
+            } @else {
+              {{ 'auth.errors.emailInvalid' | translate }}
+            }
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label
+          class="text-sm font-medium text-slate-700 dark:text-slate-200"
+          for="auth-login-password"
+        >
+          {{ 'auth.password' | translate }}
+        </label>
+        <div class="relative flex items-center">
+          <input
+            id="auth-login-password"
+            [type]="passwordVisible() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+            [attr.aria-describedby]="form.controls.password.invalid ? passwordErrorId : null"
+            class="h-12 w-full rounded-lg border border-slate-300 bg-white px-4 pr-12 text-base text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
+          />
+          <button
+            type="button"
+            class="absolute inset-y-1 right-1 inline-flex h-10 items-center justify-center rounded-md px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 dark:text-slate-300 dark:hover:bg-slate-800"
+            (click)="togglePasswordVisibility()"
+            [disabled]="loading()"
+            [attr.aria-label]="
+              passwordVisible()
+                ? ('auth.passwordToggle.hide' | translate)
+                : ('auth.passwordToggle.show' | translate)
+            "
+            [attr.aria-pressed]="passwordVisible()"
+          >
+            {{
+              passwordVisible()
+                ? ('auth.passwordToggle.hide' | translate)
+                : ('auth.passwordToggle.show' | translate)
+            }}
+          </button>
+        </div>
+        @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+          <p
+            class="text-sm text-red-600"
+            [id]="passwordErrorId"
+            data-og7="auth-login-password-error"
+            role="alert"
+            aria-live="polite"
+          >
+            {{ 'auth.errors.passwordRequired' | translate }}
+          </p>
+        }
+      </div>
+
+      <div class="flex items-center justify-between text-sm">
+        <a
+          [routerLink]="['/faq']"
+          fragment="auth-support"
+          class="font-medium text-slate-500 underline-offset-2 transition hover:text-slate-700 hover:underline dark:text-slate-300 dark:hover:text-slate-200"
+          data-og7="auth-login-help-link"
+        >
+          {{ 'auth.login.helpLink' | translate }}
+        </a>
+        <a
+          routerLink="/forgot-password"
+          class="font-medium text-indigo-600 underline-offset-2 transition hover:text-indigo-700 hover:underline dark:text-indigo-300 dark:hover:text-indigo-200"
+          data-og7="auth-login-forgot-link"
+        >
+          {{ 'auth.forgotPassword.link' | translate }}
+        </a>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="loading()"
+        data-og7="auth-login-submit"
+        class="btn-primary h-12 w-full justify-center rounded-lg text-base"
+      >
+        @if (loading()) {
+          {{ 'auth.login.loading' | translate }}
+        } @else {
+          {{ 'auth.login.submit' | translate }}
+        }
+      </button>
+    </form>
+  }
+</section>

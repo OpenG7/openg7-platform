@@ -1,0 +1,59 @@
+<div class="grid gap-4 md:gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+  <button
+    type="button"
+    class="group relative flex h-full flex-col justify-between gap-6 rounded-3xl bg-gradient-to-r from-[#2563eb] via-[#2d9bf4] to-[#38bdf8] px-6 py-6 text-left text-white shadow-e1 transition-transform focus-outline disabled:cursor-not-allowed disabled:opacity-70"
+    [disabled]="disabled() || creating()"
+    (click)="sendIntro.emit()"
+    [attr.aria-busy]="creating()"
+  >
+    <div class="space-y-3">
+      <p class="text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-white/80">
+        {{ ready() ? ('introBillboard.ctaReady' | translate) : ('introBillboard.ctaPrepare' | translate) }}
+      </p>
+      <p class="text-2xl font-semibold leading-tight">
+        {{ creating() ? ('introBillboard.ctaSending' | translate) : ('cta.sendIntro' | translate) }}
+      </p>
+    </div>
+    <div class="flex flex-col items-end gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/90">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1">
+        <span [ngClass]="statusDotClass()"></span>
+        {{ statusLabel() | translate }}
+      </span>
+      @if (success()) {
+        <span class="text-[0.7rem] text-white/90">{{ 'introBillboard.ctaSent' | translate }}</span>
+      }
+    </div>
+  </button>
+
+  <button
+    type="button"
+    class="flex h-full flex-col justify-between gap-3 rounded-3xl bg-card px-5 py-5 text-left text-body ring-card shadow-card card-hover focus-outline focus-visible:outline-offset-2"
+    (click)="proposeSlots.emit()"
+  >
+    <div class="flex items-center justify-between gap-2">
+      <p class="text-sm font-semibold text-title">{{ 'cta.proposeSlots' | translate }}</p>
+      <span class="badge-tertiary">{{ slotsLabel() }}</span>
+    </div>
+    <p class="text-xs text-subtle">{{ 'introBillboard.ctaSlotsHint' | translate }}</p>
+    <div class="mt-2 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.24em] text-subtle">
+      <span class="inline-flex h-2 w-2 rounded-full" style="background-color:#16a34a"></span>
+      <span>{{ 'introBillboard.pipelineActive' | translate }}</span>
+    </div>
+  </button>
+
+  <button
+    type="button"
+    class="flex h-full flex-col justify-between gap-3 rounded-3xl bg-card px-5 py-5 text-left text-body ring-card shadow-card card-hover focus-outline focus-visible:outline-offset-2"
+    (click)="toggleAttachments.emit()"
+  >
+    <div class="flex items-center justify-between gap-2">
+      <p class="text-sm font-semibold text-title">{{ 'cta.attach' | translate }}</p>
+      <span class="badge-tertiary">{{ attachmentsLabel() }}</span>
+    </div>
+    <p class="text-xs text-subtle">{{ 'introBillboard.ctaDocsHint' | translate }}</p>
+    <div class="mt-2 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.24em] text-subtle">
+      <span class="inline-flex h-2 w-2 rounded-full" style="background-color:#2563eb"></span>
+      <span>{{ 'attachments.title' | translate }}</span>
+    </div>
+  </button>
+</div>

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "openg7-org/src/app/core",
+    "openg7-org/src/app/shared"
+  ],
+  "entryPointStrategy": "expand",
+  "out": "docs/reference/core",
+  "tsconfig": "openg7-org/tsconfig.typedoc.json",
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "openg7-org/src/app/**/testing/**",
+    "openg7-org/src/app/**/*.stories.ts"
+  ],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "skipErrorChecking": true
+}

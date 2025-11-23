@@ -1,0 +1,345 @@
+<form class="flex flex-col gap-8" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900 shadow-sm">
+    {{ 'registration.foreignBanner' | translate }}
+  </div>
+
+  <section class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <label class="block md:col-span-2">
+      <span class="mb-1 block text-sm font-semibold text-slate-700">
+        {{ 'registration.legalName' | translate }}
+      </span>
+      <input
+        type="text"
+        formControlName="legalName"
+        class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        placeholder="Entreprise SA / Inc."
+      />
+      @if (form.controls.legalName.touched && form.controls.legalName.invalid) {
+        <p class="mt-1 text-xs text-red-600">
+          @if (form.controls.legalName.hasError('required')) {
+            {{ 'validation.required' | translate }}
+          } @else if (form.controls.legalName.hasError('minlength')) {
+            {{
+              'validation.minLength' | translate: {
+                min: form.controls.legalName.getError('minlength')?.requiredLength ?? 2
+              }
+            }}
+          }
+        </p>
+      }
+    </label>
+
+    <label class="block">
+      <span class="mb-1 block text-sm font-semibold text-slate-700">
+        {{ 'registration.website' | translate }}
+      </span>
+      <input
+        type="url"
+        formControlName="website"
+        class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        placeholder="https://example.com"
+      />
+      @if (form.controls.website.touched && form.controls.website.errors?.['url']) {
+        <p class="mt-1 text-xs text-red-600">{{ 'validation.url' | translate }}</p>
+      }
+    </label>
+
+    <label class="block">
+      <span class="mb-1 block text-sm font-semibold text-slate-700">
+        {{ 'registration.hqCountry' | translate }}
+      </span>
+      <select
+        formControlName="headquarterCountry"
+        class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+      >
+        @for (country of countries(); track country) {
+          <option [value]="country">{{ country }}</option>
+        }
+      </select>
+      @if (form.controls.headquarterCountry.touched && form.controls.headquarterCountry.errors?.['isoCountry']) {
+        <p class="mt-1 text-xs text-red-600">{{ 'validation.isoCountry' | translate }}</p>
+      }
+    </label>
+
+    @if (isCanada()) {
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.hqProvince' | translate }}
+        </span>
+        <select
+          formControlName="headquarterProvince"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        >
+          <option value="" disabled>
+            {{ 'registration.selectProvince' | translate }}
+          </option>
+          @for (province of provinces(); track province) {
+            <option [value]="province">{{ province }}</option>
+          }
+        </select>
+        @if (form.controls.headquarterProvince.touched && form.controls.headquarterProvince.invalid) {
+          <p class="mt-1 text-xs text-red-600">{{ 'validation.required' | translate }}</p>
+        }
+      </label>
+    }
+  </section>
+
+  <section class="space-y-3">
+    <span class="block text-sm font-semibold text-slate-700">
+      {{ 'registration.tradeScope' | translate }}
+    </span>
+    <div class="flex flex-wrap gap-3">
+      <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium shadow-sm transition hover:border-cyan-400 focus-within:border-cyan-500">
+        <input type="radio" formControlName="tradeScope" value="canada" class="size-4" />
+        <span>{{ 'registration.scope_canada' | translate }}</span>
+      </label>
+      <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium shadow-sm transition hover:border-cyan-400 focus-within:border-cyan-500">
+        <input type="radio" formControlName="tradeScope" value="international" class="size-4" />
+        <span>{{ 'registration.scope_international' | translate }}</span>
+      </label>
+      <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium shadow-sm transition hover:border-cyan-400 focus-within:border-cyan-500">
+        <input type="radio" formControlName="tradeScope" value="both" class="size-4" />
+        <span>{{ 'registration.scope_both' | translate }}</span>
+      </label>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    @if (scope() === 'canada' || scope() === 'both') {
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.provincesServed' | translate }}
+        </span>
+        <select
+          multiple
+          formControlName="provincesServed"
+          class="h-44 w-full rounded-2xl border border-slate-300 p-3 text-sm shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        >
+          @for (province of provinces(); track province) {
+            <option [value]="province">{{ province }}</option>
+          }
+        </select>
+        @if (form.controls.provincesServed.touched && form.controls.provincesServed.invalid) {
+          <p class="mt-1 text-xs text-red-600">{{ 'validation.required' | translate }}</p>
+        }
+      </label>
+    }
+
+    @if (scope() === 'international' || scope() === 'both') {
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.countriesServed' | translate }}
+        </span>
+        <select
+          multiple
+          formControlName="countriesServed"
+          class="h-44 w-full rounded-2xl border border-slate-300 p-3 text-sm shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        >
+          @for (country of countries(); track country) {
+            <option [value]="country">{{ country }}</option>
+          }
+        </select>
+        @if (form.controls.countriesServed.touched && form.controls.countriesServed.invalid) {
+          <p class="mt-1 text-xs text-red-600">{{ 'validation.required' | translate }}</p>
+        }
+      </label>
+    }
+  </section>
+
+  <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <label class="block">
+      <span class="mb-1 block text-sm font-semibold text-slate-700">
+        {{ 'registration.sector' | translate }}
+      </span>
+      <input
+        type="text"
+        formControlName="sector"
+        class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        placeholder="{{ 'registration.sectorPlaceholder' | translate }}"
+      />
+      @if (form.controls.sector.touched && form.controls.sector.invalid) {
+        <p class="mt-1 text-xs text-red-600">{{ 'validation.required' | translate }}</p>
+      }
+    </label>
+
+    <label class="block">
+      <span class="mb-1 block text-sm font-semibold text-slate-700">
+        {{ 'registration.description' | translate }}
+      </span>
+      <textarea
+        rows="4"
+        formControlName="description"
+        class="w-full rounded-2xl border border-slate-300 p-3 text-sm shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        placeholder="{{ 'registration.descriptionHint' | translate }}"
+      ></textarea>
+    </label>
+  </section>
+
+  <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <label class="block md:col-span-2">
+      <span class="mb-1 block text-sm font-semibold text-slate-700">
+        {{ 'registration.capacityNote' | translate }}
+      </span>
+      <textarea
+        rows="3"
+        formControlName="capacityNote"
+        class="w-full rounded-2xl border border-slate-300 p-3 text-sm shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        placeholder="{{ 'registration.capacityHint' | translate }}"
+      ></textarea>
+    </label>
+  </section>
+
+  @if (!isCanada()) {
+    <section class="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-2">
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.foreignRegistrationId' | translate }}
+        </span>
+        <input
+          type="text"
+          formControlName="foreignRegistrationId"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          placeholder="VAT / Reg. number"
+        />
+      </label>
+      <div class="flex flex-col gap-2">
+        <span class="text-sm font-semibold text-slate-700">
+          {{ 'registration.canadianRep' | translate }}
+        </span>
+        <input
+          type="text"
+          formControlName="canadianRepresentative_name"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          placeholder="{{ 'registration.fullName' | translate }}"
+        />
+        <input
+          type="email"
+          formControlName="canadianRepresentative_email"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          placeholder="{{ 'registration.email' | translate }}"
+        />
+        @if (
+          form.controls.canadianRepresentative_email.touched &&
+          form.controls.canadianRepresentative_email.invalid
+        ) {
+          <p class="text-xs text-red-600">{{ 'validation.email' | translate }}</p>
+        }
+      </div>
+    </section>
+  }
+
+  <section class="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-white/70 p-4 md:grid-cols-2">
+    <div class="space-y-3">
+      <h2 class="text-base font-semibold text-slate-800">
+        {{ 'registration.contactSection' | translate }}
+      </h2>
+      <p class="text-sm text-slate-600">{{ 'registration.contactHint' | translate }}</p>
+    </div>
+    <div class="grid grid-cols-1 gap-3">
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.contact_fullName' | translate }}
+        </span>
+        <input
+          type="text"
+          formControlName="contact_fullName"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          placeholder="{{ 'registration.fullName' | translate }}"
+        />
+        @if (form.controls.contact_fullName.touched && form.controls.contact_fullName.invalid) {
+          <p class="mt-1 text-xs text-red-600">
+            @if (form.controls.contact_fullName.hasError('required')) {
+              {{ 'validation.required' | translate }}
+            } @else {
+              {{
+                'validation.minLength' | translate: {
+                  min: form.controls.contact_fullName.getError('minlength')?.requiredLength ?? 2
+                }
+              }}
+            }
+          </p>
+        }
+      </label>
+
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.contact_role' | translate }}
+        </span>
+        <input
+          type="text"
+          formControlName="contact_role"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          placeholder="{{ 'registration.rolePlaceholder' | translate }}"
+        />
+        @if (form.controls.contact_role.touched && form.controls.contact_role.invalid) {
+          <p class="mt-1 text-xs text-red-600">{{ 'validation.required' | translate }}</p>
+        }
+      </label>
+
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.contact_email' | translate }}
+        </span>
+        <input
+          type="email"
+          formControlName="contact_email"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          placeholder="contact@example.com"
+        />
+        @if (form.controls.contact_email.touched && form.controls.contact_email.invalid) {
+          <p class="mt-1 text-xs text-red-600">
+            @if (form.controls.contact_email.hasError('required')) {
+              {{ 'validation.required' | translate }}
+            } @else {
+              {{ 'validation.email' | translate }}
+            }
+          </p>
+        }
+      </label>
+
+      <label class="block">
+        <span class="mb-1 block text-sm font-semibold text-slate-700">
+          {{ 'registration.contact_phone' | translate }}
+        </span>
+        <input
+          type="tel"
+          formControlName="contact_phone"
+          class="w-full rounded-2xl border border-slate-300 p-3 text-base shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          placeholder="+1 514 555 1234"
+        />
+        @if (form.controls.contact_phone.touched && form.controls.contact_phone.errors?.['caPhone']) {
+          <p class="mt-1 text-xs text-red-600">{{ 'validation.caPhone' | translate }}</p>
+        }
+      </label>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <label class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
+      <input type="checkbox" formControlName="acceptedTerms" class="mt-1 size-5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500" />
+      <span>
+        {{ 'registration.acceptedTerms' | translate }}
+        <a routerLink="/privacy" class="text-cyan-600 underline underline-offset-2 hover:text-cyan-500">
+          {{ 'registration.privacyLink' | translate }}
+        </a>
+        {{ 'registration.and' | translate }}
+        <a routerLink="/terms" class="text-cyan-600 underline underline-offset-2 hover:text-cyan-500">
+          {{ 'registration.termsLink' | translate }}
+        </a>
+      </span>
+    </label>
+    @if (form.controls.acceptedTerms.touched && form.controls.acceptedTerms.invalid) {
+      <p class="text-xs text-red-600">{{ 'validation.required' | translate }}</p>
+    }
+  </section>
+
+  <div class="flex items-center justify-end gap-3">
+    <button
+      type="submit"
+      class="inline-flex items-center justify-center rounded-2xl bg-cyan-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-400"
+      [disabled]="form.invalid"
+    >
+      {{ 'registration.submit' | translate }}
+    </button>
+  </div>
+</form>

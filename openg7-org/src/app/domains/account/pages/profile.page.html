@@ -1,0 +1,224 @@
+<section class="mx-auto flex w-full max-w-4xl flex-col gap-6 p-6" data-og7="user-profile">
+  <header class="flex flex-col gap-2" data-og7="user-profile-header">
+    <h1 class="text-3xl font-semibold text-slate-900">
+      {{ 'auth.profile.title' | translate }}
+    </h1>
+    <p class="text-sm text-slate-600">
+      {{ 'auth.profile.subtitle' | translate }}
+    </p>
+    @if (profile(); as current) {
+      <p class="text-sm text-slate-500" data-og7="user-profile-email">
+        {{ current.email }}
+      </p>
+    }
+  </header>
+
+  @if (loading()) {
+    <p class="text-sm text-slate-500">
+      {{ 'auth.profile.loading' | translate }}
+    </p>
+  } @else {
+    <form
+      class="flex flex-col gap-8"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      novalidate
+    >
+      <section class="flex flex-col gap-4" data-og7="user-profile-avatar">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-200">
+            @if (avatarPreview(); as avatarUrl) {
+              <img [src]="avatarUrl" [alt]="'auth.profile.avatar.alt' | translate" class="h-full w-full object-cover" />
+            } @else {
+              @if (profile(); as current) {
+                <span class="text-lg font-semibold uppercase text-slate-500">
+                  {{ buildInitials(current) }}
+                </span>
+              }
+            }
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700" for="profile-avatar-url">
+              {{ 'auth.profile.avatar.label' | translate }}
+            </label>
+            <input
+              id="profile-avatar-url"
+              type="url"
+              class="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="avatarUrl"
+              placeholder="{{ 'auth.profile.avatar.placeholder' | translate }}"
+              autocomplete="url"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-4" data-og7="user-profile-contact">
+        <h2 class="text-lg font-semibold text-slate-900">
+          {{ 'auth.profile.contact.title' | translate }}
+        </h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-first-name">
+              {{ 'auth.profile.contact.firstName' | translate }}
+            </label>
+            <input
+              id="profile-first-name"
+              type="text"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="firstName"
+              autocomplete="given-name"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-last-name">
+              {{ 'auth.profile.contact.lastName' | translate }}
+            </label>
+            <input
+              id="profile-last-name"
+              type="text"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="lastName"
+              autocomplete="family-name"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-job-title">
+              {{ 'auth.profile.contact.jobTitle' | translate }}
+            </label>
+            <input
+              id="profile-job-title"
+              type="text"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="jobTitle"
+              autocomplete="organization-title"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-organization">
+              {{ 'auth.profile.contact.organization' | translate }}
+            </label>
+            <input
+              id="profile-organization"
+              type="text"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="organization"
+              autocomplete="organization"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-phone">
+              {{ 'auth.profile.contact.phone' | translate }}
+            </label>
+            <input
+              id="profile-phone"
+              type="tel"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="phone"
+              autocomplete="tel"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-email">
+              {{ 'auth.profile.contact.email' | translate }}
+            </label>
+            <input
+              id="profile-email"
+              type="email"
+              class="rounded border border-slate-300 bg-slate-100 px-3 py-2 text-sm"
+              formControlName="email"
+              readonly
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-4" data-og7="user-profile-preferences">
+        <h2 class="text-lg font-semibold text-slate-900">
+          {{ 'auth.profile.preferences.title' | translate }}
+        </h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-sectors">
+              {{ 'auth.profile.preferences.sectors' | translate }}
+            </label>
+            <input
+              id="profile-sectors"
+              type="text"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="sectorPreferences"
+              placeholder="energy, manufacturing"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-slate-700" for="profile-provinces">
+              {{ 'auth.profile.preferences.provinces' | translate }}
+            </label>
+            <input
+              id="profile-provinces"
+              type="text"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="provincePreferences"
+              placeholder="qc, on"
+            />
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4"
+          data-og7="user-profile-notifications"
+        >
+          <label class="flex items-start gap-3" for="profile-email-notifications">
+            <input
+              id="profile-email-notifications"
+              type="checkbox"
+              class="mt-1 h-4 w-4 rounded border-slate-400"
+              formControlName="emailNotifications"
+            />
+            <span class="space-y-1">
+              <span class="block text-sm font-semibold text-slate-900">
+                {{ 'auth.profile.preferences.email.title' | translate }}
+              </span>
+              <span class="block text-sm text-slate-600">
+                {{ 'auth.profile.preferences.email.description' | translate }}
+              </span>
+            </span>
+          </label>
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-xs font-medium uppercase tracking-wide text-slate-500"
+              for="profile-notification-webhook"
+            >
+              {{ 'auth.profile.preferences.email.webhookLabel' | translate }}
+            </label>
+            <input
+              id="profile-notification-webhook"
+              type="url"
+              class="rounded border border-slate-300 px-3 py-2 text-sm"
+              formControlName="notificationWebhook"
+              placeholder="https://cms.example.com/api/notifications/email"
+              [disabled]="!form.controls.emailNotifications.value"
+              autocomplete="url"
+            />
+            <p class="text-xs text-slate-500">
+              {{ 'auth.profile.preferences.email.webhookHelp' | translate }}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="flex justify-end gap-3">
+        <button
+          type="submit"
+          class="inline-flex items-center rounded bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          [disabled]="saving()"
+        >
+          @if (saving()) {
+            {{ 'auth.profile.saving' | translate }}
+          } @else {
+            {{ 'auth.profile.save' | translate }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>

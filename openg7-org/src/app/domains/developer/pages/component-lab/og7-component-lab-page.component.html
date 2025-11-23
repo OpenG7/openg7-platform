@@ -1,0 +1,270 @@
+<section class="min-h-screen bg-surface-primary text-neutral-900">
+  <div class="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12">
+    <header class="space-y-6">
+      <div class="space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-500">Laboratoire</p>
+        <h1 class="text-3xl font-bold">Composants UI (mock data)</h1>
+        <p class="text-sm text-neutral-600">
+          Sélectionnez un composant pour l'afficher isolément avec ses données de démonstration.
+        </p>
+      </div>
+
+      <label class="block space-y-3">
+        <span class="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">Composant</span>
+        <div class="rounded-lg border border-neutral-200 bg-white shadow-sm">
+          <select
+            class="w-full appearance-none rounded-lg border-0 bg-transparent px-4 py-3 text-base font-medium text-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            [value]="selectedDemo()"
+            (change)="onSelectDemo($event)"
+          >
+            <option *ngFor="let option of demoOptions" [value]="option.id">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+        <p class="text-sm text-neutral-500">{{ selectedDescription() }}</p>
+      </label>
+    </header>
+
+    <section [ngSwitch]="selectedDemo()">
+      <ng-container *ngSwitchCase="'search-field'">
+        <div class="space-y-6 rounded-3xl bg-white p-6 shadow-lg">
+          <header class="space-y-2">
+            <h2 class="text-2xl font-semibold text-neutral-900">Filtre et actions</h2>
+            <p class="text-sm text-neutral-600">
+              Le champ de recherche met à jour dynamiquement un tableau Material et déclenche des actions dédiées.
+            </p>
+          </header>
+
+          <div class="space-y-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+            <span class="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">Filtrer les entreprises</span>
+            <og7-search-field ariaLabel="Filtrer les entreprises" (searchChanged)="applyFilter($event)"></og7-search-field>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-neutral-200">
+            <table mat-table [dataSource]="companies" class="min-w-full divide-y divide-neutral-200 text-sm text-neutral-800">
+              <ng-container matColumnDef="name">
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  class="bg-neutral-50 px-4 py-2 text-left text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500"
+                >
+                  Nom
+                </th>
+                <td mat-cell *matCellDef="let row" class="px-4 py-3 font-medium">{{ row.name }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+
+          <div class="space-y-2 rounded-2xl border border-dashed border-primary-200 bg-primary-50 p-4 text-sm text-primary-900">
+            <span class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-500">Dernière action</span>
+            <og7-search-field
+              ariaLabel="Valider une recherche"
+              (searchCommitted)="commitSearch($event)"
+            ></og7-search-field>
+            <p>
+              Valeur transmise :
+              <span class="font-semibold">{{ lastCommittedSearch() ?? '—' }}</span>
+            </p>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'intro-stepper'">
+        <div class="space-y-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-lg">
+          <header class="space-y-2 text-center">
+            <h2 class="text-2xl font-semibold text-neutral-900">Flux d'introduction simulé</h2>
+            <p class="text-sm text-neutral-600">
+              Chaque étape est préremplie avec des données fictives pour parcourir rapidement le scénario complet.
+            </p>
+          </header>
+
+          <og7-intro-stepper
+            #introStepper="og7IntroStepper"
+            class="w-full"
+            [messageTemplate]="messageTemplate"
+            [complianceTemplate]="complianceTemplate"
+            [schedulerTemplate]="schedulerTemplate"
+            [logisticsTemplate]="logisticsTemplate"
+            [pipelineTemplate]="pipelineTemplate"
+            [financingTemplate]="financingTemplate"
+            [pipelineSteps]="pipelineSteps"
+            [financingData]="financingBanner"
+          ></og7-intro-stepper>
+
+          <ng-template #messageTemplate>
+            <div class="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50 p-6 text-center">
+              <p class="text-lg font-semibold text-neutral-900">Message d'ouverture</p>
+              <p class="text-sm text-neutral-600">
+                Le message initial est injecté automatiquement pour se concentrer sur les étapes suivantes.
+              </p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                (click)="goToStep('compliance')"
+              >
+                Continuer vers la conformité
+              </button>
+            </div>
+          </ng-template>
+
+          <ng-template #complianceTemplate>
+            <div class="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50 p-6 text-center">
+              <p class="text-lg font-semibold text-neutral-900">Vérifications préchargées</p>
+              <p class="text-sm text-neutral-600">
+                Les pièces requises sont déjà cochées pour illustrer la validation automatique.
+              </p>
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('introduction')"
+                >
+                  Retour
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('scheduler')"
+                >
+                  Passer à la planification
+                </button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template #schedulerTemplate>
+            <div class="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50 p-6 text-center">
+              <p class="text-lg font-semibold text-neutral-900">Créneaux suggérés</p>
+              <p class="text-sm text-neutral-600">
+                Deux créneaux fictifs sont insérés pour simuler la prise de rendez-vous.
+              </p>
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('compliance')"
+                >
+                  Revenir
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('logistics')"
+                >
+                  Continuer vers la logistique
+                </button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template #logisticsTemplate>
+            @let transports = introStepper?.selectedTransports() ?? [];
+            @let incoterm = introStepper?.selectedIncoterm() ?? fallbackIncoterm;
+
+            <div class="space-y-5 rounded-lg border border-neutral-200 bg-neutral-50 p-6 text-left">
+              <h3 class="text-lg font-semibold text-neutral-900">Synthèse logistique</h3>
+              <p class="text-sm text-neutral-600">
+                Les choix ci-dessous sont définis via du mock pour illustrer l'expérience utilisateur complète.
+              </p>
+              <div class="grid gap-4 md:grid-cols-2">
+                <div class="space-y-2 rounded-md border border-neutral-200 bg-white p-4">
+                  <p class="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">Transports retenus</p>
+                  <ul class="space-y-1 text-sm text-neutral-700">
+                    <li *ngFor="let mode of transports">{{ transportLabels[mode] }}</li>
+                  </ul>
+                </div>
+                <div class="space-y-2 rounded-md border border-neutral-200 bg-white p-4">
+                  <p class="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">Incoterm proposé</p>
+                  <p class="text-base font-semibold text-neutral-900">{{ incoterm }}</p>
+                  <p class="text-sm text-neutral-600">{{ incotermDescriptions[incoterm] }}</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('scheduler')"
+                >
+                  Ajuster les créneaux
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('pipeline')"
+                >
+                  Voir le pipeline
+                </button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template #pipelineTemplate>
+            <div class="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50 p-6 text-left">
+              <h3 class="text-lg font-semibold text-neutral-900">Pipeline simulé</h3>
+              <p class="text-sm text-neutral-600">
+                Les étapes sont alimentées par le tableau de mock pipelineSteps ci-dessous.
+              </p>
+              <ul class="grid gap-3 sm:grid-cols-2">
+                <li
+                  *ngFor="let step of pipelineSteps"
+                  class="rounded-md border border-neutral-200 bg-white p-4 text-sm text-neutral-700"
+                >
+                  <p class="font-semibold text-neutral-900">{{ pipelineStageLabels[step.stage] }}</p>
+                  <p class="text-xs uppercase tracking-[0.2em] text-neutral-500">{{ pipelineStatusLabels[step.status] }}</p>
+                </li>
+              </ul>
+              <div class="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('logistics')"
+                >
+                  Retour à la logistique
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  (click)="goToStep('financing')"
+                >
+                  Accéder au financement
+                </button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template #financingTemplate>
+            <div class="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50 p-6 text-left">
+              <h3 class="text-lg font-semibold text-neutral-900">Programme de financement</h3>
+              <p class="text-sm text-neutral-600">
+                Les contenus FR/EN proviennent du mock financingBanner et s'affichent dans le composant parent.
+              </p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                (click)="goToStep('introduction')"
+              >
+                Rejouer la séquence
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'opportunity-timeline'">
+        <div class="space-y-6 rounded-3xl bg-neutral-950 p-6 text-neutral-100 shadow-2xl">
+          <header class="space-y-2 text-center">
+            <h2 class="text-2xl font-semibold text-neutral-50">Chronologie d'une opportunité</h2>
+            <p class="text-sm text-neutral-300">
+              Les données simulées illustrent un corridor interprovincial avec impact carbone et logistique.
+            </p>
+          </header>
+          <og7-opportunity-timeline [vm]="opportunityTimelineVm"></og7-opportunity-timeline>
+        </div>
+      </ng-container>
+    </section>
+  </div>
+</section>

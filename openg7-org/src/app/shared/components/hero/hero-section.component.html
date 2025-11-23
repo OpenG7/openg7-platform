@@ -1,0 +1,19 @@
+<div class="relative isolate min-h-[90vh] overflow-hidden">
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <img src="assets/accueil.png" alt="" class="h-full w-full object-cover" />
+    <div class="absolute inset-0 bg-slate-900/45"></div>
+  </div>
+
+  <div
+    class="relative mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-16 sm:px-10 lg:flex-row lg:items-end lg:py-24"
+  >
+    <div
+      class="max-w-lg rounded-3xl bg-slate-900/85 p-6 text-white shadow-xl ring-1 ring-white/10 backdrop-blur lg:p-8"
+    >
+      <og7-hero-copy data-og7="hero" data-og7-id="copy" class="space-y-4"></og7-hero-copy>
+      <og7-hero-ctas data-og7="hero" data-og7-id="ctas" class="mt-8"></og7-hero-ctas>
+    </div>
+
+    <og7-hero-stats class="mt-10 flex-1 lg:mt-0" [stats]="stats()"></og7-hero-stats>
+  </div>
+</div>

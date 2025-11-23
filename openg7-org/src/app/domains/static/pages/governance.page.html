@@ -1,0 +1,209 @@
+<section
+  data-og7-page="governance"
+  class="relative isolate overflow-hidden bg-slate-950 text-slate-100"
+>
+  <div class="pointer-events-none absolute inset-0 opacity-70">
+    <div class="absolute -top-36 left-1/2 h-[420px] w-[620px] -translate-x-1/2 rounded-full bg-emerald-400/10 blur-3xl"></div>
+    <div class="absolute top-0 right-0 h-[340px] w-[340px] translate-x-1/3 -translate-y-1/3 rounded-full bg-cyan-300/20 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 h-[320px] w-[320px] -translate-x-1/3 translate-y-1/3 rounded-full bg-rose-400/10 blur-3xl"></div>
+  </div>
+
+  <div class="relative mx-auto max-w-6xl px-6 pb-12 pt-24 md:pb-20 md:pt-28">
+    <p class="text-xs font-semibold tracking-[0.32em] text-emerald-200/80">
+      {{ 'pages.governance.hero.kicker' | translate }}
+    </p>
+    <h1 class="mt-3 text-balance text-4xl font-extrabold tracking-tight md:text-6xl">
+      {{ 'pages.governance.hero.title' | translate }}
+    </h1>
+    <p class="mt-4 max-w-3xl text-pretty text-lg text-slate-200/90 md:text-xl">
+      {{ 'pages.governance.hero.subtitle' | translate }}
+    </p>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      <article
+        *ngFor="let commitment of commitments()"
+        class="rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-[0_24px_80px_-40px_rgba(16,185,129,0.45)]"
+      >
+        <h2 class="text-lg font-semibold text-white">{{ commitment.title }}</h2>
+        <p class="mt-2 text-sm text-slate-200/80">{{ commitment.copy }}</p>
+      </article>
+    </div>
+
+    <nav
+      class="mt-10 flex flex-wrap items-center gap-3 text-sm text-slate-200/70"
+      [attr.aria-label]="'pages.governance.hero.navLabel' | translate"
+      data-og7-governance-nav
+    >
+      <a
+        *ngFor="let anchor of anchors()"
+        class="rounded-full border border-white/15 px-4 py-2 font-medium text-slate-100/90 transition hover:border-emerald-300/70 hover:text-white"
+        [attr.href]="'#' + anchor.id"
+      >
+        {{ anchor.label }}
+      </a>
+    </nav>
+  </div>
+</section>
+
+<section id="board" class="bg-slate-950/95 py-16">
+  <div class="mx-auto max-w-6xl px-6">
+    <header class="max-w-3xl">
+      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-200/70">
+        {{ 'pages.governance.board.kicker' | translate }}
+      </p>
+      <h2 class="mt-2 text-3xl font-bold text-white md:text-4xl">
+        {{ 'pages.governance.board.title' | translate }}
+      </h2>
+      <p class="mt-3 text-base text-slate-200/80 md:text-lg">
+        {{ 'pages.governance.board.subtitle' | translate }}
+      </p>
+    </header>
+
+    <div class="mt-8 grid gap-4 lg:grid-cols-2">
+      <article
+        *ngFor="let member of boardMembers()"
+        class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+        data-og7-board-member
+      >
+        <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-emerald-400/70 via-cyan-400/70 to-sky-500/70 opacity-0 transition group-hover:opacity-100"></div>
+        <h3 class="text-lg font-semibold text-white">{{ member.name }}</h3>
+        <p class="mt-1 text-sm font-medium text-emerald-200/80">{{ member.role }}</p>
+        <p class="mt-3 text-sm text-slate-200/80">{{ member.background }}</p>
+        <p class="mt-2 text-sm text-slate-200/70">{{ member.focus }}</p>
+      </article>
+    </div>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <h3 class="text-base font-semibold text-white">
+          {{ 'pages.governance.board.mandateTitle' | translate }}
+        </h3>
+        <ul class="mt-3 space-y-2 text-sm text-slate-200/80">
+          <li *ngFor="let item of boardMandate()" class="flex gap-2">
+            <span class="mt-1 size-1.5 rounded-full bg-emerald-400/80"></span>
+            <span>{{ item }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <h3 class="text-base font-semibold text-white">
+          {{ 'pages.governance.board.cadenceTitle' | translate }}
+        </h3>
+        <ul class="mt-3 space-y-2 text-sm text-slate-200/80">
+          <li *ngFor="let cadence of boardCadence()" class="flex gap-2">
+            <span class="mt-1 size-1.5 rounded-full bg-cyan-400/70"></span>
+            <span>{{ cadence }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="advisory" class="bg-slate-950 py-16">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+      <div>
+        <h2 class="text-3xl font-bold text-white md:text-4xl">
+          {{ 'pages.governance.advisory.title' | translate }}
+        </h2>
+        <p class="mt-3 text-base text-slate-200/80 md:text-lg">
+          {{ 'pages.governance.advisory.description' | translate }}
+        </p>
+
+        <div class="mt-6 grid gap-4">
+          <article
+            *ngFor="let group of advisoryGroups()"
+            class="rounded-2xl border border-white/10 bg-white/[0.02] p-5"
+          >
+            <h3 class="text-lg font-semibold text-white">{{ group.name }}</h3>
+            <p class="mt-2 text-sm text-slate-200/80">{{ group.focus }}</p>
+            <p class="mt-3 text-xs font-medium uppercase tracking-[0.26em] text-emerald-200/70">
+              {{ group.meets }}
+            </p>
+          </article>
+        </div>
+      </div>
+
+      <aside class="rounded-3xl border border-emerald-400/30 bg-emerald-400/5 p-6">
+        <h3 class="text-lg font-semibold text-emerald-100">
+          {{ 'pages.governance.advisory.inviteTitle' | translate }}
+        </h3>
+        <p class="mt-3 text-sm text-emerald-50/90">
+          {{ 'pages.governance.advisory.inviteCopy' | translate }}
+        </p>
+        <a
+          class="mt-4 inline-flex items-center justify-center rounded-xl bg-emerald-400 px-5 py-2 font-semibold text-slate-900 shadow hover:bg-emerald-300"
+          href="mailto:governance@openg7.org"
+        >
+          {{ 'pages.governance.advisory.inviteCta' | translate }}
+        </a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="process" class="bg-slate-950/95 py-16">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="max-w-3xl">
+      <h2 class="text-3xl font-bold text-white md:text-4xl">
+        {{ 'pages.governance.process.title' | translate }}
+      </h2>
+      <p class="mt-3 text-base text-slate-200/80 md:text-lg">
+        {{ 'pages.governance.process.subtitle' | translate }}
+      </p>
+    </div>
+
+    <div class="mt-8 grid gap-4 md:grid-cols-2">
+      <article
+        *ngFor="let step of processSteps(); let index = index"
+        class="relative rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+      >
+        <div class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-200/60">
+          {{ index + 1 | number:'2.0' }}
+        </div>
+        <h3 class="mt-2 text-lg font-semibold text-white">{{ step.title }}</h3>
+        <p class="mt-2 text-sm text-slate-200/80">{{ step.description }}</p>
+        <ul *ngIf="step.deliverables?.length" class="mt-4 space-y-2 text-sm text-slate-200/80">
+          <li *ngFor="let deliverable of step.deliverables" class="flex gap-2">
+            <span class="mt-1 size-1.5 rounded-full bg-emerald-400/80"></span>
+            <span>{{ deliverable }}</span>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="transparency" class="bg-slate-950 py-16">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1fr]">
+      <div>
+        <h2 class="text-3xl font-bold text-white md:text-4xl">
+          {{ 'pages.governance.transparency.title' | translate }}
+        </h2>
+        <p class="mt-3 text-base text-slate-200/80 md:text-lg">
+          {{ 'pages.governance.transparency.subtitle' | translate }}
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-slate-200/80">
+          <li *ngFor="let item of transparencyItems()" class="flex gap-3">
+            <span class="mt-1 size-2 rounded-full bg-emerald-400/80"></span>
+            <span>{{ item }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+        <h3 class="text-lg font-semibold text-white">
+          {{ 'pages.governance.timeline.title' | translate }}
+        </h3>
+        <ul class="mt-4 space-y-4">
+          <li *ngFor="let milestone of timelineMilestones()" class="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200/70">{{ milestone.quarter }}</p>
+            <p class="mt-2 text-sm text-slate-200/85">{{ milestone.title }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

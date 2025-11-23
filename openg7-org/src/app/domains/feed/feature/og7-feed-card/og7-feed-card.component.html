@@ -1,0 +1,62 @@
+<article class="feed-card" [attr.aria-label]="ariaLabel()">
+  <header class="feed-card__header">
+    <div class="feed-card__avatar" aria-hidden="true">
+      <img *ngIf="post().author.avatarUrl as avatar" [src]="avatar" [alt]="post().author.displayName" />
+      <span *ngIf="!post().author.avatarUrl" aria-hidden="true">{{ post().author.displayName[0] }}</span>
+    </div>
+    <div class="feed-card__meta">
+      <p class="feed-card__author">{{ post().author.displayName }}</p>
+      <p class="feed-card__timestamp">
+        <span>{{ post().createdAt | jsonDateAgo }}</span>
+        <span *ngIf="post().updatedAt">· {{ 'feed.card.edited' | translate }}</span>
+      </p>
+    </div>
+    <div
+      *ngIf="post().pinned"
+      class="feed-card__pin"
+      role="img"
+      [attr.aria-label]="'feed.card.pinned' | translate"
+    >
+      📌
+    </div>
+  </header>
+
+  <section class="feed-card__content">
+    <p>{{ post().content }}</p>
+    <ul *ngIf="post().needTypes?.length" class="feed-card__needs">
+      <li *ngFor="let need of post().needTypes">#{{ need }}</li>
+    </ul>
+    <p *ngIf="post().province" class="feed-card__province">{{ post().province }}</p>
+  </section>
+
+  <footer class="feed-card__footer">
+    <div class="feed-card__badges" aria-live="polite">
+      <span *ngIf="post().status === 'pending'" class="feed-card__badge feed-card__badge--pending">
+        {{ 'feed.card.pending' | translate }}
+      </span>
+      <span *ngIf="post().status === 'failed'" class="feed-card__badge feed-card__badge--error">
+        {{ 'feed.card.failed' | translate }}
+      </span>
+      <span *ngIf="post().expiresAt" class="feed-card__badge" [class.feed-card__badge--urgent]="expiresSoon()">
+        {{ 'feed.card.expires' | translate:{ value: (post().expiresAt | jsonDateRelative) } }}
+      </span>
+      <span *ngFor="let label of post().moderationLabels" class="feed-card__badge feed-card__badge--warning">
+        {{ label }}
+      </span>
+    </div>
+    <div class="feed-card__actions">
+      <button type="button" (click)="handleView()" [disabled]="disabled()" class="feed-card__action">
+        {{ 'feed.card.view' | translate }}
+      </button>
+      <button type="button" (click)="handleReply()" [disabled]="disabled()" class="feed-card__action">
+        {{ 'feed.card.reply' | translate }} ({{ post().metrics.replies }})
+      </button>
+      <button type="button" (click)="handleLike()" [disabled]="disabled()" class="feed-card__action">
+        {{ 'feed.card.like' | translate }} ({{ post().metrics.likes }})
+      </button>
+      <button type="button" (click)="handleShare()" [disabled]="disabled()" class="feed-card__action">
+        {{ 'feed.card.share' | translate }}
+      </button>
+    </div>
+  </footer>
+</article>

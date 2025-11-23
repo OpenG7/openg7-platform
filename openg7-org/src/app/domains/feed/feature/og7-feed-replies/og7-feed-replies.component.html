@@ -1,0 +1,17 @@
+<section
+  class="feed-replies"
+  [attr.aria-label]="'feed.replies.title' | translate"
+>
+  <h3>{{ 'feed.replies.title' | translate }} ({{ replies().length }})</h3>
+  <ol class="feed-replies__list">
+    <li *ngFor="let reply of replies()">
+      <article class="feed-reply">
+        <header>
+          <strong>{{ reply.author.displayName }}</strong>
+          <span>{{ reply.createdAt | jsonDateAgo }}</span>
+        </header>
+        <p>{{ reply.content }}</p>
+      </article>
+    </li>
+  </ol>
+</section>

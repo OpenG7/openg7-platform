@@ -1,0 +1,261 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PLATFORM_ID, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+
+import { QuickSearchModalComponent, QuickSearchModalData } from './quick-search-modal.component';
+import { SearchService } from '../search.service';
+import { SearchHistoryStore } from '../search-history.store';
+import { AnalyticsService } from '@app/core/observability/analytics.service';
+import { OG7_MODAL_DATA, OG7_MODAL_REF } from '@app/core/ui/modal/og7-modal.tokens';
+import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
+import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { RecentSearch, SearchContext, SearchResult, SearchSection } from '@app/core/models/search';
+
+class MockSearchService {
+  readonly searchCalls: Array<{ query: string; context: SearchContext; subject: Subject<SearchResult> }> = [];
+
+  search$(query: string, context: SearchContext) {
+    const subject = new Subject<SearchResult>();
+    this.searchCalls.push({ query, context, subject });
+    return subject.asObservable();
+  }
+}
+
+class MockSearchHistoryStore {
+  private readonly entriesSig = signal<RecentSearch[]>([]);
+  readonly entries = this.entriesSig.asReadonly();
+
+  readonly add = jasmine.createSpy('add');
+  readonly clear = jasmine.createSpy('clear');
+
+  setEntries(entries: RecentSearch[]) {
+    this.entriesSig.set(entries);
+  }
+}
+
+class MockAnalyticsService {
+  readonly emit = jasmine.createSpy('emit');
+}
+
+class MockModalRef implements Og7ModalRef<void> {
+  readonly id = 1;
+  readonly closed = signal(false);
+  readonly result = Promise.resolve(undefined);
+  readonly close = jasmine.createSpy('close');
+  readonly dismiss = jasmine.createSpy('dismiss');
+}
+
+class MockRbacFacadeService {
+  readonly currentRole = jasmine.createSpy('currentRole').and.returnValue('editor');
+  readonly isPremium = jasmine.createSpy('isPremium').and.returnValue(true);
+}
+
+describe('QuickSearchModalComponent', () => {
+  let fixture: ComponentFixture<QuickSearchModalComponent>;
+  let component: QuickSearchModalComponent;
+  let searchService: MockSearchService;
+  let history: MockSearchHistoryStore;
+  let analytics: MockAnalyticsService;
+  let modalRef: MockModalRef;
+  let rbac: MockRbacFacadeService;
+  let modalData: QuickSearchModalData;
+  let router: Router;
+  let host: HTMLElement;
+
+  beforeEach(async () => {
+    searchService = new MockSearchService();
+    history = new MockSearchHistoryStore();
+    analytics = new MockAnalyticsService();
+    modalRef = new MockModalRef();
+    rbac = new MockRbacFacadeService();
+    modalData = { initialQuery: 'enbridge', context: { sectorId: 'energy' }, source: 'unit-test' };
+
+    await TestBed.configureTestingModule({
+      imports: [QuickSearchModalComponent, RouterTestingModule, TranslateModule.forRoot()],
+      providers: [
+        { provide: SearchService, useValue: searchService },
+        { provide: SearchHistoryStore, useValue: history },
+        { provide: AnalyticsService, useValue: analytics },
+        { provide: RbacFacadeService, useValue: rbac },
+        { provide: OG7_MODAL_REF, useValue: modalRef },
+        { provide: OG7_MODAL_DATA, useValue: modalData },
+        { provide: PLATFORM_ID, useValue: 'browser' },
+      ],
+    }).compileComponents();
+
+    const translate = TestBed.inject(TranslateService);
+    translate.setDefaultLang('en');
+    translate.use('en');
+
+    fixture = TestBed.createComponent(QuickSearchModalComponent);
+    component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    fixture.detectChanges();
+    host = fixture.nativeElement as HTMLElement;
+  });
+
+  it('requests search results with computed context and handles success', () => {
+    expect(searchService.searchCalls.length).toBe(1);
+    const request = searchService.searchCalls[0];
+
+    expect(request.query).toBe('enbridge');
+    expect(request.context).toEqual({
+      role: 'editor',
+      locale: 'en',
+      sectorId: 'energy',
+      isPremium: true,
+    });
+    expect(component.loading()).withContext('should be loading until results arrive').toBeTrue();
+    expect(component.errored()).toBeFalse();
+
+    const sections: SearchSection[] = [
+      {
+        id: 'companies',
+        title: 'Companies',
+        items: [{ id: 'item-1', title: 'Acme Inc.' }],
+      },
+    ];
+
+    request.subject.next({ query: 'enbridge', sections });
+
+    expect(component.loading()).toBeFalse();
+    expect(component.errored()).toBeFalse();
+    expect(component.sections()).toEqual(sections);
+    expect(analytics.emit).toHaveBeenCalledWith(
+      'result_impression',
+      jasmine.objectContaining({ query: 'enbridge', resultCount: 1 }),
+    );
+    expect(analytics.emit).toHaveBeenCalledWith(
+      'search_time_to_first_result',
+      jasmine.objectContaining({ query: 'enbridge' }),
+    );
+  });
+
+  it('sets errored state when search fails', () => {
+    const request = searchService.searchCalls[0];
+    request.subject.error(new Error('network error'));
+
+    expect(component.loading()).toBeFalse();
+    expect(component.errored()).toBeTrue();
+  });
+
+  it('selectActive emits analytics, stores history and performs navigation', () => {
+    const navigate = spyOn(router, 'navigate').and.resolveTo(true);
+
+    const sections: SearchSection[] = [
+      {
+        id: 'actions',
+        title: 'Actions',
+        items: [
+          {
+            id: 'item-1',
+            title: 'Go to feed',
+            action: { type: 'route', commands: ['/feed'] },
+          },
+        ],
+      },
+    ];
+
+    component.query.set('feed');
+    component.sections.set(sections);
+    component.activeIndex.set(0);
+
+    const initialAnalyticsCalls = analytics.emit.calls.count();
+
+    component.selectActive();
+
+    expect(analytics.emit.calls.count()).toBe(initialAnalyticsCalls + 1);
+    expect(analytics.emit).toHaveBeenCalledWith(
+      'result_selected',
+      jasmine.objectContaining({ id: 'item-1', query: 'feed', actionType: 'route' }),
+    );
+    expect(history.add).toHaveBeenCalledWith(
+      jasmine.objectContaining({ id: 'item-1', label: 'Go to feed' }),
+    );
+    expect(navigate).toHaveBeenCalledWith(['/feed'], undefined);
+    expect(modalRef.close).toHaveBeenCalled();
+  });
+
+  it('retry triggers a fresh search request', () => {
+    expect(searchService.searchCalls.length).toBe(1);
+    component.retry();
+    expect(searchService.searchCalls.length).toBe(2);
+  });
+
+  it('allows typing text in the query input', () => {
+    const input = host.querySelector<HTMLInputElement>('#quick-search-input');
+    expect(input).withContext('input element should be rendered').not.toBeNull();
+    if (!input) {
+      return;
+    }
+
+    const keyboardEvent = new KeyboardEvent('keydown', { key: 'P', cancelable: true });
+    input.dispatchEvent(keyboardEvent);
+
+    expect(keyboardEvent.defaultPrevented)
+      .withContext('printable keys should not be prevented so typing works')
+      .toBeFalse();
+
+    input.value = 'PATATE';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.query()).toBe('PATATE');
+    expect(component.queryControl.value).toBe('PATATE');
+    const lastRequest = searchService.searchCalls.at(-1);
+    expect(lastRequest?.query).toBe('PATATE');
+  });
+
+  it('closes the modal when the close button is clicked', () => {
+    modalRef.close.calls.reset();
+    const button = host.querySelector<HTMLButtonElement>('button[aria-label="Close quick search"]');
+    expect(button).withContext('close button should be present').not.toBeNull();
+    button?.click();
+    expect(modalRef.close).toHaveBeenCalledTimes(1);
+  });
+
+  it('prevents bubbling when close button is clicked', () => {
+    modalRef.close.calls.reset();
+    const event = jasmine.createSpyObj<MouseEvent>('MouseEvent', ['preventDefault', 'stopPropagation']);
+
+    component.onCloseClick(event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(event.stopPropagation).toHaveBeenCalled();
+    expect(modalRef.close).toHaveBeenCalled();
+  });
+
+  it('onHistorySelect replays saved action and closes the modal', () => {
+    const navigate = spyOn(router, 'navigate').and.resolveTo(true);
+    analytics.emit.calls.reset();
+    history.add.calls.reset();
+    modalRef.close.calls.reset();
+
+    component.query.set('history query');
+
+    const entry: RecentSearch = {
+      id: 'history-1',
+      label: 'Go back to feed',
+      action: { type: 'route', commands: ['/feed'] },
+      visitedAt: new Date().toISOString(),
+    };
+
+    component.onHistorySelect(entry);
+
+    expect(history.add).toHaveBeenCalled();
+    expect(analytics.emit).toHaveBeenCalledWith(
+      'result_selected',
+      jasmine.objectContaining({ id: 'history-1', source: 'history', actionType: 'route' }),
+    );
+    expect(navigate).toHaveBeenCalledWith(['/feed'], undefined);
+    expect(modalRef.close).toHaveBeenCalled();
+  });
+
+  it('clearHistory delegates to the history store', () => {
+    component.clearHistory();
+    expect(history.clear).toHaveBeenCalled();
+  });
+});

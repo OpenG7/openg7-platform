@@ -1,0 +1,54 @@
+<section class="flex flex-col gap-6" data-og7="company-table-section">
+  <header class="space-y-1">
+    <h2 class="text-lg font-semibold text-slate-900">Marketplace directory</h2>
+    <p class="text-sm text-slate-600">Browse the list of approved companies and inspect their public profile.</p>
+  </header>
+
+  @if (loading()) {
+    <p class="text-sm text-slate-500">Loading companies…</p>
+  } @else if (error(); as message) {
+    <p class="text-sm text-red-600">{{ message }}</p>
+  } @else {
+    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white" data-og7="company-table-wrapper">
+      <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-600">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th scope="col" class="px-4 py-3">Name</th>
+            <th scope="col" class="px-4 py-3">Status</th>
+            <th scope="col" class="px-4 py-3">Sector</th>
+            <th scope="col" class="px-4 py-3">Country</th>
+            <th scope="col" class="px-4 py-3">Province</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100" data-og7="company-table-body">
+          @if (!companies().length) {
+            <tr>
+              <td colspan="4" class="px-4 py-6 text-center text-sm text-slate-500">No companies available yet.</td>
+            </tr>
+          } @else {
+            @for (company of companies(); track company.id) {
+              <tr
+                class="cursor-pointer transition hover:bg-primary-50"
+                (click)="selectCompany(company)"
+                [class.bg-primary-50]="selected()?.id === company.id"
+                data-og7="company-table-row"
+              >
+                <td class="px-4 py-3 font-medium text-slate-900">{{ company.name }}</td>
+                <td class="px-4 py-3">{{ statusLabel(company.status) }}</td>
+                <td class="px-4 py-3">{{ company.sector?.name ?? '—' }}</td>
+                <td class="px-4 py-3">
+                  {{ company.country ? (('countries.' + company.country) | translate) : '—' }}
+                </td>
+                <td class="px-4 py-3">{{ company.province?.name ?? '—' }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <div class="mt-4" data-og7="company-table-detail">
+    <div data-og7="company-detail" [company]="selected()"></div>
+  </div>
+</section>

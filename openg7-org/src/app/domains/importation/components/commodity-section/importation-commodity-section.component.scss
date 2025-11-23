@@ -1,0 +1,180 @@
+:host {
+  display: block;
+}
+
+.og7-importation-commodities {
+  display: grid;
+  gap: 1.5rem;
+  background: var(--og7-surface, #ffffff);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+}
+
+.og7-importation-commodities header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.og7-importation-commodities__tabs {
+  display: inline-flex;
+  background: rgba(15, 23, 42, 0.05);
+  border-radius: 999px;
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.og7-importation-commodities__tabs button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  background: transparent;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--og7-text-subtle, #475569);
+  cursor: pointer;
+}
+
+.og7-importation-commodities__tabs button.is-active {
+  background: #0f172a;
+  color: #fff;
+}
+
+.og7-importation-commodities__table {
+  overflow-x: auto;
+  border-radius: 1rem;
+}
+
+.og7-importation-commodities table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.og7-importation-commodities thead {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.og7-importation-commodities th,
+.og7-importation-commodities td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.og7-importation-commodities tbody tr {
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.og7-importation-commodities tbody tr:hover {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.og7-importation-commodities tbody tr.is-selected {
+  background: rgba(59, 130, 246, 0.12);
+  border-left: 4px solid rgba(59, 130, 246, 0.8);
+}
+
+.og7-importation-commodities td.is-negative {
+  color: #ef4444;
+}
+
+.og7-importation-commodities__empty {
+  text-align: center;
+  color: var(--og7-text-subtle, #475569);
+}
+
+.og7-importation-commodities__loading {
+  margin: 0;
+  text-align: center;
+  color: var(--og7-text-subtle, #475569);
+}
+
+.og7-importation-commodities__flags {
+  display: grid;
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.04);
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+}
+
+.og7-importation-commodities__flags article {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.og7-importation-commodities__flags header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.og7-importation-commodities__flags h4 {
+  margin: 0;
+}
+
+.og7-importation-commodities__severity {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(251, 191, 36, 0.2);
+  color: #92400e;
+}
+
+.og7-importation-commodities__severity[data-level='medium'] {
+  background: rgba(249, 115, 22, 0.2);
+  color: #9a3412;
+}
+
+.og7-importation-commodities__severity[data-level='high'] {
+  background: rgba(248, 113, 113, 0.25);
+  color: #991b1b;
+}
+
+.og7-importation-commodities__action {
+  margin: 0;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.og7-importation-commodities__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.og7-importation-commodities__export-buttons {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.og7-importation-commodities__export-buttons button {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .og7-importation-commodities__tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+}

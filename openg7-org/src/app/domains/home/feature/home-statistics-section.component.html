@@ -1,0 +1,22 @@
+<section
+  class="bg-slate-50 py-16"
+  data-og7="home-statistics"
+  role="region"
+  aria-labelledby="home-statistics-heading"
+>
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
+    <header class="space-y-4">
+      <p class="text-sm font-semibold uppercase tracking-[0.35em] text-slate-500">
+        {{ 'home.statistics.kicker' | translate }}
+      </p>
+      <h2 id="home-statistics-heading" class="text-3xl font-semibold text-slate-900 sm:text-4xl">
+        {{ 'home.statistics.title' | translate }}
+      </h2>
+      <p id="home-statistics-description" class="max-w-3xl text-base leading-relaxed text-slate-600">
+        {{ 'home.statistics.description' | translate }}
+      </p>
+    </header>
+
+    <og7-hero-stats aria-describedby="home-statistics-description" [stats]="stats()"></og7-hero-stats>
+  </div>
+</section>

@@ -1,0 +1,67 @@
+@use './material-theme';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--og7-font-family-base);
+  background-color: var(--og7-color-page);
+  color: var(--og7-color-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Améliore le contraste des libellés dans les steppers Angular Material */
+.mat-step-text-label {
+  color: var(--og7-color-body);
+  font-weight: 600;
+}
+
+.mat-step-header.mat-active .mat-step-text-label,
+.mat-step-header.mat-completed .mat-step-text-label {
+  color: var(--og7-color-title);
+}
+
+.dark .mat-step-text-label {
+  color: var(--og7-color-subtle);
+}
+
+.dark .mat-step-header.mat-active .mat-step-text-label,
+.dark .mat-step-header.mat-completed .mat-step-text-label {
+  color: var(--og7-color-title);
+}
+
+
+

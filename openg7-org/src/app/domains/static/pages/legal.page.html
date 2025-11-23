@@ -1,0 +1,50 @@
+<section data-og7="static-page" data-og7-page="legal" class="og7-page og7-page--static space-y-10">
+  <header class="space-y-6">
+    <div class="space-y-4">
+      <h1 class="og7-page__title text-4xl font-semibold">{{ 'pages.legal.title' | translate }}</h1>
+      <p class="og7-page__intro text-lg text-subtle">{{ 'pages.legal.intro' | translate }}</p>
+    </div>
+    <dl *ngIf="highlights.length" class="grid gap-4 sm:grid-cols-2" data-og7-legal-highlights>
+      <div
+        *ngFor="let highlight of highlights"
+        data-og7-legal-highlight
+        class="space-y-2 rounded-2xl border border-slate-200 bg-surface p-5 shadow-sm"
+      >
+        <dt class="text-xs font-semibold uppercase tracking-wide text-primary-600">{{ highlight.label }}</dt>
+        <dd class="text-lg font-medium text-body">{{ highlight.value }}</dd>
+        <p *ngIf="highlight.description" class="text-sm leading-relaxed text-subtle">{{ highlight.description }}</p>
+      </div>
+    </dl>
+  </header>
+  <div class="grid gap-10 lg:grid-cols-[2fr_1fr]">
+    <article class="og7-page__content space-y-8">
+      <section *ngFor="let section of sections" class="space-y-4">
+        <h2 class="text-2xl font-semibold">
+          {{ 'pages.legal.sections.' + section + '.title' | translate }}
+        </h2>
+        <p *ngFor="let paragraph of paragraphs(section)" class="leading-relaxed text-body">
+          {{ paragraph }}
+        </p>
+        <ul *ngIf="bullets(section).length" class="list-disc space-y-2 pl-6 text-body">
+          <li *ngFor="let item of bullets(section)">{{ item }}</li>
+        </ul>
+      </section>
+    </article>
+    <aside *ngIf="contact" data-og7-legal-contact class="space-y-5 rounded-2xl border border-slate-200 bg-surface p-6 shadow-sm">
+      <div class="space-y-2">
+        <h2 class="text-xl font-semibold text-title">{{ contact.title }}</h2>
+        <p *ngIf="contact.description" class="text-sm leading-relaxed text-subtle">{{ contact.description }}</p>
+      </div>
+      <ul class="space-y-4">
+        <li *ngFor="let channel of contact.channels" class="space-y-1" data-og7-legal-contact-channel>
+          <span class="text-xs font-semibold uppercase tracking-wide text-primary-600">{{ channel.label }}</span>
+          <div class="text-base font-medium text-body">
+            <a *ngIf="channel.href" [href]="channel.href" class="hover:underline">{{ channel.value }}</a>
+            <span *ngIf="!channel.href">{{ channel.value }}</span>
+          </div>
+          <p *ngIf="channel.hint" class="text-xs text-subtle">{{ channel.hint }}</p>
+        </li>
+      </ul>
+    </aside>
+  </div>
+</section>

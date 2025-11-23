@@ -1,0 +1,39 @@
+<article
+  class="impact-banner"
+  [attr.aria-labelledby]="titleId()"
+  [attr.aria-describedby]="summaryId()"
+  role="group"
+  [class.impact-banner--tone-high]="scoreTone() === 'high'"
+  [class.impact-banner--tone-medium]="scoreTone() === 'medium'"
+  [class.impact-banner--tone-low]="scoreTone() === 'low'"
+>
+  <div class="impact-banner__score" aria-hidden="true">
+    <span class="impact-banner__score-label">{{ scoreLabel() }}</span>
+    <span class="impact-banner__score-caption">match</span>
+  </div>
+
+  <div class="impact-banner__content">
+    <p class="impact-banner__partners">{{ partnersLabel() }}</p>
+    <h3 class="impact-banner__title" [id]="titleId()">{{ vm().title }}</h3>
+    <p class="impact-banner__summary" [id]="summaryId()">{{ vm().impactHeadline }}</p>
+
+    <ul *ngIf="hasKpis()" class="impact-banner__kpis" role="list">
+      <li
+        *ngFor="let kpi of vm().supportingKpis; trackBy: trackByKpiId"
+        class="impact-banner__kpi"
+        role="listitem"
+      >
+        <span class="impact-banner__kpi-label">{{ kpi.label }}</span>
+        <span class="impact-banner__kpi-value">{{ kpi.value }}</span>
+      </li>
+    </ul>
+
+    <p *ngIf="hasFootnote()" class="impact-banner__footnote">{{ vm().impactFootnote }}</p>
+  </div>
+
+  <div class="impact-banner__cta">
+    <button type="button" class="impact-banner__action" (click)="emitConnect()">
+      {{ vm().ctaLabel | translate }}
+    </button>
+  </div>
+</article>

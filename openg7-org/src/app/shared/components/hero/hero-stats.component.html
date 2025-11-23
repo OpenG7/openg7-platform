@@ -1,0 +1,74 @@
+<ul
+  role="list"
+  class="mx-auto grid w-full max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+>
+  <li
+    *ngFor="let s of formattedStats(); trackBy: trackId"
+    role="listitem"
+    tabindex="0"
+    class="relative grid rounded-2xl bg-white/85 px-5 py-4 shadow-lg ring-1 ring-slate-200/70 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:bg-slate-900/70 dark:ring-white/10"
+  >
+    <!-- barre d’accent -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 h-1.5 rounded-t-2xl"
+      [ngClass]="s.color ?? 'bg-sky-500'"
+    ></div>
+
+    <!-- header -->
+    <div class="flex items-center gap-2">
+      <span class="size-2.5 rounded-full" [ngClass]="s.color ?? 'bg-sky-500'"></span>
+      <span class="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        {{ s.labelKey | translate }}
+      </span>
+      <span class="sr-only">badge</span>
+      <span
+        class="ml-auto text-slate-400"
+        aria-hidden="true"
+        [attr.title]="'common.info' | translate"
+      >
+        ⓘ
+      </span>
+    </div>
+
+    <!-- body (valeur + sparkline) -->
+    <div class="mt-1">
+      <div class="flex items-baseline gap-2">
+        <span class="font-semibold text-slate-900 dark:text-slate-100">
+          {{ s.display }}
+        </span>
+        <span
+          *ngIf="s.delta !== undefined"
+          [class]="s.delta! >= 0
+            ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+            : 'bg-rose-50 text-rose-700 ring-rose-200'"
+          class="rounded-full px-1.5 py-0.5 text-xs ring-1"
+        >
+          {{ s.delta! >= 0 ? '+' : '' }}{{ s.delta | number: '1.0-1' }}%
+        </span>
+      </div>
+
+      <!-- sparkline SVG inline -->
+      <svg *ngIf="s.sparkPath" viewBox="0 0 120 28" class="mt-2 h-7 w-full opacity-80">
+        <path
+          [attr.d]="s.sparkPath"
+          class="stroke-current"
+          [ngClass]="(s.delta ?? 0) >= 0 ? 'text-emerald-500' : 'text-rose-500'"
+          fill="none"
+          stroke-width="2"
+        />
+        <path
+          *ngIf="s.sparkArea"
+          [attr.d]="s.sparkArea"
+          [attr.fill]="(s.delta ?? 0) >= 0 ? 'rgba(16,185,129,0.18)' : 'rgba(244,63,94,0.18)'"
+        />
+      </svg>
+    </div>
+
+    <!-- footer -->
+    <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+      <ng-container *ngIf="s.suffixKey as k">
+        {{ k | translate: { count: s.rawValue } }}
+      </ng-container>
+    </div>
+  </li>
+</ul>

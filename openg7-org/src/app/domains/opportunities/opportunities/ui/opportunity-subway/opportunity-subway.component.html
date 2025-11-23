@@ -1,0 +1,149 @@
+<article
+  class="opportunity-subway"
+  [attr.aria-labelledby]="titleId()"
+  [attr.data-score-tone]="scoreTone()"
+>
+  <header class="opportunity-subway__header">
+    <div class="opportunity-subway__headline">
+      <p class="opportunity-subway__eyebrow">{{ 'opportunities.subway.prototypeLabel' | translate }}</p>
+      <h3 class="opportunity-subway__title" [id]="titleId()">{{ vm().title }}</h3>
+      @if (distanceLabel(); as distance) {
+        <p class="opportunity-subway__headline-distance">
+          {{ 'opportunities.timeline.distance' | translate }} · {{ distance }}
+        </p>
+      }
+    </div>
+    <div
+      class="opportunity-subway__score"
+      role="img"
+      [attr.id]="scoreId()"
+      [attr.aria-label]="'opportunities.timeline.scoreLabel' | translate:{ value: scoreLabel() }"
+    >
+      <svg viewBox="0 0 64 64" class="opportunity-subway__score-figure" aria-hidden="true">
+        <defs>
+          <linearGradient id="opportunity-subway-score-high" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#22d3ee" />
+            <stop offset="100%" stop-color="#34d399" />
+          </linearGradient>
+          <linearGradient id="opportunity-subway-score-medium" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#fbbf24" />
+            <stop offset="100%" stop-color="#38bdf8" />
+          </linearGradient>
+          <linearGradient id="opportunity-subway-score-low" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f97316" />
+            <stop offset="100%" stop-color="#facc15" />
+          </linearGradient>
+        </defs>
+        <circle class="opportunity-subway__score-track" cx="32" cy="32" r="26" />
+        <circle
+          class="opportunity-subway__score-ring"
+          cx="32"
+          cy="32"
+          r="26"
+          [attr.stroke-dasharray]="scoreStrokeDasharray"
+          [attr.stroke-dashoffset]="scoreStrokeDashoffset()"
+          [attr.stroke]="scoreStroke()"
+        />
+      </svg>
+      <span class="opportunity-subway__score-value">{{ scoreLabel() }}</span>
+    </div>
+  </header>
+
+  <section class="opportunity-subway__actors">
+    <div class="opportunity-subway__actor">
+      <p class="opportunity-subway__actor-label">{{ 'opportunities.timeline.buyer' | translate }}</p>
+      <div class="opportunity-subway__actor-body">
+        <p class="opportunity-subway__actor-name">{{ vm().buyer.name }}</p>
+        <div class="opportunity-subway__chips" role="list">
+          <span class="opportunity-subway__chip" role="listitem">{{ vm().buyer.provinceLabelKey | translate }}</span>
+          <span class="opportunity-subway__chip" role="listitem">{{ vm().buyer.sectorLabelKey | translate }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="opportunity-subway__actor opportunity-subway__actor--supplier">
+      <p class="opportunity-subway__actor-label">{{ 'opportunities.timeline.supplier' | translate }}</p>
+      <div class="opportunity-subway__actor-body">
+        <p class="opportunity-subway__actor-name">{{ vm().supplier.name }}</p>
+        <div class="opportunity-subway__chips" role="list">
+          <span class="opportunity-subway__chip" role="listitem">{{ vm().supplier.provinceLabelKey | translate }}</span>
+          <span class="opportunity-subway__chip" role="listitem">{{ vm().supplier.sectorLabelKey | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="opportunity-subway__map" [attr.aria-label]="'opportunities.subway.mapLabel' | translate">
+    <ol class="opportunity-subway__lines">
+      @for (line of lines(); track line.id) {
+        <li class="opportunity-subway__line" [attr.data-severity]="line.severity">
+          <header class="opportunity-subway__line-header">
+            <span class="opportunity-subway__line-label">{{ line.labelKey | translate }}</span>
+            <span class="opportunity-subway__line-metric">
+              <strong>{{ line.metricValueKey | translate: line.metricValueParams }}</strong>
+              <span>{{ line.metricLabelKey | translate }}</span>
+            </span>
+          </header>
+          <div class="opportunity-subway__track" role="presentation">
+            <div class="opportunity-subway__track-line"></div>
+            <div class="opportunity-subway__stations">
+              @for (station of line.stations; track station.id) {
+                <div class="opportunity-subway__station" [attr.data-role]="station.role" [attr.data-junction]="station.junction ? true : null">
+                  <div class="opportunity-subway__station-dot"></div>
+                  <div class="opportunity-subway__station-labels">
+                    <p class="opportunity-subway__station-title">
+                      @if (station.titleKey) {
+                        {{ station.titleKey! | translate: station.titleParams }}
+                      } @else {
+                        {{ station.title }}
+                      }
+                    </p>
+                    @if (station.badges.length > 0) {
+                      <div class="opportunity-subway__station-badges" role="list">
+                        @for (badge of station.badges; track badge.id) {
+                          <span class="opportunity-subway__station-badge" role="listitem">
+                            @if (badge.labelKey) {
+                              {{ badge.labelKey! | translate: badge.labelParams }}
+                            } @else {
+                              {{ badge.label }}
+                            }
+                          </span>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (station.distanceBadge) {
+                    <span class="opportunity-subway__station-distance">
+                      @if (station.distanceBadge.labelKey) {
+                        {{ station.distanceBadge.labelKey! | translate: station.distanceBadge.labelParams }}
+                      } @else {
+                        {{ station.distanceBadge.label }}
+                      }
+                    </span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <footer class="opportunity-subway__actions">
+    <button
+      type="button"
+      class="opportunity-subway__action-primary"
+      (click)="emitViewSheet()"
+    >
+      {{ 'opportunities.timeline.viewSheet' | translate }}
+    </button>
+    <button
+      type="button"
+      class="opportunity-subway__action-secondary"
+      (click)="emitConnect()"
+    >
+      {{ 'opportunities.timeline.connect' | translate }}
+    </button>
+    <button type="button" class="opportunity-subway__action-ghost">{{ 'opportunities.timeline.save' | translate }}</button>
+  </footer>
+</article>

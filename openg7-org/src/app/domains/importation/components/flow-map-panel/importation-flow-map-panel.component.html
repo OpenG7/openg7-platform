@@ -1,0 +1,101 @@
+<section class="og7-importation-flow" data-og7="importation-flow">
+  <header class="og7-importation-flow__header">
+    <div>
+      <h2>{{ 'pages.importation.flow.title' | translate }}</h2>
+      <p class="og7-importation-flow__subtitle">
+        {{ 'pages.importation.flow.subtitle' | translate:{ coverage: viewModel.coverage ? (viewModel.coverage | number:'1.0-1') + '%' : '—' } }}
+      </p>
+    </div>
+    <div class="og7-importation-flow__controls">
+      <button type="button" class="og7-importation-flow__play" (click)="onTogglePlayback()">
+        <span aria-hidden="true">{{ viewModel.playing ? '⏸' : '▶' }}</span>
+        <span class="sr-only">
+          {{ viewModel.playing ? ('pages.importation.flow.pause' | translate) : ('pages.importation.flow.play' | translate) }}
+        </span>
+      </button>
+      <select
+        *ngIf="viewModel.compareMode"
+        class="og7-importation-flow__compare-select"
+        [value]="viewModel.compareTarget || ''"
+        (change)="onCompareTargetChange($any($event.target).value)"
+      >
+        <option value="">{{ 'pages.importation.flow.comparePlaceholder' | translate }}</option>
+        <option *ngFor="let point of viewModel.timeline; trackBy: trackTimeline" [value]="point.id">
+          {{ point.label }}
+        </option>
+      </select>
+    </div>
+  </header>
+
+  <p *ngIf="viewModel.loading" class="og7-importation-flow__loading">
+    {{ 'pages.importation.flow.loading' | translate }}
+  </p>
+
+  <div
+    *ngIf="!viewModel.loading"
+    class="og7-importation-flow__timeline"
+    role="group"
+    [attr.aria-label]="'pages.importation.flow.timeline' | translate"
+  >
+    <button
+      type="button"
+      *ngFor="let point of viewModel.timeline; trackBy: trackTimeline"
+      [class.is-active]="point.id === viewModel.selectedPoint"
+      (click)="onTimelineSelect(point.id)"
+    >
+      <span>{{ point.label }}</span>
+      <small>{{ formatDelta(point.yoyDelta) }}</small>
+    </button>
+  </div>
+
+  <div *ngIf="!viewModel.loading" class="og7-importation-flow__map-wrapper">
+    <div class="og7-importation-flow__map" aria-hidden="true">
+      <div class="og7-importation-flow__map-glow"></div>
+      <div class="og7-importation-flow__map-grid"></div>
+      <p>{{ 'pages.importation.flow.mapPlaceholder' | translate }}</p>
+    </div>
+    <aside class="og7-importation-flow__legend">
+      <h3>{{ 'pages.importation.flow.legend.title' | translate }}</h3>
+      <dl>
+        <div>
+          <dt>{{ 'pages.importation.flow.legend.min' | translate }}</dt>
+          <dd>{{ formatValue(viewModel.legendMin) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'pages.importation.flow.legend.max' | translate }}</dt>
+          <dd>{{ formatValue(viewModel.legendMax) }}</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+
+  <section
+    *ngIf="!viewModel.loading"
+    class="og7-importation-flow__list"
+    [attr.aria-label]="'pages.importation.flow.list' | translate"
+  >
+    <article *ngFor="let flow of viewModel.flows; trackBy: trackFlow" class="og7-importation-flow__card">
+      <header>
+        <h3>{{ flow.originName }}</h3>
+        <button type="button" (click)="onOriginClick(flow.originCode)">
+          {{ 'pages.importation.flow.drilldown' | translate }}
+        </button>
+      </header>
+      <p class="og7-importation-flow__value">{{ formatValue(flow.value) }}</p>
+      <p class="og7-importation-flow__delta" [class.is-negative]="(flow.yoyDelta ?? 0) < 0">
+        {{ formatDelta(flow.yoyDelta) }}
+      </p>
+      <p class="og7-importation-flow__share">{{ formatShare(flow.share) }}</p>
+      <ul *ngIf="flow.corridors.length" class="og7-importation-flow__corridors">
+        <li *ngFor="let corridor of flow.corridors">
+          <span>{{ corridor.target }}</span>
+          <span>{{ formatValue(corridor.value) }}</span>
+          <small>{{ formatDelta(corridor.delta) }}</small>
+        </li>
+      </ul>
+    </article>
+    <p *ngIf="!viewModel.flows.length" class="og7-importation-flow__empty">
+      {{ 'pages.importation.flow.empty' | translate }}
+    </p>
+  </section>
+</section>

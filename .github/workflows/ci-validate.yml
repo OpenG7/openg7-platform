@@ -1,0 +1,37 @@
+name: Validate Agents
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  validate-selectors:
+    runs-on: ubuntu-latest
+    env:
+      API_URL: https://api.ci.openg7.org
+      API_WITH_CREDENTIALS: 'false'
+      ANALYTICS_ENDPOINT: https://analytics.ci.openg7.org/events
+      NOTIFICATION_WEBHOOK_URL: https://notifications.ci.openg7.org/email
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+      - name: Install dependencies
+        run: |
+          corepack enable
+          yarn install --immutable
+      - name: Lint
+        run: yarn lint
+      - name: Validate product checklist
+        run: yarn checklist:verify
+      - name: Validate Playwright selectors
+        run: yarn validate:selectors
+      - name: Prebuild web (contracts codegen + tests)
+        run: yarn prebuild:web
+      - name: Validate preprod runtime config
+        run: yarn validate:preprod-runtime-config
+      - name: Build web for preproduction
+        run: yarn --cwd openg7-org build:preprod

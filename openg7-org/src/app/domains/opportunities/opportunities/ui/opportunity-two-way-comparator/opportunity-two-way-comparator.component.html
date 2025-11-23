@@ -1,0 +1,102 @@
+<article
+  class="opportunity-two-way"
+  [attr.aria-labelledby]="titleId()"
+  [attr.aria-describedby]="metricsId()"
+>
+  <header class="opportunity-two-way__header">
+    <p class="opportunity-two-way__eyebrow">{{ 'opportunities.twoWay.prototypeLabel' | translate }}</p>
+    <h3 class="opportunity-two-way__title" [id]="titleId()">{{ vm().title }}</h3>
+  </header>
+
+  <div class="opportunity-two-way__columns">
+    <section class="opportunity-two-way__actor">
+      <h4 class="opportunity-two-way__actor-label">{{ 'opportunities.timeline.buyer' | translate }}</h4>
+      <div class="opportunity-two-way__actor-card">
+        <ng-container *ngIf="vm().buyer.logoUrl as logoUrl">
+          <img class="opportunity-two-way__actor-logo" [src]="logoUrl" alt="" loading="lazy" />
+        </ng-container>
+        <p class="opportunity-two-way__actor-name">{{ vm().buyer.name }}</p>
+        <div class="opportunity-two-way__chips">
+          <span class="opportunity-two-way__chip">{{ vm().buyer.provinceLabelKey | translate }}</span>
+          <span class="opportunity-two-way__chip">{{ vm().buyer.sectorLabelKey | translate }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="opportunity-two-way__metrics" [attr.aria-labelledby]="metricsId()">
+      <div
+        class="opportunity-two-way__score"
+        role="img"
+        [attr.aria-label]="'opportunities.twoWay.scoreLabel' | translate:{ value: scoreLabel() }"
+        [id]="scoreId()"
+      >
+        <div class="opportunity-two-way__score-ring" [ngClass]="scoreBadgeClass()">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="opportunity-two-way-score-high" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#34d399" />
+                <stop offset="100%" stop-color="#22d3ee" />
+              </linearGradient>
+              <linearGradient id="opportunity-two-way-score-medium" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#facc15" />
+                <stop offset="100%" stop-color="#f97316" />
+              </linearGradient>
+              <linearGradient id="opportunity-two-way-score-low" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#94a3b8" />
+                <stop offset="100%" stop-color="#64748b" />
+              </linearGradient>
+            </defs>
+            <circle class="opportunity-two-way__score-track" cx="60" cy="60" r="48"></circle>
+            <circle
+              class="opportunity-two-way__score-meter"
+              cx="60"
+              cy="60"
+              r="48"
+              [attr.stroke-dasharray]="scoreStrokeDasharray"
+              [attr.stroke-dashoffset]="scoreStrokeDashoffset()"
+              [attr.stroke]="scoreStroke()"
+            ></circle>
+            <text x="60" y="68" text-anchor="middle" class="opportunity-two-way__score-value">{{ scoreLabel() }}</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="opportunity-two-way__metrics-body">
+        <h4 class="opportunity-two-way__metrics-title" [id]="metricsId()">
+          {{ 'opportunities.twoWay.metricsLabel' | translate }}
+        </h4>
+        <ul class="opportunity-two-way__metric-list">
+          <li
+            class="opportunity-two-way__metric"
+            *ngFor="let metric of vm().metrics; trackBy: trackByMetricId"
+            [class.opportunity-two-way__metric--pending]="metric.pending"
+          >
+            <span class="opportunity-two-way__metric-label">{{ metric.labelKey | translate }}</span>
+            <span class="opportunity-two-way__metric-value">{{ metric.valueKey | translate: metric.valueParams }}</span>
+            <span class="opportunity-two-way__metric-hint">{{ metric.hintKey | translate }}</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="opportunity-two-way__actor opportunity-two-way__actor--supplier">
+      <h4 class="opportunity-two-way__actor-label">{{ 'opportunities.timeline.supplier' | translate }}</h4>
+      <div class="opportunity-two-way__actor-card">
+        <ng-container *ngIf="vm().supplier.logoUrl as logoUrl">
+          <img class="opportunity-two-way__actor-logo" [src]="logoUrl" alt="" loading="lazy" />
+        </ng-container>
+        <p class="opportunity-two-way__actor-name">{{ vm().supplier.name }}</p>
+        <div class="opportunity-two-way__chips">
+          <span class="opportunity-two-way__chip">{{ vm().supplier.provinceLabelKey | translate }}</span>
+          <span class="opportunity-two-way__chip">{{ vm().supplier.sectorLabelKey | translate }}</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="opportunity-two-way__actions">
+    <button type="button" class="opportunity-two-way__action" (click)="emitConnect()">
+      {{ 'opportunities.timeline.connect' | translate }}
+    </button>
+  </footer>
+</article>

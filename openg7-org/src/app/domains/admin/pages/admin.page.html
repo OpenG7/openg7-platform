@@ -1,0 +1,81 @@
+<section class="mx-auto flex w-full max-w-5xl flex-col gap-6" data-og7="admin-companies">
+  <header class="space-y-2">
+    <h1 class="text-2xl font-semibold text-slate-900">Company moderation</h1>
+    <p class="text-sm text-slate-600">
+      Review pending companies and adjust their publication status. Only approved organisations are visible to the public.
+    </p>
+  </header>
+
+  <div class="flex items-center justify-between">
+    <button
+      type="button"
+      class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600"
+      (click)="refresh()"
+    >
+      Refresh list
+    </button>
+    @if (loading()) {
+      <span class="text-sm text-slate-500">Loading companies…</span>
+    }
+  </div>
+
+  @if (error(); as message) {
+    <p class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ resolveError(message) }}
+    </p>
+  }
+
+  <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-600">
+      <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+        <tr>
+          <th scope="col" class="px-4 py-3">Company</th>
+          <th scope="col" class="px-4 py-3">Sector</th>
+          <th scope="col" class="px-4 py-3">Country</th>
+          <th scope="col" class="px-4 py-3">Province</th>
+          <th scope="col" class="px-4 py-3">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        @if (!companies().length && !loading()) {
+          <tr>
+            <td colspan="4" class="px-4 py-6 text-center text-sm text-slate-500">No companies have been submitted yet.</td>
+          </tr>
+        } @else {
+          @for (company of companies(); track company.id) {
+            <tr>
+              <td class="px-4 py-3">
+                <p class="font-medium text-slate-900">{{ company.name }}</p>
+                @if (company.description) {
+                  <p class="text-xs text-slate-500">{{ company.description }}</p>
+                }
+              </td>
+              <td class="px-4 py-3">{{ company.sector?.name ?? '—' }}</td>
+              <td class="px-4 py-3">
+                {{ company.country ? (('countries.' + company.country) | translate) : '—' }}
+              </td>
+              <td class="px-4 py-3">{{ company.province?.name ?? '—' }}</td>
+              <td class="px-4 py-3">
+                <label class="sr-only" [for]="'status-' + company.id">Status</label>
+                <select
+                  class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                  [id]="'status-' + company.id"
+                  [value]="company.status"
+                  (change)="onStatusChange(company, $event)"
+                  [disabled]="isUpdating(company.id)"
+                >
+                  @for (status of statuses; track status) {
+                    <option [value]="status">{{ statusLabel(status) }}</option>
+                  }
+                </select>
+                @if (isUpdating(company.id)) {
+                  <span class="ml-2 text-xs text-slate-400">Saving…</span>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

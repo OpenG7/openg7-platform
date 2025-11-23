@@ -1,0 +1,2739 @@
+{
+  "announcement": "Welcome to OpenG7",
+  "banner": {
+    "underConstruction": {
+      "title": "Platform under construction",
+      "message": "We are still assembling the OpenG7 experience. Some sections may be incomplete for now.",
+      "dismiss": "Dismiss banner"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Enter at least {{ min }} characters.",
+    "email": "Enter a valid email address.",
+    "url": "Enter a valid URL.",
+    "isoCountry": "Invalid ISO-2 country code",
+    "caPhone": "Enter a valid Canadian phone number"
+  },
+  "notifications": {
+    "panel": {
+      "title": "Notifications",
+      "subtitle": "{{ unread }} unread · {{ total }} total",
+      "markAllRead": "Mark all as read",
+      "clearAll": "Clear history",
+      "empty": "You're all caught up.",
+      "deliveryError": "Email delivery failed: {{ message }}",
+      "dismissDeliveryError": "Dismiss alert",
+      "source": "Source: {{ source }}",
+      "unreadLabel": "{{ count }} unread notifications"
+    },
+    "types": {
+      "success": "Success",
+      "info": "Information",
+      "error": "Error"
+    }
+  },
+  "onboarding": {
+    "kicker": "First steps",
+    "progress": "Onboarding progress",
+    "actions": {
+      "close": "Close onboarding",
+      "finish": "Finish onboarding",
+      "skip": "Skip for now",
+      "back": "Back"
+    },
+    "steps": {
+      "profile": {
+        "title": "Complete your partner profile",
+        "description": "Let trusted contacts know who you are. Confirm your organisation, role and preferred sectors so matches stay relevant.",
+        "cta": "Update my profile",
+        "secondaryCta": "Remind me later"
+      },
+      "feed": {
+        "title": "Explore your curated activity feed",
+        "description": "Use filters and keyboard shortcuts to scan new requests, sector briefings and alerts from your network in real time.",
+        "cta": "Show me the feed"
+      },
+      "alerts": {
+        "title": "Activate proactive alerts",
+        "description": "Choose the channels that work for you: email digests, browser notifications or webhook automations for your CRM.",
+        "cta": "Configure alerts",
+        "secondaryCta": "I'll configure later"
+      }
+    }
+  },
+  "signup": "Sign up",
+  "registration": {
+    "kicker": "Registration portal",
+    "title": "Register your company on OpenG7",
+    "subtitle": "Connect with Canadian and international partners by sharing your capabilities and target markets.",
+    "badges": {
+      "trusted": "G7-backed trust and security programme",
+      "noFee": "No fees for eligible organisations",
+      "timeline": "Manual review in under five business days"
+    },
+    "highlight": {
+      "market": "Market access",
+      "marketDesc": "Showcase your offer to public buyers, clusters and private partners.",
+      "compliance": "Compliance & trust",
+      "complianceDesc": "Export controls, sanctions screening and privacy aligned with GDPR/DPDPA.",
+      "speed": "Faster review",
+      "speedDesc": "Initial review by the OpenG7 team within five business days."
+    },
+    "sidebar": {
+      "title": "Registration checklist",
+      "description": "Have these items ready to streamline the review of your application.",
+      "point1": "Legal identity, website and primary sectors.",
+      "point2": "Trade scope, provinces and countries you serve.",
+      "point3": "Contact information for a decision maker or Canadian representative."
+    },
+    "formLead": "Start your application in a few minutes.",
+    "formTitle": "Company registration form",
+    "formSubtitle": "Our partnerships team validates every submission. We will reach out before publishing your profile.",
+    "reviewTime": "Every submission is handled confidentially by the OpenG7 partnerships team until it goes live.",
+    "foreignBanner": "Based outside Canada? Select your headquarter country and indicate the markets you cover. OpenG7 welcomes international registrations tied to trade with Canada.",
+    "legalName": "Legal name",
+    "website": "Website",
+    "hqCountry": "Headquarter country",
+    "hqProvince": "Province or territory (if based in Canada)",
+    "selectProvince": "Select a province",
+    "tradeScope": "Trade scope",
+    "scope_canada": "National (Canada)",
+    "scope_international": "International",
+    "scope_both": "Canada + International",
+    "provincesServed": "Provinces served",
+    "countriesServed": "Countries served",
+    "sector": "Primary sector",
+    "sectorPlaceholder": "Energy, agri-food, mobility…",
+    "description": "Short description",
+    "descriptionHint": "Summarise your offer and key clients (optional).",
+    "capacityNote": "Capabilities or certifications",
+    "capacityHint": "e.g. annual capacity, ISO standards, export requirements.",
+    "foreignRegistrationId": "Foreign registration / VAT number",
+    "canadianRep": "Canadian representative (optional)",
+    "fullName": "Full name",
+    "email": "Email",
+    "contactSection": "Primary contact",
+    "contactHint": "This person will receive the confirmation and follow-up questions.",
+    "contact_fullName": "Contact full name",
+    "contact_role": "Role or title",
+    "contact_email": "Contact email",
+    "contact_phone": "Phone (Canada)",
+    "rolePlaceholder": "Export director, VP business development…",
+    "acceptedTerms": "I agree to the OpenG7 privacy and usage policies",
+    "privacyLink": "privacy policy",
+    "termsLink": "terms",
+    "and": "and the",
+    "submit": "Submit registration",
+    "steps": {
+      "title": "How registration works",
+      "items": {
+        "intake": {
+          "title": "1. Submit your profile",
+          "desc": "Share your legal identity, target markets and verified points of contact."
+        },
+        "assessment": {
+          "title": "2. Compliance assessment",
+          "desc": "Our analysts screen sanctions, certifications and regulatory compliance."
+        },
+        "publication": {
+          "title": "3. Launch & onboarding",
+          "desc": "Receive tailored feedback and unlock the secure partner features."
+        }
+      }
+    },
+    "support": {
+      "title": "Need assistance?",
+      "description": "Contact support@openg7.org if you require guidance while submitting your application."
+    },
+    "toast": {
+      "success": "Your registration request has been sent."
+    }
+  },
+  "auth": {
+    "email": "Email address",
+    "password": "Password",
+    "accessDenied": "You must be authenticated to access this page.",
+    "profile": {
+      "title": "My profile",
+      "subtitle": "Review your contact details and preferences shared with partners.",
+      "loading": "Loading your profile…",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "success": "Your profile has been updated.",
+      "error": "We could not update your profile. Please try again.",
+      "avatar": {
+        "label": "Profile picture URL",
+        "placeholder": "https://example.com/avatar.jpg",
+        "alt": "Profile picture preview"
+      },
+      "contact": {
+        "title": "Contact details",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "jobTitle": "Job title",
+        "organization": "Organization",
+        "phone": "Phone number",
+        "email": "Email"
+      },
+      "preferences": {
+        "title": "Collaboration preferences",
+        "sectors": "Preferred sectors (comma-separated)",
+        "provinces": "Preferred provinces or territories (comma-separated)",
+        "email": {
+          "title": "Email notifications",
+          "description": "Send high-priority alerts to your inbox via the backend webhook.",
+          "webhookLabel": "Custom webhook URL (optional)",
+          "webhookHelp": "Leave empty to use the default Strapi webhook or provide a secure HTTPS endpoint managed by your team."
+        }
+      }
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Access your secure workspace to coordinate partnerships and exchanges.",
+      "subtitleLocal": "Use your internal credentials to pick up where you left off with your secured exchanges.",
+      "subtitleHybrid": "Choose how you want to sign in: internal credentials or your company provider.",
+      "subtitleSsoOnly": "Select your company provider to continue to the OpenG7 platform.",
+      "submit": "Sign in",
+      "loading": "Signing in…",
+      "success": "You are now logged in.",
+      "securityTitle": "Hardened security",
+      "securityCopy": "Your credentials are encrypted and processed under GDPR. Only authorised teams can view your information.",
+      "helpLink": "Need help?",
+      "ssoOnlyHelperTitle": "Continue with your company account",
+      "ssoOnlyHelperBody": "Click the button above to open your provider. Once the authentication completes, you will be redirected back here automatically.",
+      "ssoOnlyHelperCta": "Read the SSO guide"
+    },
+    "loginSubtitle": "Access your secure workspace to coordinate partnerships and exchanges.",
+    "signup": "Create an account",
+    "or": "or",
+    "continueWithMicrosoft": "Continue with Microsoft",
+    "continueWithGoogle": "Continue with Google",
+    "forgotPassword": {
+      "hero": {
+        "tagline": "Reset access in minutes",
+        "body": "Follow the secure instructions we send by email to regain access to your account."
+      },
+      "title": "Forgot your password?",
+      "subtitle": "Enter the email linked to your account and we will send you a reset link.",
+      "submit": "Send reset link",
+      "loading": "Sending…",
+      "success": "If an account exists for this email, a reset link is on its way.",
+      "link": "Forgot your password?",
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "subtitle": "Paste the security token from your email and choose a new password.",
+      "submit": "Update password",
+      "loading": "Updating…",
+      "success": "Your password has been reset. You can now sign in with the new credentials.",
+      "tokenLabel": "Reset token",
+      "tokenRequired": "A reset token is required.",
+      "passwordLabel": "New password"
+    },
+    "register": {
+      "submit": "Create account",
+      "loading": "Creating your account…",
+      "success": "Your account is ready.",
+      "hero": {
+        "tagline": "Secure onboarding",
+        "title": "Create your OpenG7 account",
+        "subtitle": "Unlock a sovereign workspace to coordinate cross-border projects with trusted partners."
+      },
+      "badges": {
+        "security": "Encrypted data and sovereign hosting",
+        "network": "Certified intergovernmental network",
+        "speed": "Activation confirmed within 48 hours"
+      },
+      "benefits": {
+        "visibility": {
+          "title": "Targeted visibility",
+          "copy": "Showcase your initiatives to authorised decision makers and surface critical resource needs."
+        },
+        "compliance": {
+          "title": "Compliance & audit trail",
+          "copy": "Every exchange respects GDPR, GC InfoSec and the internal governance policies of your administration."
+        },
+        "support": {
+          "title": "Dedicated guidance",
+          "copy": "A designated onboarding lead helps you progress smoothly through validation and partner matching."
+        }
+      },
+      "timeline": {
+        "title": "Three steps to activate your access",
+        "items": {
+          "intake": {
+            "title": "Online request",
+            "copy": "Submit your professional details and the scope of your mandate."
+          },
+          "review": {
+            "title": "Confidential review",
+            "copy": "Our team validates the information and confirms alignment with the G7 mandate."
+          },
+          "activation": {
+            "title": "Activation & onboarding",
+            "copy": "Receive a confirmation email with first steps and curated resources."
+          }
+        }
+      },
+      "form": {
+        "lead": "Secure workspace",
+        "title": "Tell us who you are",
+        "subtitle": "We vet each request individually to protect sensitive data across the ecosystem.",
+        "review": "A trusted operations team reviews every submission. Expect a personalised acknowledgement in your inbox.",
+        "ssoOnly": {
+          "title": "Continue with your identity provider",
+          "copy": "This environment is configured for SSO only. Start the flow from your corporate portal to access OpenG7.",
+          "cta": "Read the SSO help guide"
+        }
+      },
+      "support": {
+        "title": "Support that starts before you log in",
+        "subtitle": "We help your teams secure exchanges and embed the platform into existing processes.",
+        "items": {
+          "onboarding": "Guided onboarding journey with interactive documentation.",
+          "security": "Continuous security controls with certified SOC oversight.",
+          "contact": "Priority support via encrypted email and dedicated hotline."
+        }
+      }
+    },
+    "sso": {
+      "microsoft": "Continue with Microsoft",
+      "google": "Continue with Google",
+      "progress": "Redirecting to {{ provider }}…"
+    },
+    "errors": {
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Password is required.",
+      "invalidCredentials": "Incorrect credentials. Double-check your email and password.",
+      "accountDisabled": "Your account is inactive. Please reach out to your administrator to reactivate it.",
+      "accountLocked": "Too many attempts. Your account is temporarily locked.",
+      "passwordExpired": "Your password has expired. Reset it to continue.",
+      "tooManyAttempts": "Too many consecutive attempts. Try again in a few minutes.",
+      "serviceUnavailable": "The authentication service is temporarily unavailable. Please try again later.",
+      "api": "Unable to complete the request right now.",
+      "emailAlreadyExists": "This email address is already associated with an account.",
+      "passwordResetRequest": "We could not send the reset instructions. Please try again later.",
+      "resetPassword": "We could not reset your password. Please try again.",
+      "ssoStart": "We could not start the single sign-on flow. Please try again or use your password instead."
+    },
+    "passwordToggle": {
+      "show": "Show",
+      "hide": "Hide"
+    },
+    "required": "Authentication required."
+  },
+  "header": {
+    "help": "Help",
+    "account": "Account",
+    "signin": "Sign in",
+    "login": "Log in",
+    "favorites": "Favorites",
+    "nav": {
+      "home": "Home",
+      "features": "Features",
+      "pricing": "Pricing",
+      "statistics": "Statistics",
+      "info": "Info",
+      "faq": "FAQ",
+      "terms": "Terms of Service",
+      "privacy": "Privacy policy",
+      "legal": "Legal notice",
+      "credits": "Credits & partners",
+      "ariaLabel": "Primary navigation",
+      "favoritesAriaLabel": "View saved opportunities"
+    },
+    "cta": {
+      "publish": "Create account"
+    },
+    "search": {
+      "aria": "Search OpenG7",
+      "placeholder": "Search partners, sectors, provinces…",
+      "spotlight": "Type to search OpenG7",
+      "hint": "Try “aluminium”, “Ontario”, “energy”…",
+      "results": {
+        "query": "Show results for “{{query}}”",
+        "queryDesc": "Open search with the “{{query}}” filter",
+        "matches": "My matches",
+        "matchesDesc": "Access your saved companies and projects",
+        "stats": "Explore statistics",
+        "statsDesc": "Interprovincial data and sector trends",
+        "pricing": "Plans & pricing",
+        "pricingDesc": "Compare data access options",
+        "registration": "Company registration",
+        "registrationDesc": "Submit your organisation for onboarding"
+      }
+    },
+    "lang": {
+      "fr": "French",
+      "en": "English"
+    },
+    "more": {
+      "registration": "Registration",
+      "importation": "Import",
+      "stats": "Statistics",
+      "pricing": "Pricing",
+      "open": "More options"
+    },
+    "profile": {
+      "matches": "My matches",
+      "account": "My profile",
+      "logout": "Sign out",
+      "menuLabel": "Open profile menu"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "empty": "No notifications yet"
+    },
+    "mobile": {
+      "menuLabel": "Open menu"
+    },
+    "visibility": {
+      "locked": "Boost visibility"
+    }
+  },
+  "footer": {
+    "links": {
+      "ariaLabel": "Footer navigation",
+      "faq": "FAQ",
+      "registration": "Registration",
+      "credits": "Credits",
+      "terms": "Terms of Service",
+      "privacy": "Privacy policy",
+      "legal": "Legal notice"
+    }
+  },
+  "common": {
+    "search": "Search",
+    "clear": "Clear",
+    "info": "Information"
+  },
+  "search": {
+    "quick": {
+      "kicker": "Command palette",
+      "title": "Quick search",
+      "subtitle": "Find companies, sectors, actions and help from anywhere.",
+      "placeholder": "Search across OpenG7",
+      "actions": {
+        "close": "Close quick search",
+        "retry": "Try again"
+      },
+      "results": {
+        "ariaLabel": "Quick search results",
+        "companyFallback": "Company #{{ id }}",
+        "exchange": {
+          "source": "Source province",
+          "target": "Target province"
+        }
+      },
+      "empty": {
+        "title": "No results",
+        "subtitle": "We couldn't find anything for \"{{ query }}\". Try a different keyword."
+      },
+      "error": {
+        "title": "Unable to load results",
+        "description": "Check your connection and try again."
+      },
+      "history": {
+        "title": "Recent searches",
+        "clear": "Clear history"
+      },
+      "shortcuts": {
+        "title": "Keyboard shortcuts",
+        "navigate": "Navigate results",
+        "validate": "Select highlighted result",
+        "close": "Close palette"
+      },
+      "badges": {
+        "energy": "Energy",
+        "manufacturing": "Manufacturing",
+        "trending": "Trending",
+        "new": "New",
+        "shortcut": "Shortcut"
+      },
+      "sections": {
+        "companies": {
+          "title": "Companies",
+          "items": {
+            "enbridge": {
+              "title": "Enbridge Inc.",
+              "description": "Energy infrastructure leader · Ontario"
+            },
+            "magna": {
+              "title": "Magna International",
+              "description": "Advanced manufacturing · Ontario"
+            }
+          }
+        },
+        "remoteCompanies": {
+          "title": "Companies (live data)"
+        },
+        "sectors": {
+          "title": "Sectors",
+          "items": {
+            "energy": {
+              "title": "Energy outlook",
+              "description": "Latest production and investment indicators"
+            },
+            "technology": {
+              "title": "Technology landscape",
+              "description": "Digital growth and workforce signals"
+            }
+          }
+        },
+        "actions": {
+          "title": "Actions",
+          "items": {
+            "createCompany": {
+              "title": "Register a partner company",
+              "description": "Create a new company profile and assign sectors"
+            },
+            "openFeed": {
+              "title": "Open collaboration feed",
+              "description": "Jump to the personalised activity stream"
+            }
+          }
+        },
+        "help": {
+          "title": "Help",
+          "items": {
+            "shortcuts": {
+              "title": "Review keyboard shortcuts",
+              "description": "Open the FAQ section dedicated to accelerators"
+            },
+            "support": {
+              "title": "Contact support",
+              "description": "Email the OpenG7 team for assistance"
+            }
+          }
+        },
+        "remoteExchanges": {
+          "title": "Interprovincial exchanges",
+          "badge": "Exchange"
+        }
+      }
+    }
+  },
+  "feed": {
+    "title": "Collaboration feed",
+    "subtitle": "Stay on top of partner updates, needs, and real-time collaboration signals.",
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "description": "Navigate faster on desktop and tablets.",
+      "refresh": "Refresh the feed",
+      "loadMore": "Load more posts",
+      "closeDrawer": "Close the post drawer"
+    },
+    "status": {
+      "online": "Live updates active",
+      "degraded": "Live updates degraded — some data may be delayed",
+      "offline": "Offline — attempting to reconnect",
+      "reconnecting": "Reconnecting…"
+    },
+    "stream": {
+      "refresh": "Retry connection",
+      "newPosts": "{{ count, plural, one {# new post available.} other {# new posts available.} }}",
+      "showNew": "Show latest",
+      "onboarding": "Share quick updates or needs so partners can respond in time.",
+      "onboardingAction": "Post an update",
+      "filters": "Active filters",
+      "clearFilters": "Clear all",
+      "loading": "Loading more updates…"
+    },
+    "filters": {
+      "search": "Search feed",
+      "province": "Province",
+      "sector": "Sector",
+      "need": "Need tag",
+      "onlyUnread": "Unread only",
+      "sort": {
+        "label": "Sort",
+        "latest": "Latest",
+        "trending": "Trending",
+        "recommended": "Recommended"
+      }
+    },
+    "card": {
+      "edited": "Edited",
+      "pinned": "Pinned update",
+      "pending": "Sending…",
+      "failed": "Not delivered",
+      "expires": "Expires {{ value }}",
+      "view": "Open",
+      "reply": "Reply",
+      "like": "Like",
+      "share": "Share"
+    },
+    "replies": {
+      "title": "Replies"
+    },
+    "drawer": {
+      "close": "Close post",
+      "aria": "Post details panel"
+    },
+    "composer": {
+      "title": "Share an update",
+      "channelLabel": "Choose an audience",
+      "channel": {
+        "global": "All partners",
+        "sector": "Sector group",
+        "province": "Province channel",
+        "private": "Private note"
+      },
+      "placeholder": "Summarize what you need or can offer…",
+      "help": "Keep the message concise and note any deadlines or accessibility considerations.",
+      "submit": "Publish",
+      "submitting": "Publishing…",
+      "clear": "Clear draft"
+    },
+    "validation": {
+      "tooShort": "Write at least three characters.",
+      "tooLong": "Limit updates to 5,000 characters.",
+      "moderationFlag": "Review the language for a respectful, inclusive tone.",
+      "channelRequired": "Select where to publish this update."
+    },
+    "toast": {
+      "publishSuccess": "Update shared with the feed.",
+      "publishFailure": "We could not send your update. Try again.",
+      "loadFailure": "The feed did not load. Check your connection.",
+      "reconnected": "Connection restored. New updates will appear automatically."
+    },
+    "notifications": {
+      "publishSuccess": "Update shared with the feed.",
+      "publishFailure": "We could not send your update: {{ reason }}.",
+      "loadError": "The feed did not load: {{ reason }}.",
+      "connectionLost": "Live updates are temporarily paused. We will retry shortly.",
+      "connectionRestored": "Live updates are back online.",
+      "reconnecting": "Reconnecting in {{ seconds }}s…"
+    },
+    "error": {
+      "generic": "Something went wrong. Please try again.",
+      "offline": "You are offline. Reconnect to refresh the feed.",
+      "forbidden": "You do not have permission to publish in this channel.",
+      "expired": "This post is no longer available."
+    },
+    "aria": {
+      "newPosts": "{{ count, plural, one {# new post ready.} other {# new posts ready.} }}",
+      "postFailed": "Post failed to send. Edit and try again.",
+      "connectionLost": "Feed connection lost. Reconnecting.",
+      "connectionRestored": "Feed connection restored."
+    },
+    "analytics": {
+      "pageLoaded": "Feed page loaded",
+      "postPublish": "Feed post published",
+      "postPublishFailed": "Feed post publish failed",
+      "postReceived": "Feed post received",
+      "drawerOpened": "Feed post opened"
+    }
+  },
+  "pages": {
+    "credits": {
+      "kicker": "COLLECTIVE IMPACT",
+      "title": "An ecosystem built together",
+      "subtitle": "OpenG7 thrives thanks to collaboration across innovators, decision-makers and community catalysts nationwide.",
+      "kpis": {
+        "contributors": "Contributors",
+        "provinces": "Provinces",
+        "pillars": "Pillars",
+        "since": "Since"
+      },
+      "cta": {
+        "join": "Join the initiative",
+        "readCharter": "Read the charter"
+      },
+      "filters": {
+        "reset": "Reset",
+        "search": "Search name, skill…"
+      },
+      "contributors": {
+        "title": "Contributors",
+        "caption": "A multidisciplinary crew spanning product, data, design and partnership enablement.",
+        "items": [
+          {
+            "id": "amina",
+            "name": "Amina Lefèvre",
+            "role": "Design & Product",
+            "province": "QC",
+            "skills": [
+              "Design systems",
+              "UX"
+            ],
+            "impact": "Defined the visual DNA and modular grid."
+          },
+          {
+            "id": "noah",
+            "name": "Noah Tremblay",
+            "role": "Data",
+            "province": "BC",
+            "skills": [
+              "ETL",
+              "APIs"
+            ],
+            "impact": "StatCan pipelines into OpenG7."
+          },
+          {
+            "id": "sofia",
+            "name": "Sofia Caron",
+            "role": "Partnerships",
+            "province": "ON",
+            "skills": [
+              "Alliances",
+              "Gov relations"
+            ],
+            "impact": "Interprovincial and G7 liaison."
+          },
+          {
+            "id": "elliot",
+            "name": "Elliot Bouchard",
+            "role": "Engineering",
+            "province": "QC",
+            "skills": [
+              "Angular",
+              "NgRx"
+            ],
+            "impact": "Signal-first architecture and performance."
+          }
+        ]
+      },
+      "community": {
+        "title": "Ready to build Canada’s economic future?",
+        "copy": "Add your name to the people shaping a more agile interprovincial economy.",
+        "btn": "Count me in"
+      },
+      "governance": {
+        "title": "Governance",
+        "copy": "Our commitments reinforce partner and citizen trust.",
+        "points": {
+          "open": "Code & data as open as possible",
+          "transparent": "Transparent decisions and budgets",
+          "nonprofit": "Public interest first",
+          "privacy": "Strict data protection"
+        }
+      },
+      "pillars": {
+        "nationalCoordination": "National coordination",
+        "nationalCoordination_desc": "Harmonise interprovincial flows and shared references.",
+        "digitalInnovation": "Digital innovation",
+        "digitalInnovation_desc": "Interactive maps, open AI and real-time integrations.",
+        "communityPartnerships": "Community partnerships",
+        "communityPartnerships_desc": "Connect SMEs, clusters and local institutions.",
+        "items": [
+          {
+            "id": "nationalCoordination",
+            "title": "National coordination",
+            "summary": "Harmonise interprovincial flows and shared references.",
+            "tags": [
+              "Open data",
+              "Interoperability",
+              "Security"
+            ]
+          },
+          {
+            "id": "digitalInnovation",
+            "title": "Digital innovation",
+            "summary": "Interactive maps, open AI and real-time integrations.",
+            "tags": [
+              "Angular",
+              "NgRx",
+              "Leaflet"
+            ]
+          },
+          {
+            "id": "communityPartnerships",
+            "title": "Community partnerships",
+            "summary": "Connect SMEs, clusters and local institutions.",
+            "tags": [
+              "Clusters",
+              "SMEs",
+              "Academic"
+            ]
+          }
+        ]
+      }
+    },
+    "governance": {
+      "hero": {
+        "kicker": "TRUSTED FOUNDATION",
+        "title": "Governance that earns trust",
+        "subtitle": "OpenG7 is stewarded as public digital infrastructure where transparency, accountability and shared leadership guide every release.",
+        "navLabel": "Governance sections"
+      },
+      "commitments": [
+        {
+          "title": "Public mandate",
+          "copy": "Guided by an intergovernmental charter that centres public interest above commercial objectives."
+        },
+        {
+          "title": "Multi-partner leadership",
+          "copy": "Federal, provincial, territorial and civic partners co-design priorities and evaluate outcomes together."
+        },
+        {
+          "title": "Evidence-first decisions",
+          "copy": "Policies, budgets and releases are supported by open metrics and impact stories reviewed each quarter."
+        },
+        {
+          "title": "Indigenous inclusion",
+          "copy": "Indigenous economic leaders hold a permanent seat to embed reconciliation and data sovereignty."
+        }
+      ],
+      "anchors": [
+        {
+          "id": "board",
+          "label": "Board & stewardship"
+        },
+        {
+          "id": "advisory",
+          "label": "Advisory circles"
+        },
+        {
+          "id": "process",
+          "label": "Decision process"
+        },
+        {
+          "id": "transparency",
+          "label": "Transparency"
+        }
+      ],
+      "board": {
+        "kicker": "STEERING THE PLATFORM",
+        "title": "Stewardship board",
+        "subtitle": "Representatives from federal innovation, provincial economic development, Indigenous leadership and civic tech maintain our mandate.",
+        "members": [
+          {
+            "name": "Élise Martel",
+            "role": "Chair — Innovation, Science and Economic Development Canada",
+            "background": "Bridges policy, procurement and agile delivery for national digital services.",
+            "focus": "Keeps cohesion between federal investments and regional adoption."
+          },
+          {
+            "name": "Noah Desrosiers",
+            "role": "Vice-chair — Gouvernement du Québec",
+            "background": "Leads the provincial cluster strategy and interprovincial trade facilitation.",
+            "focus": "Ensures SMEs benefit equitably from marketplace visibility."
+          },
+          {
+            "name": "Dr. Aanya Greyeyes",
+            "role": "Indigenous economic representative",
+            "background": "Advocates for Indigenous data sovereignty and community-led prosperity.",
+            "focus": "Secures consent-driven data practices and co-governed opportunities."
+          },
+          {
+            "name": "Sanjay Patel",
+            "role": "Civic tech & open data coalition",
+            "background": "Founder of the Open Exchange Observatory monitoring interoperability.",
+            "focus": "Champions reusable APIs, open source and accessibility standards."
+          }
+        ],
+        "mandateTitle": "Mandate",
+        "mandate": [
+          "Guard the public-interest charter and principles of openness.",
+          "Approve release trains, funding envelopes and risk mitigations.",
+          "Ensure equity across provinces, territories and Indigenous partners."
+        ],
+        "cadenceTitle": "Cadence",
+        "cadence": [
+          "Quarterly open sessions with published minutes and recordings.",
+          "Biannual audit of privacy, security and accessibility baselines.",
+          "Annual renewal of priorities following partner consultations."
+        ]
+      },
+      "advisory": {
+        "title": "Advisory circles",
+        "description": "Specialist circles create the connective tissue between communities, sectors and the platform roadmap.",
+        "groups": [
+          {
+            "name": "Data & AI ethics council",
+            "focus": "Reviews algorithmic recommendations, bias mitigation and consent flows before deployment.",
+            "meets": "Meets every 2 months"
+          },
+          {
+            "name": "Supply chain resilience forum",
+            "focus": "Surfaces signals from manufacturing, agri-food and energy ecosystems to shape features.",
+            "meets": "Meets quarterly"
+          },
+          {
+            "name": "Civic adoption guild",
+            "focus": "Connects municipalities, chambers of commerce and incubators to support onboarding.",
+            "meets": "Meets monthly"
+          }
+        ],
+        "inviteTitle": "Bring your voice to the table",
+        "inviteCopy": "We welcome contributors from coast to coast to strengthen inclusive governance.",
+        "inviteCta": "Express your interest"
+      },
+      "process": {
+        "title": "Decisions in the open",
+        "subtitle": "Every governance decision follows a transparent pipeline with documented evidence.",
+        "steps": [
+          {
+            "title": "Frame",
+            "description": "Partners submit a concise issue brief outlining needs, constraints and potential impact.",
+            "deliverables": [
+              "Brief published to the community hub",
+              "Impact canvas shared with stakeholders"
+            ]
+          },
+          {
+            "title": "Co-design",
+            "description": "Mixed working groups iterate scenarios, privacy guardrails and funding needs.",
+            "deliverables": [
+              "Open workshop notes",
+              "Risk register updated"
+            ]
+          },
+          {
+            "title": "Decide",
+            "description": "The stewardship board votes in public session with rationale recorded and streamed.",
+            "deliverables": [
+              "Voting record",
+              "Implementation charter"
+            ]
+          },
+          {
+            "title": "Review",
+            "description": "Results are measured against agreed indicators and lessons learned feed back into planning.",
+            "deliverables": [
+              "Post-implementation review",
+              "Updated public roadmap"
+            ]
+          }
+        ]
+      },
+      "transparency": {
+        "title": "Transparency measures",
+        "subtitle": "Accountability is actionable with artefacts you can review at any time.",
+        "items": [
+          "Public registry of votes, declarations of interest and meeting attendance.",
+          "Financial dashboard tracking programme budgets, grants and in-kind contributions.",
+          "Privacy, security and accessibility compliance reports available every semester.",
+          "Issue tracker exposing backlog status, owners and delivery progress."
+        ]
+      },
+      "timeline": {
+        "title": "Upcoming governance milestones",
+        "milestones": [
+          {
+            "quarter": "Q2 2025",
+            "title": "Establish civic data stewardship agreement"
+          },
+          {
+            "quarter": "Q3 2025",
+            "title": "Publish first multi-province interoperability scorecard"
+          },
+          {
+            "quarter": "Q4 2025",
+            "title": "Launch participatory budgeting pilot for regional enhancements"
+          }
+        ]
+      }
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "We describe how we handle personal and organisational data collected through OpenG7.",
+      "kicker": "Data stewardship commitments",
+      "hero": {
+        "badge": "Transparency first",
+        "updated": "Last updated: September 2024",
+        "supporting": "We follow federal privacy guidance to keep your marketplace data safe and purposeful.",
+        "ctaLabel": "Contact the privacy team",
+        "ctaDescription": "Dedicated specialists will reply within two business days."
+      },
+      "highlights": [
+        {
+          "title": "Purpose-built collection",
+          "description": "We only request details needed to match partners and deliver mandated services."
+        },
+        {
+          "title": "Security by design",
+          "description": "Encryption, segmentation, and audits reduce risk throughout the platform lifecycle."
+        },
+        {
+          "title": "Clear accountability",
+          "description": "Named roles govern access and every request is logged for traceability."
+        }
+      ],
+      "quickNav": {
+        "title": "Navigate this page",
+        "description": "Skip directly to the topic you are looking for."
+      },
+      "summaryCard": {
+        "title": "Privacy at a glance",
+        "description": "Key commitments we uphold for every user and organisation.",
+        "items": [
+          {
+            "label": "Data minimisation",
+            "description": "We collect the minimum personal data required to operate OpenG7 services."
+          },
+          {
+            "label": "Shared responsibility",
+            "description": "Partners accessing data sign agreements that mirror these standards."
+          },
+          {
+            "label": "Responsive support",
+            "description": "Privacy inquiries are tracked and answered within regulatory timelines."
+          }
+        ]
+      },
+      "contactCard": {
+        "title": "Need more details?",
+        "description": "Reach the privacy team for tailored guidance or to exercise your rights.",
+        "meta": "Response within two business days"
+      },
+      "contactEmailLabel": "Email",
+      "contactEmail": "privacy@openg7.org",
+      "sections": {
+        "collection": {
+          "title": "1. Data we collect",
+          "paragraphs": [
+            "We collect account details, activity logs, and data you publish to the marketplace.",
+            "We may ingest public datasets and partner-provided information to enrich profiles."
+          ],
+          "bullets": [
+            "Identification data such as name, email, and organisation.",
+            "Usage metrics like session timestamps and feature adoption.",
+            "Content metadata including uploaded documents and structured forms."
+          ]
+        },
+        "usage": {
+          "title": "2. How we use the data",
+          "paragraphs": [
+            "Data enables matchmaking, analytics, and service improvements.",
+            "Aggregated insights are produced to help policy and economic development teams."
+          ],
+          "bullets": [
+            "Provide and secure user accounts.",
+            "Recommend relevant partners or opportunities.",
+            "Assess adoption and plan roadmap priorities."
+          ]
+        },
+        "sharing": {
+          "title": "3. Sharing & disclosure",
+          "paragraphs": [
+            "We share data only with authorised partners involved in delivering the service or when required by law.",
+            "Access is restricted to roles with a legitimate need and governed by agreements."
+          ]
+        },
+        "security": {
+          "title": "4. Security & retention",
+          "paragraphs": [
+            "We apply encryption, network segmentation, and routine audits to protect records.",
+            "Data is retained for the duration of service delivery and archived according to federal guidelines."
+          ]
+        },
+        "rights": {
+          "title": "5. Your rights",
+          "paragraphs": [
+            "You may request access, correction, or deletion of your personal data subject to legal obligations.",
+            "Contact us to exercise these rights and we will respond within regulatory timelines."
+          ]
+        },
+        "contact": {
+          "title": "6. Contact",
+          "paragraphs": [
+            "Reach the OpenG7 privacy team at privacy@openg7.org or via the administrative console."
+          ]
+        }
+      }
+    },
+    "features": {
+      "title": "Product features",
+      "description": "Explore the capabilities OpenG7 makes available to teams and partners."
+    },
+    "importation": {
+      "eyebrow": "Data module",
+      "title": "Trade data import workspace",
+      "intro": "Connect public and partner datasets to continuously power the OpenG7 interactive map.",
+      "breadcrumb": {
+        "dashboard": "Dashboard",
+        "trade": "Trade intelligence",
+        "importation": "Importation"
+      },
+      "meta": {
+        "lastUpdated": "Last refresh",
+        "provider": "Data provider",
+        "coverage": "Coverage",
+        "unknown": "Not available"
+      },
+      "filters": {
+        "title": "Quick filters",
+        "period": {
+          "title": "Period granularity",
+          "month": "Month",
+          "quarter": "Quarter",
+          "year": "Year",
+          "value": "Specific period"
+        },
+        "origin": {
+          "title": "Origin scope",
+          "global": "Global imports",
+          "globalDescription": "All partner economies combined.",
+          "g7": "G7 partners",
+          "g7Description": "Canada, United States, Japan, United Kingdom, France, Germany, Italy.",
+          "usmca": "USMCA corridor",
+          "usmcaDescription": "North American supply chains (CA, US, MX).",
+          "eu": "European Union",
+          "euDescription": "European Union member states aggregate.",
+          "indo": "Indo-Pacific",
+          "indoDescription": "Indo-Pacific strategy markets.",
+          "custom": "Custom codes",
+          "customDescription": "Focus on specific ISO country codes.",
+          "codes": "ISO country codes"
+        },
+        "hs": {
+          "title": "HS sections",
+          "sections": {
+            "01": "Section I – Live animals",
+            "02": "Section II – Vegetables",
+            "07": "Section VII – Plastics & rubber",
+            "15": "Section XV – Base metals",
+            "27": "Section XXVII – Mineral fuels",
+            "84": "Section XVI – Machinery"
+          }
+        },
+        "compare": {
+          "label": "Compare against another period"
+        }
+      },
+      "kpis": {
+        "totalValue": "Total import value",
+        "totalValueTooltip": "Aggregated import value for the selected period.",
+        "yoyDelta": "Year-over-year delta",
+        "yoyDeltaTooltip": "Variation compared with the same period last year.",
+        "topOrigin": "Top origin market",
+        "topOriginTooltip": "Leading partner economy for the selected period.",
+        "riskIndex": "Risk intensity index",
+        "riskIndexTooltip": "Weighted severity of current supply alerts."
+      },
+      "flow": {
+        "title": "Flow map and corridors",
+        "subtitle": "Current coverage: {{ coverage }}",
+        "play": "Play timeline",
+        "pause": "Pause timeline",
+        "comparePlaceholder": "Choose comparison period",
+        "timeline": "Timeline selector",
+        "mapPlaceholder": "Interactive flow map loading…",
+        "legend": {
+          "title": "Legend",
+          "min": "Minimum value",
+          "max": "Maximum value"
+        },
+        "list": "Origin flows",
+        "drilldown": "Drill down",
+        "empty": "No flows available for the selected filters.",
+        "loading": "Loading trade flows…"
+      },
+      "commodities": {
+        "title": "Commodity deep dive",
+        "tabs": {
+          "label": "Commodity tabs",
+          "top": "Top commodities",
+          "emerging": "Emerging trends",
+          "risk": "Risk flags"
+        },
+        "columns": {
+          "product": "Commodity",
+          "hs": "HS code",
+          "value": "Import value",
+          "delta": "YoY delta",
+          "risk": "Risk score"
+        },
+        "empty": "No commodity found for the current filters.",
+        "loading": "Loading commodity analytics…",
+        "flags": {
+          "title": "Risk details",
+          "level": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+          }
+        },
+        "export": {
+          "label": "Export data"
+        }
+      },
+      "suppliers": {
+        "title": "Strategic suppliers",
+        "subtitle": "Monitor dependency and diversification for critical partners.",
+        "loading": "Loading suppliers…",
+        "dependency": "Dependency score",
+        "diversification": "Diversification",
+        "reliability": "Reliability",
+        "lastReviewed": "Last reviewed on {{ date }}",
+        "empty": "No supplier insight available for this selection."
+      },
+      "collaboration": {
+        "title": "Collaboration hub",
+        "subtitle": "Activate teams around watchlists, annotations and scheduled reports.",
+        "watchlists": {
+          "title": "Shared watchlists",
+          "newLabel": "Create a new watchlist",
+          "placeholder": "Name your watchlist",
+          "create": "Create",
+          "updated": "Updated {{ date }}",
+          "empty": "No watchlists yet — create one to monitor your filters."
+        },
+        "annotations": {
+          "title": "Recent annotations",
+          "empty": "No annotations posted for this module."
+        },
+        "schedule": {
+          "title": "Schedule recurring report",
+          "recipients": "Recipients",
+          "format": "Export format",
+          "frequency": "Frequency",
+          "weekly": "Weekly",
+          "monthly": "Monthly",
+          "quarterly": "Quarterly",
+          "notes": "Optional notes",
+          "submit": "Schedule report"
+        }
+      },
+      "knowledge": {
+        "title": "Knowledge base & next steps",
+        "subtitle": "Articles and alerts curated for the importation workspace.",
+        "loading": "Loading knowledge articles…",
+        "read": "Read article",
+        "empty": "No knowledge content available yet."
+      }
+    },
+    "pricing": {
+      "title": "Plans & pricing",
+      "description": "Compare plans and pick the right level of access for your organization.",
+      "hero": {
+        "breadcrumb": {
+          "label": "Breadcrumb",
+          "home": "Home",
+          "current": "Pricing"
+        },
+        "eyebrow": "Transparent pricing",
+        "title": "Choose the right OpenG7 plan for your team",
+        "subtitle": "Scale collaboration and analytics with plans designed for public-sector partnerships and resilient supply chains.",
+        "billing": {
+          "label": "Billing cycle",
+          "monthly": "Monthly billing",
+          "yearly": "Annual billing",
+          "savings": "Save 2 months with annual billing"
+        },
+        "primaryCta": "Explore plans",
+        "secondaryCta": "Talk to our team",
+        "highlights": {
+          "market": "Verified suppliers across the entire G7 network",
+          "analytics": "Priority analytics and export-ready insights",
+          "support": "Concierge onboarding for public-sector buyers",
+          "security": "Enterprise-grade security with Canadian data residency"
+        },
+        "metrics": {
+          "title": "Impact snapshot",
+          "suppliers": {
+            "value": "4,200+",
+            "label": "verified Canadian suppliers"
+          },
+          "matches": {
+            "value": "18k",
+            "label": "introductions facilitated"
+          },
+          "satisfaction": {
+            "value": "96%",
+            "label": "partner satisfaction score"
+          }
+        }
+      },
+      "planCards": {
+        "eyebrow": "Compare plans",
+        "heading": "Flexible plans for every stage of your export journey",
+        "subheading": "All plans include secure marketplace access, bilingual support, and compliance-ready documentation.",
+        "featuredLabel": "Most popular",
+        "interval": {
+          "monthly": "per month",
+          "yearly": "per year"
+        },
+        "perMonthEquivalent": "{{ value }} equivalent per month",
+        "freeLabel": "Free forever",
+        "customLabel": "Custom pricing",
+        "explorer": {
+          "badge": "Starter",
+          "title": "Explorer",
+          "description": "Ideal for organisations beginning to map partnerships and visibility.",
+          "highlight": "Get started in minutes with three seats included.",
+          "features": {
+            "directory": "Discover verified suppliers across the G7",
+            "watchlists": "Bookmark opportunities with shared watchlists",
+            "collaboration": "Collaborate with up to three seats per organisation"
+          },
+          "cta": "Create a free account",
+          "ctaHint": "No payment details required.",
+          "footnote": "Switch plans or cancel at any time."
+        },
+        "analyst": {
+          "badge": "Growth",
+          "title": "Analyst",
+          "description": "Unlock premium analytics, curated matches, and expanded team management.",
+          "highlight": "Best for trade commissioners, procurement teams, and regional clusters.",
+          "features": {
+            "analytics": "Advanced trade analytics and export dashboards",
+            "visibility": "Priority placement in search and curated showcases",
+            "success": "Dedicated success manager for quarterly planning"
+          },
+          "cta": "Start Analyst trial",
+          "ctaHint": "14-day trial, cancel anytime.",
+          "savings": "Two months free when billed annually.",
+          "footnote": "Pricing shown in CAD and excludes applicable taxes."
+        },
+        "enterprise": {
+          "badge": "Enterprise",
+          "title": "Enterprise",
+          "description": "Tailored deployments with deeper integrations, governance controls, and SLAs.",
+          "highlight": "Designed for national programs, provincial agencies, and large consortiums.",
+          "features": {
+            "workshops": "Strategic onboarding workshops and change management",
+            "integrations": "Custom data integrations and private catalogues",
+            "assurance": "Contractual SLAs with 99.9% availability"
+          },
+          "cta": "Contact sales",
+          "ctaHint": "We respond within one business day.",
+          "footnote": "Custom pricing based on scope, seats, and integrations."
+        }
+      },
+      "matrix": {
+        "eyebrow": "Feature comparison",
+        "heading": "What each plan includes",
+        "description": "See how capabilities scale as your collaboration needs evolve.",
+        "columns": {
+          "feature": "Capability",
+          "explorer": "Explorer",
+          "analyst": "Analyst",
+          "enterprise": "Enterprise"
+        },
+        "groups": {
+          "data": "Data & insights",
+          "collaboration": "Collaboration",
+          "support": "Support & compliance"
+        },
+        "rows": {
+          "visibility": {
+            "label": "Marketplace visibility",
+            "description": "How your organisation appears across search, showcases, and alerts.",
+            "explorer": "Standard listing placement",
+            "analyst": "Priority placement with campaign boosts",
+            "enterprise": "Custom landing pages and spotlight campaigns"
+          },
+          "analytics": {
+            "label": "Analytics dashboards",
+            "description": "Depth of analytics across trade flows, supplier health, and demand signals.",
+            "explorer": "Core metrics updated monthly",
+            "analyst": "Advanced dashboards with weekly refresh",
+            "enterprise": "Tailored indicators with real-time alerts"
+          },
+          "dataExports": {
+            "label": "Data exports",
+            "description": "Access to CSV, API, and custom export workflows.",
+            "explorer": "Manual CSV exports",
+            "analyst": "Automated CSV + API bundles",
+            "enterprise": "Unlimited exports with governance controls"
+          },
+          "teamSeats": {
+            "label": "Team seats",
+            "description": "Number of user seats included per organisation.",
+            "explorer": "Up to 3 seats included",
+            "analyst": "Up to 15 seats included",
+            "enterprise": "Unlimited seats with SSO"
+          },
+          "introductions": {
+            "label": "Warm introductions",
+            "description": "Support from the OpenG7 concierge team to broker introductions.",
+            "explorer": "Self-serve requests",
+            "analyst": "Concierge-assisted introductions",
+            "enterprise": "Managed partnership programs"
+          },
+          "support": {
+            "label": "Support response",
+            "description": "Guaranteed response times from the customer success team.",
+            "explorer": "Email support within 2 business days",
+            "analyst": "Priority queue within 8 business hours",
+            "enterprise": "Dedicated line with 2-hour response"
+          },
+          "compliance": {
+            "label": "Compliance assurance",
+            "description": "Security documentation, attestations, and platform governance.",
+            "explorer": "Access to compliance summary",
+            "analyst": "Vendor security packages on request",
+            "enterprise": "Custom due diligence & contractual commitments"
+          }
+        }
+      },
+      "addons": {
+        "eyebrow": "Usage-based add-ons",
+        "heading": "Extend the platform as you grow",
+        "description": "Add modular capabilities when you need deeper integrations or white-glove support.",
+        "api": {
+          "badge": "Popular",
+          "title": "Data export API",
+          "description": "REST API access for programmatic exports, analytics, and ERP integrations.",
+          "unit": "per 10k API calls",
+          "frequency": "Includes daily refreshes and sandbox credentials."
+        },
+        "support": {
+          "title": "Premium support",
+          "description": "24/7 incident hotline, change advisory board, and quarterly roadmap reviews.",
+          "unit": "per month",
+          "frequency": "Billed annually with a 12-month commitment."
+        },
+        "analytics": {
+          "title": "Custom insight packs",
+          "description": "On-demand insight reports prepared by the OpenG7 analyst team.",
+          "unit": "per insight pack"
+        }
+      },
+      "testimonials": {
+        "eyebrow": "Trusted partners",
+        "heading": "What government and industry leaders say",
+        "description": "Provinces and regional clusters use OpenG7 to accelerate procurement and collaboration.",
+        "quebec": {
+          "quote": "The Analyst plan gave us a unified view of suppliers across ministries in record time.",
+          "author": "Mélanie Beaulieu",
+          "role": "Director of Strategic Procurement",
+          "organisation": "Government of Québec"
+        },
+        "saskatchewan": {
+          "quote": "We can prioritise introductions that align with provincial goals and measure outcomes weekly.",
+          "author": "Aaron Little",
+          "role": "Executive Director, Growth Initiatives",
+          "organisation": "Saskatchewan Trade & Export"
+        },
+        "bc": {
+          "quote": "The enterprise rollout anchored our partnership program with reliable data and governance.",
+          "author": "Priya Narang",
+          "role": "VP Sustainability Partnerships",
+          "organisation": "Coastal Manufacturing Consortium"
+        }
+      },
+      "faq": {
+        "eyebrow": "FAQ",
+        "heading": "Answers for procurement teams",
+        "description": "Everything you need to bring OpenG7 through security, privacy, and purchasing reviews.",
+        "security": {
+          "question": "Where is data stored and processed?",
+          "answer": "All customer data is hosted in Canada with redundancy across Toronto and Montréal regions. Backups are encrypted using AES-256 and stored in-region."
+        },
+        "procurement": {
+          "question": "Can we issue a purchase order instead of using a credit card?",
+          "answer": "Yes. Analyst annual and Enterprise plans support invoicing with purchase orders. We provide vendor forms, W9 equivalents, and security assessments on request."
+        },
+        "billing": {
+          "question": "Do you offer discounts for multi-year commitments?",
+          "answer": "Enterprise agreements can include multi-year pricing with predictable uplifts. Analyst plans receive a 10% discount for two-year terms."
+        },
+        "rollout": {
+          "question": "How long does onboarding take?",
+          "answer": "Explorer accounts activate instantly. Analyst plans typically launch within two weeks, while Enterprise rollouts include a 6-week guided deployment."
+        }
+      },
+      "compliance": {
+        "heading": "Compliance & assurances",
+        "soc2": {
+          "label": "SOC 2 Type II assessment in flight",
+          "description": "Audit underway with quarterly penetration testing and continuous monitoring."
+        },
+        "iso": {
+          "label": "ISO 27001-aligned controls",
+          "description": "Policies mapped to ISO controls with evidence packages available for review."
+        },
+        "pipeda": {
+          "label": "PIPEDA & provincial privacy alignment",
+          "description": "We meet federal and provincial privacy obligations, including Québec Law 25."
+        }
+      },
+      "support": {
+        "heading": "Need guidance choosing a plan?",
+        "description": "Our team can walk you through use cases, security documentation, and rollout planning.",
+        "primaryCta": "Book a consultation",
+        "secondaryCta": "Email partnerships",
+        "email": "partnerships@openg7.org"
+      },
+      "customerPortal": {
+        "heading": "Already a customer?",
+        "description": "Sign in to manage billing, download invoices, or adjust seats in the subscription portal."
+      }
+    },
+    "linkups": {
+      "eyebrow": "Matchmaking hub",
+      "title": "Linkups",
+      "subtitle": "Track the history of your economic connections and where each request stands.",
+      "filters": {
+        "reset": "Reset filters",
+        "status": {
+          "label": "Status",
+          "all": "All statuses"
+        },
+        "tradeMode": {
+          "label": "Exchange type",
+          "all": "All exchanges"
+        },
+        "searchPlaceholder": "Search by company, sector or province"
+      },
+      "table": {
+        "companyA": "Origin company",
+        "companyB": "Target company",
+        "primarySector": "Primary sector",
+        "createdAt": "Created on",
+        "status": "Status",
+        "actions": "Actions",
+        "viewDetails": "View details"
+      },
+      "empty": {
+        "title": "No linkups match your filters",
+        "description": "Adjust the filters or run a new search to bring a record into view."
+      },
+      "status": {
+        "pending": "Pending",
+        "inDiscussion": "In discussion",
+        "completed": "Completed",
+        "closed": "Closed"
+      },
+      "tradeMode": {
+        "import": "Import",
+        "export": "Export",
+        "both": "Import + export"
+      },
+      "detail": {
+        "backToList": "Back to linkups",
+        "eyebrow": "Detailed record",
+        "reference": "Reference",
+        "createdAt": "Created on",
+        "updatedAt": "Last updated",
+        "companyA": {
+          "title": "Origin company"
+        },
+        "companyB": {
+          "title": "Target company"
+        },
+        "company": {
+          "location": "Province",
+          "sector": "Sector",
+          "channel": "Channel"
+        },
+        "scope": {
+          "title": "Scope of the exchange",
+          "primarySector": "Primary sector",
+          "tradeMode": "Exchange type"
+        },
+        "timeline": {
+          "title": "Interaction timeline",
+          "description": "Each milestone is timestamped to provide full traceability."
+        },
+        "notes": {
+          "title": "Internal notes",
+          "description": "Capture learnings for the OpenG7 teams.",
+          "empty": "No notes have been added to this linkup yet."
+        },
+        "notFound": {
+          "title": "Linkup not found",
+          "description": "The requested record no longer exists or has not been synchronized yet."
+        }
+      }
+    },
+    "favorites": {
+      "title": "My favorites",
+      "description": "Here are the items you have saved for quick access.",
+      "empty": "Save companies or opportunities to find them here later."
+    },
+    "terms": {
+      "kicker": "LEGAL FRAMEWORK",
+      "title": "Terms of Service",
+      "updated": "Last updated: March 2025",
+      "intro": "These terms govern your use of the OpenG7 platform and outline the responsibilities shared between partners.",
+      "highlights": [
+        {
+          "title": "Who should read this",
+          "description": "Platform administrators, legal teams and procurement leads working with OpenG7."
+        },
+        {
+          "title": "Why it matters",
+          "description": "Defines the trust, data sharing and accountability practices every participant signs onto."
+        },
+        {
+          "title": "Review cadence",
+          "description": "Reviewed twice per year with provincial, territorial and federal governance partners."
+        }
+      ],
+      "summary": {
+        "title": "Operate with shared care",
+        "description": "Treat OpenG7 as mission-critical infrastructure for your organisation and its partners.",
+        "points": [
+          "Administrators steward accounts and escalate incidents promptly.",
+          "Data sharing respects confidentiality, licences and partner expectations.",
+          "Policy updates ship with transparent timelines and archived versions."
+        ]
+      },
+      "toc": {
+        "title": "Navigate the terms"
+      },
+      "obligations": {
+        "title": "Shared obligations",
+        "items": [
+          {
+            "title": "Share accurate information",
+            "description": "Keep organisation profiles, opportunities and datasets truthful and current so partners can rely on them."
+          },
+          {
+            "title": "Protect community data",
+            "description": "Apply your internal safeguards to OpenG7 just as you would to other trusted collaboration environments."
+          },
+          {
+            "title": "Engage with integrity",
+            "description": "Use the platform to build fair, lawful collaborations that respect every participant’s mandate."
+          }
+        ]
+      },
+      "timeline": {
+        "title": "Revision timeline",
+        "description": "Key updates to the Terms of Service.",
+        "items": [
+          {
+            "date": "March 2025",
+            "label": "Operational launch",
+            "description": "Established the baseline terms covering beta-to-live transition and availability commitments."
+          },
+          {
+            "date": "June 2025",
+            "label": "Security uplift",
+            "description": "Added joint incident management duties and clarified credential rotation expectations."
+          },
+          {
+            "date": "September 2025",
+            "label": "Procurement alignment",
+            "description": "Aligned terminology with federal and provincial procurement frameworks for easier adoption."
+          }
+        ]
+      },
+      "support": {
+        "title": "Need bespoke agreements?",
+        "description": "The OpenG7 governance office can adapt clauses for sectoral programmes and pilot projects.",
+        "details": [
+          "Available on business days from 9:00 to 18:00 ET.",
+          "Typical response time is two business days with clear next steps."
+        ],
+        "ctaLabel": "Email the governance office",
+        "ctaEmail": "legal@openg7.org"
+      },
+      "sections": {
+        "service": {
+          "anchor": "service",
+          "navLabel": "Service scope",
+          "tag": "Platform coverage",
+          "title": "1. Service scope & availability",
+          "lede": "Understand what the OpenG7 platform delivers today and how we keep it reliable.",
+          "paragraphs": [
+            "OpenG7 connects Canadian organisations with partners across the G7 supply chain and powers shared intelligence for industrial collaboration.",
+            "Core marketplace features are available 24/7 with planned maintenance windows announced in advance."
+          ],
+          "checklistTitle": "OpenG7 commits to",
+          "checklist": [
+            "Delivering a minimum 99.5% monthly uptime target for core marketplace capabilities.",
+            "Publishing maintenance and release windows at least five business days in advance.",
+            "Notifying partners whenever we introduce new data processing locations or sub-processors."
+          ],
+          "callout": {
+            "title": "Need the printable version?",
+            "body": [
+              "A PDF copy lives in the governance workspace for procurement and audit records."
+            ],
+            "tone": "info"
+          }
+        },
+        "access": {
+          "anchor": "access",
+          "navLabel": "Account stewardship",
+          "tag": "Roles & permissions",
+          "title": "2. Account stewardship",
+          "lede": "Delegate the right access for your organisation and keep it current.",
+          "paragraphs": [
+            "Each organisation designates at least two administrators who manage seats, roles and approvals for their teams.",
+            "Administrators ensure user profiles reflect current employment status and revoke accounts when people depart."
+          ],
+          "checklistTitle": "Administrators agree to",
+          "checklist": [
+            "Review user rosters quarterly and confirm least-privilege access levels.",
+            "Enable multi-factor authentication on all administrator accounts.",
+            "Report compromised credentials to OpenG7 within 24 hours."
+          ]
+        },
+        "data": {
+          "anchor": "data",
+          "navLabel": "Data handling",
+          "tag": "Data lifecycle",
+          "title": "3. Data handling & confidentiality",
+          "lede": "Share datasets confidently while respecting confidentiality and licences.",
+          "paragraphs": [
+            "Participants retain ownership of the datasets and content they contribute while granting OpenG7 a licence to host, transform and display it to authorised users.",
+            "We aggregate metrics to inform national insights without exposing identifiable confidential information."
+          ],
+          "checklistTitle": "When sharing data you will",
+          "checklist": [
+            "Classify uploads according to your internal governance standards.",
+            "Avoid including personal information unless a separate agreement explicitly allows it.",
+            "Respect embargoes or licences that apply to partner datasets."
+          ],
+          "callout": {
+            "title": "Sensitive exports",
+            "body": [
+              "Exports of restricted datasets require a written release or scoped API token issued by OpenG7."
+            ],
+            "tone": "warning"
+          }
+        },
+        "conduct": {
+          "anchor": "conduct",
+          "navLabel": "Responsible conduct",
+          "tag": "Community standards",
+          "title": "4. Responsible conduct",
+          "lede": "Keep collaboration constructive, inclusive and lawful.",
+          "paragraphs": [
+            "Interactions on OpenG7 must support lawful economic collaboration and procurement between participants.",
+            "You may not use the service to mislead partners, disrupt operations or abuse communication channels."
+          ],
+          "checklistTitle": "Prohibited behaviour includes",
+          "checklist": [
+            "Posting fraudulent opportunities or misrepresenting credentials.",
+            "Attempting to probe, disable or bypass security controls.",
+            "Using platform directories for unsolicited marketing outside approved programmes."
+          ]
+        },
+        "security": {
+          "anchor": "security",
+          "navLabel": "Security",
+          "tag": "Trust & safety",
+          "title": "5. Security & incident response",
+          "lede": "Coordinate with us to keep the ecosystem resilient.",
+          "paragraphs": [
+            "OpenG7 monitors platform health and security anomalies to safeguard all participants.",
+            "We coordinate incident handling with designated security contacts from each organisation."
+          ],
+          "checklistTitle": "If an incident occurs",
+          "checklist": [
+            "Notify OpenG7 within 24 hours of discovering suspected misuse or breach.",
+            "Preserve relevant system logs for at least 90 days to support investigations.",
+            "Collaborate on remediation steps and joint communications."
+          ],
+          "callout": {
+            "title": "Security contact list",
+            "body": [
+              "Keep your security distribution list up to date so we can reach you during coordinated responses."
+            ],
+            "tone": "info"
+          }
+        },
+        "continuity": {
+          "anchor": "continuity",
+          "navLabel": "Updates",
+          "tag": "Staying current",
+          "title": "6. Updates & change history",
+          "lede": "We evolve these terms transparently with our partners.",
+          "paragraphs": [
+            "We update these terms when policies, product capabilities or regulatory requirements change.",
+            "Material revisions are previewed with governance partners before they take effect."
+          ],
+          "checklistTitle": "We will always",
+          "checklist": [
+            "Publish redlines and effective dates in the governance workspace.",
+            "Keep prior versions accessible for auditing and procurement records.",
+            "Provide at least 30 days’ notice for changes that materially affect data usage."
+          ],
+          "callout": {
+            "title": "Questions about a change?",
+            "body": [
+              "Join the monthly governance clinic or email us for a walkthrough of the upcoming updates."
+            ],
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "legal": {
+      "title": "Legal notice",
+      "intro": "Official information about the organisation operating OpenG7.",
+      "highlights": {
+        "registration": {
+          "label": "Registration",
+          "value": "Not-for-profit corporation — Canada Not-for-profit Corporations Act"
+        },
+        "businessNumber": {
+          "label": "Federal business number",
+          "value": "BN 78342 5598 RC0001",
+          "description": "Used for program agreements and statutory filings."
+        },
+        "establishment": {
+          "label": "Established",
+          "value": "2018, renewed by members in 2024"
+        },
+        "jurisdiction": {
+          "label": "Jurisdiction",
+          "value": "Province of Ontario",
+          "description": "All proceedings are subject to Ontario and federal legislation."
+        }
+      },
+      "sections": {
+        "operator": {
+          "title": "Operator",
+          "paragraphs": [
+            "OpenG7 is operated by the OpenG7 Coalition, a non-profit initiative supporting Canadian supply chain partnerships.",
+            "Registered office: 155 Laurier Ave W, Ottawa, ON, Canada."
+          ]
+        },
+        "hosting": {
+          "title": "Hosting & infrastructure",
+          "paragraphs": [
+            "The platform is hosted in Canadian regions on accredited cloud providers meeting federal security requirements.",
+            "Disaster recovery sites are maintained in compliance with Treasury Board directives."
+          ]
+        },
+        "compliance": {
+          "title": "Compliance & contact",
+          "paragraphs": [
+            "We comply with the Privacy Act, PIPEDA, and applicable provincial regulations.",
+            "For any legal notice, contact legal@openg7.org."
+          ]
+        },
+        "credits": {
+          "title": "Credits & partners",
+          "paragraphs": [
+            "OpenG7 acknowledges the contributions of the following partners:"
+          ],
+          "bullets": [
+            "Innovation, Science and Economic Development Canada for strategic guidance.",
+            "Global Affairs Canada for international market intelligence.",
+            "Provincial economic development agencies for regional data pipelines.",
+            "Industry associations and cooperatives for domain expertise."
+          ]
+        }
+      },
+      "contact": {
+        "title": "Reach our compliance desk",
+        "description": "Dedicated contacts respond to formal notices, privacy requests, and incident escalations.",
+        "channels": {
+          "legal": {
+            "label": "Legal desk",
+            "value": "legal@openg7.org",
+            "href": "mailto:legal@openg7.org",
+            "hint": "Primary channel for summons, contractual notices, and governance inquiries."
+          },
+          "privacy": {
+            "label": "Privacy officer",
+            "value": "privacy@openg7.org",
+            "href": "mailto:privacy@openg7.org",
+            "hint": "Use for data subject requests and privacy impact assessments."
+          },
+          "security": {
+            "label": "Security hotline",
+            "value": "+1 (613) 555-0199",
+            "href": "tel:+16135550199",
+            "hint": "24/7 line for incident response and vulnerability disclosures."
+          },
+          "policies": {
+            "label": "Policy register",
+            "value": "View the public repository",
+            "href": "https://openg7.org/policies",
+            "hint": "Latest charters, governance policies, and annual compliance reports."
+          }
+        }
+      }
+    },
+    "faq": {
+      "kicker": "SUPPORT & TRUST",
+      "title": "Frequently asked questions",
+      "intro": "Answers to the most common questions from organisations joining OpenG7.",
+      "cta": {
+        "title": "Need a quick answer?",
+        "description": "Our concierge team can help you scope integrations, onboarding, or partnership questions.",
+        "button": "Email the concierge team",
+        "responseTime": "We reply within one business day."
+      },
+      "quickNav": {
+        "title": "Browse by topic",
+        "description": "Jump directly to the section you're interested in."
+      },
+      "search": {
+        "label": "Search",
+        "placeholder": "Search by question or keyword",
+        "results": "Results: {{count}}",
+        "noResults": {
+          "title": "No questions match your search",
+          "description": "Try different keywords or reach out to the concierge team for tailored assistance.",
+          "button": "Contact the concierge team"
+        }
+      },
+      "contact": {
+        "title": "Still looking for something specific?",
+        "description": "Share your use case and we will connect you with the right product specialist.",
+        "emailLabel": "Email",
+        "phoneLabel": "Call us",
+        "hours": "Available Monday to Friday, 9am–6pm EST",
+        "sla": "First response within one business day"
+      },
+      "items": {
+        "platform": {
+          "question": "What is OpenG7?",
+          "answers": [
+            "OpenG7 is the collaborative infrastructure connecting Canadian innovators with G7 buyers, investors, and policy partners.",
+            "The platform brings together verified company profiles, procurement briefs, and matchmaking workflows inside a secure workspace.",
+            "Each feature is co-designed with public servants and industry catalysts to ensure measurable impact and transparency."
+          ],
+          "bullets": [
+            "Unified directory of vetted suppliers and opportunities.",
+            "Shared collaboration spaces for bilateral and multilateral projects.",
+            "Analytics exposing interprovincial trade flows and emerging skills."
+          ]
+        },
+        "data": {
+          "question": "How do you keep data accurate?",
+          "answers": [
+            "We combine official registries, partner submissions, and proactive outreach to keep every profile in sync.",
+            "Automated monitors flag anomalies, while human reviewers focus on strategic sectors and high-value opportunities."
+          ],
+          "bullets": [
+            "Continuous reconciliation with federal and provincial open data feeds.",
+            "Traceable version history for every change approved by administrators.",
+            "Feedback widgets so organisations can suggest corrections in context."
+          ]
+        },
+        "pricing": {
+          "question": "Is there a cost to join?",
+          "answers": [
+            "The discovery tier is free and unlocks the national directory, saved searches, and public insight briefs.",
+            "Premium plans add integration APIs, portfolio analytics, and dedicated visibility campaigns tailored to your objectives."
+          ],
+          "bullets": [
+            "Discovery: free, unlimited seats, national directory access.",
+            "Growth: monthly subscription with trade flow analytics and concierge support.",
+            "Alliance: bespoke partnerships for clusters and government programmes."
+          ]
+        },
+        "support": {
+          "question": "How do I request support?",
+          "answers": [
+            "You can open a ticket from any page via the help launcher or email support@openg7.org.",
+            "Premium subscribers get a concierge channel with shared dashboards and milestone reviews."
+          ],
+          "bullets": [
+            "Contextual playbooks and tips embedded in every workflow.",
+            "Live onboarding clinics twice a month.",
+            "Integration office hours for technical teams."
+          ]
+        },
+        "partners": {
+          "question": "Who are the programme partners?",
+          "answers": [
+            "OpenG7 is stewarded with federal, provincial, and industry partners committed to sustainable and inclusive trade.",
+            "Partnerships are renewed annually with shared impact metrics that are published in our transparency report."
+          ],
+          "bullets": [
+            "Innovation, trade, and procurement departments across the G7.",
+            "Provincial economic development agencies and export councils.",
+            "Industry alliances representing clean tech, agri-food, digital, and advanced manufacturing."
+          ]
+        }
+      }
+    },
+    "statistics": {
+      "hero": {
+        "kicker": "2025 Indicators",
+        "title": "Canada’s trade intelligence at a glance",
+        "subtitle": "Monitor input flows across provinces and into G7 markets to anticipate supply pressures.",
+        "description": "This dashboard highlights consolidated volumes, active corridors, and flagship partnerships across strategic sectors.",
+        "toggleLabel": "Scope",
+        "interprovincial": "Interprovincial",
+        "international": "International",
+        "snapshot": {
+          "title": {
+            "interprovincial": "Interprovincial snapshot",
+            "international": "International snapshot",
+            "all": "Snapshot"
+          },
+          "updated": "Updated Q1 2025",
+          "totalFlows": "Consolidated flows",
+          "activeCorridors": "Active corridors",
+          "note": "Projection compiled from Statistics Canada and federal departmental datasets."
+        }
+      },
+      "filters": {
+        "label": "Input type",
+        "all": "All",
+        "energy": "Energy",
+        "agriculture": "Agri-food",
+        "manufacturing": "Manufacturing",
+        "services": "Services",
+        "period": "Period",
+        "periodAll": "All periods",
+        "country": "Country",
+        "countryAll": "All countries",
+        "province": "Province",
+        "provinceAll": "All provinces"
+      },
+      "units": {
+        "billionCAD": "Billion CAD",
+        "corridors": "monitored corridors",
+        "petajoules": "petajoules",
+        "projects": "projects in delivery",
+        "marketShare": "% of G7 market share",
+        "alliances": "active alliances",
+        "cooperatives": "provincial cooperatives"
+      },
+      "summaries": {
+        "scopeLabel": {
+          "interprovincial": "Interprovincial flows",
+          "international": "International flows",
+          "all": "Flows"
+        },
+        "energyFlow": {
+          "title": "Clean energy in transit",
+          "description": "Hydroelectric and hydrogen volumes rebalanced between producing and consuming provinces."
+        },
+        "cleanTechDemand": {
+          "title": "Cleantech projects confirmed",
+          "description": "Assembly partnerships delivering battery and renewable energy components."
+        },
+        "agriValue": {
+          "title": "Shared agri-food value",
+          "description": "Interprovincial cooperation stabilising grain and protein supply chains."
+        },
+        "energyFlowGlobal": {
+          "title": "Canadian energy exported",
+          "description": "Low-carbon energy deliveries into allied G7 markets."
+        },
+        "servicesExports": {
+          "title": "Digital services exported",
+          "description": "Growth of software and cloud engagements with partner economies."
+        },
+        "agriGlobalShare": {
+          "title": "Global agri-food share",
+          "description": "Canada’s position in plant proteins and processed food segments."
+        },
+        "digitalServices": {
+          "title": "Interprovincial collaborative platforms",
+          "description": "Professional services networks accelerating supply chain digitisation."
+        },
+        "manufacturingAlliances": {
+          "title": "G7 manufacturing alliances",
+          "description": "Joint programmes securing critical materials and strategic components."
+        },
+        "agriResilience": {
+          "title": "Resilient agri cooperatives",
+          "description": "Regenerative agriculture initiatives bridging rural and metropolitan regions."
+        }
+      },
+      "sections": {
+        "exchanges": {
+          "title": "Trade with G7 countries",
+          "description": "Compare interprovincial flows with international demand to prioritise corridors.",
+          "guidance": {
+            "title": "How to read the indicators",
+            "body": "Use the input filters to isolate critical supply chains, then align volumes with partner commitments."
+          },
+          "alert": {
+            "title": "Watchpoints",
+            "body": "Aggregated data excludes confidential projects. Negative trends highlight capacities needing rapid reinforcement."
+          }
+        },
+        "partnerships": {
+          "title": "International economic partnerships",
+          "description": "Overview of collaborative programmes open to Canadian organisations across the G7.",
+          "cards": {
+            "lowCarbon": {
+              "title": "Low-carbon financing",
+              "body": "Joint programmes accelerating low-emission energy infrastructure."
+            },
+            "innovation": {
+              "title": "Innovation labs",
+              "body": "Access to shared prototyping platforms with European and Asian ecosystems."
+            },
+            "skills": {
+              "title": "Skills mobility",
+              "body": "Cross-training and talent mobility pathways securing scarce expertise."
+            },
+            "infrastructure": {
+              "title": "Logistics modernisation",
+              "body": "Co-investment plans upgrading port and rail hubs."
+            },
+            "sme": {
+              "title": "SME coalitions",
+              "body": "Export cohorts helping small and medium firms scale up."
+            },
+            "digital": {
+              "title": "Digital interoperability",
+              "body": "Common standards protecting industrial data exchanges."
+            }
+          }
+        }
+      },
+      "conclusion": {
+        "title": "Turn insight into agreements",
+        "description": "Our analysts help translate these signals into resilient contracts and partnerships.",
+        "cta": "Schedule a strategic briefing",
+        "supporting": "Personalised response within 48 hours."
+      }
+    }
+  },
+  "countries": {
+    "CA": "Canada",
+    "US": "United States",
+    "UK": "United Kingdom",
+    "FR": "France",
+    "DE": "Germany",
+    "IT": "Italy",
+    "JP": "Japan"
+  },
+  "nav": {
+    "sectors": "Sectors",
+    "new": "What's new",
+    "pro": "Pro",
+    "finance": "Finance",
+    "more": "More"
+  },
+  "hero": {
+    "title": "Mapping Canada’s Interprovincial Trade.",
+    "subtitle": "Where supply meets demand, from coast to coast",
+    "quote": {
+      "text": "The power of the people is stronger than the people in power.",
+      "author": "Arnold Schwarzenegger"
+    },
+    "imageAlt": "Illustration of Canadian companies collaborating across provinces",
+    "actions": {
+      "viewSectors": "View sectors",
+      "proMode": "Pro mode",
+      "registerCompany": "Register company",
+      "preview": "Preview"
+    }
+  },
+  "home": {
+    "statistics": {
+      "kicker": "Key indicators",
+      "title": "A snapshot of strategic trade corridors",
+      "description": "Aggregated flows feed these metrics to track value, volume and sector diversity across interprovincial exchanges."
+    },
+    "map": {
+      "kicker": "Trade map",
+      "title": "Navigate G7 interprovincial corridors",
+      "description": "Explore logistics routes, energy hubs and industrial partnerships shaping Canada’s economy."
+    },
+    "filters": {
+      "kicker": "Refine the view",
+      "title": "Filter exchanges by your priorities",
+      "description": "Adjust trade mode and sectors to surface the partners and corridors that matter most.",
+      "tradeModeLabel": "Trade mode",
+      "tradeModeDescription": "Show exports, imports or the full set of flows.",
+      "sectorLabel": "Strategic sectors",
+      "sectorDescription": "Select a sector to highlight related flows on the map."
+    }
+  },
+  "map": {
+    "badges": {
+      "tradeValue": "Trade value",
+      "tradeVolume": "Exchange quantity",
+      "sectorCount": "Sectors",
+      "units": {
+        "transactions": "transactions",
+        "shipments": "shipments"
+      }
+    },
+    "filters": {
+      "tradeMode": {
+        "label": "Trade mode",
+        "all": "All",
+        "export": "Export",
+        "import": "Import"
+      }
+    }
+  },
+  "errors": {
+    "generic": "An unexpected error occurred",
+    "404": "Resource not found"
+  },
+  "metrics": {
+    "tradeValue": "Trade value",
+    "exchangeQty": "Exchange quantity",
+    "sectors": "Sectors",
+    "transactions": "{{count, plural, =0 {transaction} one {transaction} other {transactions}}}"
+  },
+  "sectors": {
+    "energy": "Energy",
+    "mining": "Mining",
+    "manufacturing": "Manufacturing",
+    "construction": "Construction",
+    "services": "Services",
+    "agri": "Agri-food"
+  },
+  "provinces": {
+    "AB": "Alberta",
+    "BC": "British Columbia",
+    "MB": "Manitoba",
+    "NB": "New Brunswick",
+    "NL": "Newfoundland and Labrador",
+    "NS": "Nova Scotia",
+    "NT": "Northwest Territories",
+    "NU": "Nunavut",
+    "ON": "Ontario",
+    "PE": "Prince Edward Island",
+    "QC": "Quebec",
+    "SK": "Saskatchewan",
+    "YT": "Yukon"
+  },
+  "opportunities": {
+    "title": "Interprovincial opportunity matches",
+    "subtitle": "Turn map insights into actionable buyer-supplier connections",
+    "description": "Spot live supply and demand signals, then connect the right partners to strengthen Canada’s interprovincial value chains.",
+    "aiNote": "An AI agent will prefill this list based on your preferences, which may stem from a consent cookie.",
+    "filters": {
+      "title": "Opportunity filters",
+      "q": "Search commodity or company",
+      "province": "Province or territory",
+      "allProvinces": "All provinces and territories",
+      "sector": "Sector",
+      "allSectors": "All sectors",
+      "mode": {
+        "label": "Trade mode",
+        "all": "All",
+        "import": "Import",
+        "export": "Export"
+      },
+      "layout": {
+        "label": "Card interface"
+      }
+    },
+    "buyer": "Buyer",
+    "seller": "Supplier",
+    "sellerDetails": "View supplier profile",
+    "cta": {
+      "hint": "Create a match for {{ commodity }}",
+      "connect": "Request introduction"
+    },
+    "empty": "No opportunities match these filters. Adjust your search or broaden the filters to discover more partners.",
+    "error": "We couldn’t load the opportunity matches right now.",
+    "retry": "Try again",
+    "confidence": "Confidence score: {{ value }}%",
+    "distance": "{{ value, number }} km between partners",
+    "distanceLabel": "Distance",
+    "cards": {
+      "carousel": "Opportunity cards"
+    },
+    "layouts": {
+      "standard": "Standard card",
+      "tile": "Trading card duo",
+      "mini-map": "Logistics mini-map",
+      "subway": "Subway map",
+      "radar": "Compatibility radar",
+      "timeline": "Signal timeline",
+      "compact-kpi": "Compact KPI list",
+      "swipe-stack": "Mobile swipe stack",
+      "impact-banner": "Impact banner",
+      "two-way": "Two-way comparator"
+    },
+    "timeline": {
+      "prototypeLabel": "Signal preview",
+      "scoreLabel": "Compatibility score {{ value }}",
+      "buyer": "Buyer",
+      "supplier": "Supplier",
+      "distance": "Distance",
+      "leadTime": "Lead time",
+      "co2Savings": "CO₂ avoided",
+      "logisticsCost": "Logistics",
+      "stepsTitle": "Supply journey stages",
+      "viewSheet": "View profile",
+      "connect": "Request intro",
+      "save": "Save"
+    },
+    "miniMap": {
+      "prototypeLabel": "Logistics mini-map",
+      "scoreLabel": "Mini-map score {{ value }}",
+      "distanceAction": "Open distance details ({{ value }})",
+      "activateMap": "Activate interactive mini-map",
+      "loadingMap": "Loading the mini-map…",
+      "mapAlt": "Geographic preview for {{ title }}",
+      "units": {
+        "days": "days",
+        "weeks": "weeks",
+        "tco2e": "tCO₂e"
+      }
+    },
+    "subway": {
+      "prototypeLabel": "Constraint subway view",
+      "mapLabel": "Constraint subway map",
+      "constraints": {
+        "cost": "Cost line",
+        "delay": "Lead-time line",
+        "carbon": "Carbon line"
+      },
+      "metrics": {
+        "cost": "Cost pressure",
+        "delay": "Logistics window",
+        "carbon": "Carbon impact",
+        "costValue": "≈ {{ value }} / kg",
+        "delayValue": "Transit ~{{ value }} days",
+        "carbonValue": "~{{ value }} tCO₂ avoided",
+        "carbonPending": "Footprint in modeling"
+      },
+      "station": {
+        "corridor": "Interprovincial junction",
+        "distanceBadge": "{{ value }} km",
+        "distancePending": "Distance pending",
+        "modes": {
+          "import": "Import",
+          "export": "Export",
+          "bilateral": "Bilateral"
+        }
+      }
+    },
+    "radar": {
+      "chartLabel": "Buyer ↔ Supplier compatibility radar",
+      "legendHint": "Filled area showing alignment across the five axes.",
+      "metricsLabel": "Compatibility axes",
+      "axes": {
+        "price": "Price",
+        "delay": "Lead time",
+        "capacity": "Capacity",
+        "footprint": "Footprint",
+        "proximity": "Proximity"
+      }
+    },
+    "compact": {
+      "prototypeLabel": "Signal-first dense list",
+      "title": "Compact KPI chips — {{ count }} matches",
+      "scoreLabel": "{{ value }}%",
+      "distancePending": "Distance pending",
+      "actionLabel": "Open profile",
+      "actionAria": "Open the profile for {{ buyer }} ↔ {{ supplier }}"
+    },
+    "twoWay": {
+      "prototypeLabel": "Localized score comparator",
+      "scoreLabel": "Two-way score {{ value }}",
+      "metricsLabel": "Shared corridor metrics",
+      "metricValues": {
+        "distance": "{{ value }} km",
+        "distancePending": "Distance validation pending",
+        "leadTimeDays": "≈ {{ value }} days",
+        "leadTimeWeeks": "≈ {{ value }} weeks",
+        "leadTimePending": "Transit modeling in progress",
+        "logisticsCost": "≈ {{ value }} / kg",
+        "logisticsCostPending": "Logistics estimate pending"
+      },
+      "metricHints": {
+        "distance": "Corridor length between partners",
+        "distancePending": "Distance validation in progress",
+        "leadTime": "Door-to-door transit estimate",
+        "leadTimePending": "Transit window awaiting supply chain inputs",
+        "logisticsCost": "Approximate freight cost per kilogram",
+        "logisticsCostPending": "Awaiting corridor logistics data"
+      }
+    },
+    "notifications": {
+      "loaded": "{{ count }} opportunity matches synced.",
+      "demo": "Loaded {{ count }} demo opportunity matches."
+    }
+  },
+  "cta": {
+    "sendIntro": "Send the introduction",
+    "proposeSlots": "Suggest 3 slots",
+    "attach": "Attach NDA/RFQ"
+  },
+  "attachments": {
+    "title": "Compliance attachments",
+    "subtitle": "Attach the canonical NDA and RFQ packages before sending the introduction.",
+    "count": "{{ value }} selected",
+    "selected": "Selected",
+    "optional": "Optional",
+    "select": "Select",
+    "deselect": "Remove",
+    "preview": "Strapi preview",
+    "nda": {
+      "title": "Standard NDA",
+      "description": "Bilingual G7 NDA ready for e-signature."
+    },
+    "rfq": {
+      "title": "RFQ template",
+      "description": "Structured RFQ template with sector and province variables."
+    }
+  },
+  "scheduler": {
+    "title": "Proposed meeting slots",
+    "subtitle": "Share three windows that work for your team to kick off the exchange.",
+    "count": "{{ value }} slots",
+    "empty": "No time slot proposed yet",
+    "newSlotLabel": "Add a new slot",
+    "addSlot": "Add slot",
+    "hint": "Times are shown in your local timezone.",
+    "removeSlot": "Remove slot {{ value }}"
+  },
+  "pipeline": {
+    "intro": "Intro",
+    "reply": "Reply",
+    "meeting": "Meeting",
+    "review": "Review",
+    "deal": "Deal"
+  },
+  "introBillboard": {
+    "title": "Business introduction",
+    "heroDiscipline": "MANUFACTURER",
+    "scoreBadge": "Confidence {{ value }}%",
+    "distance": "{{ value }} km between partners",
+    "co2": "Estimated savings: {{ value, number }} t CO₂",
+    "scanBuyer": "Scan — buyer details",
+    "scanSupplier": "Scan — supplier details",
+    "scanMicroCopy": "Scan to open details",
+    "messageLabel": "Introduction message",
+    "messageHint": "Personalize the hook and add your compliance notes.",
+    "briefingTitle": "Partner briefing",
+    "matchBuyer": "Buyer",
+    "matchSupplier": "Supplier",
+    "matchCommodity": "Offer",
+    "buyerLabel": "Buyer",
+    "supplierLabel": "Supplier",
+    "loadingMatch": "Preparing your introduction…",
+    "matchNotFound": "This introduction is no longer available",
+    "matchNotFoundHint": "The requested match could not be located. Return to the opportunity map to browse the latest connections.",
+    "matchPartnerIdentifierTitle": "This link requires a match identifier",
+    "matchPartnerIdentifierHint": "The provided link points to a partner profile. Request the match identifier from your contact or browse the opportunity map for active introductions.",
+    "matchInvalidTitle": "Invalid introduction identifier",
+    "matchInvalidHint": "The link is malformed. Verify the URL or return to the opportunity map to discover new connections.",
+    "backToHome": "Back to home",
+    "ctaReady": "Armed",
+    "ctaPrepare": "Prepare intro",
+    "ctaSending": "Sending…",
+    "ctaSent": "Introduction sent",
+    "statusSending": "Sending",
+    "statusSent": "Sent",
+    "statusArmed": "Armed",
+    "statusIdle": "Prepare",
+    "ctaSlotsHint": "Suggest three local windows to kick off the exchange.",
+    "ctaDocsHint": "Automatically attach NDA and RFQ to the flow.",
+    "attachmentsTitle": "Attachments",
+    "configure": "Configure",
+    "close": "Close",
+    "edit": "Edit",
+    "attachmentsEmpty": "No document selected yet",
+    "attachments": {
+      "nda": "Standard NDA",
+      "rfq": "RFQ template"
+    },
+    "attachmentsNdaDesc": "Bilingual G7 NDA ready for e-signature.",
+    "attachmentsRfqDesc": "Structured RFQ template with sector/province variables.",
+    "slotsTitle": "Proposed time slots",
+    "slotsEmpty": "No slot defined yet",
+    "slot": "Slot {{ index }}",
+    "confirmSlots": "Save slots",
+    "cancel": "Cancel",
+    "logisticsTitle": "Logistics & transport modes",
+    "logisticsSubtitle": "Pick the preferred modes for this introduction.",
+    "incotermTitle": "Recommended incoterms",
+    "selected": "Selected",
+    "transport": {
+      "road": "Road",
+      "rail": "Rail",
+      "air": "Air",
+      "sea": "Sea"
+    },
+    "incoterms": {
+      "FCA": "FCA — Free Carrier",
+      "FOB": "FOB — Free On Board",
+      "DDP": "DDP — Delivered Duty Paid",
+      "CPT": "CPT — Carriage Paid To",
+      "DAP": "DAP — Delivered At Place"
+    },
+    "incotermsDesc": {
+      "FCA": "Goods handed to the carrier appointed by the buyer.",
+      "FOB": "Loaded on board, risk transfers at the port of shipment.",
+      "DDP": "Supplier covers duties and final delivery.",
+      "CPT": "Freight paid to the agreed place, risk transfers to the buyer.",
+      "DAP": "Delivered to the agreed site, import duties on the buyer side."
+    },
+    "pipelineTitle": "Relationship scoreboard",
+    "pipelineSubtitle": "Track every milestone of the introduction",
+    "pipelineSending": "Sending",
+    "pipelineActive": "Active",
+    "logisticsSummaryTitle": "Selected logistics",
+    "financingCtaLabel": "Open program",
+    "financingFallback": "Select a match to reveal relevant financing programs.",
+    "steps": {
+      "introduction": {
+        "title": "Introduction",
+        "description": "Compose the opening message"
+      },
+      "message": {
+        "title": "Message",
+        "description": "Craft the introduction"
+      },
+      "compliance": {
+        "title": "Compliance",
+        "description": "Add supporting files"
+      },
+      "scheduler": {
+        "title": "Scheduling",
+        "description": "Propose meeting slots"
+      },
+      "logistics": {
+        "title": "Logistics",
+        "description": "Transport & incoterms"
+      },
+      "pipeline": {
+        "title": "Pipeline",
+        "description": "Track the journey"
+      },
+      "financing": {
+        "title": "Financing",
+        "description": "Funding programs"
+      }
+    },
+    "messageIncomplete": "Your introduction message must be between 20 and 600 characters.",
+    "complianceIncomplete": "Select at least one supporting document before sending the introduction.",
+    "schedulerIncomplete": "Propose at least two valid meeting slots before sending.",
+    "logisticsIncomplete": "Pick an incoterm and at least one transport mode before sending.",
+    "pipelineIncomplete": "Initialize the relationship pipeline before sending the introduction.",
+    "missingProfiles": "Buyer or supplier profile is incomplete for this introduction.",
+    "connectionSuccess": "Introduction sent — the team has been notified.",
+    "connectionError": "We were unable to create the introduction. Try again or contact the team.",
+    "downloadStub": "Download the partner dossier to review every detail offline.",
+    "downloadPending": "Preparing the partner dossier…",
+    "downloadSuccess": "Partner dossier downloaded successfully.",
+    "downloadError": "We were unable to download the partner dossier. Please try again.",
+    "downloadUnsupported": "Downloads are not available in this environment.",
+    "shareStub": "Share this partner dossier with your team.",
+    "shareSuccess": "Share link ready — use your device dialog or paste it from the clipboard.",
+    "shareError": "We were unable to share the partner dossier. Please try again.",
+    "existing": {
+      "title": "Introduction already in motion",
+      "message": "Latest update: {{ stage }} — {{ timestamp }}",
+      "stage": {
+        "intro": "Drafting",
+        "reply": "Awaiting reply",
+        "meeting": "Preparing meeting",
+        "review": "Under review",
+        "deal": "Deal phase"
+      }
+    },
+    "draft": {
+      "title": "Draft available",
+      "message": "A saved draft was loaded for this introduction. Review the details before sending."
+    },
+    "draftPrompt": {
+      "title": "Save your work?",
+      "message": "You have unsaved edits to this introduction. Save them as a draft before leaving?",
+      "save": "Save draft & exit",
+      "discard": "Discard changes",
+      "stay": "Continue editing"
+    },
+    "draftSaved": "Draft saved. You can resume whenever you're ready.",
+    "stepperLabel": "Introduction steps",
+    "stepOptional": "Optional",
+    "stepperEmpty": "There is nothing to display for this step yet.",
+    "stepperPanelHint": "Open the partner panel to complete this step.",
+    "notFound": {
+      "title": "Match not found",
+      "body": "We could not locate this opportunity match. Return to the matches catalogue to launch a new introduction.",
+      "cta": "Back to matches"
+    }
+  },
+  "partner": {
+    "card": {
+      "identifiers": "Registration identifiers",
+      "address": "Head office",
+      "contacts": "Direct contacts",
+      "leadership": "Leadership team",
+      "networks": "Networks & channels",
+      "mission": "Mission & highlights",
+      "actions": "Actions",
+      "download": "Download profile",
+      "share": "Share profile",
+      "placeholder": "Select a partner to display its profile."
+    },
+    "panel": {
+      "title": "Partner profile",
+      "close": "Close panel",
+      "introduce": "Request introduction",
+      "unavailable": "Partner profile is currently unavailable.",
+      "tabs": {
+        "details": "Details",
+        "collaboration": "Collaboration",
+        "qr": "QR"
+      },
+      "sections": {
+        "identity": "Identity",
+        "identityHint": "Legal identity, registry IDs and direct contacts.",
+        "trust": "Trust & verification",
+        "mission": "Mission",
+        "collaboration": "Introduction actions",
+        "pipeline": "Pipeline",
+        "incoterms": "Incoterms guidance",
+        "financing": "Financing programs",
+        "compliance": "Compliance checklist",
+        "scheduler": "Meeting scheduler"
+      },
+      "missionPlaceholder": "Add a mission statement to spotlight this partner.",
+      "ctaPlaceholder": "Configure the introduction rail to expose curated actions for this partner.",
+      "pipelinePlaceholder": "Live pipeline analytics update automatically as the introduction advances.",
+      "incotermsPlaceholder": "Logistics guidance syncs with the transports and Incoterms selected in the flow.",
+      "financingPlaceholder": "Eligible financing programs appear here when matched to this opportunity.",
+      "compliancePlaceholder": "Compliance workflows mirror the attachments toggled in the introduction builder.",
+      "schedulerPlaceholder": "Use the scheduler step to publish or adjust available time slots instantly.",
+      "qrPlaceholder": "QR codes are generated automatically once partner deep links are resolved.",
+      "verification": {
+        "title": "Reliability & verification",
+        "statusLabel": "Current verification status",
+        "status": {
+          "unverified": "Unverified",
+          "pending": "Pending review",
+          "verified": "Verified",
+          "suspended": "Suspended"
+        },
+        "badgeStatus": {
+          "pending": "Pending",
+          "validated": "Validated",
+          "revoked": "Revoked"
+        },
+        "sourceTypes": {
+          "registry": "Official registry",
+          "chamber": "Chamber of commerce",
+          "audit": "Third-party audit",
+          "other": "Other source"
+        },
+        "trustScore": "Reliability score: {{ value }}%",
+        "trustScoreUnknown": "Reliability score unavailable",
+        "statusHelp": "Badges validated by trusted institutions unlock the verified badge.",
+        "badgesTitle": "Badges & attestations",
+        "badgesEmpty": "No verification badges have been submitted yet.",
+        "sourceLink": "Source",
+        "evidenceLink": "Evidence",
+        "issuedAt": "Issued {{ value }}",
+        "checkedAt": "Checked {{ value }}",
+        "historyTitle": "Reliability history",
+        "historyEmpty": "No transactions or evaluations recorded yet.",
+        "historyAmount": "Amount: {{ value }} M$",
+        "historyScore": "Score: {{ value }}",
+        "historyPreviewHint": "Review the full audit trail from the collaboration workspace.",
+        "history": {
+          "types": {
+            "transaction": "Transaction",
+            "evaluation": "Evaluation"
+          },
+          "direction": {
+            "inbound": "Inbound",
+            "outbound": "Outbound"
+          }
+        }
+      }
+    },
+    "profilePage": {
+      "headerKicker": "Partner profile",
+      "missionFallback": "This partner has not shared their mission yet.",
+      "highlightsTitle": "Highlights",
+      "notFound": "We could not load this partner profile right now.",
+      "placeholderBody": "Full collaboration and verification details will appear here soon."
+    }
+  },
+  "financing": {
+    "title": "Financing and programs"
+  },
+  "empty": {
+    "directory": {
+      "title": "No organization published",
+      "description": "Publish your first organization to populate the OpenG7 directory.",
+      "cta": "Add an organization"
+    }
+  },
+  "pricing": {
+    "plans": {
+      "internalHandled": "This plan is handled directly by our team. We'll contact you to complete the setup.",
+      "cancelled": "Your subscription will end at the close of the current billing period.",
+      "cancelError": "We couldn't cancel your subscription. Please try again or contact support.",
+      "cancoin": {
+        "title": "CanCoin Alliance",
+        "description": "Contribute via the CanCoin cooperative on PayPal while keeping full premium benefits.",
+        "features": {
+          "visibility": "Featured placement within the CanCoin showcase and partner lists",
+          "analytics": "Premium analytics dashboards funded by the CanCoin programme",
+          "support": "Co-branded concierge with PayPal settlement assistance"
+        }
+      }
+    },
+    "invoices": {
+      "title": "Billing history",
+      "loading": "Loading invoices...",
+      "retry": "Reload",
+      "cancel": "Cancel subscription",
+      "cancelling": "Cancelling...",
+      "date": "Date",
+      "amount": "Amount",
+      "actions": "Actions",
+      "view": "View",
+      "download": "Download PDF",
+      "empty": "No invoices are available yet.",
+      "status": {
+        "label": "Status",
+        "paid": "Paid",
+        "open": "Open",
+        "draft": "Draft",
+        "void": "Voided",
+        "uncollectible": "Uncollectible",
+        "unknown": "Unknown"
+      }
+    }
+  },
+  "paypal": {
+    "approval_url_missing": "The PayPal approval link is missing. Please contact support.",
+    "browser_required": "Please continue the PayPal checkout from a browser session."
+  },
+  "importCompaniesPage": {
+    "title": "Company import",
+    "subtitle": "Upload a JSON file to preview and push companies into the OpenG7 map.",
+    "uploadTitle": "Upload file",
+    "uploadHint": "Import a .json file or paste its content to validate it.",
+    "uploadLabel": "Choose a JSON file",
+    "parseButton": "Analyse JSON content",
+    "textareaPlaceholder": "Paste the company list in JSON format here…",
+    "previewTitle": "Preview of imported companies",
+    "previewSubtitle": "{{ count }} companies ready to be imported.",
+    "importButton": "Import into OpenG7",
+    "importing": "Import in progress…",
+    "successMessage": "{{ count }} companies have been sent to the OpenG7 platform.",
+    "errorMessage": "Unable to send the companies. Please try again or contact support.",
+    "stats": {
+      "validCompanies": "{{ count }} valid companies",
+      "errors": "{{ count }} validation issue(s)"
+    },
+    "table": {
+      "headers": {
+        "businessId": "Business ID",
+        "name": "Name",
+        "province": "Province",
+        "sectors": "Sectors"
+      },
+      "empty": "No valid company to display yet."
+    },
+    "pillars": {
+      "ids": {
+        "title": "Structure of the ecosystem",
+        "description": "Unique identifiers connect companies to government registries."
+      },
+      "sectors": {
+        "title": "Economic insight",
+        "description": "Sectors describe the economic footprint and power future analysis."
+      },
+      "location": {
+        "title": "Position on the map",
+        "description": "Coordinates place each company on the OpenG7 interactive map."
+      },
+      "contacts": {
+        "title": "Matchmaking",
+        "description": "Contact points trigger actionable introductions between partners."
+      }
+    },
+    "validationTitle": "Validation issues detected",
+    "validation": {
+      "notArray": "The JSON file must contain an array of companies.",
+      "invalidEntry": "Entry number {{ index }} is not a valid object.",
+      "missingFields": "Entry number {{ index }} is invalid: missing or incorrect fields ({{ fields }}).",
+      "invalidJson": "The JSON file is invalid: {{ message }}",
+      "unknownError": "Unknown error",
+      "fileReadError": "Unable to read file \"{{ fileName }}\"."
+    }
+  }
+}

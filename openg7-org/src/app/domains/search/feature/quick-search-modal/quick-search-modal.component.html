@@ -1,0 +1,147 @@
+<div
+  cdkTrapFocus
+  cdkTrapFocusAutoCapture
+  class="quick-search flex max-h-[80vh] flex-col gap-6"
+  role="dialog"
+  [attr.aria-label]="'search.quick.title' | translate"
+>
+  <header class="flex items-start justify-between gap-4">
+    <div class="space-y-1">
+      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-subtle">
+        {{ 'search.quick.kicker' | translate }}
+      </p>
+      <h2 class="text-2xl font-semibold text-title">{{ 'search.quick.title' | translate }}</h2>
+      <p class="text-sm text-subtle">{{ 'search.quick.subtitle' | translate }}</p>
+    </div>
+    <button
+      type="button"
+      class="rounded-full p-2 text-subtle transition hover:bg-slate-100"
+      (click)="onCloseClick($event)"
+      [attr.aria-label]="'search.quick.actions.close' | translate"
+    >
+      <span aria-hidden="true">✕</span>
+    </button>
+  </header>
+
+  <div class="space-y-3">
+    <label class="sr-only" for="quick-search-input">{{ 'search.quick.placeholder' | translate }}</label>
+    <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-surface px-4 py-3 shadow-inner focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-100">
+      <span class="text-subtle" aria-hidden="true">🔍</span>
+      <input
+        #queryInput
+        id="quick-search-input"
+        type="search"
+        [formControl]="queryControl"
+        class="w-full bg-transparent text-base text-title outline-none placeholder:text-subtle"
+        autocomplete="off"
+        [attr.aria-activedescendant]="flatResults().length ? optionId(activeIndex()) : null"
+        [attr.aria-controls]="'quick-search-results'"
+        [attr.aria-expanded]="flatResults().length > 0"
+        [placeholder]="'search.quick.placeholder' | translate"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-haspopup="listbox"
+      />
+      <span class="hidden rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-subtle sm:block">
+        Ctrl K
+      </span>
+    </div>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,16rem)]">
+    <section class="flex flex-col gap-4">
+      <ng-container *ngIf="errored(); else contentTpl">
+        <div class="rounded-2xl border border-red-200 bg-red-50/80 p-4 text-sm text-red-800">
+          <p class="font-semibold">{{ 'search.quick.error.title' | translate }}</p>
+          <p class="mt-1">{{ 'search.quick.error.description' | translate }}</p>
+          <button type="button" class="mt-3 inline-flex items-center gap-2 rounded-full bg-red-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-red-500" (click)="retry()">
+            {{ 'search.quick.actions.retry' | translate }}
+          </button>
+        </div>
+      </ng-container>
+      <ng-template #contentTpl>
+        <ng-container *ngIf="loading(); else resultTpl">
+          <og7-quick-search-section-skeleton></og7-quick-search-section-skeleton>
+        </ng-container>
+      </ng-template>
+      <ng-template #resultTpl>
+        <div
+          id="quick-search-results"
+          class="flex flex-col gap-4"
+          role="listbox"
+          [attr.aria-label]="'search.quick.results.ariaLabel' | translate"
+          [attr.aria-activedescendant]="flatResults().length ? optionId(activeIndex()) : null"
+        >
+          <ng-container *ngIf="emptyStateVisible(); else sectionsTpl">
+            <div class="space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-subtle">
+              <p class="text-base font-semibold text-title">{{ 'search.quick.empty.title' | translate }}</p>
+              <p>{{ 'search.quick.empty.subtitle' | translate:{ query: query() } }}</p>
+            </div>
+          </ng-container>
+        </div>
+      </ng-template>
+      <ng-template #sectionsTpl>
+        <ng-container *ngFor="let section of visibleSections(); trackBy: trackSection">
+          <div class="space-y-3">
+            <h3 class="text-xs font-semibold uppercase tracking-[0.3em] text-subtle">{{ section.title }}</h3>
+            <div class="space-y-2">
+              <button
+                type="button"
+                class="block w-full text-left"
+                *ngFor="let option of section.items; let optionIndex = index; trackBy: trackItem"
+                [attr.id]="optionId(resultIndex(option))"
+                (click)="select({ section, item: option })"
+              >
+                <og7-quick-search-result-item
+                  [item]="option"
+                  [active]="isActive(option)"
+                ></og7-quick-search-result-item>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </ng-template>
+    </section>
+
+    <aside class="flex flex-col gap-4">
+      <section class="rounded-2xl border border-slate-200 bg-surface p-4 shadow-sm" *ngIf="historyEntries().length > 0">
+        <div class="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-subtle">
+          <span>{{ 'search.quick.history.title' | translate }}</span>
+          <button type="button" class="text-[11px] font-medium text-primary" (click)="clearHistory()">
+            {{ 'search.quick.history.clear' | translate }}
+          </button>
+        </div>
+        <ul class="space-y-2 text-sm text-body">
+          <li *ngFor="let entry of historyEntries(); trackBy: trackHistory">
+            <button type="button" class="flex w-full items-start justify-between gap-3 rounded-xl border border-slate-200 px-3 py-2 text-left transition hover:border-primary-200 hover:bg-primary-50" (click)="onHistorySelect(entry)">
+              <span class="flex-1">
+                <span class="block font-semibold text-title">{{ entry.label }}</span>
+                <span *ngIf="entry.description" class="text-xs text-subtle">{{ entry.description }}</span>
+              </span>
+              <span class="text-[11px] text-subtle">
+                {{ entry.visitedAt | date:'short' }}
+              </span>
+            </button>
+          </li>
+        </ul>
+      </section>
+      <section class="rounded-2xl border border-slate-200 bg-surface p-4 text-xs text-subtle">
+        <h3 class="text-sm font-semibold text-title">{{ 'search.quick.shortcuts.title' | translate }}</h3>
+        <ul class="mt-3 space-y-2">
+          <li class="flex items-center justify-between">
+            <span>{{ 'search.quick.shortcuts.navigate' | translate }}</span>
+            <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5">↑ / ↓</span>
+          </li>
+          <li class="flex items-center justify-between">
+            <span>{{ 'search.quick.shortcuts.validate' | translate }}</span>
+            <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5">Enter</span>
+          </li>
+          <li class="flex items-center justify-between">
+            <span>{{ 'search.quick.shortcuts.close' | translate }}</span>
+            <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5">Esc</span>
+          </li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+</div>

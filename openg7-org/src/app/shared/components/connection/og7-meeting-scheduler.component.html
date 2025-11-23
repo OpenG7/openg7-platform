@@ -1,0 +1,65 @@
+<section
+  class="og7-scheduler space-y-4 rounded-3xl bg-card p-6 text-sm text-body ring-card shadow-card"
+>
+  <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+    <div class="space-y-2">
+      <h3 class="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-subtle">
+        {{ 'scheduler.title' | translate }}
+      </h3>
+      <p class="text-xs text-subtle">{{ 'scheduler.subtitle' | translate }}</p>
+    </div>
+    <span
+      class="badge-tertiary og7-scheduler__counter"
+    >
+      {{ 'scheduler.count' | translate:{ value: slots().length } }}
+    </span>
+  </header>
+
+  <div class="space-y-4">
+    <div class="min-h-[2.5rem]">
+      @if (hasSlots()) {
+        <div class="flex flex-wrap items-center gap-2">
+          @for (slot of slots(); track trackSlot($index, slot); let index = $index) {
+            <button
+              type="button"
+              class="og7-scheduler__chip"
+              [attr.aria-label]="'scheduler.removeSlot' | translate:{ value: formattedSlot(slot) }"
+              [disabled]="disabled()"
+              (click)="removeSlot(index)"
+            >
+              <span>{{ formattedSlot(slot) }}</span>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          }
+        </div>
+      } @else {
+        <p class="text-xs text-subtle">{{ 'scheduler.empty' | translate }}</p>
+      }
+    </div>
+
+    <form class="flex flex-wrap items-center gap-3" (submit)="submitDraft($event)">
+      <label class="og7-scheduler__input">
+        <span class="og7-sr-only">{{ 'scheduler.newSlotLabel' | translate }}</span>
+        <input
+          type="datetime-local"
+          class="og7-scheduler__field"
+          [value]="draftValue()"
+          [disabled]="disabled()"
+          (input)="handleInput($any($event.target).value ?? '')"
+        />
+      </label>
+      <button
+        type="submit"
+        class="og7-scheduler__add"
+        [disabled]="!canSubmit()"
+      >
+        <span aria-hidden="true">+</span>
+        <span class="og7-sr-only">{{ 'scheduler.addSlot' | translate }}</span>
+      </button>
+    </form>
+
+    <p class="text-[0.7rem] uppercase tracking-[0.25em] text-subtle">
+      {{ 'scheduler.hint' | translate }}
+    </p>
+  </div>
+</section>

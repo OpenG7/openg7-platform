@@ -1,0 +1,41 @@
+<div
+  class="mb-3 flex w-full flex-wrap gap-2 sm:mb-4 sm:gap-3"
+  role="group"
+  [attr.aria-label]="'map.filters.tradeMode.label' | translate"
+>
+  <button
+    type="button"
+    *ngFor="let option of tradeModeOptions; trackBy: trackByTradeMode"
+    class="flex-1 rounded-full border border-slate-200 bg-white/85 px-3 py-2 text-sm font-semibold text-slate-600 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/30 sm:flex-none sm:px-4"
+    [ngClass]="{
+      'border-transparent bg-slate-900 text-white shadow-md ring-2 ring-slate-900/15': filters.tradeMode() === option.id,
+      'hover:bg-white': filters.tradeMode() !== option.id
+    }"
+    [attr.aria-pressed]="filters.tradeMode() === option.id"
+    (click)="selectTradeMode(option.id)"
+  >
+    {{ option.labelKey | translate }}
+  </button>
+</div>
+<div class="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4" role="list">
+  <div
+    *ngFor="let badge of badges(); trackBy: trackById"
+    class="flex aspect-[4/3] w-full flex-col justify-between gap-3 rounded-3xl bg-white/90 p-3 text-slate-900 shadow-sm ring-1 ring-slate-200 backdrop-blur"
+    role="listitem"
+    [attr.data-og7-id]="badge.id"
+    [@badgePulse]="badge.value"
+  >
+    <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+      {{ badge.labelKey | translate }}
+    </span>
+    <div class="flex items-baseline gap-2">
+      <span class="text-lg font-bold text-slate-900">{{ badge.value }}</span>
+      <span
+        *ngIf="badge.detailKey"
+        class="text-xs font-medium text-slate-500"
+      >
+        {{ badge.detailKey | translate }}
+      </span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+.og7-feed {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem clamp(1rem, 3vw, 3rem);
+  background: var(--og7-surface, #f8fafc);
+  min-height: 100%;
+}
+
+.og7-feed__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.og7-feed__header h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+}
+
+.og7-feed__subtitle {
+  margin: 0;
+  color: var(--og7-muted, #475569);
+  font-size: clamp(1rem, 2vw, 1.125rem);
+}
+
+@media (min-width: 960px) {
+  .og7-feed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,162 @@
+<section
+  data-og7="static-page"
+  data-og7-page="faq"
+  class="og7-page og7-page--static space-y-12"
+>
+  <header class="grid gap-8 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur md:grid-cols-[minmax(0,1fr)_320px]">
+    <div class="space-y-4">
+      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-200">
+        {{ 'pages.faq.kicker' | translate }}
+      </p>
+      <h1 class="og7-page__title text-balance text-4xl font-semibold md:text-5xl">
+        {{ 'pages.faq.title' | translate }}
+      </h1>
+      <p class="og7-page__intro text-lg text-subtle md:text-xl">
+        {{ 'pages.faq.intro' | translate }}
+      </p>
+    </div>
+    <div class="surface-strong flex h-full flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/70 p-6">
+      <div class="space-y-2">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-primary-200">
+          {{ 'pages.faq.cta.title' | translate }}
+        </h2>
+        <p class="text-body text-sm leading-relaxed">
+          {{ 'pages.faq.cta.description' | translate }}
+        </p>
+      </div>
+      <div class="space-y-2">
+        <a
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+          [href]="'mailto:' + supportEmail"
+        >
+          {{ 'pages.faq.cta.button' | translate }}
+        </a>
+        <p class="text-xs text-muted">{{ 'pages.faq.cta.responseTime' | translate }}</p>
+      </div>
+    </div>
+  </header>
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+    @let filtered = filteredItems;
+    <article class="og7-page__content space-y-8">
+      <div class="space-y-3 rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur">
+        <label class="block text-xs font-semibold uppercase tracking-[0.3em] text-primary-200" [attr.for]="searchFieldId">
+          {{ 'pages.faq.search.label' | translate }}
+        </label>
+        <div class="relative">
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm text-muted"
+          >
+            ⌕
+          </span>
+          <input
+            [id]="searchFieldId"
+            type="search"
+            inputmode="search"
+            name="faq-search"
+            autocomplete="off"
+            [value]="query"
+            (input)="onQueryChange($any($event.target).value)"
+            class="w-full rounded-2xl border border-white/10 bg-slate-950/70 py-2 pl-11 pr-4 text-sm text-white placeholder:text-muted focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400/60"
+            [attr.placeholder]="'pages.faq.search.placeholder' | translate"
+            [attr.aria-describedby]="query.trim().length ? 'faq-search-hint' : null"
+          />
+        </div>
+        @if (query.trim().length) {
+          <p id="faq-search-hint" class="text-xs text-muted">
+            {{ 'pages.faq.search.results' | translate: { count: filtered.length } }}
+          </p>
+        }
+      </div>
+      <ng-container *ngIf="filtered.length; else noResults">
+        <dl class="space-y-6">
+          <div
+            *ngFor="let item of filtered"
+            class="space-y-4 rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-sm backdrop-blur"
+          >
+            <dt [attr.id]="'faq-' + item" class="scroll-mt-28 text-2xl font-semibold text-white">
+              {{ 'pages.faq.items.' + item + '.question' | translate }}
+            </dt>
+            <dd class="space-y-3 text-body">
+              <p *ngFor="let answer of answers(item)" class="leading-relaxed">
+                {{ answer }}
+              </p>
+              <ul *ngIf="bullets(item).length" class="list-disc space-y-2 pl-6">
+                <li *ngFor="let entry of bullets(item)" class="leading-relaxed">{{ entry }}</li>
+              </ul>
+            </dd>
+          </div>
+        </dl>
+      </ng-container>
+      <ng-template #noResults>
+        <div class="space-y-4 rounded-3xl border border-primary-300/40 bg-primary-500/10 p-6 text-sm text-body">
+          <p class="text-base font-semibold text-white">
+            {{ 'pages.faq.search.noResults.title' | translate }}
+          </p>
+          <p class="leading-relaxed">
+            {{ 'pages.faq.search.noResults.description' | translate }}
+          </p>
+          <a
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-primary-200 hover:bg-primary-50/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-300"
+            [href]="'mailto:' + supportEmail"
+          >
+            {{ 'pages.faq.search.noResults.button' | translate }}
+          </a>
+        </div>
+      </ng-template>
+    </article>
+    <aside class="space-y-6">
+      <div class="surface-soft space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-base font-semibold text-white">{{ 'pages.faq.quickNav.title' | translate }}</h2>
+        <p class="text-sm text-muted">{{ 'pages.faq.quickNav.description' | translate }}</p>
+        @if (filtered.length) {
+          <nav>
+            <ul class="space-y-2 text-sm">
+              <li *ngFor="let item of filtered">
+                <a
+                  class="flex items-center justify-between gap-4 rounded-2xl border border-transparent px-3 py-2 text-left text-body transition hover:border-primary-200 hover:bg-primary-50/20 hover:text-white"
+                  [href]="'#faq-' + item"
+                >
+                  <span>{{ 'pages.faq.items.' + item + '.question' | translate }}</span>
+                  <span aria-hidden="true" class="text-xs text-muted">→</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        } @else {
+          <p class="text-sm text-muted">{{ 'pages.faq.search.noResults.description' | translate }}</p>
+        }
+      </div>
+      <div class="surface-strong space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-base font-semibold text-white">{{ 'pages.faq.contact.title' | translate }}</h2>
+        <p class="text-sm leading-relaxed text-body">{{ 'pages.faq.contact.description' | translate }}</p>
+        <div class="space-y-3 text-sm">
+          <a
+            class="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-primary-200 hover:bg-primary-50/20"
+            [href]="'mailto:' + supportEmail"
+          >
+            <span>
+              <span class="block text-xs font-semibold uppercase tracking-wide text-primary-200">
+                {{ 'pages.faq.contact.emailLabel' | translate }}
+              </span>
+              <span class="mt-1 block text-base font-semibold text-white">{{ supportEmail }}</span>
+            </span>
+            <span class="text-xs text-muted">{{ 'pages.faq.contact.sla' | translate }}</span>
+          </a>
+          <a
+            class="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-primary-200 hover:bg-primary-50/20"
+            [href]="'tel:' + supportPhoneHref"
+          >
+            <span>
+              <span class="block text-xs font-semibold uppercase tracking-wide text-primary-200">
+                {{ 'pages.faq.contact.phoneLabel' | translate }}
+              </span>
+              <span class="mt-1 block text-base font-semibold text-white">{{ supportPhone }}</span>
+            </span>
+            <span class="text-xs text-muted">{{ 'pages.faq.contact.hours' | translate }}</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>

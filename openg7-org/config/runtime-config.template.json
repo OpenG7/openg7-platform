@@ -1,0 +1,20 @@
+{
+  "API_URL": "",
+  "API_WITH_CREDENTIALS": true,
+  "API_TOKEN": null,
+  "HOMEPAGE_PREVIEW_TOKEN": null,
+  "I18N_PREFIX": "/assets/i18n/",
+  "FEATURE_FLAGS": {
+    "componentLab": false
+  },
+  "AUTH_MODE": "hybrid",
+  "NOTIFICATION_WEBHOOK_URL": null,
+  "ANALYTICS_ENDPOINT": null,
+  "CONTENT_SECURITY_POLICY": {
+    "scriptSrc": [],
+    "styleSrc": [],
+    "imgSrc": [],
+    "fontSrc": [],
+    "connectSrc": []
+  }
+}

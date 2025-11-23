@@ -1,0 +1,66 @@
+@import "tailwindcss";
+@import "./app/shared/styles/tokens.css";
+@import "./app/shared/styles/utilities.css";
+
+
+/* === Glass panel util === */
+@layer utilities {
+  .panel-glass {
+    @apply relative isolate z-0 overflow-hidden rounded-3xl border border-white/20 bg-transparent
+           backdrop-blur-xl backdrop-saturate-150 transition duration-300
+           shadow-[0_28px_80px_-35px_rgba(15,23,42,0.65)] ring-1 ring-white/20;
+  }
+  .panel-glass::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.18));
+    opacity: 0.92;
+    transition: opacity 200ms ease;
+    z-index: -2;
+  }
+  .panel-glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.55), transparent 55%);
+    opacity: 0.75;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+    z-index: -1;
+  }
+  .panel-glass:hover {
+    @apply border-white/30 ring-white/30;
+  }
+  .panel-glass:hover::before {
+    opacity: 1;
+  }
+  .panel-glass:hover::after {
+    opacity: 0.85;
+  }
+  .panel-glass:focus-within {
+    @apply ring-2 ring-emerald-400/30;
+  }
+
+  /* Variante plus sombre (si background très clair) */
+  .panel-glass-dark {
+    @apply rounded-2xl border border-white/10 bg-slate-900/40
+           backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)];
+  }
+
+  /* Cartes internes opaques à contraste fort (tuiles) */
+  .card-contrast {
+    @apply rounded-xl bg-white p-4 text-slate-800 shadow;
+  }
+}
+
+/* Fallback si le navigateur ne supporte pas backdrop-filter */
+@supports not (backdrop-filter: blur(0)) {
+  .panel-glass,
+  .panel-glass-dark {
+    /* un peu plus opaque pour compenser l’absence de blur */
+    background-color: rgb(255 255 255 / 0.75);
+  }
+}

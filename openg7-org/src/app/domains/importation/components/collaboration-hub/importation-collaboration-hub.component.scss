@@ -1,0 +1,153 @@
+:host {
+  display: block;
+}
+
+.og7-importation-collaboration {
+  display: grid;
+  gap: 1.75rem;
+  background: var(--og7-surface, #ffffff);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+}
+
+.og7-importation-collaboration header h2 {
+  margin: 0;
+}
+
+.og7-importation-collaboration header p {
+  margin: 0.4rem 0 0;
+  color: var(--og7-text-subtle, #475569);
+}
+
+.og7-importation-collaboration__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.og7-importation-collaboration__watchlists,
+.og7-importation-collaboration__annotations,
+.og7-importation-collaboration__schedule {
+  background: rgba(15, 23, 42, 0.04);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.og7-importation-collaboration__watchlists form,
+.og7-importation-collaboration__schedule form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.og7-importation-collaboration__watchlists label,
+.og7-importation-collaboration__schedule label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.og7-importation-collaboration__watchlists input,
+.og7-importation-collaboration__schedule input,
+.og7-importation-collaboration__schedule select,
+.og7-importation-collaboration__schedule textarea {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 0.55rem 0.9rem;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.og7-importation-collaboration__watchlists button,
+.og7-importation-collaboration__schedule button {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.55rem 1rem;
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.og7-importation-collaboration__error {
+  color: #ef4444;
+  font-size: 0.85rem;
+}
+
+.og7-importation-collaboration__watchlist-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.og7-importation-collaboration__watchlist-grid article {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.og7-importation-collaboration__watchlist-grid header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.og7-importation-collaboration__timestamp {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--og7-text-subtle, #64748b);
+}
+
+.og7-importation-collaboration__empty {
+  margin: 0;
+  text-align: center;
+  color: var(--og7-text-subtle, #475569);
+}
+
+.og7-importation-collaboration__annotations ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+}
+
+.og7-importation-collaboration__annotations li {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.07);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.og7-importation-collaboration__annotation-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--og7-text-subtle, #475569);
+}
+
+.og7-importation-collaboration__author {
+  font-weight: 600;
+  color: var(--og7-text-body, #0f172a);
+}
+
+.og7-importation-collaboration__tag {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #2563eb;
+}
+
+.og7-importation-collaboration__schedule-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}

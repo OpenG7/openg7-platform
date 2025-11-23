@@ -1,0 +1,162 @@
+<section class="plans" data-og7="subscription-plans">
+  <header class="plans__header">
+    <h2 class="plans__title-main">{{ 'pricing.plans.heading' | translate }}</h2>
+    <p class="plans__subtitle">{{ 'pricing.plans.subheading' | translate }}</p>
+  </header>
+
+  <div *ngIf="loading(); else plansContent" class="plans__state" aria-live="polite">
+    <div class="plans__spinner" aria-hidden="true"></div>
+    <p>{{ 'pricing.plans.loading' | translate }}</p>
+  </div>
+
+  <ng-template #plansContent>
+    <div *ngIf="error(); else plansGrid" class="plans__state plans__state--error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" class="plans__retry" (click)="loadPlans()">
+        {{ 'pricing.plans.retry' | translate }}
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #plansGrid>
+    <div class="plans__grid" *ngIf="hasPlans(); else emptyState">
+      <article
+        class="plans__card"
+        *ngFor="let plan of plans()"
+        [class.plans__card--highlight]="plan.highlight"
+      >
+        <div class="plans__card-header">
+          <h3 class="plans__card-title">{{ planTitle(plan) | translate }}</h3>
+          <p class="plans__card-description">{{ planDescription(plan) | translate }}</p>
+        </div>
+
+        <div class="plans__price" aria-live="polite">
+          <span class="plans__amount">{{ planPrice(plan) }}</span>
+          <span *ngIf="plan.price.amount > 0" class="plans__interval">{{ planInterval(plan) }}</span>
+        </div>
+
+        <ul class="plans__features">
+          <li *ngFor="let feature of plan.features">{{ feature | translate }}</li>
+        </ul>
+
+        <div class="plans__badges" *ngIf="plan.capabilities.premiumVisibility || plan.capabilities.priorityAnalytics">
+          <span *ngIf="plan.capabilities.premiumVisibility" class="plans__badge plans__badge--visibility">
+            {{ 'pricing.plans.capabilities.visibility' | translate }}
+          </span>
+          <span *ngIf="plan.capabilities.priorityAnalytics" class="plans__badge plans__badge--analytics">
+            {{ 'pricing.plans.capabilities.analytics' | translate }}
+          </span>
+        </div>
+
+        <p *ngIf="!plan.available" class="plans__note">
+          {{ 'pricing.plans.unavailable' | translate }}
+        </p>
+
+        <button
+          type="button"
+          class="plans__cta"
+          [disabled]="isCurrentPlan(plan) || !plan.available || processingPlan() === plan.id"
+          (click)="subscribe(plan)"
+        >
+          <ng-container *ngIf="processingPlan() === plan.id; else ctaLabel">
+            {{ 'pricing.plans.redirecting' | translate }}
+          </ng-container>
+          <ng-template #ctaLabel>
+            <ng-container *ngIf="isCurrentPlan(plan); else defaultCta">
+              {{ 'pricing.plans.current' | translate }}
+            </ng-container>
+            <ng-template #defaultCta>
+              {{ plan.tier === 'free' ? ('pricing.plans.freeCta' | translate) : ('pricing.plans.upgrade' | translate) }}
+            </ng-template>
+          </ng-template>
+        </button>
+      </article>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="plans__state plans__state--empty">
+        <p>{{ 'pricing.plans.empty' | translate }}</p>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <section *ngIf="isAuthenticated()" class="plans__invoices">
+    <header class="plans__invoices-header">
+      <h3 class="plans__invoices-title">{{ 'pricing.invoices.title' | translate }}</h3>
+      <button
+        type="button"
+        class="plans__cancel"
+        (click)="cancelSubscription()"
+        [disabled]="!isPremium() || cancelling()"
+      >
+        <ng-container *ngIf="cancelling(); else cancelLabel">
+          {{ 'pricing.invoices.cancelling' | translate }}
+        </ng-container>
+        <ng-template #cancelLabel>
+          {{ 'pricing.invoices.cancel' | translate }}
+        </ng-template>
+      </button>
+    </header>
+
+    <div *ngIf="invoicesLoading(); else invoicesContent" class="plans__state" aria-live="polite">
+      <div class="plans__spinner" aria-hidden="true"></div>
+      <p>{{ 'pricing.invoices.loading' | translate }}</p>
+    </div>
+
+    <ng-template #invoicesContent>
+      <div *ngIf="invoicesError(); else invoicesTable" class="plans__state plans__state--error" role="alert">
+        <p>{{ invoicesError() }}</p>
+        <button type="button" class="plans__retry" (click)="loadInvoices()">
+          {{ 'pricing.invoices.retry' | translate }}
+        </button>
+      </div>
+    </ng-template>
+
+    <ng-template #invoicesTable>
+      <table *ngIf="hasInvoices(); else invoicesEmpty" class="plans__invoices-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'pricing.invoices.date' | translate }}</th>
+            <th scope="col">{{ 'pricing.invoices.status.label' | translate }}</th>
+            <th scope="col">{{ 'pricing.invoices.amount' | translate }}</th>
+            <th scope="col">{{ 'pricing.invoices.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let invoice of invoices()">
+            <td data-title="{{ 'pricing.invoices.date' | translate }}">{{ invoice.createdAt | date: 'mediumDate' }}</td>
+            <td data-title="{{ 'pricing.invoices.status.label' | translate }}">{{ invoiceStatus(invoice) }}</td>
+            <td data-title="{{ 'pricing.invoices.amount' | translate }}">{{ invoiceAmount(invoice) }}</td>
+            <td class="plans__invoices-actions" data-title="{{ 'pricing.invoices.actions' | translate }}">
+              <a
+                *ngIf="invoice.hostedInvoiceUrl"
+                class="plans__invoice-link"
+                [href]="invoice.hostedInvoiceUrl"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ 'pricing.invoices.view' | translate }}
+              </a>
+              <a
+                *ngIf="invoice.invoicePdf"
+                class="plans__invoice-link"
+                [href]="invoice.invoicePdf"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ 'pricing.invoices.download' | translate }}
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #invoicesEmpty>
+        <div class="plans__state plans__state--empty">
+          <p>{{ 'pricing.invoices.empty' | translate }}</p>
+        </div>
+      </ng-template>
+    </ng-template>
+  </section>
+</section>
+

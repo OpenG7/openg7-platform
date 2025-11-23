@@ -1,0 +1,50 @@
+{
+  "name": "openg7",
+  "license": "MIT",
+  "workspaces": [
+    "openg7-org",
+    "strapi",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "yarn workspace @openg7/web start",
+    "dev:web:trace": "yarn workspace @openg7/web start:trace",
+    "dev:cms": "yarn workspace @openg7/strapi dev",
+    "dev:cms:trace": "yarn workspace @openg7/strapi dev:trace",
+    "dev:all": "concurrently \"yarn dev:cms\" \"yarn dev:web\"",
+    "dev:trace": "concurrently \"yarn dev:web:trace\" \"yarn dev:cms:trace\"",
+    "codegen": "yarn --cwd packages/contracts run codegen",
+    "test": "yarn --cwd packages/contracts test",
+    "prebuild:web": "yarn codegen && yarn test",
+    "build:web": "yarn workspace @openg7/web build",
+    "build:cms": "yarn workspace @openg7/strapi build",
+    "build:all": "yarn build:web --optimization=false && yarn build:cms",
+    "generate:runtime-config": "yarn workspace @openg7/web generate:runtime-config",
+    "validate:preprod-runtime-config": "yarn workspace @openg7/web validate:preprod-config",
+    "docs": "typedoc --options typedoc.core.json",
+    "docs:core": "typedoc --options typedoc.core.json",
+    "docs:full": "typedoc --options typedoc.full.json",
+    "predeploy:cms-cache": "yarn workspace @openg7/strapi seed:dev",
+    "predeploy:preprod": "yarn validate:selectors && yarn prebuild:web && yarn validate:preprod-runtime-config && yarn build:web",
+    "validate:selectors": "yarn workspace @openg7/tooling validate:selectors",
+    "checklist:verify": "node ./scripts/sync-checklist.mjs --check",
+    "sync:checklist": "node ./scripts/sync-checklist.mjs",
+    "lint": "eslint . --ext .js,.cjs,.mjs,.ts,.tsx",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.10.0",
+    "concurrently": "^8.2.2",
+    "cross-env": "^10.0.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^15.9.0",
+    "prettier": "^3.6.2",
+    "typedoc": "^0.25.10",
+    "typescript": "^5.6.2"
+  },
+  "packageManager": "yarn@4.9.4"
+}

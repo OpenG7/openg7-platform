@@ -1,0 +1,47 @@
+<section class="og7-feed" aria-labelledby="feed-heading" data-og7="feed-page">
+  <header class="og7-feed__header">
+    <h1 id="feed-heading">{{ 'feed.title' | translate }}</h1>
+    <p class="og7-feed__subtitle">{{ 'feed.subtitle' | translate }}</p>
+  </header>
+  <div class="og7-feed__layout">
+    <og7-feed-stream
+      data-og7="feed-stream"
+      [posts]="posts()"
+      [loading]="loading()"
+      [error]="error()"
+      [unreadCount]="unreadCount()"
+      [connectionState]="connectionState"
+      (loadMore)="handleLoadMore()"
+      (refresh)="handleRefresh()"
+      (openPost)="openPost($event)"
+      (closePost)="closePost()"
+    ></og7-feed-stream>
+    <section
+      class="og7-feed__aside"
+      data-og7="feed-shortcuts"
+      role="region"
+      [attr.aria-labelledby]="shortcutsHeadingId"
+    >
+      <h2 class="og7-feed__aside-title" [attr.id]="shortcutsHeadingId">
+        {{ 'feed.shortcuts.title' | translate }}
+      </h2>
+      <p class="og7-feed__aside-description">
+        {{ 'feed.shortcuts.description' | translate }}
+      </p>
+      <ul class="og7-feed__shortcut-list">
+        <li>
+          <kbd>R</kbd>
+          <span>{{ 'feed.shortcuts.refresh' | translate }}</span>
+        </li>
+        <li>
+          <kbd>L</kbd>
+          <span>{{ 'feed.shortcuts.loadMore' | translate }}</span>
+        </li>
+        <li>
+          <kbd>Esc</kbd>
+          <span>{{ 'feed.shortcuts.closeDrawer' | translate }}</span>
+        </li>
+      </ul>
+    </section>
+  </div>
+</section>

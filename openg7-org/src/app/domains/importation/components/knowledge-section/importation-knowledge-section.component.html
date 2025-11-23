@@ -1,0 +1,31 @@
+<section class="og7-importation-knowledge" data-og7="importation-knowledge">
+  <header>
+    <h2>{{ 'pages.importation.knowledge.title' | translate }}</h2>
+    <p>{{ 'pages.importation.knowledge.subtitle' | translate }}</p>
+  </header>
+
+  <p *ngIf="viewModel.loading" class="og7-importation-knowledge__loading">{{ 'pages.importation.knowledge.loading' | translate }}</p>
+
+  <div *ngIf="!viewModel.loading" class="og7-importation-knowledge__grid">
+    <article *ngFor="let article of viewModel.articles; trackBy: trackArticle">
+      <span class="og7-importation-knowledge__tag">{{ article.tag }}</span>
+      <h3>{{ article.title }}</h3>
+      <p>{{ article.summary }}</p>
+      <time>{{ article.publishedAt }}</time>
+      <a [href]="article.link" target="_blank" rel="noopener">{{ 'pages.importation.knowledge.read' | translate }}</a>
+    </article>
+    <p *ngIf="!viewModel.articles.length" class="og7-importation-knowledge__empty">
+      {{ 'pages.importation.knowledge.empty' | translate }}
+    </p>
+  </div>
+
+  <aside *ngIf="viewModel.cta" class="og7-importation-knowledge__cta">
+    <div>
+      <h3>{{ viewModel.cta.title }}</h3>
+      <p>{{ viewModel.cta.subtitle }}</p>
+    </div>
+    <a [href]="viewModel.cta.actionLink" class="og7-importation-knowledge__cta-button">
+      {{ viewModel.cta.actionLabel }}
+    </a>
+  </aside>
+</section>

@@ -1,0 +1,26 @@
+<ul
+  class="flex gap-2 overflow-x-auto"
+  role="listbox"
+  [attr.aria-labelledby]="ariaLabelledBy ?? null"
+  [attr.aria-describedby]="describedBy ?? null"
+>
+  <li *ngFor="let sector of sectors; trackBy: trackById">
+    <button
+      type="button"
+      role="option"
+      class="rounded-full border border-slate-200 px-4 py-1.5 text-sm font-medium transition hover:border-slate-300 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+      [class.bg-slate-900]="isActive(sector.id)"
+      [class.text-white]="isActive(sector.id)"
+      [class.border-slate-900]="isActive(sector.id)"
+      [class.active]="isActive(sector.id)"
+      [attr.id]="resolveOptionId(sector.id)"
+      [attr.aria-selected]="isActive(sector.id)"
+      (click)="select(sector.id)"
+    >
+      <ng-container *ngIf="sector.labelKey; else plainLabel">
+        {{ sector.labelKey | translate }}
+      </ng-container>
+      <ng-template #plainLabel>{{ sector.name ?? sector.id }}</ng-template>
+    </button>
+  </li>
+</ul>

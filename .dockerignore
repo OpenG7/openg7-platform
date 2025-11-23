@@ -1,0 +1,11 @@
+.git
+node_modules
+**/node_modules
+.yarn/cache
+.yarn/install-state.gz
+.yarn/build-state.yml
+npm-debug.log*
+yarn-error.log*
+dist
+.tmp
+.DS_Store

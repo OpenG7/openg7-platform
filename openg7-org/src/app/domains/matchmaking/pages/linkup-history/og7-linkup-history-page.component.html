@@ -1,0 +1,121 @@
+<section class="og7-linkup-history">
+  <header class="og7-linkup-history__header">
+    <div>
+      <p class="og7-linkup-history__eyebrow">{{ 'pages.linkups.eyebrow' | translate }}</p>
+      <h1 class="og7-linkup-history__title">{{ 'pages.linkups.title' | translate }}</h1>
+      <p class="og7-linkup-history__subtitle">{{ 'pages.linkups.subtitle' | translate }}</p>
+    </div>
+    <button
+      type="button"
+      class="og7-linkup-history__reset"
+      *ngIf="hasActiveFilters()"
+      (click)="onResetFilters()"
+    >
+      {{ 'pages.linkups.filters.reset' | translate }}
+    </button>
+  </header>
+
+  <div class="og7-linkup-history__filters">
+    <div class="og7-linkup-history__filters-group">
+      <span class="og7-linkup-history__filters-label">{{ 'pages.linkups.filters.status.label' | translate }}</span>
+      <div class="og7-linkup-history__chip-set">
+        <button
+          type="button"
+          class="og7-chip"
+          *ngFor="let option of statuses"
+          [class.og7-chip--active]="filterStatus() === option.id"
+          (click)="onStatusSelected(option.id)"
+        >
+          <span>{{ option.labelKey | translate }}</span>
+          <span class="og7-chip__count">
+            {{ option.id === 'all' ? totalLinkups() : statusCounts()[option.id] || 0 }}
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="og7-linkup-history__filters-group">
+      <span class="og7-linkup-history__filters-label">{{ 'pages.linkups.filters.tradeMode.label' | translate }}</span>
+      <div class="og7-linkup-history__chip-set">
+        <button
+          type="button"
+          class="og7-chip"
+          *ngFor="let option of tradeModes"
+          [class.og7-chip--active]="filterMode() === option.id"
+          (click)="onTradeModeSelected(option.id)"
+        >
+          {{ option.labelKey | translate }}
+        </button>
+      </div>
+    </div>
+
+    <og7-search-field
+      class="og7-linkup-history__search"
+      variant="toolbar"
+      [placeholder]="'pages.linkups.filters.searchPlaceholder' | translate"
+      [ngModel]="searchTerm()"
+      (ngModelChange)="onSearchChanged($event)"
+    ></og7-search-field>
+  </div>
+
+  <div class="og7-linkup-history__table-wrapper" *ngIf="filteredLinkups().length; else emptyState">
+    <table class="og7-linkup-history__table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'pages.linkups.table.companyA' | translate }}</th>
+          <th scope="col">{{ 'pages.linkups.table.companyB' | translate }}</th>
+          <th scope="col">{{ 'pages.linkups.table.primarySector' | translate }}</th>
+          <th scope="col">{{ 'pages.linkups.table.createdAt' | translate }}</th>
+          <th scope="col">{{ 'pages.linkups.table.status' | translate }}</th>
+          <th scope="col">{{ 'pages.linkups.table.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let linkup of filteredLinkups(); trackBy: trackByLinkupId">
+          <td>
+            <div class="og7-linkup-history__company">
+              <span class="og7-linkup-history__company-name">{{ linkup.companyA.name }}</span>
+              <span class="og7-linkup-history__company-meta">
+                {{ linkup.companyA.province }} · {{ linkup.companyA.sector }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="og7-linkup-history__company">
+              <span class="og7-linkup-history__company-name">{{ linkup.companyB.name }}</span>
+              <span class="og7-linkup-history__company-meta">
+                {{ linkup.companyB.province }} · {{ linkup.companyB.sector }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="og7-linkup-history__sector">{{ linkup.primarySector }}</span>
+          </td>
+          <td>
+            <span class="og7-linkup-history__date">{{ linkup.createdAt | date: 'd MMM y' }}</span>
+          </td>
+          <td>
+            <span class="og7-linkup-status" [ngClass]="statusClass(linkup.status)">
+              {{ statusLabel(linkup.status) | translate }}
+            </span>
+          </td>
+          <td>
+            <a
+              class="og7-linkup-history__action"
+              [routerLink]="['/linkups', linkup.id]"
+            >
+              {{ 'pages.linkups.table.viewDetails' | translate }}
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="og7-linkup-history__empty">
+      <h2>{{ 'pages.linkups.empty.title' | translate }}</h2>
+      <p>{{ 'pages.linkups.empty.description' | translate }}</p>
+    </div>
+  </ng-template>
+</section>

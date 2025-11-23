@@ -1,0 +1,42 @@
+<section class="og7-importation-suppliers" data-og7="importation-suppliers">
+  <header>
+    <h2>{{ 'pages.importation.suppliers.title' | translate }}</h2>
+    <p>{{ 'pages.importation.suppliers.subtitle' | translate }}</p>
+  </header>
+
+  <p *ngIf="viewModel.loading" class="og7-importation-suppliers__loading">
+    {{ 'pages.importation.suppliers.loading' | translate }}
+  </p>
+
+  <div *ngIf="!viewModel.loading" class="og7-importation-suppliers__grid">
+    <article *ngFor="let supplier of viewModel.suppliers; trackBy: trackSupplier">
+      <header>
+        <h3>{{ supplier.name }}</h3>
+        <span>{{ supplier.country }}</span>
+      </header>
+      <dl>
+        <div>
+          <dt>{{ 'pages.importation.suppliers.dependency' | translate }}</dt>
+          <dd>{{ supplier.dependencyScore != null ? (supplier.dependencyScore | number:'1.1-1') : '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'pages.importation.suppliers.diversification' | translate }}</dt>
+          <dd>{{ supplier.diversificationScore != null ? (supplier.diversificationScore | number:'1.1-1') : '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'pages.importation.suppliers.reliability' | translate }}</dt>
+          <dd>{{ supplier.reliability != null ? (supplier.reliability | number:'1.1-1') : '—' }}</dd>
+        </div>
+      </dl>
+      <p class="og7-importation-suppliers__recommendation" *ngIf="supplier.recommendation">
+        {{ supplier.recommendation }}
+      </p>
+      <p class="og7-importation-suppliers__review" *ngIf="supplier.lastReviewed">
+        {{ 'pages.importation.suppliers.lastReviewed' | translate:{ date: supplier.lastReviewed } }}
+      </p>
+    </article>
+    <p *ngIf="!viewModel.suppliers.length" class="og7-importation-suppliers__empty">
+      {{ 'pages.importation.suppliers.empty' | translate }}
+    </p>
+  </div>
+</section>
