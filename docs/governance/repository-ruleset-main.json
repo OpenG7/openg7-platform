@@ -1,0 +1,78 @@
+{
+  "name": "OpenG7 – Main branch protection",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": [
+        "refs/heads/main"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "required_pull_request_reviews",
+      "parameters": {
+        "dismiss_stale_reviews_on_push": true,
+        "require_code_owner_review": false,
+        "required_approving_review_count": 1,
+        "require_last_push_approval": false
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": true,
+        "required_status_checks": [
+          {
+            "context": "ci/lint",
+            "integration_id": null
+          },
+          {
+            "context": "ci/test",
+            "integration_id": null
+          },
+          {
+            "context": "ci/build",
+            "integration_id": null
+          }
+        ]
+      }
+    },
+    {
+      "type": "non_fast_forward",
+      "parameters": {}
+    },
+    {
+      "type": "required_linear_history",
+      "parameters": {}
+    },
+    {
+      "type": "restrict_pushes",
+      "parameters": {
+        "allowed_actor_ids": [],
+        "allowed_actor_type": "RepositoryRole",
+        "branch_allowlist": [],
+        "push_allowance_actors": []
+      }
+    },
+    {
+      "type": "required_signatures",
+      "parameters": {}
+    },
+    {
+      "type": "pull_request",
+      "parameters": {
+        "dismiss_stale_reviews_on_push": true
+      }
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 1,
+      "actor_type": "RepositoryRole",
+      "bypass_mode": "always"
+    }
+  ]
+}
