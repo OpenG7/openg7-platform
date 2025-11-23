@@ -1,35 +1,83 @@
 **Languages:** [English](#english) | [Français](#francais)
 
 <a id="english"></a>
-# OpenG7
+# OpenG7 Security Policy
 
-Open-source platform to explore and analyze **interprovincial economic flows** (Angular front-end + Strapi CMS).  
-This monorepo contains the front-end app, the CMS, and the API contracts.
+We are committed to protecting the OpenG7 ecosystem (Angular front-end, Strapi CMS, and shared tooling). Please report vulnerabilities privately so we can investigate and issue a fix.
 
-## Getting Started
+## Reporting a Vulnerability
 
-1. Install dependencies: `yarn install`
-2. Start Strapi: `yarn dev:cms` (local API on http://localhost:1337)
-3. Start the Angular front-end: `yarn dev:web` (UI on http://localhost:4200)
-4. Need a Strapi admin account? Set `STRAPI_ADMIN_EMAIL` / `STRAPI_ADMIN_PASSWORD` in your local `.env`, then create it from the admin screen.
+- **Email:** `contact@openg7.org` (preferred). You can also use GitHub Private Vulnerability Reporting if email is not possible.
+- **Include:** clear description, impact, reproduction steps or proof-of-concept, affected component (front-end `openg7-org`, CMS `strapi`, infra scripts, or contracts), and any temporary mitigations.
+- **Expect:** acknowledgement within **3 business days**, regular status updates, and coordinated disclosure after a fix or mitigation is available. We will credit reporters if requested.
+- **Please avoid:** filing public issues, exploiting data belonging to others, or running tests that could degrade service for other users.
 
-> On Windows, `Run-Installer-pwsh.cmd` executes `install-dev-basics_robuste.ps1` to prepare the environment (PowerShell 5 in administrator mode, install/validation of Node.js LTS, Yarn, Git, UTF-8 encoding), then offers a menu to launch the main `yarn` commands.
+## Scope
 
-Detailed guides live in `docs/`:
-- `docs/getting-started.md`: quick onboarding and useful scripts  
-- `docs/frontend/`: Angular signal-first architecture, `[data-og7]` selectors  
-- `docs/strapi/`: CMS conventions and idempotent seeds  
-- `docs/first-contribution.md`: checklist for your first PR  
-- `docs/roadmap.md`: public roadmap and priorities  
+In scope:
+- Front-end application under `openg7-org/` and its SSR runtime.
+- Strapi CMS (`strapi/`), including seeds, plugins, and API routes.
+- Supporting packages and scripts (`packages/`, `infra/`, `scripts/`, `docs/` where applicable) that configure or deploy the platform.
 
-## Contributing
+Out of scope:
+- Third-party services or libraries we consume (report to the upstream project instead).
+- Social engineering, phishing, or physical attacks.
+- Denial of Service (volume-based or resource exhaustion) and automated scanning that disrupts availability.
+- Findings that require root/physical access to the host environment we do not control.
 
-Read `CONTRIBUTING.md` to understand the development flow, the checks to run before opening a PR, and the secrets management policy.  
-The `CODE_OF_CONDUCT.md` applies to all community spaces.  
-A “first contribution” guide is available in `docs/first-contribution.md`.
+## Testing Guidelines (Safe Harbor)
 
-### Public Channels & Support
+We allow good-faith security research under these conditions:
+- Use test accounts and limit the scope of your testing to your own data.
+- Do not exfiltrate, destroy, or publicly disclose data. Stop testing immediately if you encounter real user data.
+- Avoid actions that degrade availability for others. Coordinate timing with us for tests that may be disruptive.
+- Follow applicable laws and third-party terms of service.
 
-- **GitHub Issues**: bugs, feature requests, docs (templates provided, `needs-triage` label by default).  
-- **GitHub Discussions**: general questions or exploratory ideas.  
-- **Support & governance**: see `SUPPORT.md` for response times, escalation paths, and the decisio
+## Remediation & Disclosure
+
+1. We triage and assign severity (CVSS) after receiving your report.
+2. We develop and validate a fix or mitigation, then prepare a coordinated release.
+3. We publish advisories and give credit to reporters who opt in. If a public disclosure is planned, we will agree on timing with you.
+
+Thank you for helping keep OpenG7 users safe.
+
+<a id="francais"></a>
+# Politique de sécurité OpenG7
+
+Nous protégeons l’écosystème OpenG7 (front-end Angular, CMS Strapi et outils partagés). Merci de signaler toute vulnérabilité de manière privée afin que nous puissions enquêter et corriger rapidement.
+
+## Signalement d’une vulnérabilité
+
+- **Courriel :** `contact@openg7.org` (canal privilégié). Vous pouvez aussi utiliser la fonctionnalité GitHub “Private Vulnerability Reporting” si l’email n’est pas possible.
+- **À fournir :** description claire, impact, étapes de reproduction ou preuve de concept, composant concerné (front `openg7-org`, CMS `strapi`, scripts d’infra ou contrats), et mesures d’atténuation temporaires si disponibles.
+- **Engagement :** accusé de réception sous **3 jours ouvrés**, mises à jour régulières, et divulgation coordonnée dès qu’un correctif ou une mitigation est prêt. Nous créditerons les chercheur·euse·s qui le souhaitent.
+- **À éviter :** issues publiques, exploitation de données tierces, ou tests qui dégradent la disponibilité pour les autres utiliisateurs.
+
+## Périmètre
+
+En périmètre :
+- Application front-end dans `openg7-org/` et son runtime SSR.
+- CMS Strapi (`strapi/`), y compris seeds, plugins et routes API.
+- Packages et scripts de support (`packages/`, `infra/`, `scripts/`, `docs/` le cas échéant) qui configurent ou déploient la plateforme.
+
+Hors périmètre :
+- Services ou bibliothèques tiers (merci de signaler directement à leur équipe).
+- Attaques de social engineering, phishing ou physiques.
+- Déni de service (volumétrique ou exhaustion) et scans automatisés qui perturbent la disponibilité.
+- Problèmes nécessitant un accès root/physique à l’hôte que nous ne contrôlons pas.
+
+## Règles de test (Safe Harbor)
+
+La recherche en bonne foi est autorisée si vous respectez ces règles :
+- Utilisez des comptes de test et limitez vos essais à vos propres données.
+- N’exfiltrez, ne détruisez ni ne divulguez aucune donnée. Arrêtez immédiatement si vous tombez sur des données réelles.
+- Évitez toute action qui dégraderait l’accessibilité pour d’autres. Coordonnez le calendrier avec nous pour les tests potentiellement perturbateurs.
+- Respectez les lois applicables et les conditions d’utilisation des services tiers.
+
+## Remédiation et divulgation
+
+1. Nous trions le signalement et évaluons la sévérité (CVSS) dès réception.
+2. Nous concevons et validons un correctif ou une mitigation, puis préparons une publication coordonnée.
+3. Nous publions un avis et créditons les personnes qui le souhaitent. En cas de divulgation publique, nous convenons ensemble du calendrier.
+
+Merci d’aider à sécuriser les utilisatrices et utilisateurs d’OpenG7.
