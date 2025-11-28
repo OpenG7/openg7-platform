@@ -1,0 +1,167 @@
+[
+  {
+    "title": "Implement global search box (omnibox)",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["search", "ux", "good first issue"],
+    "body_en": "Implement the global search box [data-og7=\"search-box\"] and wire it to a simple search service (mock or Strapi) that can query companies, sectors and provinces. Ensure keyboard accessibility, debounced input and i18n placeholders for EN/FR.",
+    "body_fr": "Implémenter le champ de recherche global [data-og7=\"search-box\"] et le relier à un service de recherche simple (mock ou Strapi) capable d’interroger entreprises, secteurs et provinces. Assurer l’accessibilité clavier, un input avec debounce et des placeholders i18n pour FR/EN."
+  },
+  {
+    "title": "Language switch UX & persistence",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Easy",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["i18n", "a11y", "good first issue"],
+    "body_en": "Refine the language switch component so that it uses @ngx-translate cleanly, persists the chosen locale (e.g. in localStorage or cookies) and behaves correctly with SSR. Avoid language flicker on first load and provide accessible labels for screen readers.",
+    "body_fr": "Améliorer le composant de changement de langue pour qu’il utilise @ngx-translate proprement, persiste la locale choisie (ex. dans localStorage ou cookie) et se comporte correctement avec SSR. Éviter le clignotement de langue au premier chargement et fournir des libellés accessibles pour les lecteurs d’écran."
+  },
+  {
+    "title": "Implement partner details panel layout",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["partners", "ui", "mat-drawer"],
+    "body_en": "Implement the partner details panel (drawer) layout with a clean structure: identity block, sectors, provinces served, capabilities and links (website, map). Use Angular standalone components, typed inputs and responsive Tailwind layout.",
+    "body_fr": "Implémenter la mise en page du panneau de détails partenaire (drawer) avec une structure claire : bloc identité, secteurs, provinces desservies, capacités et liens (site web, carte). Utiliser des composants standalone Angular, des inputs typés et une mise en page responsive avec Tailwind."
+  },
+  {
+    "title": "Partner quick-actions component",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Easy",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["partners", "cta", "good first issue"],
+    "body_en": "Create a partner quick-actions component that exposes CTAs such as \"Contact\", \"View on map\" and \"Bookmark\". No backend integration is required yet: emit strongly-typed events and/or router links so that parent components can decide the behaviour.",
+    "body_fr": "Créer un composant de raccourcis d’actions pour les partenaires avec des CTAs comme « Contacter », « Voir sur la carte » et « Ajouter aux favoris ». Aucune intégration backend n’est requise pour l’instant : émettre des événements fortement typés et/ou des routerLinks pour laisser le parent décider du comportement."
+  },
+  {
+    "title": "OG7 feed card & basic activity feed",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular) + CMS (Strapi)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org", "strapi"],
+    "agents_id": null,
+    "labels": ["feed", "ux", "humanitarian-2.0"],
+    "body_en": "Define a simple \"OpenG7 feed\" content type in Strapi (title, summary, type, tags, link, language) and implement an OG7 feed card component to display it on the homepage or a dedicated feed page. Prepare space to show economic updates, humanitarian calls and platform changes.",
+    "body_fr": "Définir un type de contenu « OpenG7 feed » dans Strapi (titre, résumé, type, tags, lien, langue) et implémenter un composant de carte OG7 feed pour l’afficher sur la page d’accueil ou une page dédiée. Préparer l’affichage d’actualités économiques, d’appels humanitaires et de mises à jour de la plateforme."
+  },
+  {
+    "title": "Citizen humanitarian report form (v1)",
+    "project_status": "Cadrage & Strategic ideas",
+    "track": "Front (Angular) + CMS (Strapi)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org", "strapi"],
+    "agents_id": null,
+    "labels": ["humanitarian-2.0", "forms", "a11y"],
+    "body_en": "Design the data model and first UI for a citizen humanitarian report form: location (city/region), short description, type of situation, optional contact and consent. Implement a static Angular form and a draft Strapi model that can evolve after feedback.",
+    "body_fr": "Concevoir le modèle de données et la première interface pour un formulaire de signalement humanitaire citoyen : lieu (ville/région), courte description, type de situation, contact optionnel et consentement. Implémenter un formulaire Angular statique et un modèle Strapi brouillon qui pourra évoluer après les premiers retours."
+  },
+  {
+    "title": "Humanitarian project calls listing",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular) + CMS (Strapi)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org", "strapi"],
+    "agents_id": null,
+    "labels": ["humanitarian-2.0", "list", "filters"],
+    "body_en": "Create a \"Project Call\" content type in Strapi to describe humanitarian or reconstruction projects (location, sectors needed, funding type, deadlines) and implement a listing page with filters (province, sector, urgency). Focus on information architecture and clarity.",
+    "body_fr": "Créer un type de contenu « Project Call » dans Strapi pour décrire des projets humanitaires ou de reconstruction (lieu, secteurs requis, type de financement, échéances) et implémenter une page de liste avec filtres (province, secteur, urgence). Mettre l’accent sur l’architecture de l’information et la lisibilité."
+  },
+  {
+    "title": "Government & institutions information block",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Easy",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["content", "governance", "good first issue"],
+    "body_en": "Add a dedicated block on the homepage that explains the invitation to the Government of Canada and to financial institutions: why OpenG7 matters for sovereignty, risk management and collaboration. Reuse the official README copy and provide EN/FR versions.",
+    "body_fr": "Ajouter sur la page d’accueil un bloc dédié qui explique l’invitation adressée au gouvernement du Canada et aux institutions financières : pourquoi OpenG7 est important pour la souveraineté, la gestion des risques et la collaboration. Réutiliser le texte officiel du README et fournir des versions FR/EN."
+  },
+  {
+    "title": "Wise contribution & funding banner",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Easy",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["funding", "banner", "good first issue"],
+    "body_en": "Implement a discreet but visible banner or card that explains how to support the project financially (e.g. Wise link, GitHub Sponsors) and how funds are governed. Link to the financial governance page and keep the tone transparent and calm.",
+    "body_fr": "Implémenter une bannière ou carte discrète mais bien visible qui explique comment soutenir financièrement le projet (ex. lien Wise, GitHub Sponsors) et comment les fonds sont gouvernés. Lier vers la page de gouvernance financière et adopter un ton transparent et posé."
+  },
+  {
+    "title": "OpenG7 symbolic coin section (design & copy)",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Easy",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["branding", "content", "design"],
+    "body_en": "Create a section that presents the OpenG7 symbolic coin: image or illustration, meaning of each symbol (lion, sunrise, maple leaves, stars, etc.) and how it reflects economic sovereignty and cooperation. Text should be fully i18n-ready.",
+    "body_fr": "Créer une section qui présente la pièce symbolique OpenG7 : image ou illustration, signification de chaque symbole (lion, lever de soleil, feuilles d’érable, étoiles, etc.) et lien avec la souveraineté économique et la coopération. Le texte doit être entièrement prêt pour l’i18n."
+  },
+  {
+    "title": "Docs: How to run dev:all and full-stack loop",
+    "project_status": "Backlog validated",
+    "track": "Docs",
+    "difficulty": "Easy",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["docs", "good first issue"],
+    "body_en": "Write a short guide that explains the full-stack dev loop: how to run yarn dev:cms, yarn dev:web, yarn dev:all, what ports are used, and common issues (missing env, seeds). Target new contributors who just cloned the repo.",
+    "body_fr": "Rédiger un court guide qui explique la boucle de développement full-stack : comment lancer yarn dev:cms, yarn dev:web, yarn dev:all, quels ports sont utilisés et quels problèmes courants peuvent survenir (env manquante, seeds). Viser les nouveaux contributeurs qui viennent de cloner le dépôt."
+  },
+  {
+    "title": "Docs: Architecture overview for newcomers",
+    "project_status": "Backlog validated",
+    "track": "Docs",
+    "difficulty": "Easy",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["docs", "onboarding", "good first issue"],
+    "body_en": "Turn the current architecture description (front, Strapi, contracts, tooling, infra, docs) into a newcomer-friendly page with a diagram and short explanations for each workspace. Link to this page from the main README and CONTRIBUTING.",
+    "body_fr": "Transformer la description actuelle de l’architecture (front, Strapi, contracts, tooling, infra, docs) en une page accueillante pour les nouveaux arrivants avec un schéma et de courtes explications pour chaque workspace. Lier cette page depuis le README principal et CONTRIBUTING."
+  },
+  {
+    "title": "Infra: bootstrap CI workflow for monorepo scripts",
+    "project_status": "Cadrage & Strategic ideas",
+    "track": "Tooling / Infra",
+    "difficulty": "Medium",
+    "repos": ["infra", ".github"],
+    "agents_id": null,
+    "labels": ["ci", "monorepo", "tooling"],
+    "body_en": "Design a first combined CI workflow that runs the main monorepo scripts (lint, format:check, codegen, test, prebuild:web, etc.) and can later be extended with selectors/API validation. Document the trade-offs (runtime, caching, matrix strategy) in a short ADR.",
+    "body_fr": "Concevoir un premier workflow CI combiné qui exécute les principaux scripts du monorepo (lint, format:check, codegen, test, prebuild:web, etc.) et pourra être étendu plus tard avec la validation des sélecteurs/API. Documenter les compromis (durée, cache, stratégie de matrice) dans un court ADR."
+  },
+  {
+    "title": "Contracts: improve type coverage & docs",
+    "project_status": "Backlog validated",
+    "track": "Contracts",
+    "difficulty": "Medium",
+    "repos": ["packages/contracts"],
+    "agents_id": null,
+    "labels": ["openapi", "typescript", "contracts"],
+    "body_en": "Improve the @openg7/contracts package by ensuring strong type coverage for core entities (Province, Sector, Company, Exchange) and writing a README with import examples for Angular and Node scripts. Prepare for future OpenAPI-driven codegen.",
+    "body_fr": "Améliorer le package @openg7/contracts en garantissant une bonne couverture de types pour les entités clés (Province, Secteur, Entreprise, Échange) et en rédigeant un README avec des exemples d’import pour Angular et des scripts Node. Préparer le terrain pour un futur codegen basé sur OpenAPI."
+  },
+  {
+    "title": "Governance: publish financial governance page",
+    "project_status": "Cadrage & Strategic ideas",
+    "track": "Docs + Community",
+    "difficulty": "Medium",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["governance", "finance", "community"],
+    "body_en": "Extract the financial governance rules (multi-signature, thresholds, audit principles) into a dedicated page under docs/ and describe how contributions (Wise, GitHub Sponsors, others) are managed. Keep language clear, non-legalistic and reassuring.",
+    "body_fr": "Extraire les règles de gouvernance financière (multi-signature, seuils, principes d’audit) dans une page dédiée sous docs/ et décrire la façon dont les contributions (Wise, GitHub Sponsors, autres) sont gérées. Utiliser un langage clair, non juridique et rassurant."
+  }
+]
