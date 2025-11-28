@@ -1,0 +1,178 @@
+[
+  {
+    "title": "Publish OpenG7 mission & vision on homepage",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular) + CMS (Strapi)",
+    "difficulty": "Easy",
+    "repos": ["openg7-org", "strapi"],
+    "agents_id": null,
+    "labels": ["help wanted", "content", "i18n"],
+    "body_en": "Use the official OpenG7 mission and vision text from the README to populate the homepage hero/content in Strapi and render it on the Angular frontend (FR/EN). Keep copy close to the current README and prepare for future updates via CMS.",
+    "body_fr": "Utiliser le texte officiel de mission et de vision OpenG7 (README) pour alimenter la page d’accueil dans Strapi et l’afficher dans le frontend Angular (FR/EN). Garder le contenu proche du README actuel et prêt pour de futures mises à jour via le CMS."
+  },
+  {
+    "title": "Implement hero section with CTAs (AG-1.2)",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org"],
+    "agents_id": "AG-1.2",
+    "labels": ["map", "hero", "good first issue"],
+    "body_en": "Implement the standalone hero components (hero layout, copy, primary/secondary CTAs) using the official [data-og7] selectors and i18n texts. Wire CTAs to placeholder routes (e.g. /map, /companies) until final flows are defined.",
+    "body_fr": "Implémenter les composants hero standalone (layout, texte, CTA principal/secondaire) en utilisant les sélecteurs [data-og7] officiels et les textes i18n. Relier les CTAs à des routes temporaires (ex. /map, /companies) en attendant les parcours finaux."
+  },
+  {
+    "title": "Implement trade map frame + controls (AG-1.3)",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Hard",
+    "repos": ["openg7-org"],
+    "agents_id": "AG-1.3",
+    "labels": ["map", "leaflet", "a11y"],
+    "body_en": "Implement the TradeMap component with its frame and controls: zoom, base layer toggle, legend, KPI badges and sector chips. Use Leaflet integration and respect performance/a11y constraints (keyboard navigation, focus states).",
+    "body_fr": "Implémenter le composant TradeMap avec son cadre et ses contrôles : zoom, changement de fond de carte, légende, badges KPI et puces de secteurs. Utiliser l’intégration Leaflet et respecter les contraintes de performance et d’accessibilité (navigation clavier, états de focus)."
+  },
+  {
+    "title": "Company table & drawer (AG-1.4)",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org"],
+    "agents_id": "AG-1.4",
+    "labels": ["mat-table", "good first issue"],
+    "body_en": "Create the company listing table (Mat-Table) and the right-side detail drawer, driven by typed data models. Start with mock data or simple API responses and prepare inputs/outputs for future Strapi integration.",
+    "body_fr": "Créer le tableau des entreprises (Mat-Table) et le panneau de détails latéral, basés sur des modèles de données typés. Commencer avec des données mock ou une API simple et préparer les entrées/sorties pour la future intégration avec Strapi."
+  },
+  {
+    "title": "Auth prototype: login/register/profile (AG-1.5)",
+    "project_status": "Backlog validated",
+    "track": "Front (Angular)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org"],
+    "agents_id": "AG-1.5",
+    "labels": ["auth", "prototype"],
+    "body_en": "Implement basic login, register, profile and access-denied pages using typed reactive forms and [data-og7] selectors. This is a prototype flow: focus on UX, structure and i18n rather than production security.",
+    "body_fr": "Implémenter les pages de base login, inscription, profil et accès refusé en utilisant des formulaires réactifs typés et les sélecteurs [data-og7]. Il s’agit d’un flux prototype : privilégier l’UX, la structure et l’i18n plutôt que la sécurité de production."
+  },
+  {
+    "title": "Seed provinces, sectors, companies, exchanges (AG-5)",
+    "project_status": "Backlog validated",
+    "track": "CMS (Strapi)",
+    "difficulty": "Medium",
+    "repos": ["strapi"],
+    "agents_id": "AG-5",
+    "labels": ["seed", "data", "help wanted"],
+    "body_en": "Create idempotent Strapi seeds for provinces, sectors, demo companies and economic exchanges so the map and directory can display realistic data. Seeds should be re-runnable without creating duplicates.",
+    "body_fr": "Créer des seeds Strapi idempotents pour les provinces, secteurs, entreprises de démonstration et échanges économiques afin que la carte et le bottin affichent des données réalistes. Les seeds doivent être relançables sans créer de doublons."
+  },
+  {
+    "title": "Document local dev quickstart (front + CMS)",
+    "project_status": "Backlog validated",
+    "track": "Docs",
+    "difficulty": "Easy",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["docs", "good first issue"],
+    "body_en": "Write a concise \"Getting started (dev)\" guide explaining how to run the CMS and web front: yarn dev:cms, yarn dev:web, yarn dev:all, expected ports and basic troubleshooting.",
+    "body_fr": "Rédiger un guide concis « Getting started (dev) » expliquant comment lancer le CMS et le frontend : yarn dev:cms, yarn dev:web, yarn dev:all, ports attendus et dépannage de base."
+  },
+  {
+    "title": "Explain AGENTS.md for new contributors",
+    "project_status": "Backlog validated",
+    "track": "Docs",
+    "difficulty": "Easy",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["docs", "good first issue"],
+    "body_en": "Add documentation that explains what AGENTS.md is, how AG-X.Y IDs map to real components and tasks, and how contributors should reference them in issues and PR titles/descriptions.",
+    "body_fr": "Ajouter une documentation qui explique ce qu’est AGENTS.md, comment les identifiants AG-X.Y correspondent à des composants et tâches réelles, et comment les contributeurs doivent les référencer dans les issues et PR."
+  },
+  {
+    "title": "Set up CI step for selector validation (AG-12)",
+    "project_status": "Backlog validated",
+    "track": "Tooling / CI",
+    "difficulty": "Medium",
+    "repos": [".github", "packages/tooling"],
+    "agents_id": "AG-12",
+    "labels": ["ci", "selectors"],
+    "body_en": "Add a GitHub Actions workflow job that runs the selector validation script (validate-selectors) to ensure every [data-og7] hook declared in AGENTS.md actually exists in the Angular templates.",
+    "body_fr": "Ajouter un job GitHub Actions qui exécute le script de validation des sélecteurs (validate-selectors) pour s’assurer que chaque hook [data-og7] déclaré dans AGENTS.md existe réellement dans les templates Angular."
+  },
+  {
+    "title": "Set up CI step for API validation",
+    "project_status": "Backlog validated",
+    "track": "Tooling / CI",
+    "difficulty": "Medium",
+    "repos": [".github", "packages/tooling"],
+    "agents_id": null,
+    "labels": ["ci", "api"],
+    "body_en": "Add a CI job that runs the API validation script (validate-api) against Strapi dev/preprod environments and fails if critical endpoints used by the frontend are broken.",
+    "body_fr": "Ajouter un job CI qui exécute le script de validation d’API (validate-api) sur les environnements Strapi dev/préprod et échoue si des endpoints critiques utilisés par le frontend sont cassés."
+  },
+  {
+    "title": "Improve CONTRIBUTING.md with Project instructions",
+    "project_status": "Backlog validated",
+    "track": "Docs + Community",
+    "difficulty": "Easy",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["docs", "community", "good first issue"],
+    "body_en": "Update CONTRIBUTING.md to explain how to use the \"@OpenG7 – Steering & Delivery\" Project: how to pick a card, move it between columns, and link PRs to Project items.",
+    "body_fr": "Mettre à jour CONTRIBUTING.md pour expliquer comment utiliser le Project « @OpenG7 – Pilotage & Livraison » : comment choisir une carte, la déplacer entre les colonnes et lier les PR aux items du Project."
+  },
+  {
+    "title": "Create GitHub issue templates (bugs/feature/docs)",
+    "project_status": "Backlog validated",
+    "track": "Docs + Community",
+    "difficulty": "Easy",
+    "repos": [".github"],
+    "agents_id": null,
+    "labels": ["templates", "good first issue"],
+    "body_en": "Add GitHub issue templates for bug reports, feature requests and documentation tasks to standardise community contributions and speed up triage.",
+    "body_fr": "Ajouter des modèles d’issues GitHub pour les rapports de bug, les demandes de fonctionnalités et les tâches de documentation afin de standardiser les contributions et d’accélérer le triage."
+  },
+  {
+    "title": "First \"Humanitarian Aid 2.0\" concept doc",
+    "project_status": "Cadrage & Strategic ideas",
+    "track": "Docs + Community",
+    "difficulty": "Easy",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["humanitarian-2.0", "strategy"],
+    "body_en": "Draft a short concept note describing how citizen humanitarian signals (reports, needs) could appear in the UI and data model of OpenG7. No code yet: focus on scenarios, data fields and ethics.",
+    "body_fr": "Rédiger une courte note de concept décrivant comment les signaux humanitaires citoyens (signalements, besoins) pourraient apparaître dans l’UI et le modèle de données d’OpenG7. Aucun code pour l’instant : se concentrer sur les scénarios, champs de données et enjeux éthiques."
+  },
+  {
+    "title": "Map performance & a11y checklist",
+    "project_status": "Design & Multi-repo breakdown",
+    "track": "Front (Angular)",
+    "difficulty": "Medium",
+    "repos": ["openg7-org"],
+    "agents_id": null,
+    "labels": ["map", "a11y", "perf"],
+    "body_en": "Create a repeatable checklist for map-related PRs: LCP and FPS targets, keyboard navigation, focus management, reduced motion, colour contrast for layers and badges. Store it in docs and reference it in AGENTS.",
+    "body_fr": "Créer une checklist réutilisable pour les PR liées à la carte : objectifs de LCP et FPS, navigation clavier, gestion du focus, réduction des animations, contraste des couches et badges. La stocker dans la documentation et la référencer dans AGENTS."
+  },
+  {
+    "title": "Contracts package – minimal OpenAPI snapshot",
+    "project_status": "Backlog validated",
+    "track": "Contracts",
+    "difficulty": "Medium",
+    "repos": ["packages/contracts"],
+    "agents_id": null,
+    "labels": ["openapi", "typescript", "contracts"],
+    "body_en": "Export an initial OpenAPI spec from Strapi and wire it into @openg7/contracts so the Angular app can consume typed responses for key entities (Province, Sector, Company, Exchange).",
+    "body_fr": "Exporter une première spécification OpenAPI depuis Strapi et l’intégrer dans @openg7/contracts afin que l’app Angular consomme des réponses typées pour les entités clés (Province, Secteur, Entreprise, Échange)."
+  },
+  {
+    "title": "Document \"local validation chain\" for PR authors",
+    "project_status": "Backlog validated",
+    "track": "Docs",
+    "difficulty": "Easy",
+    "repos": ["docs"],
+    "agents_id": null,
+    "labels": ["docs", "ci"],
+    "body_en": "Turn the local validation chain (yarn lint, yarn format:check, yarn validate:selectors, yarn codegen && yarn test, yarn predeploy:cms-cache, yarn prebuild:web) into a friendly \"Before you open a PR\" checklist.",
+    "body_fr": "Transformer la chaîne de validation locale (yarn lint, yarn format:check, yarn validate:selectors, yarn codegen && yarn test, yarn predeploy:cms-cache, yarn prebuild:web) en une checklist « Avant d’ouvrir une PR » facile à suivre."
+  }
+]
