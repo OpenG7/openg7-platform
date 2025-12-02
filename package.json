@@ -26,6 +26,9 @@
     "docs:full": "typedoc --options typedoc.full.json",
     "predeploy:cms-cache": "yarn workspace @openg7/strapi seed:dev",
     "predeploy:preprod": "yarn validate:selectors && yarn prebuild:web && yarn validate:preprod-runtime-config && yarn build:web",
+    "projects:reset:steering": "powershell -ExecutionPolicy Bypass -File ./tools/projects/reset-openg7-steering.ps1",
+    "projects:get-project-id": "powershell -ExecutionPolicy Bypass -File ./tools/projects/get-github-project-id.ps1",
+    "projects:seed:steering": "ts-node --project tsconfig.tools.json tools/projects/seed-openg7-steering.ts",
     "validate:selectors": "yarn workspace @openg7/tooling validate:selectors",
     "checklist:verify": "node ./scripts/sync-checklist.mjs --check",
     "sync:checklist": "node ./scripts/sync-checklist.mjs",
@@ -34,6 +37,7 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
     "@typescript-eslint/parser": "^8.10.0",
     "concurrently": "^8.2.2",
@@ -43,6 +47,7 @@
     "eslint-plugin-import": "^2.31.0",
     "globals": "^15.9.0",
     "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
     "typedoc": "^0.25.10",
     "typescript": "^5.6.2"
   },
