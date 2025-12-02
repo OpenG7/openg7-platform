@@ -10616,7 +10616,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:>=8.1.0":
+"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:>=8.1.0, @types/node@npm:^24.10.1":
   version: 24.10.1
   resolution: "@types/node@npm:24.10.1"
   dependencies:
@@ -20292,6 +20292,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openg7@workspace:."
   dependencies:
+    "@types/node": "npm:^24.10.1"
     "@typescript-eslint/eslint-plugin": "npm:^8.10.0"
     "@typescript-eslint/parser": "npm:^8.10.0"
     concurrently: "npm:^8.2.2"
@@ -20301,6 +20302,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.31.0"
     globals: "npm:^15.9.0"
     prettier: "npm:^3.6.2"
+    ts-node: "npm:^10.9.2"
     typedoc: "npm:^0.25.10"
     typescript: "npm:^5.6.2"
   languageName: unknown
