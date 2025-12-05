@@ -11,6 +11,11 @@ Ce guide centralise les fichiers `.env.example` fournis par les workspaces, les 
 
 Copiez ces fichiers en `.env` (ou chargez-les via `direnv`/`dotenvx`) avant d'exécuter `yarn dev:web`, `yarn dev:cms` ou `yarn --cwd strapi strapi develop`. Pensez à remplacer les valeurs d'exemple (`change-me`, `og7_frontend_readonly_token`, `preview-token`, etc.) par vos secrets locaux.
 
+### `.env` vs `manifest-dev.yml`
+
+- **`.env`** (ou `.env.local`) charge les variables d'environnement au démarrage des processus `yarn dev:web` ou `yarn dev:cms`. Elles sont lues directement par Angular (SSR) et par Strapi pour configurer l'URL du CMS, les tokens read-only et les secrets de prévisualisation. Ces fichiers ne quittent pas la machine de développement et restent non versionnés (`.gitignore`). 【F:openg7-org/.env.example†L5-L15】【F:strapi/.env.example†L1-L19】【F:openg7-org/src/app/core/config/runtime-config.service.ts†L17-L55】
+- **`manifest-dev.yml`** serait un manifeste déclaratif (Kubernetes/compose) injectant des `env` dans un service conteneurisé. Il est utile quand on orchestre un cluster distant ou un devcontainer, mais il duplique les `.env` locaux et n'est pas nécessaire dans le flux actuel : le front génère déjà son runtime (`public/runtime-config.js`) via les variables d'environnement existantes, et Strapi lit directement les variables depuis `.env`. Nous évitons donc de maintenir un manifest YAML supplémentaire pour le développement tant que les services tournent localement. 【F:openg7-org/config/runtime-config.template.json†L1-L19】【F:openg7-org/scripts/validate-preprod-config.mjs†L1-L58】
+
 ## Rotation des secrets
 
 ### Jeton API read-only (front → Strapi)
@@ -60,8 +65,10 @@ En alignant ces variables entre workspaces, on garantit que les seeds Strapi et 
 
 ## Injection automatisée des secrets
 
-- **Vault → Kubernetes** : les manifestes Strapi s'appuient désormais sur `ExternalSecret` pour hydrater `strapi-database`, `strapi-admin-secrets` et `strapi-upload` directement depuis Vault (`ClusterSecretStore` `vault-openg7`). Ajustez les chemins `remoteRef` selon votre arborescence Vault avant d'appliquer les manifests. 【F:infra/kubernetes/strapi.yaml†L119-L214】
-- **Rotation continue** : mettez à jour les valeurs côté Vault ; l'opérateur External Secrets rafraîchira automatiquement les Secrets Kubernetes (`refreshInterval: 1h`). Redémarrez les pods Strapi uniquement si le changement concerne des connexions persistantes (Postgres, S3). 【F:infra/kubernetes/strapi.yaml†L119-L214】
+- **Vault → Kubernetes** : les manifestes Strapi s'appuient désormais sur `ExternalSecret` pour hydrater `strapi-database`, `strapi-admin-secrets` et `strapi-upload` directement depuis Vault (`ClusterSecretStore` `vault-openg7`). Ajustez les chemins `remoteRef` selon votre arborescence Vault avant d'appliquer les manifests. 【F:infra/kubernetes/strapi.yaml†L384-L480】
+- **Rotation continue** : mettez à jour les valeurs côté Vault ; l'opérateur External Secrets rafraîchira automatiquement les Secrets Kubernetes (`refreshInterval: 1h`). Redémarrez les pods Strapi uniquement si le changement concerne des connexions persistantes (Postgres, S3). 【F:infra/kubernetes/strapi.yaml†L384-L480】
+- **Rafraîchissement au déploiement** : le déploiement Strapi référence directement ces Secrets via `envFrom`. Une nouvelle image ou un `kubectl rollout restart deployment/openg7-strapi` forcera les pods à redémarrer et à relire les valeurs mises à jour, ce qui garantit que les variables d'environnement changées dans Vault sont injectées à chaque déploiement. 【F:infra/kubernetes/strapi.yaml†L125-L162】【F:infra/kubernetes/strapi.yaml†L384-L480】
+- **Front Angular** : le fichier `public/runtime-config.js` est régénéré à chaque build par `generate-runtime-config.mjs`, qui relit `process.env` au moment du déploiement. Assurez-vous que les pipelines CI/CD exportent les nouvelles valeurs avant `yarn prebuild:web` afin que le runtime embarqué corresponde toujours aux secrets les plus récents. 【F:openg7-org/scripts/generate-runtime-config.mjs†L1-L40】
 
 ## Préproduction — garde-fous seeds & manifeste runtime
 
