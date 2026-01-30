@@ -13,6 +13,8 @@ jobs:
       API_WITH_CREDENTIALS: 'false'
       ANALYTICS_ENDPOINT: https://analytics.ci.openg7.org/events
       NOTIFICATION_WEBHOOK_URL: https://notifications.ci.openg7.org/email
+      API_TOKEN: ci-readonly-token
+      HOMEPAGE_PREVIEW_TOKEN: ci-preview-token
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
