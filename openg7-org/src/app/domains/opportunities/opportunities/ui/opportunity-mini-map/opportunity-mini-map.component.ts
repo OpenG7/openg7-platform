@@ -47,10 +47,14 @@ interface LeafletLayer {
   addTo(map: LeafletMap): void;
 }
 
+interface LeafletBounds {
+  pad(padding: number): LeafletBounds;
+}
+
 interface LeafletModule {
   map(...args: unknown[]): LeafletMap;
   tileLayer(...args: unknown[]): LeafletLayer;
-  latLngBounds(...args: unknown[]): unknown;
+  latLngBounds(...args: unknown[]): LeafletBounds;
   polyline(...args: unknown[]): LeafletLayer;
   marker(...args: unknown[]): LeafletLayer;
   divIcon(options: {
