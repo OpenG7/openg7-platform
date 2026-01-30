@@ -11,9 +11,9 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Og7DualQrPanelComponent } from '@app/shared/components/qr/og7-dual-qr-panel.component';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService, TranslationObject } from '@ngx-translate/core';
 
-type TranslationSlice = Record<string, unknown>;
+type TranslationSlice = TranslationObject;
 
 interface LoadedTranslations {
   readonly en: TranslationSlice;

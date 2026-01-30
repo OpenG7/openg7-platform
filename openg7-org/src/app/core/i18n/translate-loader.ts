@@ -1,7 +1,7 @@
 import { isPlatformServer } from '@angular/common';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID, TransferState, makeStateKey } from '@angular/core';
-import { TranslateLoader } from '@ngx-translate/core';
+import { TranslateLoader, TranslationObject } from '@ngx-translate/core';
 import { Observable, catchError, from, of, tap } from 'rxjs';
 
 import { I18N_PREFIX } from '../config/environment.tokens';
@@ -56,9 +56,9 @@ export class AppTranslateLoader implements TranslateLoader {
    * @param lang Locale code requested by the translate service.
    * @returns Observable emitting the translation dictionary for the given locale.
    */
-  getTranslation(lang: string): Observable<Record<string, unknown>> {
-    const KEY = makeStateKey<Record<string, unknown>>('i18n-' + lang);
-    const cached = this.transferState.get<Record<string, unknown> | null>(KEY, null);
+  getTranslation(lang: string): Observable<TranslationObject> {
+    const KEY = makeStateKey<TranslationObject>('i18n-' + lang);
+    const cached = this.transferState.get<TranslationObject | null>(KEY, null);
     if (cached) {
       return of(cached);
     }
@@ -109,7 +109,7 @@ export class AppTranslateLoader implements TranslateLoader {
       );
     }
 
-    return this.http.get<Record<string, unknown>>(this.composeHttpUrl(lang)).pipe(
+    return this.http.get<TranslationObject>(this.composeHttpUrl(lang)).pipe(
       tap((data) => this.transferState.set(KEY, data)),
       catchError((err) => {
         console.error('Translation load error', err?.message, err?.status);

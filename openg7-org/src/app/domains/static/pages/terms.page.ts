@@ -174,7 +174,7 @@ export class TermsPage {
     return Array.isArray(value) ? (value as T[]) : [value as T];
   }
 
-  private resolveObject<T extends Record<string, unknown>>(key: string): T | null {
+  private resolveObject<T>(key: string): T | null {
     const value = this.translateInstant<T>(key);
     if (!value || typeof value !== 'object') {
       return null;

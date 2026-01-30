@@ -175,7 +175,7 @@ export class Og7IntroBillboardContentComponent implements AfterViewInit {
       return true;
     }
     const source = this.selectedPartnerId();
-    return Boolean(source) && Boolean(source());
+    return source ? Boolean(source()) : false;
   });
 
   public readonly scorePercent = computed(() => {

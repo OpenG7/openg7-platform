@@ -50,6 +50,7 @@ interface LeafletLayer {
 interface LeafletModule {
   map(...args: unknown[]): LeafletMap;
   tileLayer(...args: unknown[]): LeafletLayer;
+  latLngBounds(...args: unknown[]): unknown;
   polyline(...args: unknown[]): LeafletLayer;
   marker(...args: unknown[]): LeafletLayer;
   divIcon(options: {

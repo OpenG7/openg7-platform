@@ -137,5 +137,5 @@ export interface BlobRequestOptions extends RequestOptionsBase {
 export type RequestOptions = JsonRequestOptions | BlobRequestOptions;
 
 function isBlobRequestOptions(options?: RequestOptions): options is BlobRequestOptions {
-  return Boolean(options) && options.responseType === 'blob';
+  return options?.responseType === 'blob';
 }
