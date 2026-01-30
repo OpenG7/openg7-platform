@@ -108,7 +108,7 @@ export class ConnectionsEffects {
     if (error instanceof Error && typeof error.message === 'string') {
       return error.message;
     }
-    if (typeof error === 'object' && error && 'message' in error) {
+    if (typeof error === 'object' && 'message' in error) {
       const message = (error as { message?: unknown }).message;
       if (typeof message === 'string') {
         return message;
