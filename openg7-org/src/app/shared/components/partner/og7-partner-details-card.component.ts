@@ -9,13 +9,13 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PartnerProfile,
   PartnerTrustRecord,
   PartnerVerificationStatus,
   SocialLinkType,
 } from '@app/core/models/partner-profile';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface IconDefinition {
   readonly viewBox: string;

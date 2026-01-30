@@ -1,3 +1,5 @@
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   Input,
@@ -17,24 +19,22 @@ import {
   ControlValueAccessor, ValidationErrors, AbstractControl, Validator,
   ReactiveFormsModule, FormsModule
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 
-type PaletteItem = {
+interface PaletteItem {
   label: string;
   description?: string;
   badge?: string;
   badgeClass?: string;
-};
+}
 
-type PaletteSection = {
+interface PaletteSection {
   title: string;
   items: PaletteItem[];
-};
+}
 
 @Component({
   selector: 'og7-search-field',
@@ -226,8 +226,8 @@ export class Og7SearchFieldComponent implements
 
   // --- CVA
   writeValue(value: string | null): void { this.value = value ?? ''; }
-  registerOnChange(fn: any): void { this.onChange = fn; }
-  registerOnTouched(fn: any): void { this.onTouched = fn; }
+  registerOnChange(fn: (value: string) => void): void { this.onChange = fn; }
+  registerOnTouched(fn: () => void): void { this.onTouched = fn; }
   setDisabledState(isDisabled: boolean): void { this.disabled = isDisabled; }
 
   // --- Validator

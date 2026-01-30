@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { CompanyCapacity, CompanyRecord, CompanyStatus } from '@app/core/services/company.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 const STATUS_LABELS: Record<CompanyStatus, string> = {
   pending: 'Pending review',

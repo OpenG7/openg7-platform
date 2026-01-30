@@ -1,15 +1,15 @@
 import type { Core } from '@strapi/strapi';
 
-type Env = {
+interface Env {
   (key: string, defaultValue?: any): any;
   int(key: string, defaultValue?: number): number;
   bool(key: string, defaultValue?: boolean): boolean;
   array(key: string, defaultValue?: string[]): string[];
-};
+}
 
-type ConfigContext = {
+interface ConfigContext {
   env: Env;
-};
+}
 
 export default ({ env }: ConfigContext) => ({
   host: env('HOST', '0.0.0.0'),

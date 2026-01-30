@@ -1,11 +1,15 @@
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
 import { Buffer } from 'buffer';
+
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+
+
 import { API_URL } from '../config/environment.tokens';
-import { AuthResponse } from './auth.types';
 import { HttpClientService } from '../http/http-client.service';
 import { CryptoService } from '../security/crypto.service';
+
+import { AuthResponse } from './auth.types';
 
 export type OidcProvider = 'microsoft' | 'google';
 

@@ -16,12 +16,13 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IntroductionDraftState, ConnectionAttachment, TransportMode, IncotermCode } from '@app/core/models/connection';
 import { FinancingBanner } from '@app/core/models/partner-profile';
 import { PipelineStepStatus } from '@app/state';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { IntroductionMessageEditorComponent } from './components/introduction-message-editor.component';
 
 export type Og7IntroStepId =
@@ -145,7 +146,7 @@ export class Og7IntroStepperComponent {
   );
   public readonly selectedIncoterm = computed(() => this.selectedIncotermSignal());
   public readonly logisticsReady = computed(
-    () => !!this.selectedIncotermSignal() && this.selectedTransportsSignal().length > 0
+    () => Boolean(this.selectedIncotermSignal()) && this.selectedTransportsSignal().length > 0
   );
 
   public readonly pipelineReady = computed(() => {
@@ -153,7 +154,7 @@ export class Og7IntroStepperComponent {
     return Array.isArray(steps) && steps.length > 0;
   });
 
-  public readonly financingReady = computed(() => !!this.financingData());
+  public readonly financingReady = computed(() => Boolean(this.financingData()));
 
   public readonly readyToSend = computed(
     () =>
@@ -215,7 +216,6 @@ export class Og7IntroStepperComponent {
   });
 
   constructor() {
-    console.log('Og7IntroStepperComponent instantiated');
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const requested = this.parseStep(params.get('step'));
       const normalized = this.normalizeStep(requested, this.steps());
@@ -365,7 +365,7 @@ export class Og7IntroStepperComponent {
     if (availability != null) {
       return availability;
     }
-    return !!this.financingData();
+    return Boolean(this.financingData());
   }
 
   protected hasComplianceContent(): boolean {

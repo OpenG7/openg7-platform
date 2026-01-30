@@ -1,19 +1,19 @@
 import { factories } from '@strapi/strapi';
 
-type InsightEntity = {
+interface InsightEntity {
   id: number;
   attributes?: Record<string, unknown> | null;
-};
+}
 
-type StatisticFilters = {
+interface StatisticFilters {
   scope?: string;
   intrant?: string;
   period?: string;
   province?: string;
   country?: string;
-};
+}
 
-type StatisticsPayload = {
+interface StatisticsPayload {
   data: {
     summaries: Array<Record<string, unknown>>;
     insights: Array<Record<string, unknown>>;
@@ -31,7 +31,7 @@ type StatisticsPayload = {
       country: string | null;
     };
   };
-};
+}
 
 const parseDecimal = (value: unknown): number | null => {
   if (typeof value === 'number' && Number.isFinite(value)) {

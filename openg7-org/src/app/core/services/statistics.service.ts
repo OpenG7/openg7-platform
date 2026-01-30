@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   Injectable,
@@ -6,8 +7,10 @@ import {
   inject,
   makeStateKey,
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Observable, catchError, map, of, shareReplay, tap } from 'rxjs';
+
 import { API_URL } from '../config/environment.tokens';
+import { CountryCode, G7_COUNTRY_CODES, isCountryCode } from '../models/country';
 import {
   StatisticsFilters,
   StatisticsInsight,
@@ -17,10 +20,8 @@ import {
   StatisticsSnapshot,
   StatisticsSummary,
 } from '../models/statistics';
-import { Observable, catchError, map, of, shareReplay, tap } from 'rxjs';
-import { CountryCode, G7_COUNTRY_CODES, isCountryCode } from '../models/country';
 
-type StatisticsApiResponse = {
+interface StatisticsApiResponse {
   data: {
     summaries: StatisticsSummary[];
     insights: StatisticsInsight[];
@@ -32,7 +33,7 @@ type StatisticsApiResponse = {
   meta?: {
     filters?: Partial<StatisticsFilters>;
   };
-};
+}
 
 type FallbackInsight =
   | (StatisticsSummary & { kind: 'summary' })

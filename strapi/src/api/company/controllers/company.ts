@@ -1,18 +1,18 @@
 import { factories } from '@strapi/strapi';
 
-type RelationInput = {
+interface RelationInput {
   data?: {
     id?: number;
     attributes?: {
       name?: unknown;
     };
   } | null;
-};
+}
 
-type CompanyEntity = {
+interface CompanyEntity {
   id?: number;
   attributes?: Record<string, unknown> | null;
-};
+}
 
 const baseControllerFactory = factories.createCoreController('api::company.company');
 const noopNext = async () => undefined;
@@ -65,7 +65,7 @@ const mapCapacities = (value: unknown) => {
   return list;
 };
 
-type VerificationSourceInput = {
+interface VerificationSourceInput {
   id?: number;
   name?: unknown;
   type?: unknown;
@@ -76,9 +76,9 @@ type VerificationSourceInput = {
   lastCheckedAt?: unknown;
   evidenceUrl?: unknown;
   notes?: unknown;
-};
+}
 
-type TrustRecordInput = {
+interface TrustRecordInput {
   id?: number;
   label?: unknown;
   type?: unknown;
@@ -87,7 +87,7 @@ type TrustRecordInput = {
   amount?: unknown;
   score?: unknown;
   notes?: unknown;
-};
+}
 
 const mapVerificationStatus = (value: unknown) => {
   if (value === 'verified' || value === 'pending' || value === 'suspended') {

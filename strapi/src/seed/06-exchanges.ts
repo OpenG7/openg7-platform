@@ -1,11 +1,11 @@
 import { ensureLocale, findId, upsertByUID } from '../utils/seed-helpers';
 
-type ExchangeSeed = {
+interface ExchangeSeed {
   sourceProvinceSlug: string;
   targetProvinceSlug: string;
   value: number;
   unit: string;
-};
+}
 
 const exchanges: ExchangeSeed[] = [
   { sourceProvinceSlug: 'bc', targetProvinceSlug: 'ab', value: 1250, unit: 'GWh' },

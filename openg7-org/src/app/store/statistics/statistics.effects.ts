@@ -1,9 +1,10 @@
 import { inject } from '@angular/core';
+import { StatisticsService } from '@app/core/services/statistics.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { StatisticsActions } from './statistics.actions';
-import { StatisticsService } from '@app/core/services/statistics.service';
 import { catchError, map, of, switchMap, withLatestFrom } from 'rxjs';
+
+import { StatisticsActions } from './statistics.actions';
 import { selectStatisticsFilters } from './statistics.selectors';
 
 /**

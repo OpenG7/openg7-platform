@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { PartnerSelection } from '@app/core/models/partner-selection';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { OpportunityViewSheetPayload } from '../opportunity-view-sheet-payload';
 
-type OpportunityTileActor = {
+interface OpportunityTileActor {
   readonly name: string;
   readonly provinceLabelKey: string;
   readonly sectorLabelKey: string;
   readonly logoUrl?: string | null;
-};
+}
 
-export type OpportunityTileVm = {
+export interface OpportunityTileVm {
   readonly id: string;
   readonly matchId: string;
   readonly title: string;
@@ -20,7 +21,7 @@ export type OpportunityTileVm = {
   readonly supplier: OpportunityTileActor;
   readonly distanceKm: number | null;
   readonly profileSelection: PartnerSelection;
-};
+}
 
 @Component({
   selector: 'og7-opportunity-tile',

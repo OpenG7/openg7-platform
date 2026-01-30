@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 const FAQ_ITEM_KEYS = ['platform', 'data', 'pricing', 'support', 'partners'] as const;

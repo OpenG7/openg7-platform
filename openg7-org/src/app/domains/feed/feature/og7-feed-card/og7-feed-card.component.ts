@@ -9,6 +9,7 @@ import {
   output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+
 import { FeedPost } from '../models/feed.models';
 import { JsonDateAgoPipe } from '../pipes/json-date-ago.pipe';
 import { JsonDateRelativePipe } from '../pipes/json-date-relative.pipe';

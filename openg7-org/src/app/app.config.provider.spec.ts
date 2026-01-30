@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+
 import { appConfigProvider } from './app.config.provider';
 import { API_URL, FEATURE_FLAGS, I18N_PREFIX } from './core/config/environment.tokens';
 import { RuntimeConfigService } from './core/config/runtime-config.service';

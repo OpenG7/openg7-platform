@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Signal, input, output, viewChild } from '@angular/core';
-import { PartnerDetailsPanelComponent } from '@app/shared/components/partner/partner-details-panel.component';
+import { ConnectionDraft } from '@app/core/models/connection';
 import { OpportunityMatch } from '@app/core/models/opportunity';
 import { FinancingBanner, PartnerProfile } from '@app/core/models/partner-profile';
 import { parsePartnerSelection } from '@app/core/models/partner-selection';
-import { Og7IntroBillboardContentComponent } from './og7-intro-billboard-content.component';
 import { PartnerQuickActionsComponent } from '@app/domains/partners/partners/ui/partner-quick-actions.component';
+import { PartnerDetailsPanelComponent } from '@app/shared/components/partner/partner-details-panel.component';
+
+import { Og7IntroBillboardContentComponent } from './og7-intro-billboard-content.component';
 
 export interface IntroductionRequestContext {
   readonly profile: PartnerProfile;
@@ -91,4 +93,3 @@ export class Og7IntroBillboardSection {
     this.introductionRequested.emit({ profile, match });
   }
 }
-import { ConnectionDraft } from '@app/core/models/connection';

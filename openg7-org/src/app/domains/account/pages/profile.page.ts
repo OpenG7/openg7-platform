@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '@app/core/auth/auth.service';
-import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { AuthUser, UpdateProfilePayload } from '@app/core/auth/auth.types';
+import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,

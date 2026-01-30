@@ -1,8 +1,10 @@
+import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { TranslateModule } from '@ngx-translate/core';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
-import { TranslateModule } from '@ngx-translate/core';
+
 import { HomeStatisticsSectionComponent } from './home-statistics-section.component';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+
 
 const stats: StatMetric[] = [
   {

@@ -1,5 +1,5 @@
-import { Directive, DestroyRef, ElementRef, PLATFORM_ID, Renderer2, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Directive, DestroyRef, ElementRef, PLATFORM_ID, Renderer2, inject } from '@angular/core';
 
 @Directive({
   selector: '[og7SparksBackground]',

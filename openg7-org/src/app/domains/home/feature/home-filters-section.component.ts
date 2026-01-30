@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { GlobalFiltersComponent } from '@app/shared/components/filters/global-filters.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-home-filters-section',

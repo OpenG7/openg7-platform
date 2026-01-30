@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of, Subject } from 'rxjs';
-import { LoginPage } from './login.page';
 import { AuthService } from '@app/core/auth/auth.service';
+import { LoginResponse } from '@app/core/auth/auth.types';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
-import { LoginResponse } from '@app/core/auth/auth.types';
+import { of, Subject } from 'rxjs';
+
+import { LoginPage } from './login.page';
 
 class MockNotificationStore {
   success = jasmine.createSpy('success');

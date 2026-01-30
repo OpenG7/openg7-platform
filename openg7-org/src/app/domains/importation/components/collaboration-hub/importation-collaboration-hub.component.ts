@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+
 import { ImportationCollaborationViewModel } from '../../models/importation.models';
 
 interface ScheduleDraft {
@@ -61,7 +62,7 @@ export class ImportationCollaborationHubComponent {
     const recipients = this.scheduleDraft.recipients
       .split(',')
       .map((value) => value.trim())
-      .filter((value) => !!value);
+      .filter((value) => Boolean(value));
     if (!recipients.length) {
       return;
     }

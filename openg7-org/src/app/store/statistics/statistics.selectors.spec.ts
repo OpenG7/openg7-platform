@@ -1,3 +1,7 @@
+import type { CountryCode } from '@app/core/models/country';
+import { StatisticsSnapshot } from '@app/core/models/statistics';
+
+import { StatisticsState } from './statistics.reducer';
 import {
   selectStatisticsAvailableCountries,
   selectStatisticsAvailablePeriods,
@@ -8,9 +12,6 @@ import {
   selectStatisticsInsights,
   selectStatisticsSummaries,
 } from './statistics.selectors';
-import { StatisticsState } from './statistics.reducer';
-import { StatisticsSnapshot } from '@app/core/models/statistics';
-import type { CountryCode } from '@app/core/models/country';
 
 describe('Statistics selectors', () => {
   const summaryA = {

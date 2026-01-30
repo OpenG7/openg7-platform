@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
-import { SocialAuthButtonsComponent } from './social-auth-buttons.component';
 import { AuthService } from '@app/core/auth/auth.service';
+import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { NotificationStoreApi } from '@app/core/observability/notification.store';
-import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { TranslateService } from '@ngx-translate/core';
+
+import { SocialAuthButtonsComponent } from './social-auth-buttons.component';
 
 describe('SocialAuthButtonsComponent', () => {
   let fixture: ComponentFixture<SocialAuthButtonsComponent>;

@@ -1,4 +1,5 @@
 import { compileStrapi, createStrapi } from '@strapi/strapi';
+
 import runSeeds from '../src/seed';
 
 async function main() {

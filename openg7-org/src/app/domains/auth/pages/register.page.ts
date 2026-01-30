@@ -1,14 +1,14 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import { AuthConfigService } from '@app/core/auth/auth-config.service';
+import { AuthRedirectService } from '@app/core/auth/auth-redirect.service';
 import { AuthService } from '@app/core/auth/auth.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { SocialAuthButtonsComponent } from '@app/shared/components/auth/social-auth-buttons.component';
-import { AuthConfigService } from '@app/core/auth/auth-config.service';
-import { AuthRedirectService } from '@app/core/auth/auth-redirect.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,

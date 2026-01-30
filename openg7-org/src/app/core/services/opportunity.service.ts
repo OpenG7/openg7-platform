@@ -1,8 +1,10 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, PLATFORM_ID, Signal, TransferState, inject, makeStateKey, signal } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+
 import { API_URL } from '../config/environment.tokens';
 import {
   CompanySummary,
@@ -13,7 +15,6 @@ import {
   isSectorType,
 } from '../models/opportunity';
 import { injectNotificationStore } from '../observability/notification.store';
-import { TranslateService } from '@ngx-translate/core';
 
 interface StrapiRelation<T> {
   readonly data: StrapiEntity<T> | null;

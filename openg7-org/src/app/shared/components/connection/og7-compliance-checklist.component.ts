@@ -26,21 +26,21 @@ export class Og7ComplianceChecklistComponent {
   readonly ndaChange = output<boolean>();
   readonly rfqChange = output<boolean>();
 
-  protected readonly ndaChecked = computed(() => !!this.ndaSelected());
-  protected readonly rfqChecked = computed(() => !!this.rfqSelected());
+  protected readonly ndaChecked = computed(() => Boolean(this.ndaSelected()));
+  protected readonly rfqChecked = computed(() => Boolean(this.rfqSelected()));
   protected readonly ndaPreview = computed(() => this.normalizeUrl(this.ndaPreviewUrl()));
   protected readonly rfqPreview = computed(() => this.normalizeUrl(this.rfqPreviewUrl()));
   protected readonly selectionCount = computed(() => Number(this.ndaChecked()) + Number(this.rfqChecked()));
 
   protected onNdaToggle(event: Event): void {
     const inputElement = event.target as HTMLInputElement | null;
-    const checked = !!inputElement?.checked;
+    const checked = Boolean(inputElement?.checked);
     this.ndaChange.emit(checked);
   }
 
   protected onRfqToggle(event: Event): void {
     const inputElement = event.target as HTMLInputElement | null;
-    const checked = !!inputElement?.checked;
+    const checked = Boolean(inputElement?.checked);
     this.rfqChange.emit(checked);
   }
 

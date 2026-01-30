@@ -8,6 +8,7 @@ import {
   Type,
   inject,
 } from '@angular/core';
+
 import { Og7ModalService } from './og7-modal.service';
 import { Og7ModalState } from './og7-modal.types';
 

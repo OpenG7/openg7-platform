@@ -17,7 +17,7 @@ export default async () => {
     if (hasCountry) {
       continue;
     }
-    // eslint-disable-next-line no-await-in-loop
+     
     await strapi.entityService.update('api::company.company', id, {
       data: { country: 'CA' } as any,
     });

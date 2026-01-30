@@ -1,6 +1,6 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { StatisticsFilters, StatisticsPayload, StatisticsScope, StatisticsIntrant } from '@app/core/models/statistics';
 import type { CountryCode } from '@app/core/models/country';
+import { StatisticsFilters, StatisticsPayload, StatisticsScope, StatisticsIntrant } from '@app/core/models/statistics';
+import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
 export const StatisticsActions = createActionGroup({
   source: 'Statistics',

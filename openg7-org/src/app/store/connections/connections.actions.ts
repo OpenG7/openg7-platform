@@ -1,4 +1,3 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import {
   ConnectionAttachment,
   ConnectionDraft,
@@ -6,6 +5,7 @@ import {
   ConnectionStage,
   IntroductionDraftState,
 } from '@app/core/models/connection';
+import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
 export const ConnectionsActions = createActionGroup({
   source: 'Connections',

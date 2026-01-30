@@ -6,39 +6,40 @@ import {
   SectorType,
   normalizeConfidencePercent,
 } from '@app/core/models/opportunity';
-import { createPartnerSelection } from '@app/core/models/partner-selection';
 import {
   OpportunityMatchLayout,
   OPPORTUNITY_MATCH_LAYOUTS,
 } from '@app/core/models/opportunity-match-layout';
-import { OpportunityTileVm } from './opportunity-tile/opportunity-tile.component';
-import {
-  OpportunityMiniMapVm,
-  OpportunityMiniMapSparklinePoint,
-} from './opportunity-mini-map/opportunity-mini-map.component';
-import { OpportunityTwoWayComparatorVm } from './opportunity-two-way-comparator/opportunity-two-way-comparator.component';
-import { OpportunityRadarVm } from './opportunity-radar/opportunity-radar.component';
+import { createPartnerSelection } from '@app/core/models/partner-selection';
+
 import {
   OpportunityCompactKpiItemVm,
   OpportunityCompactKpiListVm,
 } from './opportunity-compact-kpi-list/opportunity-compact-kpi-list.component';
-import { OpportunitySwipeStackVm } from './opportunity-swipe-stack/opportunity-swipe-stack.component';
 import {
   OpportunityImpactBannerVm,
   OpportunityImpactBannerKpi,
 } from './opportunity-impact-banner/opportunity-impact-banner.component';
+import {
+  OpportunityMiniMapVm,
+  OpportunityMiniMapSparklinePoint,
+} from './opportunity-mini-map/opportunity-mini-map.component';
+import { OpportunityRadarVm } from './opportunity-radar/opportunity-radar.component';
 import {
   OpportunitySubwayVm,
   OpportunitySubwayLine,
   OpportunitySubwayStation,
   OpportunitySubwayStationBadge,
 } from './opportunity-subway/opportunity-subway.component';
+import { OpportunitySwipeStackVm } from './opportunity-swipe-stack/opportunity-swipe-stack.component';
+import { OpportunityTileVm } from './opportunity-tile/opportunity-tile.component';
 import { OpportunityTimelineVm } from './opportunity-timeline/opportunity-timeline.component';
+import { OpportunityTwoWayComparatorVm } from './opportunity-two-way-comparator/opportunity-two-way-comparator.component';
 
-export type OpportunityMatchLayoutOption = {
+export interface OpportunityMatchLayoutOption {
   readonly value: OpportunityMatchLayout;
   readonly labelKey: string;
-};
+}
 
 export const OPPORTUNITY_MATCH_LAYOUT_OPTIONS: readonly OpportunityMatchLayoutOption[] = OPPORTUNITY_MATCH_LAYOUTS.map(
   (layout): OpportunityMatchLayoutOption => ({

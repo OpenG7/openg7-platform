@@ -4,8 +4,9 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 
 import { API_URL } from '../config/environment.tokens';
-import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
 import { OpportunityMatch } from '../models/opportunity';
+import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
+
 import { OpportunityService } from './opportunity.service';
 
 describe('OpportunityService', () => {

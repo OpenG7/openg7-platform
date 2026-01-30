@@ -1,9 +1,9 @@
-import { collectDefaultMetrics, Counter, Histogram, Registry } from 'prom-client';
 import type { Context, Next } from 'koa';
+import { collectDefaultMetrics, Counter, Histogram, Registry } from 'prom-client';
 
-type MetricsConfig = {
+interface MetricsConfig {
   slowRequestThresholdMs?: number;
-};
+}
 
 const registry = new Registry();
 collectDefaultMetrics({ register: registry, prefix: 'strapi_' });

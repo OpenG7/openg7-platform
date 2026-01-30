@@ -2,10 +2,10 @@ import { getSeedFailureStrategy } from '../utils/seed-helpers';
 
 type SeedRunner = () => Promise<void>;
 
-type SeedDefinition = {
+interface SeedDefinition {
   name: string;
   run: SeedRunner | undefined;
-};
+}
 
 const seeds: SeedDefinition[] = [
   { name: '00-locales', run: require('./00-locales').default },
@@ -34,7 +34,7 @@ export default async function runSeeds() {
     }
 
     try {
-      // eslint-disable-next-line no-await-in-loop
+       
       await seed.run();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);

@@ -1,5 +1,6 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+
 import { FavoritesService } from './favorites.service';
 
 const STORAGE_KEY = 'og7.favorites';

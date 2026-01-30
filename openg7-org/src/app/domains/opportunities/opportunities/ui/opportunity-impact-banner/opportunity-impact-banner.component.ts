@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-export type OpportunityImpactBannerKpi = {
+export interface OpportunityImpactBannerKpi {
   readonly id: string;
   readonly label: string;
   readonly value: string;
-};
+}
 
-export type OpportunityImpactBannerVm = {
+export interface OpportunityImpactBannerVm {
   readonly id: string;
   readonly matchId: string;
   readonly title: string;
@@ -19,7 +19,7 @@ export type OpportunityImpactBannerVm = {
   readonly impactFootnote?: string | null;
   readonly supportingKpis: ReadonlyArray<OpportunityImpactBannerKpi>;
   readonly ctaLabel: string;
-};
+}
 
 @Component({
   selector: 'og7-opportunity-impact-banner',
@@ -56,7 +56,7 @@ export class OpportunityImpactBannerComponent {
     return 'low';
   });
 
-  readonly hasFootnote = computed(() => !!this.vm().impactFootnote);
+  readonly hasFootnote = computed(() => Boolean(this.vm().impactFootnote));
   readonly hasKpis = computed(() => this.vm().supportingKpis.length > 0);
 
   protected trackByKpiId(_index: number, kpi: OpportunityImpactBannerKpi): string {

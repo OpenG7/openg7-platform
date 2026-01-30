@@ -2,10 +2,10 @@ import type { Core, Modules } from '@strapi/strapi';
 
 const deepPopulate = 'deep' as unknown as Modules.EntityService.Params.Populate.Any<'api::homepage.homepage'>;
 
-type PreviewQuery = {
+interface PreviewQuery {
   secret?: string;
   locale?: string;
-};
+}
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async preview(ctx) {

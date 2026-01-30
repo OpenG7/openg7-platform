@@ -1,5 +1,4 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   DestroyRef,
   Injectable,
@@ -10,12 +9,14 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
 import { ImportationApiClient, toGranularity, toOriginScope } from '../data-access/importation-api.client';
-import { ImportationViewModelMapper } from '../data-access/importation.viewmodel.mapper';
 import {
   ImportationAnnotationDto,
   ImportationCommodityCollectionsDto,
@@ -25,6 +26,7 @@ import {
   ImportationSupplierDto,
   ImportationWatchlistDto,
 } from '../data-access/importation-api.client';
+import { ImportationViewModelMapper } from '../data-access/importation.viewmodel.mapper';
 import {
   ImportationCollaborationViewModel,
   ImportationCommoditySectionViewModel,
@@ -35,9 +37,10 @@ import {
   ImportationOverviewViewModel,
   ImportationSupplierSectionViewModel,
 } from '../models/importation.models';
-import { ImportationPermissionsService } from './importation-permissions.service';
+
 import { ImportationAnalyticsService } from './importation-analytics.service';
-import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { ImportationPermissionsService } from './importation-permissions.service';
+
 
 type ImportationSectionError = string | null;
 
@@ -299,7 +302,7 @@ export class ImportationFiltersStore {
   setCompareWith(period: string | null): void {
     this.stateSig.update((state) => ({
       ...state,
-      filters: { ...state.filters, compareWith: period?.trim() || null, compareMode: !!(period?.trim()) },
+      filters: { ...state.filters, compareWith: period?.trim() || null, compareMode: Boolean(period?.trim()) },
     }));
   }
 

@@ -1,5 +1,3 @@
-import { createReducer, on } from '@ngrx/store';
-import { ConnectionsActions } from './connections.actions';
 import {
   ConnectionAttachment,
   ConnectionDraft,
@@ -10,6 +8,9 @@ import {
   IntroductionDraftState,
   PipelineEvent,
 } from '@app/core/models/connection';
+import { createReducer, on } from '@ngrx/store';
+
+import { ConnectionsActions } from './connections.actions';
 
 export interface ConnectionsState {
   readonly creating: boolean;

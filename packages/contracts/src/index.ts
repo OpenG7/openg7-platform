@@ -15,8 +15,8 @@ export type StatisticsSnapshot = components['schemas']['StatisticsSnapshot'];
 export type StatisticsResponse = components['schemas']['StatisticsResponse'];
 
 // Réponses Strapi usuelles
-export type StrapiList<T>   = { data: T[]; meta: { pagination?: unknown } };
-export type StrapiSingle<T> = { data: T;  meta?: unknown };
+export interface StrapiList<T> { data: T[]; meta: { pagination?: unknown } }
+export interface StrapiSingle<T> { data: T;  meta?: unknown }
 
 // Endpoints documentés
 export const endpoints = {

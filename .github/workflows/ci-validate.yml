@@ -13,12 +13,18 @@ jobs:
       API_WITH_CREDENTIALS: 'false'
       ANALYTICS_ENDPOINT: https://analytics.ci.openg7.org/events
       NOTIFICATION_WEBHOOK_URL: https://notifications.ci.openg7.org/email
+      API_TOKEN: ci-readonly-token
+      HOMEPAGE_PREVIEW_TOKEN: ci-preview-token
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'yarn'
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3 pkg-config
       - name: Install dependencies
         run: |
           corepack enable

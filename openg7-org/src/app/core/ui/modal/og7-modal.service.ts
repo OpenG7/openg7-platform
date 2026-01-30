@@ -1,4 +1,6 @@
 import { Injectable, computed, signal, Injector } from '@angular/core';
+
+import { OG7_MODAL_DATA, OG7_MODAL_REF } from './og7-modal.tokens';
 import {
   Og7ModalConfig,
   Og7ModalContent,
@@ -7,7 +9,6 @@ import {
   Og7ModalState,
   Og7ModalTemplateContext,
 } from './og7-modal.types';
-import { OG7_MODAL_DATA, OG7_MODAL_REF } from './og7-modal.tokens';
 
 const DEFAULT_OPTIONS: Required<Og7ModalOptions> = {
   width: 'md',

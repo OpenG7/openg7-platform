@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, Signal, inject, signal } from '@angular/core';
 import { Observable, OperatorFunction } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { API_TOKEN, API_URL } from '../config/environment.tokens';
 import { isCountryCode } from '../models/country';
 import type { CountryCode } from '../models/country';
@@ -268,12 +269,12 @@ export class CompanyService {
     }
     if (payload.verificationSources) {
       data['verificationSources'] = payload.verificationSources
-        .filter((source) => !!source.name?.trim())
+        .filter((source) => Boolean(source.name?.trim()))
         .map((source) => this.serializeVerificationSource(source));
     }
     if (payload.trustHistory) {
       data['trustHistory'] = payload.trustHistory
-        .filter((record) => !!record.label?.trim() && !!record.occurredAt?.trim())
+        .filter((record) => Boolean(record.label?.trim()) && Boolean(record.occurredAt?.trim()))
         .map((record) => this.serializeTrustRecord(record));
     }
 

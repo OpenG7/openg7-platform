@@ -1,13 +1,15 @@
 import { Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 import en from '../../../../assets/i18n/en.json';
-import { TermsPage } from './terms.page';
-import { PrivacyPage } from './privacy.page';
-import { LegalPage } from './legal.page';
-import { FaqPage } from './faq.page';
+
 import { CreditsPage } from './credits.page';
+import { FaqPage } from './faq.page';
 import { GovernancePage } from './governance.page';
+import { LegalPage } from './legal.page';
+import { PrivacyPage } from './privacy.page';
+import { TermsPage } from './terms.page';
 
 describe('Static informational pages', () => {
   let translate: TranslateService;

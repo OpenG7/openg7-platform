@@ -1,10 +1,11 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { debounceTime, map, switchMap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
 import { SearchContext, SearchItem, SearchResult, SearchSection } from '@app/core/models/search';
-import { SearchRegistryService, SearchProvider } from '@app/core/services/search-registry.service';
 import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { SearchRegistryService, SearchProvider } from '@app/core/services/search-registry.service';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
+import { debounceTime, map, switchMap } from 'rxjs/operators';
+
 import {
   SearchApiResponse,
   SearchApiService,

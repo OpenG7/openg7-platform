@@ -1,5 +1,5 @@
-import { userReducer, initialUserState } from './user.reducer';
 import { UserActions } from './user.actions';
+import { userReducer, initialUserState } from './user.reducer';
 import { UserProfile } from './user.selectors';
 
 describe('userReducer', () => {

@@ -2,7 +2,9 @@ import { HttpContext, HttpErrorResponse, HttpRequest } from '@angular/common/htt
 import { TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { throwError } from 'rxjs';
+
 import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
+
 import { errorInterceptor } from './error.interceptor';
 import { SUPPRESS_ERROR_TOAST } from './error.interceptor.tokens';
 

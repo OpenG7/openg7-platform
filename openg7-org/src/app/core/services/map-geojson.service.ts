@@ -1,3 +1,14 @@
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import {
+  Injectable,
+  PLATFORM_ID,
+  TransferState,
+  computed,
+  inject,
+  makeStateKey,
+  signal,
+} from '@angular/core';
 import type {
   Feature,
   FeatureCollection,
@@ -10,17 +21,6 @@ import type {
   Polygon,
 } from 'geojson';
 
-import {
-  Injectable,
-  PLATFORM_ID,
-  TransferState,
-  computed,
-  inject,
-  makeStateKey,
-  signal,
-} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { isPlatformBrowser } from '@angular/common';
 
 type MapGeojsonLayer = 'province' | 'flow' | 'hub';
 

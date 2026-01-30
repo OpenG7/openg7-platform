@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 export interface HeroCta {
   label: string;
   trackingType: string;
-  routerLink?: string | any[];
+  routerLink?: string | Array<string | number>;
   href?: string;
   ariaLabel?: string;
 }
@@ -38,13 +38,25 @@ export class HeroCtasComponent {
   @Input() primaryCta: HeroCta | null = {
     label: 'hero.actions.registerCompany',
     routerLink: '/register',
-    trackingType: 'hero-primary',
+    trackingType: 'register-company',
   };
 
   @Input() secondaryCta: HeroCta | null = {
     label: 'hero.actions.viewSectors',
     href: '#map',
-    trackingType: 'hero-secondary',
+    trackingType: 'view-sectors',
+  };
+
+  @Input() tertiaryCta: HeroCta | null = {
+    label: 'hero.actions.proMode',
+    routerLink: '/pricing',
+    trackingType: 'pro-mode',
+  };
+
+  @Input() quaternaryCta: HeroCta | null = {
+    label: 'hero.actions.preview',
+    routerLink: '/preview/homepage',
+    trackingType: 'preview',
   };
 
   @Output() readonly ctaClicked = new EventEmitter<HeroCtaClickEvent>();

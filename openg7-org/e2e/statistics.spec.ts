@@ -1,7 +1,7 @@
 import './setup';
 import { expect, test } from '@playwright/test';
 
-const unique = (values: readonly (string | null)[]) => Array.from(new Set(values.filter((v): v is string => !!v)));
+const unique = (values: readonly (string | null)[]) => Array.from(new Set(values.filter((v): v is string => Boolean(v))));
 
 test('statistics filters update the dataset', async ({ page }) => {
   await page.goto('/statistics');

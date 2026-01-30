@@ -1,3 +1,5 @@
+import { MapActions } from './map.actions';
+import { mapReducer, initialMapState } from './map.reducer';
 import {
   selectMapState,
   selectMapReady,
@@ -10,8 +12,6 @@ import {
   computeMapKpiSnapshot,
   MapKpiSnapshot,
 } from './map.selectors';
-import { mapReducer, initialMapState } from './map.reducer';
-import { MapActions } from './map.actions';
 
 describe('Map Selectors', () => {
   const flows: Flow[] = [

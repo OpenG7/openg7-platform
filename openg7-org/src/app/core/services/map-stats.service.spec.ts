@@ -1,5 +1,6 @@
-import { MapStatsService } from './map-stats.service';
 import { Flow, MapKpis } from '@app/state';
+
+import { MapStatsService } from './map-stats.service';
 
 describe('MapStatsService', () => {
   let service: MapStatsService;

@@ -1,5 +1,5 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { AuthUser } from '@app/core/auth/auth.types';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 export type UserProfile = AuthUser;
 

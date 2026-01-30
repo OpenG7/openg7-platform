@@ -1,5 +1,6 @@
 import { inject, signal } from '@angular/core';
 import { CanMatchFn, Route, UrlSegment } from '@angular/router';
+
 import { RbacFacadeService } from '../security/rbac.facade';
 
 /**

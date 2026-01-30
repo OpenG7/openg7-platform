@@ -1,5 +1,5 @@
-import { Injectable, PLATFORM_ID, Signal, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, Signal, computed, inject, signal } from '@angular/core';
 import { RecentSearch } from '@app/core/models/search';
 
 const STORAGE_KEY = 'og7.quickSearch.history';

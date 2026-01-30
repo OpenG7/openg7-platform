@@ -9,8 +9,9 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { FeedRealtimeService } from './services/feed-realtime.service';
+
 import { Og7FeedStreamComponent } from './og7-feed-stream/og7-feed-stream.component';
+import { FeedRealtimeService } from './services/feed-realtime.service';
 
 @Component({
   selector: 'og7-feed-page',
