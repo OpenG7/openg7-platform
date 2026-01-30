@@ -100,7 +100,7 @@ function readCatalog(filePath) {
       currentKey = null;
       continue;
     }
-    const keyValueMatch = line.match(/^    ([a-z_]+):\s*(.+)\s*$/i);
+    const keyValueMatch = line.match(/^ {4}([a-z_]+):\s*(.+)\s*$/i);
     if (keyValueMatch && currentCap) {
       const key = keyValueMatch[1];
       const value = keyValueMatch[2].trim();
@@ -117,14 +117,14 @@ function readCatalog(filePath) {
       currentKey = null;
       continue;
     }
-    const keyOnlyMatch = line.match(/^    ([a-z_]+):\s*$/i);
+    const keyOnlyMatch = line.match(/^ {4}([a-z_]+):\s*$/i);
     if (keyOnlyMatch && currentCap) {
       const key = keyOnlyMatch[1];
       catalog.capabilities[currentCap][key] = [];
       currentKey = key;
       continue;
     }
-    const listItemMatch = line.match(/^      -\s*(.+)\s*$/);
+    const listItemMatch = line.match(/^ {6}-\s*(.+)\s*$/);
     if (listItemMatch && currentCap && currentKey) {
       catalog.capabilities[currentCap][currentKey].push(listItemMatch[1].trim());
     }
