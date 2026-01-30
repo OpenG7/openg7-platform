@@ -93,7 +93,7 @@ function readCatalog(filePath) {
     if (!inCapabilities) {
       continue;
     }
-    const capMatch = line.match(/^  ([a-z0-9_\-]+):\s*$/i);
+    const capMatch = line.match(/^ {2}([a-z0-9_-]+):\s*$/i);
     if (capMatch) {
       currentCap = capMatch[1];
       catalog.capabilities[currentCap] = {};
