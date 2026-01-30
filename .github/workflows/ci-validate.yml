@@ -19,6 +19,10 @@ jobs:
         with:
           node-version: '20'
           cache: 'yarn'
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3 pkg-config
       - name: Install dependencies
         run: |
           corepack enable
