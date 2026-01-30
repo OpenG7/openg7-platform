@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
-import { CatalogState } from './catalog.selectors';
+
 import { CatalogActions } from './catalog.actions';
+import { CatalogState } from './catalog.selectors';
 
 export const initialCatalogState: CatalogState = {
   sectors: [],

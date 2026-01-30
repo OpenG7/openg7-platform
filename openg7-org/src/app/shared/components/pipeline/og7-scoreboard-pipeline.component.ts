@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,9 +10,8 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
 import { PipelineStepStatus } from '@app/store/connections/connections.selectors';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-scoreboard-pipeline',

@@ -1,24 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-export type OpportunityTwoWayComparatorActor = {
+export interface OpportunityTwoWayComparatorActor {
   readonly name: string;
   readonly provinceLabelKey: string;
   readonly sectorLabelKey: string;
   readonly logoUrl?: string | null;
-};
+}
 
-export type OpportunityTwoWayComparatorMetric = {
+export interface OpportunityTwoWayComparatorMetric {
   readonly id: string;
   readonly labelKey: string;
   readonly valueKey: string;
   readonly valueParams?: Record<string, unknown>;
   readonly hintKey: string;
   readonly pending: boolean;
-};
+}
 
-export type OpportunityTwoWayComparatorVm = {
+export interface OpportunityTwoWayComparatorVm {
   readonly id: string;
   readonly matchId: string;
   readonly title: string;
@@ -26,7 +26,7 @@ export type OpportunityTwoWayComparatorVm = {
   readonly buyer: OpportunityTwoWayComparatorActor;
   readonly supplier: OpportunityTwoWayComparatorActor;
   readonly metrics: readonly OpportunityTwoWayComparatorMetric[];
-};
+}
 
 @Component({
   selector: 'og7-opportunity-two-way-comparator',

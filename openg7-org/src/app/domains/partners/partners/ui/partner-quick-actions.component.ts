@@ -10,10 +10,10 @@ import {
   signal,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Og7DualQrPanelComponent } from '@app/shared/components/qr/og7-dual-qr-panel.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-type TranslationSlice = Record<string, any>;
+type TranslationSlice = Record<string, unknown>;
 
 interface LoadedTranslations {
   readonly en: TranslationSlice;
@@ -220,8 +220,8 @@ export class PartnerQuickActionsComponent {
       if (!translations) {
         return;
       }
-      this.translate.setTranslation('fr', translations.fr as any, true);
-      this.translate.setTranslation('en', translations.en as any, true);
+      this.translate.setTranslation('fr', translations.fr, true);
+      this.translate.setTranslation('en', translations.en, true);
       this.translationsLoaded = true;
     });
   }

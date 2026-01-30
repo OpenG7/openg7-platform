@@ -1,11 +1,11 @@
 import { upsertByUID } from '../utils/seed-helpers';
 
-type HomepageSeed = {
+interface HomepageSeed {
   locale: 'en' | 'fr';
   navigation: Record<string, any>;
   sections: any[];
   seo: Record<string, any>;
-};
+}
 
 const homepageLocales: HomepageSeed[] = [
   {

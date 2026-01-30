@@ -10,8 +10,8 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { FiltersService, TradeProvinceFilter } from '@app/core/filters.service';
 import {
   MODE_OPTIONS,
   Mode,
@@ -22,13 +22,14 @@ import {
   SectorType,
   normalizeConfidencePercent,
 } from '@app/core/models/opportunity';
-import { FiltersService, TradeProvinceFilter } from '@app/core/filters.service';
-import { createPartnerSelection, parsePartnerSelection } from '@app/core/models/partner-selection';
 import {
   DEFAULT_OPPORTUNITY_MATCH_LAYOUT,
   OpportunityMatchLayout,
   isOpportunityMatchLayout,
 } from '@app/core/models/opportunity-match-layout';
+import { createPartnerSelection, parsePartnerSelection } from '@app/core/models/partner-selection';
+import { OpportunityCompactKpiListComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-compact-kpi-list/opportunity-compact-kpi-list.component';
+import { OpportunityImpactBannerComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-impact-banner/opportunity-impact-banner.component';
 import {
   OPPORTUNITY_MATCH_LAYOUT_OPTIONS,
   createOpportunityCompactKpiListVm,
@@ -41,16 +42,15 @@ import {
   createOpportunityTimelineVm,
   createOpportunityTwoWayComparatorVm,
 } from '@app/domains/opportunities/opportunities/ui/opportunity-match-view-models';
-import { OpportunityTileComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-tile/opportunity-tile.component';
 import { OpportunityMiniMapComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-mini-map/opportunity-mini-map.component';
-import { OpportunitySubwayComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-subway/opportunity-subway.component';
 import { OpportunityRadarComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-radar/opportunity-radar.component';
-import { OpportunityTwoWayComparatorComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-two-way-comparator/opportunity-two-way-comparator.component';
-import { OpportunityTimelineComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-timeline/opportunity-timeline.component';
-import { OpportunityCompactKpiListComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-compact-kpi-list/opportunity-compact-kpi-list.component';
+import { OpportunitySubwayComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-subway/opportunity-subway.component';
 import { OpportunitySwipeStackComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-swipe-stack/opportunity-swipe-stack.component';
-import { OpportunityImpactBannerComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-impact-banner/opportunity-impact-banner.component';
+import { OpportunityTileComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-tile/opportunity-tile.component';
+import { OpportunityTimelineComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-timeline/opportunity-timeline.component';
+import { OpportunityTwoWayComparatorComponent } from '@app/domains/opportunities/opportunities/ui/opportunity-two-way-comparator/opportunity-two-way-comparator.component';
 import { OpportunityViewSheetPayload } from '@app/domains/opportunities/opportunities/ui/opportunity-view-sheet-payload';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-opportunity-matches-section',

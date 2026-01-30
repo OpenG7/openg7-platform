@@ -1,11 +1,11 @@
-type Env = {
+interface Env {
   (key: string, defaultValue?: any): any;
   bool(key: string, defaultValue?: boolean): boolean;
-};
+}
 
-type ConfigContext = {
+interface ConfigContext {
   env: Env;
-};
+}
 
 export default ({ env }: ConfigContext) => {
   const provider = (env('UPLOAD_PROVIDER', 'aws-s3') as string).toLowerCase();

@@ -1,7 +1,8 @@
-import { TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
-import { TokenStorageService } from './token-storage.service';
+import { TestBed } from '@angular/core/testing';
+
 import { CryptoService } from './crypto.service';
+import { TokenStorageService } from './token-storage.service';
 
 describe('TokenStorageService', () => {
   let service: TokenStorageService;

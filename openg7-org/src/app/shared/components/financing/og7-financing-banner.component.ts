@@ -9,8 +9,8 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FinancingBanner } from '@app/core/models/partner-profile';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-financing-banner',

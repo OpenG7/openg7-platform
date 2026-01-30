@@ -1,7 +1,8 @@
 import { computed, inject } from '@angular/core';
 import { CanMatchFn, Route, UrlSegment, Router } from '@angular/router';
-import { AuthService } from './auth.service';
+
 import { AuthRedirectService } from './auth-redirect.service';
+import { AuthService } from './auth.service';
 
 const auth = () => inject(AuthService);
 

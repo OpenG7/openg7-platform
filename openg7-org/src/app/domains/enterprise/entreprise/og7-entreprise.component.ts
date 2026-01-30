@@ -8,13 +8,13 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map, distinctUntilChanged, take } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { PartnerProfile } from '@app/core/models/partner-profile';
 import { PartnerProfileService } from '@app/core/services/partner-profile.service';
 import { PartnerQuickActionsComponent } from '@app/domains/partners/partners/ui/partner-quick-actions.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { map, distinctUntilChanged, take } from 'rxjs';
 
 @Component({
   selector: 'og7-entreprise',

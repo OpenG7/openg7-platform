@@ -1,4 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
+
 import { Company, Province, Sector } from './catalog.selectors';
 
 export const CatalogActions = createActionGroup({

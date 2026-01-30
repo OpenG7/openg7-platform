@@ -1,8 +1,8 @@
-import { Component, Input, computed, inject } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
+import { Component, Input, computed, inject } from '@angular/core';
 import { FiltersService } from '@app/core/filters.service';
-import { TranslatePipe } from '@ngx-translate/core';
 import { SectorType } from '@app/core/models/opportunity';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface Sector {
   id: SectorType;

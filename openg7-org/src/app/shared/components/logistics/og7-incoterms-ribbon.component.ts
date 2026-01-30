@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { IncotermCode, TransportMode } from '@app/core/models/connection';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface TransportOption {
   readonly mode: TransportMode;

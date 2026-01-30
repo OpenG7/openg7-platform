@@ -146,6 +146,27 @@ export default [
         ...globals.node,
       },
     },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  {
+    files: ['strapi/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  {
+    files: [
+      'openg7-org/scripts/**/*.{js,cjs,mjs,ts,tsx}',
+      'scripts/**/*.{js,cjs,mjs,ts,tsx}',
+      'tools/**/*.{js,cjs,mjs,ts,tsx}',
+      'packages/**/bin/**/*.{js,cjs,mjs,ts,tsx}',
+      'packages/**/spec/**/*.{js,cjs,mjs,ts,tsx}',
+    ],
+    rules: {
+      'no-console': 'off',
+    },
   },
   eslintConfigPrettier,
 ];

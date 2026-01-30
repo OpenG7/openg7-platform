@@ -12,10 +12,19 @@ import {
   makeStateKey,
   signal,
 } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { API_URL } from '@app/core/config/environment.tokens';
-import { FeedComposerDraft, FeedComposerValidationResult, FeedFilterState, FeedPost, FeedRealtimeEnvelope, FeedSnapshot } from '../models/feed.models';
+import { injectNotificationStore } from '@app/core/observability/notification.store';
+import {
+  activeSectorsSig,
+  feedSearchSig,
+  feedSortSig,
+  focusPostIdSig,
+  needTypeSig,
+  selectedCountrySig,
+  selectedProvinceSig,
+} from '@app/state/shared-feed-signals';
 import { FeedActions } from '@app/store/feed/feed.actions';
+import { toFeedSnapshot } from '@app/store/feed/feed.reducer';
 import {
   selectFeedConnectionState,
   selectFeedDrawerPostId,
@@ -28,18 +37,10 @@ import {
   selectFeedState,
   selectFeedUnreadCount,
 } from '@app/store/feed/feed.selectors';
-import { toFeedSnapshot } from '@app/store/feed/feed.reducer';
-import {
-  activeSectorsSig,
-  feedSearchSig,
-  feedSortSig,
-  focusPostIdSig,
-  needTypeSig,
-  selectedCountrySig,
-  selectedProvinceSig,
-} from '@app/state/shared-feed-signals';
-import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+
+import { FeedComposerDraft, FeedComposerValidationResult, FeedFilterState, FeedPost, FeedRealtimeEnvelope, FeedSnapshot } from '../models/feed.models';
 
 const STREAM_ENDPOINT = '/api/feed/stream';
 const COLLECTION_ENDPOINT = '/api/feed';
@@ -390,7 +391,7 @@ export class FeedRealtimeService {
       });
   }
 
-  private handleIncomingEvent(raw: any, eventId?: string): void {
+  private handleIncomingEvent(raw: unknown, eventId?: string): void {
     if (!raw) {
       return;
     }
@@ -595,8 +596,14 @@ export class FeedRealtimeService {
       }
       return error.message;
     }
-    if (error && typeof (error as any).message === 'string') {
-      return (error as any).message;
+    if (error instanceof Error && typeof error.message === 'string') {
+      return error.message;
+    }
+    if (typeof error === 'object' && error && 'message' in error) {
+      const message = (error as { message?: unknown }).message;
+      if (typeof message === 'string') {
+        return message;
+      }
     }
     return 'feed.error.generic';
   }
@@ -655,14 +662,15 @@ export class FeedRealtimeService {
     if (!this.browser) {
       return;
     }
-    const dataLayer = (globalThis as any).dataLayer as any[] | undefined;
+    const dataLayer = (globalThis as { dataLayer?: unknown[] }).dataLayer;
     if (Array.isArray(dataLayer)) {
       dataLayer.push({ event, ...payload });
       return;
     }
-    if (typeof (globalThis as any).dispatchEvent === 'function') {
+    const globalRef = globalThis as { dispatchEvent?: (event: Event) => boolean };
+    if (typeof globalRef.dispatchEvent === 'function') {
       const customEvent = new CustomEvent('og7-analytics', { detail: { event, payload } });
-      (globalThis as any).dispatchEvent(customEvent);
+      globalRef.dispatchEvent(customEvent);
     }
   }
 

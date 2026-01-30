@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({

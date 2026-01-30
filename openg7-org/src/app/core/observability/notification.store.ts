@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+
 import { API_URL, NOTIFICATION_WEBHOOK_URL } from '../config/environment.tokens';
 
 type NotificationKind = 'success' | 'info' | 'error';
@@ -53,7 +54,7 @@ const DEFAULT_STATE: NotificationState = {
 };
 
 function generateNotificationId(): string {
-  const cryptoApi: Crypto | undefined = (globalThis as any)?.crypto;
+  const cryptoApi: Crypto | undefined = (globalThis as { crypto?: Crypto }).crypto;
   if (cryptoApi && typeof cryptoApi.randomUUID === 'function') {
     return cryptoApi.randomUUID();
   }

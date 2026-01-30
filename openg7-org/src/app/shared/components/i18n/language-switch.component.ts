@@ -1,5 +1,5 @@
-import { Component, signal, input, computed, effect, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, NgFor } from '@angular/common';
+import { Component, signal, input, computed, effect, Inject, PLATFORM_ID } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 export interface Og7LanguageSwitch {

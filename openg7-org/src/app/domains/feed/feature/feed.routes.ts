@@ -1,10 +1,11 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
+import { FeedActions } from '@app/store/feed/feed.actions';
+import { selectFeedHydrated } from '@app/store/feed/feed.selectors';
 import { Store } from '@ngrx/store';
 import { firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { FeedActions } from '@app/store/feed/feed.actions';
-import { selectFeedHydrated } from '@app/store/feed/feed.selectors';
+
 import { FeedFilterState } from './models/feed.models';
 import { FeedRealtimeService } from './services/feed-realtime.service';
 

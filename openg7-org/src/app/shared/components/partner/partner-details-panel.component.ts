@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,10 +14,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { of, switchMap } from 'rxjs';
+import { OpportunityMatch, normalizeConfidencePercent } from '@app/core/models/opportunity';
 import {
   FinancingBanner,
   PartnerAddress,
@@ -27,10 +26,12 @@ import {
 } from '@app/core/models/partner-profile';
 import { parsePartnerSelection } from '@app/core/models/partner-selection';
 import { PartnerProfileService } from '@app/core/services/partner-profile.service';
-import { Og7DualQrPanelComponent } from '../qr/og7-dual-qr-panel.component';
-import { OpportunityMatch, normalizeConfidencePercent } from '@app/core/models/opportunity';
 import { Og7IntroStepperComponent } from '@app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component';
 import { PartnerQuickActionsComponent } from '@app/domains/partners/partners/ui/partner-quick-actions.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of, switchMap } from 'rxjs';
+
+import { Og7DualQrPanelComponent } from '../qr/og7-dual-qr-panel.component';
 type PartnerDetailsTab = 'details' | 'collaboration' | 'qr';
 let nextPanelId = 0;
 
@@ -96,7 +97,7 @@ export class PartnerDetailsPanelComponent {
     return source ? source() : null;
   });
 
-  protected readonly open = computed(() => !!this.selectedValue());
+  protected readonly open = computed(() => Boolean(this.selectedValue()));
   protected readonly loading = signal(false);
   protected readonly profile = signal<PartnerProfile | null>(null);
   protected readonly activeTab = signal<PartnerDetailsTab>('details');
@@ -247,7 +248,7 @@ export class PartnerDetailsPanelComponent {
     return contacts;
   });
 
-  protected readonly hasQrLinks = computed(() => !!this.buyerLink() || !!this.supplierLink());
+  protected readonly hasQrLinks = computed(() => Boolean(this.buyerLink()) || Boolean(this.supplierLink()));
 
   constructor() {
     toObservable(this.selectedValue)
@@ -367,7 +368,7 @@ export class PartnerDetailsPanelComponent {
     if (availability != null) {
       return availability;
     }
-    return !!this.financingContext();
+    return Boolean(this.financingContext());
   }
 
   protected hasComplianceContent(): boolean {

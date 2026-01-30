@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
-import { ConnectionsActions } from './connections.actions';
-import { ConnectionsService, mapStrapiConnectionResponse } from '@app/core/services/connections.service';
-import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { AnalyticsService } from '@app/core/observability/analytics.service';
+import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { ConnectionsService, mapStrapiConnectionResponse } from '@app/core/services/connections.service';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+
+import { ConnectionsActions } from './connections.actions';
 
 @Injectable()
 /**
@@ -104,8 +105,14 @@ export class ConnectionsEffects {
     if (error instanceof Error && error.message) {
       return error.message;
     }
-    if (typeof (error as any)?.message === 'string') {
-      return (error as any).message;
+    if (error instanceof Error && typeof error.message === 'string') {
+      return error.message;
+    }
+    if (typeof error === 'object' && error && 'message' in error) {
+      const message = (error as { message?: unknown }).message;
+      if (typeof message === 'string') {
+        return message;
+      }
     }
     return 'introBillboard.connectionError';
   }

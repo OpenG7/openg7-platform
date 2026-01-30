@@ -1,6 +1,7 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { StatisticsState } from './statistics.reducer';
 import { StatisticsFilters, StatisticsSnapshot, StatisticsSummary } from '@app/core/models/statistics';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+
+import { StatisticsState } from './statistics.reducer';
 
 export const selectStatisticsState = createFeatureSelector<StatisticsState>('statistics');
 

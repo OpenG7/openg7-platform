@@ -1,13 +1,15 @@
-import { mergeApplicationConfig, ApplicationConfig, importProvidersFrom, TransferState } from '@angular/core';
-import { provideServerRendering } from '@angular/platform-server';
-import { appConfig } from './app.config';
 import { HttpBackend, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { mergeApplicationConfig, ApplicationConfig, importProvidersFrom, TransferState } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
+import { provideServerRendering } from '@angular/platform-server';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { AppTranslateLoader } from './core/i18n/translate-loader';
+
+import { appConfig } from './app.config';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { csrfInterceptor } from './core/http/csrf.interceptor';
 import { errorInterceptor } from './core/http/error.interceptor';
-import { PLATFORM_ID } from '@angular/core';
+import { AppTranslateLoader } from './core/i18n/translate-loader';
+
 
 const serverOnly: ApplicationConfig = {
   providers: [

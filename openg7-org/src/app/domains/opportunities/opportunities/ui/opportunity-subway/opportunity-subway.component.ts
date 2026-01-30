@@ -1,24 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { PartnerSelection } from '@app/core/models/partner-selection';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { OpportunityViewSheetPayload } from '../opportunity-view-sheet-payload';
 
-export type OpportunitySubwayParty = {
+export interface OpportunitySubwayParty {
   readonly name: string;
   readonly provinceLabelKey: string;
   readonly sectorLabelKey: string;
   readonly logoUrl?: string | null;
-};
+}
 
-export type OpportunitySubwayStationBadge = {
+export interface OpportunitySubwayStationBadge {
   readonly id: string;
   readonly label?: string;
   readonly labelKey?: string;
   readonly labelParams?: Record<string, unknown>;
-};
+}
 
-export type OpportunitySubwayStation = {
+export interface OpportunitySubwayStation {
   readonly id: string;
   readonly role: 'buyer' | 'supplier' | 'partner';
   readonly title: string;
@@ -27,9 +28,9 @@ export type OpportunitySubwayStation = {
   readonly badges: ReadonlyArray<OpportunitySubwayStationBadge>;
   readonly distanceBadge?: OpportunitySubwayStationBadge;
   readonly junction?: boolean;
-};
+}
 
-export type OpportunitySubwayLine = {
+export interface OpportunitySubwayLine {
   readonly id: 'cost' | 'delay' | 'carbon' | (string & {});
   readonly labelKey: string;
   readonly severity: 'stable' | 'caution' | 'critical';
@@ -37,9 +38,9 @@ export type OpportunitySubwayLine = {
   readonly metricValueKey: string;
   readonly metricValueParams?: Record<string, unknown>;
   readonly stations: ReadonlyArray<OpportunitySubwayStation>;
-};
+}
 
-export type OpportunitySubwayVm = {
+export interface OpportunitySubwayVm {
   readonly id: string;
   readonly matchId: string;
   readonly title: string;
@@ -49,7 +50,7 @@ export type OpportunitySubwayVm = {
   readonly distanceKm: number | null;
   readonly lines: ReadonlyArray<OpportunitySubwayLine>;
   readonly profileSelection: PartnerSelection;
-};
+}
 
 @Component({
   selector: 'og7-opportunity-subway',

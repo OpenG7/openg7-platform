@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Store } from '@ngrx/store';
+import { RouterModule } from '@angular/router';
+import { CountryCode, G7_COUNTRY_CODES } from '@app/core/models/country';
+import { StatisticsIntrant, StatisticsScope } from '@app/core/models/statistics';
 import { StatisticsActions } from '@app/store/statistics/statistics.actions';
 import {
   selectStatisticsAvailableCountries,
@@ -14,8 +14,8 @@ import {
   selectStatisticsInsights,
   selectStatisticsSummaries,
 } from '@app/store/statistics/statistics.selectors';
-import { StatisticsIntrant, StatisticsScope } from '@app/core/models/statistics';
-import { CountryCode, G7_COUNTRY_CODES } from '@app/core/models/country';
+import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,

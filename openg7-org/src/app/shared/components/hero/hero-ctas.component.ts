@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 export interface HeroCta {
   label: string;
   trackingType: string;
-  routerLink?: string | any[];
+  routerLink?: string | Array<string | number>;
   href?: string;
   ariaLabel?: string;
 }

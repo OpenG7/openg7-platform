@@ -1,12 +1,13 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of, throwError } from 'rxjs';
-import { RegisterPage } from './register.page';
 import { AuthService } from '@app/core/auth/auth.service';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
-import { HttpErrorResponse } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
+
+import { RegisterPage } from './register.page';
 
 class MockNotificationStore {
   success = jasmine.createSpy('success');

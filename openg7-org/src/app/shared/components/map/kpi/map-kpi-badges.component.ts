@@ -1,3 +1,5 @@
+import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule, NgClass, NgFor } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,10 +7,7 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { CommonModule, NgClass, NgFor } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { Store } from '@ngrx/store';
+import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
 import {
   DEFAULT_MAP_KPI_SNAPSHOT,
   Flow,
@@ -20,7 +19,8 @@ import {
   selectMapKpis,
 } from '@app/state';
 import { AppState } from '@app/state/app.state';
-import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
+import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface MapBadgeViewModel {
   id: string;

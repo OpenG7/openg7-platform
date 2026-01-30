@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { LanguageSwitchComponent } from './language-switch.component';
 import { TranslateService } from '@ngx-translate/core';
+
+import { LanguageSwitchComponent } from './language-switch.component';
 
 class MockTranslateService {
   use = jasmine.createSpy('use');

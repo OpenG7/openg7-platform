@@ -1,7 +1,5 @@
 import { HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 import type {
   StrapiList,
   StrapiSingle,
@@ -13,15 +11,18 @@ import type {
   StatisticsResponse,
 } from '@openg7/contracts';
 import { endpoints } from '@openg7/contracts';
+import { firstValueFrom } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
 import { RuntimeConfigService } from '../config/runtime-config.service';
 import { HttpClientService, JsonRequestOptions } from '../http/http-client.service';
 
-type StatisticsRequestParams = {
+interface StatisticsRequestParams {
   scope?: 'interprovincial' | 'international' | 'all';
   intrant?: 'all' | 'energy' | 'agriculture' | 'manufacturing' | 'services';
   period?: string | null;
   province?: string | null;
-};
+}
 
 @Injectable({ providedIn: 'root' })
 /**

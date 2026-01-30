@@ -1,6 +1,7 @@
-import { Injectable, Inject, Optional } from '@angular/core';
 import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable, Inject, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
+
 import { API_URL, API_WITH_CREDENTIALS } from '../config/environment.tokens';
 import { RuntimeConfigService } from '../config/runtime-config.service';
 
@@ -136,5 +137,5 @@ export interface BlobRequestOptions extends RequestOptionsBase {
 export type RequestOptions = JsonRequestOptions | BlobRequestOptions;
 
 function isBlobRequestOptions(options?: RequestOptions): options is BlobRequestOptions {
-  return !!options && options.responseType === 'blob';
+  return Boolean(options) && options.responseType === 'blob';
 }

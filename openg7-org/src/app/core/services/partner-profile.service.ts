@@ -2,9 +2,10 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpContext } from '@angular/common/http';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Observable, catchError, map, of, shareReplay, throwError } from 'rxjs';
+
+import { SUPPRESS_ERROR_TOAST } from '../http/error.interceptor.tokens';
 import { HttpClientService } from '../http/http-client.service';
 import { PartnerProfile } from '../models/partner-profile';
-import { SUPPRESS_ERROR_TOAST } from '../http/error.interceptor.tokens';
 
 interface StrapiPartnerProfileResponse {
   readonly data: StrapiPartnerProfileEntity | null;

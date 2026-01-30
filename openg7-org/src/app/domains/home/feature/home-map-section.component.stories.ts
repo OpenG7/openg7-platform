@@ -1,12 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { provideMockStore } from '@ngrx/store/testing';
-import { TranslateModule } from '@ngx-translate/core';
 import { signal } from '@angular/core';
-import { HomeMapSectionComponent } from './home-map-section.component';
 import { FiltersService } from '@app/core/filters.service';
 import { MapGeojsonService, MapFlowFeatureCollection, MapHubFeatureCollection, MapProvinceFeatureCollection } from '@app/core/services/map-geojson.service';
 import { selectFilteredFlows, selectMapKpis, selectMapReady } from '@app/state';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TranslateModule } from '@ngx-translate/core';
+import { moduleMetadata } from '@storybook/angular';
+import type { Meta, StoryObj } from '@storybook/angular';
+
+import { HomeMapSectionComponent } from './home-map-section.component';
 
 class StoryMapGeojsonService {
   provinceCollection = signal<MapProvinceFeatureCollection>({ type: 'FeatureCollection', features: [] });

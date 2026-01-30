@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,35 +11,56 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
-export type OpportunityMiniMapSparklinePoint = {
+export interface OpportunityMiniMapSparklinePoint {
   readonly x: number;
   readonly y: number;
-};
+}
 
-type OpportunityMiniMapActor = {
+interface OpportunityMiniMapActor {
   readonly name: string;
   readonly provinceLabelKey: string;
   readonly sectorLabelKey: string;
   readonly sectorIcon: string;
   readonly coordinates: readonly [number, number];
   readonly previewPosition: OpportunityMiniMapSparklinePoint;
-};
+}
 
-type OpportunityMiniMapLeadTime = {
+interface OpportunityMiniMapLeadTime {
   readonly value: number;
   readonly unit: 'days' | 'weeks';
   readonly approximate?: boolean;
-};
+}
 
-type OpportunityMiniMapCo2 = {
+interface OpportunityMiniMapCo2 {
   readonly value: number;
   readonly approximate?: boolean;
-};
+}
 
-export type OpportunityMiniMapVm = {
+interface LeafletMap {
+  fitBounds(bounds: unknown, options?: unknown): void;
+  remove(): void;
+}
+
+interface LeafletLayer {
+  addTo(map: LeafletMap): void;
+}
+
+interface LeafletModule {
+  map(...args: unknown[]): LeafletMap;
+  tileLayer(...args: unknown[]): LeafletLayer;
+  polyline(...args: unknown[]): LeafletLayer;
+  marker(...args: unknown[]): LeafletLayer;
+  divIcon(options: {
+    html: string;
+    className: string;
+    iconSize: [number, number];
+    iconAnchor: [number, number];
+  }): unknown;
+}
+
+export interface OpportunityMiniMapVm {
   readonly id: string;
   readonly matchId: string;
   readonly title: string;
@@ -50,7 +72,7 @@ export type OpportunityMiniMapVm = {
   readonly co2Saved?: OpportunityMiniMapCo2 | null;
   readonly mapPreviewUrl: string;
   readonly sparklinePoints: ReadonlyArray<OpportunityMiniMapSparklinePoint>;
-};
+}
 
 @Component({
   selector: 'og7-opportunity-mini-map',
@@ -79,8 +101,8 @@ export class OpportunityMiniMapComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly mapHost = viewChild<ElementRef<HTMLDivElement>>('mapHost');
 
-  private leafletModule: any = null;
-  private mapInstance: any = null;
+  private leafletModule: LeafletModule | null = null;
+  private mapInstance: LeafletMap | null = null;
   private ensureStylesPromise: Promise<void> | null = null;
 
   protected readonly isExpanded = signal(false);
@@ -258,13 +280,13 @@ export class OpportunityMiniMapComponent {
     this.isLoadingMap.set(false);
   }
 
-  private async ensureLeafletModule(): Promise<any> {
+  private async ensureLeafletModule(): Promise<LeafletModule | null> {
     if (this.leafletModule) {
       return this.leafletModule;
     }
     try {
       await Promise.all([this.ensureLeafletStylesheet(), this.ensureLeafletScript()]);
-      const leaflet = (globalThis as { L?: any }).L;
+      const leaflet = (globalThis as { L?: LeafletModule }).L;
       if (leaflet) {
         this.leafletModule = leaflet;
         return leaflet;

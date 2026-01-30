@@ -1,7 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import { AppState } from '../app.state';
 import { selectIsAuthenticated, selectUser } from '../index';
+
 import { searchRequested } from './header.actions';
 
 @Injectable({ providedIn: 'root' })

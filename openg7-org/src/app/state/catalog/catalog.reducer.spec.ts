@@ -1,5 +1,5 @@
-import { catalogReducer, initialCatalogState } from './catalog.reducer';
 import { CatalogActions } from './catalog.actions';
+import { catalogReducer, initialCatalogState } from './catalog.reducer';
 import { Company, Province, Sector } from './catalog.selectors';
 
 describe('catalogReducer', () => {

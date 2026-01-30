@@ -1,3 +1,5 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -10,26 +12,24 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent } from 'rxjs';
-import { AnalyticsService } from '@app/core/observability/analytics.service';
-import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
-import { OG7_MODAL_DATA, OG7_MODAL_REF } from '@app/core/ui/modal/og7-modal.tokens';
-import { SearchService } from '../search.service';
-import { SearchHistoryStore } from '../search-history.store';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NavigationExtras, Router } from '@angular/router';
 import { SearchContext, RecentSearch, SearchItem, SearchResult, SearchSection } from '@app/core/models/search';
+import { AnalyticsService } from '@app/core/observability/analytics.service';
+import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { OG7_MODAL_DATA, OG7_MODAL_REF } from '@app/core/ui/modal/og7-modal.tokens';
+import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { fromEvent } from 'rxjs';
+
+import { SearchHistoryStore } from '../search-history.store';
+import { handleQuickSearchKeydown } from '../search-keyboard.manager';
+import { SearchService } from '../search.service';
+
 import { QuickSearchResultItemComponent } from './quick-search-result-item.component';
 import { QuickSearchSectionSkeletonComponent } from './quick-search-section-skeleton.component';
-import { handleQuickSearchKeydown } from '../search-keyboard.manager';
-import { RbacFacadeService } from '@app/core/security/rbac.facade';
-import { isPlatformBrowser } from '@angular/common';
-import { PLATFORM_ID } from '@angular/core';
-
 export interface QuickSearchModalData {
   readonly initialQuery?: string;
   readonly source?: string;
@@ -416,12 +416,13 @@ export class QuickSearchModalComponent implements AfterViewInit {
     }
   }
 
-  private navigate(commands: unknown[] | string, extras?: unknown): void {
+  private navigate(commands: string | unknown[], extras?: NavigationExtras): void {
     if (typeof commands === 'string') {
-      void this.router.navigateByUrl(commands, extras as any);
-    } else {
-      void this.router.navigate(commands as any[], extras as any);
+      void this.router.navigateByUrl(commands, extras);
+      return;
     }
+    const routeCommands = commands as Parameters<Router['navigate']>[0];
+    void this.router.navigate(routeCommands, extras);
   }
 
   private openExternal(url: string, target: '_self' | '_blank'): void {

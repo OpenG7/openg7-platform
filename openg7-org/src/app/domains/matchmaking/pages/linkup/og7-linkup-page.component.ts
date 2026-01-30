@@ -2,16 +2,16 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DEMO_OPPORTUNITY_MATCHES, findDemoFinancingBanner } from '@app/core/fixtures/opportunity-demo';
+import { OpportunityMatch } from '@app/core/models/opportunity';
+import { createPartnerSelection } from '@app/core/models/partner-selection';
+import { OpportunityService } from '@app/core/services/opportunity.service';
+import { Og7IntroStepperComponent } from '@app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component';
+import { Og7SparksBackgroundDirective } from '@app/shared/directives/og7-sparks-background.directive';
+import { PipelineStepStatus } from '@app/state';
 import { TranslateModule } from '@ngx-translate/core';
 import { distinctUntilChanged, map } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { Og7IntroStepperComponent } from '@app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component';
-import { Og7SparksBackgroundDirective } from '@app/shared/directives/og7-sparks-background.directive';
-import { OpportunityService } from '@app/core/services/opportunity.service';
-import { createPartnerSelection } from '@app/core/models/partner-selection';
-import { OpportunityMatch } from '@app/core/models/opportunity';
-import { DEMO_OPPORTUNITY_MATCHES, findDemoFinancingBanner } from '@app/core/fixtures/opportunity-demo';
-import { PipelineStepStatus } from '@app/state';
 
 @Component({
   standalone: true,
@@ -146,7 +146,7 @@ export class Og7LinkupPageComponent {
     return createPartnerSelection('supplier', match.seller.id);
   });
 
-  protected readonly partnerPanelOpen = computed(() => !!this.activeMatch());
+  protected readonly partnerPanelOpen = computed(() => Boolean(this.activeMatch()));
 
   protected readonly pipelineSteps = computed(() => this.pipelineStepsSignal());
 

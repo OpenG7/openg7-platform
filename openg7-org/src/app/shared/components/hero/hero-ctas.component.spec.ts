@@ -4,6 +4,7 @@ import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
+
 import { HeroCta, HeroCtaClickEvent, HeroCtasComponent } from './hero-ctas.component';
 
 @Component({ templateUrl: './hero-ctas.component.spec.html' })

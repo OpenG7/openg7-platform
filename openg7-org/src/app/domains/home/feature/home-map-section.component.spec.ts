@@ -1,11 +1,13 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideMockStore } from '@ngrx/store/testing';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FiltersService } from '@app/core/filters.service';
 import { MapGeojsonService, MapFlowFeatureCollection, MapHubFeatureCollection, MapProvinceFeatureCollection } from '@app/core/services/map-geojson.service';
-import { HomeMapSectionComponent } from './home-map-section.component';
 import { selectFilteredFlows, selectMapKpis, selectMapReady } from '@app/state';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+import { HomeMapSectionComponent } from './home-map-section.component';
+
 
 class MapGeojsonServiceStub {
   provinceCollection = signal<MapProvinceFeatureCollection>({ type: 'FeatureCollection', features: [] });

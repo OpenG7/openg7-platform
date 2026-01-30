@@ -1,6 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, combineLatest, isObservable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { SearchContext, SearchResult, SearchSection } from '../models/search';
 
 export interface SearchProviderResult {

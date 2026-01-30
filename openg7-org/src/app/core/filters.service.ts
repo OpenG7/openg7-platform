@@ -1,4 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
+
 import { ProvinceCode, SectorType } from './models/opportunity';
 import {
   DEFAULT_OPPORTUNITY_MATCH_LAYOUT,

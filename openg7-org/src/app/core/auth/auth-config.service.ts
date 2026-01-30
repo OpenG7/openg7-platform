@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+
 import { AUTH_MODE, AuthMode } from '../config/environment.tokens';
 
 @Injectable({ providedIn: 'root' })

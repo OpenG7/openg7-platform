@@ -1,11 +1,11 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-
 import type { StrapiList, Sector, BillingPlan, StatisticsResponse } from '@openg7/contracts';
 
 import { API_URL } from '../config/environment.tokens';
 import { RuntimeConfigService } from '../config/runtime-config.service';
 import { HttpClientService } from '../http/http-client.service';
+
 import { StrapiClient } from './strapi-client';
 
 class RuntimeConfigStub {

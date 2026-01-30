@@ -1,5 +1,5 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { defer, from, Observable } from 'rxjs';
 
 import { PartnerProfile } from '../models/partner-profile';
@@ -21,7 +21,7 @@ export interface ShareRequest {
 export class ShareService {
   private readonly browser: boolean;
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) platformId: object) {
     this.browser = isPlatformBrowser(platformId);
   }
 
@@ -37,8 +37,11 @@ export class ShareService {
       throw new Error('share_unavailable');
     }
 
+    const globalRef = typeof globalThis !== 'undefined' ? globalThis : undefined;
     const navigatorRef: Navigator | undefined =
-      typeof navigator !== 'undefined' ? navigator : (globalThis as any)?.navigator;
+      typeof navigator !== 'undefined'
+        ? navigator
+        : (globalRef as { navigator?: Navigator | undefined })?.navigator;
 
     if (!navigatorRef) {
       throw new Error('share_unavailable');

@@ -1,7 +1,7 @@
-import { Component, DestroyRef, Input, computed, effect, inject, signal } from '@angular/core';
 import { NgClass, NgFor, NgIf } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Component, DestroyRef, Input, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest } from 'rxjs';
 
 @Component({

@@ -1,10 +1,11 @@
-import { ImportationViewModelMapper } from './importation.viewmodel.mapper';
+import { ImportationFilters } from '../models/importation.models';
+
 import {
   ImportationCommodityCollectionsDto,
   ImportationFlowsResponseDto,
   ImportationRiskFlagDto,
 } from './importation-api.client';
-import { ImportationFilters } from '../models/importation.models';
+import { ImportationViewModelMapper } from './importation.viewmodel.mapper';
 
 describe('ImportationViewModelMapper', () => {
   let mapper: ImportationViewModelMapper;

@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-export type OpportunityCompactKpiListVm = {
+export interface OpportunityCompactKpiListVm {
   readonly id: string;
   readonly items: readonly OpportunityCompactKpiItemVm[];
-};
+}
 
-export type OpportunityCompactKpiItemVm = {
+export interface OpportunityCompactKpiItemVm {
   readonly id: string;
   readonly sectorIcon: string;
   readonly sectorLabelKey: string;
@@ -18,7 +18,7 @@ export type OpportunityCompactKpiItemVm = {
   readonly distanceLabel: string;
   readonly distancePending: boolean;
   readonly matchId: string;
-};
+}
 
 @Component({
   selector: 'og7-opportunity-compact-kpi-list',

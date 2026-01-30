@@ -1,8 +1,21 @@
+import { Buffer } from 'buffer';
+
+import { HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable, computed, signal } from '@angular/core';
-import { HttpClientService } from '../http/http-client.service';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { AuthActions, UserActions } from '@app/state';
+import { AppState } from '@app/state/app.state';
+import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, catchError, tap, throwError } from 'rxjs';
+
+import { STRAPI_ROUTES, strapiUserById } from '../api/strapi.routes';
+import { HttpClientService } from '../http/http-client.service';
+import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
+import { RbacFacadeService } from '../security/rbac.facade';
+import { Role } from '../security/rbac.policy';
 import { TokenStorageService } from '../security/token-storage.service';
-import { OidcProvider, OidcService } from './oidc.service';
+
 import {
   AuthResponse,
   AuthUser,
@@ -12,17 +25,8 @@ import {
   JwtPayload,
   UpdateProfilePayload,
 } from './auth.types';
-import { Observable, catchError, tap, throwError } from 'rxjs';
-import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
-import { TranslateService } from '@ngx-translate/core';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Buffer } from 'buffer';
-import { Role } from '../security/rbac.policy';
-import { RbacFacadeService } from '../security/rbac.facade';
-import { STRAPI_ROUTES, strapiUserById } from '../api/strapi.routes';
-import { Store } from '@ngrx/store';
-import { AppState } from '@app/state/app.state';
-import { AuthActions, UserActions } from '@app/state';
+import { OidcProvider, OidcService } from './oidc.service';
+
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -40,10 +44,10 @@ export class AuthService {
   readonly user = this.userSig.asReadonly();
   readonly user$ = toObservable(this.user);
 
-  readonly isAuthenticated = computed(() => !!this.tokenSig());
+  readonly isAuthenticated = computed(() => Boolean(this.tokenSig()));
   readonly isAuthenticated$ = toObservable(this.isAuthenticated);
 
-  readonly isPremium = computed(() => !!this.userSig()?.premiumActive);
+  readonly isPremium = computed(() => Boolean(this.userSig()?.premiumActive));
   readonly isPremium$ = toObservable(this.isPremium);
 
   readonly currentPlanId = computed(() => {
@@ -237,7 +241,7 @@ export class AuthService {
   private syncRbac(user: AuthUser | null): void {
     const roles = user?.roles ?? [];
     const role = this.resolveRole(roles);
-    this.rbac.setContext({ role, isPremium: !!user?.premiumActive });
+    this.rbac.setContext({ role, isPremium: Boolean(user?.premiumActive) });
   }
 
   private resolveRole(roles: readonly string[]): Role {

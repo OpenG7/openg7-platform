@@ -1,6 +1,6 @@
-﻿const fs = require('fs');
+﻿const crypto = require('crypto');
+const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 
 const repoRoot = path.resolve(__dirname, '..');
 const catalogPath = path.join(repoRoot, 'docs', 'ecosystem', 'ecosystem.catalog.yml');

@@ -1,6 +1,7 @@
-import { authReducer, initialAuthState } from './auth.reducer';
-import { AuthActions } from './auth.actions';
 import { AuthUser } from '@app/core/auth/auth.types';
+
+import { AuthActions } from './auth.actions';
+import { authReducer, initialAuthState } from './auth.reducer';
 
 describe('authReducer', () => {
   const user: AuthUser = { id: 'u1', email: 'user@example.com', roles: ['admin'] };

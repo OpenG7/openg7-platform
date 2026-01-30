@@ -1,8 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
-import { RbacFacadeService } from '../security/rbac.facade';
+
 import { ANALYTICS_ENDPOINT, API_URL } from '../config/environment.tokens';
+import { RbacFacadeService } from '../security/rbac.facade';
 
 interface AnalyticsEnvelope {
   readonly event: string;
@@ -10,6 +11,10 @@ interface AnalyticsEnvelope {
   readonly priority: boolean;
   readonly timestamp: string;
 }
+
+type DataLayerEntry = Record<string, unknown>;
+type DataLayer = DataLayerEntry[];
+type GlobalWithDataLayer = typeof globalThis & { dataLayer?: DataLayer };
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -180,18 +185,19 @@ export class AnalyticsService {
     return null;
   }
 
-  private ensureDataLayer(): any[] | null {
+  private ensureDataLayer(): DataLayer | null {
     if (!this.browser) {
       return null;
     }
     if (this.dataLayerInitialized) {
-      return (globalThis as any).dataLayer as any[] | undefined ?? null;
+      return (globalThis as GlobalWithDataLayer).dataLayer ?? null;
     }
-    const globalLayer = (globalThis as any).dataLayer;
+    const globalRef = globalThis as GlobalWithDataLayer;
+    const globalLayer = globalRef.dataLayer;
     if (!Array.isArray(globalLayer)) {
-      (globalThis as any).dataLayer = [];
+      globalRef.dataLayer = [];
     }
     this.dataLayerInitialized = true;
-    return (globalThis as any).dataLayer as any[];
+    return globalRef.dataLayer ?? null;
   }
 }

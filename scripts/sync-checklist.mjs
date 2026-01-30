@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { promises as fs } from 'fs';
 import path from 'path';
+
 import ts from 'typescript';
 
 const repoRoot = path.resolve(new URL('.', import.meta.url).pathname, '..');

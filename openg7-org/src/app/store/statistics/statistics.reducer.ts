@@ -1,11 +1,12 @@
-import { createReducer, on } from '@ngrx/store';
+import type { CountryCode } from '@app/core/models/country';
 import {
   StatisticsFilters,
   StatisticsInsight,
   StatisticsSnapshot,
   StatisticsSummary,
 } from '@app/core/models/statistics';
-import type { CountryCode } from '@app/core/models/country';
+import { createReducer, on } from '@ngrx/store';
+
 import { StatisticsActions } from './statistics.actions';
 
 export interface StatisticsState {

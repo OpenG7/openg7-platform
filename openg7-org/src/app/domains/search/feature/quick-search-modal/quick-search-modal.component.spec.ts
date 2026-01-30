@@ -1,18 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PLATFORM_ID, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { RecentSearch, SearchContext, SearchResult, SearchSection } from '@app/core/models/search';
+import { AnalyticsService } from '@app/core/observability/analytics.service';
+import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { OG7_MODAL_DATA, OG7_MODAL_REF } from '@app/core/ui/modal/og7-modal.tokens';
+import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
-import { QuickSearchModalComponent, QuickSearchModalData } from './quick-search-modal.component';
-import { SearchService } from '../search.service';
 import { SearchHistoryStore } from '../search-history.store';
-import { AnalyticsService } from '@app/core/observability/analytics.service';
-import { OG7_MODAL_DATA, OG7_MODAL_REF } from '@app/core/ui/modal/og7-modal.tokens';
-import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
-import { RbacFacadeService } from '@app/core/security/rbac.facade';
-import { RecentSearch, SearchContext, SearchResult, SearchSection } from '@app/core/models/search';
+import { SearchService } from '../search.service';
+
+import { QuickSearchModalComponent, QuickSearchModalData } from './quick-search-modal.component';
 
 class MockSearchService {
   readonly searchCalls: Array<{ query: string; context: SearchContext; subject: Subject<SearchResult> }> = [];

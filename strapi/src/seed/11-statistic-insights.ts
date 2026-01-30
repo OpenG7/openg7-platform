@@ -1,6 +1,6 @@
 import { upsertByUID } from '../utils/seed-helpers';
 
-type InsightSeed = {
+interface InsightSeed {
   slug: string;
   titleKey: string;
   descriptionKey: string;
@@ -14,7 +14,7 @@ type InsightSeed = {
   province?: string;
   country?: 'CA' | 'DE' | 'FR' | 'IT' | 'JP' | 'UK' | 'US';
   ordinal?: number;
-};
+}
 
 const insights: InsightSeed[] = [
   {
@@ -294,7 +294,7 @@ const insights: InsightSeed[] = [
 
 export default async () => {
   for (const insight of insights) {
-    // eslint-disable-next-line no-await-in-loop
+     
     await upsertByUID('api::statistic-insight.statistic-insight', insight, {
       unique: { slug: insight.slug },
     });

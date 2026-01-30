@@ -7,10 +7,10 @@ export type RuntimeConfigKey = keyof EnvironmentConfig;
 
 export type RuntimeSource = Partial<Record<RuntimeConfigKey, unknown>>;
 
-type ParserParams<K extends RuntimeConfigKey> = {
+interface ParserParams<K extends RuntimeConfigKey> {
   value: unknown;
   fallback: EnvironmentConfig[K];
-};
+}
 
 type Parser<K extends RuntimeConfigKey> = (params: ParserParams<K>) => EnvironmentConfig[K];
 

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { SubscriptionPlansComponent } from '@app/shared/components/billing/subscription-plans.component';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SubscriptionPlansComponent } from '@app/shared/components/billing/subscription-plans.component';
 
 type BillingCycle = 'monthly' | 'yearly';
 

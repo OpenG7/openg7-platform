@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 /**

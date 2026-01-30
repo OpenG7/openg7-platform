@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { injectNotificationStore } from '@app/core/observability/notification.store';
-import { CompanyCapacity, CompanyPayload, CompanyService } from '@app/core/services/company.service';
 import { StrapiClient } from '@app/core/api/strapi-client';
 import { G7_COUNTRY_CODES, CountryCode, isCountryCode } from '@app/core/models/country';
+import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { CompanyCapacity, CompanyPayload, CompanyService } from '@app/core/services/company.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface SelectOption {
   readonly id: number;
@@ -169,15 +169,20 @@ export class CompanyRegisterPage implements OnInit {
     }
   }
 
-  private mapOption = (value: any): SelectOption => {
-    if (!value) {
+  private mapOption = (value: unknown): SelectOption => {
+    if (!value || typeof value !== 'object') {
       return { id: 0, name: 'Unknown' };
     }
-    if (typeof value.id === 'number' && 'name' in value) {
-      return { id: value.id, name: String((value as { name: unknown }).name ?? 'Unknown') };
+    const record = value as {
+      id?: unknown;
+      name?: unknown;
+      attributes?: { id?: unknown; name?: unknown } | null;
+    };
+    if (typeof record.id === 'number' && 'name' in record) {
+      return { id: record.id, name: String(record.name ?? 'Unknown') };
     }
-    const id = Number(value.id ?? value.attributes?.id ?? 0);
-    const nameCandidate = value.name ?? value.attributes?.name;
+    const id = Number(record.id ?? record.attributes?.id ?? 0);
+    const nameCandidate = record.name ?? record.attributes?.name;
     return {
       id,
       name: typeof nameCandidate === 'string' ? nameCandidate : 'Unknown',

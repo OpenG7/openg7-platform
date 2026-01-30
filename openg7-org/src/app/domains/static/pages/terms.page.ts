@@ -11,7 +11,7 @@ type SectionKey =
   | 'security'
   | 'continuity';
 
-type TermsSectionTranslation = {
+interface TermsSectionTranslation {
   anchor?: string;
   title: string;
   navLabel?: string;
@@ -25,7 +25,7 @@ type TermsSectionTranslation = {
     body: string[];
     tone?: 'info' | 'warning';
   };
-};
+}
 
 type TermsSectionView = TermsSectionTranslation & {
   key: SectionKey;
@@ -34,44 +34,44 @@ type TermsSectionView = TermsSectionTranslation & {
   checklist: string[];
 };
 
-type TermsHighlight = {
+interface TermsHighlight {
   title: string;
   description: string;
-};
+}
 
-type TermsObligation = {
+interface TermsObligation {
   title: string;
   description: string;
-};
+}
 
-type TermsNavLink = {
+interface TermsNavLink {
   anchor: string;
   label: string;
-};
+}
 
-type TermsTimelineEntry = {
+interface TermsTimelineEntry {
   date: string;
   label: string;
   description: string;
-};
+}
 
-type TermsSummary = {
+interface TermsSummary {
   title: string;
   description: string;
   points?: string[];
-};
+}
 
-type TermsSupport = {
+interface TermsSupport {
   title: string;
   description: string;
   details?: string[];
   ctaLabel: string;
   ctaEmail: string;
-};
+}
 
-type TermsToc = {
+interface TermsToc {
   title: string;
-};
+}
 
 @Component({
   standalone: true,

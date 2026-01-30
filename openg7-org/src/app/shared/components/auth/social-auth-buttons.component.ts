@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { OidcProvider } from '@app/core/auth/oidc.service';
-import { AuthService } from '@app/core/auth/auth.service';
-import { NotificationStore, NotificationStoreApi } from '@app/core/observability/notification.store';
-import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { AuthRedirectService } from '@app/core/auth/auth-redirect.service';
+import { AuthService } from '@app/core/auth/auth.service';
+import { OidcProvider } from '@app/core/auth/oidc.service';
+import { AnalyticsService } from '@app/core/observability/analytics.service';
+import { NotificationStore, NotificationStoreApi } from '@app/core/observability/notification.store';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-social-auth-buttons',

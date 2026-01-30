@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import {
   LINKUP_STATUS_META,
   LINKUP_TRADE_MODE_OPTIONS,
@@ -12,6 +11,7 @@ import {
   LinkupTradeMode,
 } from '@app/domains/matchmaking/data-access/linkup.store';
 import { Og7SearchFieldComponent } from '@app/shared/components/search/og7-search-field.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface StatusFilterOption {
   readonly id: LinkupStatus | 'all';

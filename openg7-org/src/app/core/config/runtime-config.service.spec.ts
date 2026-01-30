@@ -1,5 +1,6 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+
 import { RuntimeConfigService } from './runtime-config.service';
 
 describe('RuntimeConfigService', () => {

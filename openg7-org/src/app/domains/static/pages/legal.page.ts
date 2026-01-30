@@ -1,25 +1,25 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-type LegalHighlight = {
+interface LegalHighlight {
   label: string;
   value: string;
   description?: string;
-};
+}
 
-type LegalContact = {
+interface LegalContact {
   label: string;
   value: string;
   href?: string;
   hint?: string;
-};
+}
 
-type ContactContent = {
+interface ContactContent {
   title: string;
   description?: string;
   channels: LegalContact[];
-};
+}
 
 @Component({
   standalone: true,
@@ -43,7 +43,7 @@ export class LegalPage {
     if (!translated) {
       return [];
     }
-    return Object.values(translated).filter((item): item is LegalHighlight => !!item?.label && !!item?.value);
+    return Object.values(translated).filter((item): item is LegalHighlight => Boolean(item?.label) && Boolean(item?.value));
   }
 
   protected get contact(): ContactContent | null {
@@ -55,7 +55,7 @@ export class LegalPage {
     }
 
     const channels = Object.values(translated.channels ?? {}).filter(
-      (channel): channel is LegalContact => !!channel?.label && !!channel?.value
+      (channel): channel is LegalContact => Boolean(channel?.label) && Boolean(channel?.value)
     );
 
     return {

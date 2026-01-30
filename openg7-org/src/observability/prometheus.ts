@@ -1,15 +1,15 @@
 import type { NextFunction, Request, Response } from 'express';
 
-type Labels = {
+interface Labels {
   method: string;
   route: string;
   status: string;
-};
+}
 
-type CounterMetric = { inc(labels: Labels, value?: number): void };
-type HistogramMetric = { observe(labels: Labels, value: number): void };
-type MetricsRegistry = { contentType: string; metrics(): Promise<string> };
-type PromClientModule = {
+interface CounterMetric { inc(labels: Labels, value?: number): void }
+interface HistogramMetric { observe(labels: Labels, value: number): void }
+interface MetricsRegistry { contentType: string; metrics(): Promise<string> }
+interface PromClientModule {
   collectDefaultMetrics: (options: { register?: MetricsRegistry; prefix?: string }) => void;
   Counter: new (options: {
     name: string;
@@ -25,13 +25,13 @@ type PromClientModule = {
     registers?: MetricsRegistry[];
   }) => HistogramMetric;
   Registry: new () => MetricsRegistry;
-};
+}
 
-type PrometheusToolkit = {
+interface PrometheusToolkit {
   registry: MetricsRegistry;
   requestDuration: HistogramMetric;
   requestTotal: CounterMetric;
-};
+}
 
 const FALLBACK_TOOLKIT: PrometheusToolkit = {
   registry: {
