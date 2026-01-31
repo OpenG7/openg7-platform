@@ -22,6 +22,8 @@ import {
 import { AppState } from '@app/state/app.state';
 import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
 import { FEATURE_FLAGS } from '@app/core/config/environment.tokens';
+import { selectUserProfile } from '@app/state/user/user.selectors';
+import type { AuthUser } from '@app/core/auth/auth.types';
 import {
   MapFlowFeature,
   MapFlowFeatureCollection,
@@ -39,8 +41,27 @@ type Coordinates = [number, number];
 
 const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
 const MAP_STYLE_DARK_URL = '/assets/map/styles/og7-dark-style.json';
-const MAP_CENTER: Coordinates = [-45, 52];
+const MAP_CENTERS: Record<'canada' | 'europe' | 'asia', Coordinates> = {
+  canada: [-98.5795, 57.6443],
+  europe: [15.2551, 54.526],
+  asia: [100.6197, 34.0479],
+};
+const DEFAULT_CENTER: Coordinates = MAP_CENTERS.canada;
 const MAP_ZOOM = 2.35;
+
+const EUROPE_COUNTRY_CODES = new Set([
+  'AT', 'BE', 'BG', 'CH', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI',
+  'FR', 'GB', 'GR', 'HR', 'HU', 'IE', 'IS', 'IT', 'LT', 'LU',
+  'LV', 'NL', 'NO', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
+]);
+
+const ASIA_COUNTRY_CODES = new Set([
+  'AE', 'AF', 'AM', 'AZ', 'BD', 'BH', 'BN', 'BT', 'CN', 'GE',
+  'HK', 'ID', 'IL', 'IN', 'IQ', 'IR', 'JP', 'JO', 'KG', 'KH',
+  'KP', 'KR', 'KW', 'KZ', 'LA', 'LB', 'LK', 'MM', 'MN', 'MO',
+  'MV', 'MY', 'NP', 'OM', 'PH', 'PK', 'QA', 'SA', 'SG', 'SY',
+  'TH', 'TJ', 'TM', 'TR', 'TW', 'UZ', 'VN', 'YE',
+]);
 
 const EMPTY_FLOW_COLLECTION: MapFlowFeatureCollection = {
   type: 'FeatureCollection',
@@ -115,11 +136,12 @@ export class TradeMapComponent {
   private readonly tariffQuery = inject(TariffQueryService);
 
   protected readonly ready = this.store.selectSignal(selectMapReady);
+  private readonly userProfile = this.store.selectSignal(selectUserProfile);
   private readonly flows = this.store.selectSignal(selectFilteredFlows);
   private readonly kpis = this.store.selectSignal(selectMapKpis);
 
   readonly mapStyle = (this.featureFlags?.['mapNight'] ?? false) ? MAP_STYLE_DARK_URL : MAP_STYLE_URL;
-  protected readonly mapCenter = MAP_CENTER;
+  protected readonly mapCenter = computed(() => this.resolveMapCenter());
   protected readonly mapZoom = MAP_ZOOM;
   readonly globeEnabled = this.featureFlags?.['mapGlobe'] ?? false;
 
@@ -203,6 +225,65 @@ export class TradeMapComponent {
   protected readonly hasHighlight = computed(() => this.highlightSource().features.length > 0);
 
   private readonly hasTariffImpact = computed(() => this.flowCollectionState().hasTariffImpact);
+
+  private resolveMapCenter(): Coordinates {
+    const profile = this.userProfile();
+    const profileRegion = this.resolveRegionKey(this.extractProfileRegion(profile));
+    if (profileRegion) {
+      return MAP_CENTERS[profileRegion];
+    }
+
+    const localeRegion = this.resolveRegionKey(this.extractLocaleRegion());
+    if (localeRegion) {
+      return MAP_CENTERS[localeRegion];
+    }
+
+    return DEFAULT_CENTER;
+  }
+
+  private extractProfileRegion(profile: AuthUser | null): string | null {
+    if (!profile) {
+      return null;
+    }
+    if ('country' in profile && typeof (profile as { country?: unknown }).country === 'string') {
+      return (profile as { country?: string }).country ?? null;
+    }
+    if ('locale' in profile && typeof (profile as { locale?: unknown }).locale === 'string') {
+      return (profile as { locale?: string }).locale ?? null;
+    }
+    return null;
+  }
+
+  private extractLocaleRegion(): string | null {
+    if (typeof navigator === 'undefined' || !navigator.language) {
+      return null;
+    }
+    const parts = navigator.language.split(/[-_]/).filter(Boolean);
+    if (parts.length < 2) {
+      return null;
+    }
+    return parts[parts.length - 1] ?? null;
+  }
+
+  private resolveRegionKey(value: string | null): keyof typeof MAP_CENTERS | null {
+    if (!value) {
+      return null;
+    }
+    const normalized = value.trim().toUpperCase();
+    if (!normalized) {
+      return null;
+    }
+    if (['CA', 'CAN', 'CANADA'].includes(normalized)) {
+      return 'canada';
+    }
+    if (['EU', 'EUROPE', 'EUROPA'].includes(normalized) || EUROPE_COUNTRY_CODES.has(normalized)) {
+      return 'europe';
+    }
+    if (['ASIA', 'ASIE', 'ASI'].includes(normalized) || ASIA_COUNTRY_CODES.has(normalized)) {
+      return 'asia';
+    }
+    return null;
+  }
 
   private readonly tariffImpactExpression = computed<Expression>(() => [
     'boolean',

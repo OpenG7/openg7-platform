@@ -1,7 +1,7 @@
 <div style="position:absolute; inset:0;">
   <mgl-map
     [mapStyle]="mapStyle"
-    [center]="mapCenter"
+    [center]="mapCenter()"
     [zoom]="[mapZoom]"
     [renderWorldCopies]="false"
     [projection]="globeEnabled ? { type: 'globe' } : undefined"
