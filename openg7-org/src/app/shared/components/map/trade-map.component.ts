@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
 import type {
   ColorSpecification,
@@ -21,6 +21,7 @@ import {
 } from '@app/state';
 import { AppState } from '@app/state/app.state';
 import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
+import { FEATURE_FLAGS } from '@app/core/config/environment.tokens';
 import {
   MapFlowFeature,
   MapFlowFeatureCollection,
@@ -83,7 +84,7 @@ const DEFAULT_FLOW_GLOW_PAINT: LinePaint = {
   selector: 'og7-map-trade',
   standalone: true,
   imports: [
-    NgIf,
+    CommonModule,
     NgxMapLibreGLModule,
     MapLegendComponent,
     //MapKpiBadgesComponent,
@@ -107,6 +108,7 @@ const DEFAULT_FLOW_GLOW_PAINT: LinePaint = {
 export class TradeMapComponent {
   private readonly store = inject(Store<AppState>);
   private readonly filters = inject(FiltersService);
+  private readonly featureFlags = inject(FEATURE_FLAGS, { optional: true });
 
   private readonly geojson = inject(MapGeojsonService);
   private readonly tariffQuery = inject(TariffQueryService);
@@ -118,6 +120,7 @@ export class TradeMapComponent {
   protected readonly mapStyle = MAP_STYLE_URL;
   protected readonly mapCenter = MAP_CENTER;
   protected readonly mapZoom = MAP_ZOOM;
+  readonly globeEnabled = this.featureFlags?.['mapGlobe'] ?? false;
 
   protected readonly provinceSource = this.geojson.provinceCollection;
   protected readonly provinceLayerPaint = {
