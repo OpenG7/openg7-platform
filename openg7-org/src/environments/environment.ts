@@ -30,6 +30,7 @@ export const environment: EnvironmentConfig = {
   FEATURE_FLAGS: {
     componentLab: false,
     mapGlobe: true,
+    mapNight: false,
   },
   AUTH_MODE: 'hybrid',
   NOTIFICATION_WEBHOOK_URL: null,

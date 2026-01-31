@@ -38,6 +38,7 @@ import { ZoomControlComponent } from './controls/zoom-control.component';
 type Coordinates = [number, number];
 
 const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
+const MAP_STYLE_DARK_URL = '/assets/map/styles/og7-dark-style.json';
 const MAP_CENTER: Coordinates = [-45, 52];
 const MAP_ZOOM = 2.35;
 
@@ -117,7 +118,7 @@ export class TradeMapComponent {
   private readonly flows = this.store.selectSignal(selectFilteredFlows);
   private readonly kpis = this.store.selectSignal(selectMapKpis);
 
-  protected readonly mapStyle = MAP_STYLE_URL;
+  readonly mapStyle = (this.featureFlags?.['mapNight'] ?? false) ? MAP_STYLE_DARK_URL : MAP_STYLE_URL;
   protected readonly mapCenter = MAP_CENTER;
   protected readonly mapZoom = MAP_ZOOM;
   readonly globeEnabled = this.featureFlags?.['mapGlobe'] ?? false;
