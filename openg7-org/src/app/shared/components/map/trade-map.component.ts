@@ -30,6 +30,8 @@ import {
   MapGeojsonService,
   MapHubFeature,
   MapHubFeatureCollection,
+  MapProvinceFeature,
+  MapProvinceFeatureCollection,
 } from '@app/core/services/map-geojson.service';
 import { TariffQueryService } from '@app/core/services/tariff-query.service';
 import { MapLegendComponent } from './legend/map-legend.component';
@@ -38,6 +40,7 @@ import { BasemapToggleComponent } from './controls/basemap-toggle.component';
 import { ZoomControlComponent } from './controls/zoom-control.component';
 
 type Coordinates = [number, number];
+type Bbox = { minLng: number; maxLng: number; minLat: number; maxLat: number };
 
 const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
 const MAP_STYLE_DARK_URL = '/assets/map/styles/og7-dark-style.json';
@@ -82,6 +85,11 @@ type LinePaint = {
   readonly 'line-gradient'?: ExpressionSpecification;
 };
 type Expression = ExpressionSpecification;
+type FillPaint = {
+  readonly 'fill-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  readonly 'fill-opacity'?: DataDrivenPropertyValueSpecification<number>;
+  readonly 'fill-outline-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+};
 
 type FlowCollectionState = {
   readonly collection: MapFlowFeatureCollection;
@@ -146,11 +154,27 @@ export class TradeMapComponent {
   readonly globeEnabled = this.featureFlags?.['mapGlobe'] ?? false;
 
   protected readonly provinceSource = this.geojson.provinceCollection;
-  protected readonly provinceLayerPaint = {
-    'fill-color': '#dbeafe',
-    'fill-opacity': 0.45,
-    'fill-outline-color': '#1d4ed8',
-  } as const;
+  private readonly provinceBboxes = computed(() => this.buildProvinceBboxes(this.provinceSource()));
+  private readonly activeProvinces = computed(() => this.resolveActiveProvinces());
+  protected readonly provinceLayerPaint = computed<FillPaint>(() => {
+    const active = Array.from(this.activeProvinces());
+    if (!active.length) {
+      const paint: FillPaint = {
+        'fill-color': '#7fc4b5',
+        'fill-opacity': 0.18,
+        'fill-outline-color': '#a1bcbe',
+      };
+      return paint;
+    }
+
+    const isActive: ExpressionSpecification = ['in', ['get', 'code'], ['literal', active]];
+    const paint: FillPaint = {
+      'fill-color': ['case', isActive, '#7fc4b5', '#334e50'],
+      'fill-opacity': ['case', isActive, 0.78, 0.16],
+      'fill-outline-color': '#a1bcbe',
+    };
+    return paint;
+  });
 
   protected readonly flowLayerLayout = {
     'line-cap': 'round',
@@ -283,6 +307,94 @@ export class TradeMapComponent {
       return 'asia';
     }
     return null;
+  }
+
+  private resolveActiveProvinces(): Set<string> {
+    const active = new Set<string>();
+    const selected = this.filters.matchProvince();
+    if (selected && selected !== 'all') {
+      active.add(String(selected).toUpperCase());
+    }
+
+    const flows = this.filteredFlows();
+    const bboxes = this.provinceBboxes();
+    const flowGeometry = this.flowGeometryById();
+    if (!flows.length || bboxes.size === 0) {
+      return active;
+    }
+
+    for (const flow of flows) {
+      const geometry = flowGeometry.get(flow.id);
+      if (!geometry) {
+        continue;
+      }
+      for (const coordinate of this.getFlowCoordinates(geometry)) {
+        for (const [code, bbox] of bboxes) {
+          if (this.isCoordinateInBbox(coordinate, bbox)) {
+            active.add(code);
+          }
+        }
+      }
+    }
+
+    return active;
+  }
+
+  private buildProvinceBboxes(collection: MapProvinceFeatureCollection): Map<string, Bbox> {
+    const map = new Map<string, Bbox>();
+    for (const feature of collection.features) {
+      const code = feature.properties?.code?.toUpperCase();
+      if (!code) {
+        continue;
+      }
+      map.set(code, this.computeBbox(feature.geometry));
+    }
+    return map;
+  }
+
+  private computeBbox(geometry: MapProvinceFeature['geometry']): Bbox {
+    const bbox: Bbox = {
+      minLng: Number.POSITIVE_INFINITY,
+      maxLng: Number.NEGATIVE_INFINITY,
+      minLat: Number.POSITIVE_INFINITY,
+      maxLat: Number.NEGATIVE_INFINITY,
+    };
+    const polygons = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates;
+    for (const polygon of polygons) {
+      for (const ring of polygon) {
+        for (const coordinate of ring) {
+          const [lng, lat] = coordinate as Coordinates;
+          if (lng < bbox.minLng) bbox.minLng = lng;
+          if (lng > bbox.maxLng) bbox.maxLng = lng;
+          if (lat < bbox.minLat) bbox.minLat = lat;
+          if (lat > bbox.maxLat) bbox.maxLat = lat;
+        }
+      }
+    }
+    return bbox;
+  }
+
+  private isCoordinateInBbox([lng, lat]: Coordinates, bbox: Bbox): boolean {
+    return (
+      lng >= bbox.minLng &&
+      lng <= bbox.maxLng &&
+      lat >= bbox.minLat &&
+      lat <= bbox.maxLat
+    );
+  }
+
+  private getFlowCoordinates(flow: MapFlowFeature): Coordinates[] {
+    const geometry = flow.geometry;
+    if (geometry.type === 'LineString') {
+      return geometry.coordinates as Coordinates[];
+    }
+    const coordinates: Coordinates[] = [];
+    for (const line of geometry.coordinates) {
+      for (const coordinate of line) {
+        coordinates.push(coordinate as Coordinates);
+      }
+    }
+    return coordinates;
   }
 
   private readonly tariffImpactExpression = computed<Expression>(() => [

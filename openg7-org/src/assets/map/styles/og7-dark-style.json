@@ -14,7 +14,7 @@
       "id": "background",
       "type": "background",
       "paint": {
-        "background-color": "#0b1220"
+        "background-color": "#06131b"
       }
     },
     {
@@ -23,7 +23,7 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "paint": {
-        "fill-color": "#0f172a",
+        "fill-color": "#6ea59a",
         "fill-opacity": 0.9
       }
     },
@@ -33,8 +33,8 @@
       "source": "openmaptiles",
       "source-layer": "landuse",
       "paint": {
-        "fill-color": "#111827",
-        "fill-opacity": 0.8
+        "fill-color": "#5f948b",
+        "fill-opacity": 0.75
       }
     },
     {
@@ -43,8 +43,8 @@
       "source": "openmaptiles",
       "source-layer": "water",
       "paint": {
-        "fill-color": "#0b4b5a",
-        "fill-opacity": 0.9
+        "fill-color": "#071722",
+        "fill-opacity": 0.98
       }
     },
     {
@@ -53,8 +53,8 @@
       "source": "openmaptiles",
       "source-layer": "waterway",
       "paint": {
-        "line-color": "#0b5f70",
-        "line-width": 1.1
+        "line-color": "#0b4c63",
+        "line-width": 1.2
       }
     },
     {
@@ -63,7 +63,7 @@
       "source": "openmaptiles",
       "source-layer": "boundary",
       "paint": {
-        "line-color": "#334155",
+        "line-color": "#a1bcbe",
         "line-width": 1
       }
     },
@@ -73,7 +73,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "paint": {
-        "line-color": "#334155",
+        "line-color": "#2b3f59",
         "line-width": [
           "interpolate",
           ["linear"],
@@ -93,7 +93,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "paint": {
-        "line-color": "#1f2937",
+        "line-color": "#162233",
         "line-width": [
           "interpolate",
           ["linear"],
@@ -105,7 +105,7 @@
           16,
           4
         ],
-        "line-opacity": 0.6
+        "line-opacity": 0.7
       }
     },
     {
@@ -114,8 +114,8 @@
       "source": "openmaptiles",
       "source-layer": "building",
       "paint": {
-        "fill-color": "#111827",
-        "fill-opacity": 0.6
+        "fill-color": "#0e1726",
+        "fill-opacity": 0.62
       }
     },
     {
@@ -139,9 +139,9 @@
         ]
       },
       "paint": {
-        "text-color": "#e2e8f0",
-        "text-halo-color": "#0b1220",
-        "text-halo-width": 1
+        "text-color": "#cfe9ff",
+        "text-halo-color": "#0a0f1c",
+        "text-halo-width": 1.1
       }
     }
   ]
