@@ -44,6 +44,7 @@ type Bbox = { minLng: number; maxLng: number; minLat: number; maxLat: number };
 
 const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
 const MAP_STYLE_DARK_URL = '/assets/map/styles/og7-dark-style.json';
+const MAP_STYLE_NIGHT_LIGHTS_URL = '/assets/map/styles/og7-night-lights.json';
 const MAP_CENTERS: Record<'canada' | 'europe' | 'asia', Coordinates> = {
   canada: [-98.5795, 57.6443],
   europe: [15.2551, 54.526],
@@ -89,6 +90,11 @@ type FillPaint = {
   readonly 'fill-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
   readonly 'fill-opacity'?: DataDrivenPropertyValueSpecification<number>;
   readonly 'fill-outline-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+};
+type LinePaintStyle = {
+  readonly 'line-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  readonly 'line-width'?: DataDrivenPropertyValueSpecification<number>;
+  readonly 'line-opacity'?: DataDrivenPropertyValueSpecification<number>;
 };
 
 type FlowCollectionState = {
@@ -148,7 +154,9 @@ export class TradeMapComponent {
   private readonly flows = this.store.selectSignal(selectFilteredFlows);
   private readonly kpis = this.store.selectSignal(selectMapKpis);
 
-  readonly mapStyle = (this.featureFlags?.['mapNight'] ?? false) ? MAP_STYLE_DARK_URL : MAP_STYLE_URL;
+  readonly mapStyle = (this.featureFlags?.['mapNight'] ?? false)
+    ? MAP_STYLE_NIGHT_LIGHTS_URL
+    : MAP_STYLE_URL;
   protected readonly mapCenter = computed(() => this.resolveMapCenter());
   protected readonly mapZoom = MAP_ZOOM;
   readonly globeEnabled = this.featureFlags?.['mapGlobe'] ?? false;
@@ -175,6 +183,11 @@ export class TradeMapComponent {
     };
     return paint;
   });
+  protected readonly provinceOutlinePaint: LinePaintStyle = {
+    'line-color': '#d7f2f2',
+    'line-width': ['interpolate', ['linear'], ['zoom'], 2, 0.6, 6, 1.2, 10, 2],
+    'line-opacity': 0.7,
+  };
 
   protected readonly flowLayerLayout = {
     'line-cap': 'round',

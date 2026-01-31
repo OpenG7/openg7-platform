@@ -20,6 +20,12 @@
         source="provinces"
         [paint]="provinceLayerPaint()"
       ></mgl-layer>
+      <mgl-layer
+        id="provinces-outline"
+        type="line"
+        source="provinces"
+        [paint]="provinceOutlinePaint"
+      ></mgl-layer>
     </mgl-geojson-source>
 
     <mgl-geojson-source id="flows" [data]="flowSource()" [lineMetrics]="true">
