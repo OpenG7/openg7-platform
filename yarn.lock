@@ -5075,9 +5075,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@maplibre/maplibre-gl-style-spec@npm:^24.3.1":
-  version: 24.3.1
-  resolution: "@maplibre/maplibre-gl-style-spec@npm:24.3.1"
+"@maplibre/geojson-vt@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "@maplibre/geojson-vt@npm:5.0.4"
+  checksum: 10c0/74cf4e1ee0fee23b6a6946b03eeb01ae6fc55e8490cea80c1184387fae3be14dab8383c203d12b05687a1b33fc9b9b9796808c873ed5c9deef82c247bd49e5b3
+  languageName: node
+  linkType: hard
+
+"@maplibre/maplibre-gl-style-spec@npm:^24.4.1":
+  version: 24.4.1
+  resolution: "@maplibre/maplibre-gl-style-spec@npm:24.4.1"
   dependencies:
     "@mapbox/jsonlint-lines-primitives": "npm:~2.0.2"
     "@mapbox/unitbezier": "npm:^0.0.1"
@@ -5090,45 +5097,45 @@ __metadata:
     gl-style-format: dist/gl-style-format.mjs
     gl-style-migrate: dist/gl-style-migrate.mjs
     gl-style-validate: dist/gl-style-validate.mjs
-  checksum: 10c0/a0ad05b816cbd98d182a672b668952ee93f3c7703aa7932e93e6611353a204894a4a018f80adeb5daf064cae6568ac9ee52e251328c9331366363a640243ae90
+  checksum: 10c0/68c2f0607ab742ee7638ca5ecf90904e714a4215759d1862dbfc1024e92323df2322b926caf3c83237baf1dc50351a43fcab06b2b4f850597c00524a43ab74c2
   languageName: node
   linkType: hard
 
-"@maplibre/mlt@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@maplibre/mlt@npm:1.1.0"
+"@maplibre/mlt@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@maplibre/mlt@npm:1.1.2"
   dependencies:
     "@mapbox/point-geometry": "npm:^1.1.0"
-  checksum: 10c0/ede425839f1d08832b08476a946ee75868b0267c39f87566ba43ffc0fac733827f5ca122ede84ec97a4c833ad801ebd4e051acecea072b7440131736ce395364
+  checksum: 10c0/bb181f15c19ade26ea8b25505d12ff172cbe4a467f3529f951d5d4860390f9df8f87f6a036573aaff0a9b2c6b913d49d0a2135141297f183e1c6d66c28407056
   languageName: node
   linkType: hard
 
-"@maplibre/ngx-maplibre-gl@npm:^19.0.1":
-  version: 19.0.1
-  resolution: "@maplibre/ngx-maplibre-gl@npm:19.0.1"
+"@maplibre/ngx-maplibre-gl@npm:^21.0.2":
+  version: 21.0.2
+  resolution: "@maplibre/ngx-maplibre-gl@npm:21.0.2"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": ">= 19.0.0"
-    "@angular/core": ">= 19.0.0"
-    maplibre-gl: ">= 5.0.0"
+    "@angular/common": ">= 21.0.0"
+    "@angular/core": ">= 21.0.0"
+    maplibre-gl: ">= 5.15.0"
     rxjs: ">= 7.8.1"
-  checksum: 10c0/aad034af804b3f2a51c9312eec465df2ffd6e0883d38be29a70f585aee20d71ddbbcfc8c72cc0585ae6b51f3b8f5290a430c6a3e1fc4221289de5f77781ec4b4
+  checksum: 10c0/c88317e67830af2f5dbf8fc30e479f85474a687b1381dfa5d3834055e3332f21184f6f7603399d742a12fe789abe0f44b64fd45e97e937fcdfe95ad984509303
   languageName: node
   linkType: hard
 
-"@maplibre/vt-pbf@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "@maplibre/vt-pbf@npm:4.0.3"
+"@maplibre/vt-pbf@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "@maplibre/vt-pbf@npm:4.2.1"
   dependencies:
     "@mapbox/point-geometry": "npm:^1.1.0"
     "@mapbox/vector-tile": "npm:^2.0.4"
-    "@types/geojson-vt": "npm:3.2.5"
+    "@maplibre/geojson-vt": "npm:^5.0.4"
+    "@types/geojson": "npm:^7946.0.16"
     "@types/supercluster": "npm:^7.1.3"
-    geojson-vt: "npm:^4.0.2"
     pbf: "npm:^4.0.1"
     supercluster: "npm:^8.0.1"
-  checksum: 10c0/d3c84adabb9dc93ff72ea6ab8c17900479f09e4d473f34ccae1f8e22d29f814d288f529f0d85959545bc4d7021675e056f7f558e758f705a4cb060b1f75f0aff
+  checksum: 10c0/8a4a3ce82008de013d31a1ca66828c79fa64c7205480986faa3124b390b246ac12fbf6cd3fd3c9b9e7681572f8d65310015db9ca81942f72da9525e59dda84f4
   languageName: node
   linkType: hard
 
@@ -5716,7 +5723,7 @@ __metadata:
     "@angular/platform-server": "npm:^19.2.0"
     "@angular/router": "npm:^19.2.0"
     "@angular/ssr": "npm:^19.2.10"
-    "@maplibre/ngx-maplibre-gl": "npm:^19.0.1"
+    "@maplibre/ngx-maplibre-gl": "npm:^21.0.2"
     "@ngrx/effects": "npm:19.2.1"
     "@ngrx/signals": "npm:^19.2.1"
     "@ngrx/store": "npm:^19.2.1"
@@ -5740,7 +5747,7 @@ __metadata:
     karma-coverage: "npm:~2.2.0"
     karma-jasmine: "npm:~5.1.0"
     karma-jasmine-html-reporter: "npm:~2.1.0"
-    maplibre-gl: "npm:^5.0.0"
+    maplibre-gl: "npm:^5.17.0"
     postcss: "npm:^8.5.6"
     prom-client: "npm:^15.1.3"
     qrcode: "npm:^1.5.4"
@@ -10404,15 +10411,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/2816718c407e9adf2337ca69241e29097f5e0b22f3d0a3dde1ea23a2eef2ad41ad19612a6eac895492bd746593d87278f9732b4cb354dd72df3c03e8c1ad72c3
-  languageName: node
-  linkType: hard
-
-"@types/geojson-vt@npm:3.2.5":
-  version: 3.2.5
-  resolution: "@types/geojson-vt@npm:3.2.5"
-  dependencies:
-    "@types/geojson": "npm:*"
-  checksum: 10c0/bfd9157c7d0441dc4b420e0c6df65b4e4b29f3d33cc77667b3dc5acd68ba6326bfbfd867642645357382e3374ceebfb9c5d15f2b2c0ee3e3c492e0b5a2bb71be
   languageName: node
   linkType: hard
 
@@ -15599,13 +15597,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"geojson-vt@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "geojson-vt@npm:4.0.2"
-  checksum: 10c0/f2ca14d868e46f6262f5d3862f8e38a2418ecf9bd7cd6938a67bf87f1e2f8fbf65345d95996711b07cdf8f05ef512be0e2c20f0a8179c6393c2fd41badcb0532
-  languageName: node
-  linkType: hard
-
 "get-caller-file@npm:^2.0.1, get-caller-file@npm:^2.0.5":
   version: 2.0.5
   resolution: "get-caller-file@npm:2.0.5"
@@ -18876,9 +18867,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"maplibre-gl@npm:^5.0.0":
-  version: 5.13.0
-  resolution: "maplibre-gl@npm:5.13.0"
+"maplibre-gl@npm:^5.17.0":
+  version: 5.17.0
+  resolution: "maplibre-gl@npm:5.17.0"
   dependencies:
     "@mapbox/geojson-rewind": "npm:^0.5.2"
     "@mapbox/jsonlint-lines-primitives": "npm:^2.0.2"
@@ -18887,14 +18878,13 @@ __metadata:
     "@mapbox/unitbezier": "npm:^0.0.1"
     "@mapbox/vector-tile": "npm:^2.0.4"
     "@mapbox/whoots-js": "npm:^3.1.0"
-    "@maplibre/maplibre-gl-style-spec": "npm:^24.3.1"
-    "@maplibre/mlt": "npm:^1.1.0"
-    "@maplibre/vt-pbf": "npm:^4.0.3"
+    "@maplibre/geojson-vt": "npm:^5.0.4"
+    "@maplibre/maplibre-gl-style-spec": "npm:^24.4.1"
+    "@maplibre/mlt": "npm:^1.1.2"
+    "@maplibre/vt-pbf": "npm:^4.2.1"
     "@types/geojson": "npm:^7946.0.16"
-    "@types/geojson-vt": "npm:3.2.5"
     "@types/supercluster": "npm:^7.1.3"
     earcut: "npm:^3.0.2"
-    geojson-vt: "npm:^4.0.2"
     gl-matrix: "npm:^3.4.4"
     kdbush: "npm:^4.0.2"
     murmurhash-js: "npm:^1.0.0"
@@ -18903,7 +18893,7 @@ __metadata:
     quickselect: "npm:^3.0.0"
     supercluster: "npm:^8.0.1"
     tinyqueue: "npm:^3.0.0"
-  checksum: 10c0/83c4df19979e361844cb30b644d1169e01d1e8312e4e0f6683896915e4456c6c3d2595d055cef5a0b2bc5927609ad51f7c54d6f3662dbd2305e32c3aa8741e24
+  checksum: 10c0/42029c43e7ed9b592c3f20d73c282b3300ab5233030bac0fb5ea71f18620b4db192ccb8dd0d0a9e5b146b6ff49bc993ba7170777cbcd8638a5e926df59789f2a
   languageName: node
   linkType: hard
 
