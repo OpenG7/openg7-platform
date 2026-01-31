@@ -37,7 +37,10 @@ export class Og7ModalContainerComponent {
    * @returns void
    */
   @HostListener('document:keydown.escape', ['$event'])
-  onEscape(event: KeyboardEvent): void {
+  onEscape(event: Event): void {
+    if (!(event instanceof KeyboardEvent)) {
+      return;
+    }
     const state = this.modal();
     if (!state?.options.closeOnEsc) {
       return;

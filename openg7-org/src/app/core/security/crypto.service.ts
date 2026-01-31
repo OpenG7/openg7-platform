@@ -117,7 +117,8 @@ export class CryptoService {
       if (stored) {
         try {
           const raw = this.fromBase64(stored);
-          return await this.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt', 'decrypt']);
+          const rawBuffer = this.toArrayBuffer(raw);
+          return await this.subtle.importKey('raw', rawBuffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
         } catch {
           storage.removeItem(this.keyStorageKey);
         }
@@ -127,7 +128,8 @@ export class CryptoService {
     try {
       const crypto = globalThis.crypto as Crypto;
       const material = crypto.getRandomValues(new Uint8Array(32));
-      const key = await this.subtle.importKey('raw', material, 'AES-GCM', false, ['encrypt', 'decrypt']);
+      const materialBuffer = this.toArrayBuffer(material);
+      const key = await this.subtle.importKey('raw', materialBuffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
       if (storage) {
         storage.setItem(this.keyStorageKey, this.toBase64(material));
       }
@@ -156,5 +158,18 @@ export class CryptoService {
 
   private fromBase64(value: string): Uint8Array {
     return new Uint8Array(Buffer.from(value, 'base64'));
+  }
+
+  private toArrayBuffer(data: Uint8Array): ArrayBuffer {
+    const buffer = data.buffer;
+    if (buffer instanceof ArrayBuffer) {
+      if (data.byteOffset === 0 && data.byteLength === buffer.byteLength) {
+        return buffer;
+      }
+      return buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+    }
+    const copy = new Uint8Array(data.byteLength);
+    copy.set(data);
+    return copy.buffer;
   }
 }
