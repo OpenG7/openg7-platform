@@ -43,7 +43,6 @@ type Coordinates = [number, number];
 type Bbox = { minLng: number; maxLng: number; minLat: number; maxLat: number };
 
 const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
-const MAP_STYLE_DARK_URL = '/assets/map/styles/og7-dark-style.json';
 const MAP_STYLE_NIGHT_LIGHTS_URL = '/assets/map/styles/og7-night-lights.json';
 const MAP_CENTERS: Record<'canada' | 'europe' | 'asia', Coordinates> = {
   canada: [-98.5795, 57.6443],
