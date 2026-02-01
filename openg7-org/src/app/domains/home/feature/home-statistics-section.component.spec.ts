@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HomeStatisticsSectionComponent } from './home-statistics-section.component';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 
 describe('HomeStatisticsSectionComponent', () => {
   const stats: StatMetric[] = [
@@ -77,3 +77,4 @@ describe('HomeStatisticsSectionComponent', () => {
     expect(entries.length).toBe(3);
   });
 });
+

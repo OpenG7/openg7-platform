@@ -19,10 +19,10 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Commerce & entreprises | og7-company-registration-form | og7-company-registration-form | CompanyRegistrationFormComponent | openg7-org/src/app/company-registration-form/components/company-registration-form/company-registration-form.component.ts | ok |  |
 | Commerce & entreprises | og7-companies-import-page | og7-companies-import-page | CompaniesImportPageComponent | openg7-org/src/app/import/companies-import-page/companies-import-page.component.ts | ok |  |
 | Commerce & entreprises | og7-entreprise | og7-entreprise | Og7EntrepriseComponent | openg7-org/src/app/domains/enterprise/entreprise/og7-entreprise.component.ts | ok |  |
-| Hero & marketing | og7-hero-section | og7-hero-section | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section.component.ts | ok | Selector Angular aligné (og7-hero-section). |
-| Hero & marketing | og7-hero-copy | og7-hero-copy | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy.component.ts | ok | Selector Angular aligné (og7-hero-copy). |
-| Hero & marketing | og7-hero-ctas | og7-hero-ctas | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas.component.ts | ok | Selector Angular aligné (og7-hero-ctas). |
-| Hero & marketing | og7-hero-stats | og7-hero-stats | HeroStatsComponent | openg7-org/src/app/shared/components/hero/hero-stats.component.ts | ok |  |
+| Hero & marketing | og7-hero-section | og7-hero-section | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section/hero-section.component.ts | ok | Selector Angular aligné (og7-hero-section). |
+| Hero & marketing | og7-hero-copy | og7-hero-copy | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy/hero-copy.component.ts | ok | Selector Angular aligné (og7-hero-copy). |
+| Hero & marketing | og7-hero-ctas | og7-hero-ctas | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas/hero-ctas.component.ts | ok | Selector Angular aligné (og7-hero-ctas). |
+| Hero & marketing | og7-hero-stats | og7-hero-stats | HeroStatsComponent | openg7-org/src/app/shared/components/hero/hero-stats/hero-stats.component.ts | ok |  |
 | Hero & marketing | og7-home-hero-section | og7-home-hero-section | HomeHeroSectionComponent | openg7-org/src/app/domains/home/feature/home-hero-section.component.ts | ok |  |
 | Hero & marketing | og7-financing-banner | og7-financing-banner | Og7FinancingBannerComponent | openg7-org/src/app/shared/components/financing/og7-financing-banner.component.ts | ok |  |
 | Hero & marketing | og7-cta-rail | og7-cta-rail | Og7CtaRailComponent | openg7-org/src/app/shared/components/cta/og7-cta-rail.component.ts | ok |  |
@@ -89,9 +89,9 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Conformité & i18n / Auth | [data-og7="auth-register"] | RegisterPage | openg7-org/src/app/domains/auth/pages/register.page.html | ok | Présent sur la page d’inscription. |
 | Conformité & i18n / Auth | [data-og7="access-denied"] | AccessDeniedPage | openg7-org/src/app/domains/auth/pages/access-denied.page.html | ok | Présent sur la page d’accès refusé. |
 | Conformité & i18n / Auth | [data-og7="user-profile"] | ProfilePage | openg7-org/src/app/domains/account/pages/profile.page.html | ok | Présent sur la page profil. |
-| Hero & marketing | [data-og7="hero"] | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section.component.ts | ok | Selector actuel du composant. |
-| Hero & marketing | [data-og7="hero-copy"] | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy.component.ts | ok |  |
-| Hero & marketing | [data-og7="hero-ctas"] | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas.component.ts | ok |  |
+| Hero & marketing | [data-og7="hero"] | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section/hero-section.component.ts | ok | Selector actuel du composant. |
+| Hero & marketing | [data-og7="hero-copy"] | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy/hero-copy.component.ts | ok |  |
+| Hero & marketing | [data-og7="hero-ctas"] | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas/hero-ctas.component.ts | ok |  |
 | Hero & marketing | [data-og7="announcement-bar"] | — | — | planned | Doublon volontaire pour l’UI marketing (pas encore utilisé). |
 | Carte & data viz | [data-og7="trade-map"] | TradeMapComponent | openg7-org/src/app/shared/components/map/trade-map.component.ts | ok |  |
 | Carte & data viz | [data-og7="map-basemap-toggle"] | BasemapToggleComponent | openg7-org/src/app/shared/components/map/controls/basemap-toggle.component.ts | ok |  |
@@ -1440,3 +1440,4 @@ Exécuter systématiquement les scripts de validation **avant** d’ouvrir une P
 > ⚠️ Tout échec doit être corrigé **avant commit**. Documentez les écarts (ex.: seeds conditionnels) directement dans la PR.
 
 _MAJ (enhanced) : 2025-09-13 10:15:00Z_
+

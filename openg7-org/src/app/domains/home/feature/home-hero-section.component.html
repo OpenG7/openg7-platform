@@ -1,1 +1,25 @@
-<og7-hero-section data-og7="hero" data-og7-id="section" aria-labelledby="home-hero-heading" [stats]="stats()"></og7-hero-section>
+<section class="relative isolate">
+  <og7-hero-section
+    class="relative z-10"
+    data-og7="hero"
+    data-og7-id="section"
+    aria-labelledby="home-hero-heading"
+    [stats]="stats()"
+  ></og7-hero-section>
+  <div
+    class="pointer-events-none absolute inset-y-0 right-0 z-11 hidden w-full max-w-[900px] items-center justify-end lg:flex"
+    aria-hidden="true"
+  >
+    <om-three-globe
+      [globeSize]="'800px'"
+      [globeConfig]="{
+        globeColor: '#062056',
+        atmosphereColor: '#ffffff',
+        autoRotate: true,
+        autoRotateSpeed: 1
+      }"
+      [arcAndRingColors]="['#06b6d4', '#3b82f6', '#6366f1']"
+      styleClass="custom-globe-class"
+    ></om-three-globe>
+  </div>
+</section>

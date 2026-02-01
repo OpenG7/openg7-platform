@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { HomeHeroSectionComponent } from './home-hero-section.component';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 
 const stats: StatMetric[] = [
   {
@@ -36,3 +36,4 @@ export const Default: StoryObj<HomeHeroSectionComponent> = {
     props: { stats },
   }),
 };
+

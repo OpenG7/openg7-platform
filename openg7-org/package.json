@@ -34,6 +34,7 @@
     "@ngrx/store": "^21.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
+    "@omnedia/ngx-three-globe": "^4.0.1",
     "@openg7/contracts": "workspace:*",
     "@stripe/stripe-js": "^4.8.0",
     "express": "^4.18.2",
@@ -55,6 +56,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^18.18.0",
     "@types/qrcode": "^1",
+    "@types/three": "^0.182.0",
     "autoprefixer": "^10.4.21",
     "baseline-browser-mapping": "^2.8.4",
     "dotenv": "^16.4.5",
@@ -66,6 +68,8 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
+    "three": "^0.182.0",
+    "three-globe": "^2.45.0",
     "typescript": "^5.9.0"
   }
 }

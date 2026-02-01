@@ -20,7 +20,7 @@ import { AppState } from '@app/state/app.state';
 import { selectFilteredFlows, selectMapKpis } from '@app/state';
 import { FiltersService } from '@app/core/filters.service';
 import { MapStatsService } from '@app/core/services/map-stats.service';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 
 @Component({
   standalone: true,
@@ -138,3 +138,4 @@ export class Og7HomePageComponent {
     return findDemoFinancingBanner(match);
   }
 }
+

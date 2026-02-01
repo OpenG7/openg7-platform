@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { HeroStatsComponent, StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { HeroStatsComponent, StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 
 @Component({
   selector: 'og7-home-statistics-section',
@@ -19,3 +19,4 @@ import { HeroStatsComponent, StatMetric } from '@app/shared/components/hero/hero
 export class HomeStatisticsSectionComponent {
   readonly stats = input.required<StatMetric[]>();
 }
+

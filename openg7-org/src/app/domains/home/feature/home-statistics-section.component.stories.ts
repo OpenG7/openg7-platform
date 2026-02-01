@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { HomeStatisticsSectionComponent } from './home-statistics-section.component';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 
 const stats: StatMetric[] = [
   {
@@ -41,3 +41,4 @@ export default meta;
 export const Default: StoryObj<HomeStatisticsSectionComponent> = {
   render: () => ({ props: { stats } }),
 };
+
