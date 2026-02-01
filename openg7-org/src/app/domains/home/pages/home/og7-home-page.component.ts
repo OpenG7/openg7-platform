@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-section.component';
-import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section.component';
-import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section.component';
-import { HomeFiltersSectionComponent } from '@app/domains/home/feature/home-filters-section.component';
+import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-section/home-hero-section.component';
+import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section/home-map-section.component';
+import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section/home-statistics-section.component';
+import { HomeFiltersSectionComponent } from '@app/domains/home/feature/home-filters-section/home-filters-section.component';
 import { OpportunityMatchesSection } from '@app/domains/opportunities/sections/opportunity-matches.section';
 import { OpportunityService } from '@app/core/services/opportunity.service';
 import { OpportunityAiPrefillService } from '@app/core/services/opportunity-ai-prefill.service';
