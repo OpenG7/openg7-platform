@@ -1,26 +1,41 @@
 <section class="relative isolate min-h-[90vh] overflow-hidden">
-  <div class="absolute inset-0 -z-10 overflow-hidden">
-    <!-- <img src="assets/accueil.png" alt="" class="h-full w-full object-cover" /> -->
-    <!-- <div class="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-slate-950/75 to-slate-950/40"></div>
-    <div class="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-transparent"></div>
-    <div class="absolute -left-24 top-20 h-56 w-56 rounded-full bg-cyan-500/20 blur-[120px]"></div> -->
-  </div>
+  <div class="absolute inset-0 -z-10 overflow-hidden"></div>
 
-  <div class="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-16 sm:px-10 lg:py-24 lg:pr-[36%]">
-    <div class="max-w-2xl space-y-6 text-white">
-      <p class="text-xs font-semibold uppercase tracking-[0.5em] text-cyan-200/70">Connecter les intrants du Canada</p>
-      <p class="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl lg:leading-tight">
-        Entre nations
-      <og7-hero-copy data-og7="hero" data-og7-id="copy" class="space-y-4"></og7-hero-copy>
-    </div>
+  <div class="relative flex w-full flex-col gap-8 px-8 pt-12 pb-16 sm:px-12 sm:pt-14 sm:pb-20 lg:px-20 lg:pt-16 lg:pb-24 lg:pr-[30%]">
+    <div class="max-w-[36rem] text-white">
+      <og7-hero-copy data-og7="hero" data-og7-id="copy"></og7-hero-copy>
 
-    <div
-      class="w-full max-w-2xl rounded-3xl bg-slate-900/75 p-6 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.9)] ring-1 ring-white/10 backdrop-blur-xl"
-    >
-      <og7-hero-ctas data-og7="hero" data-og7-id="ctas" class="flex flex-wrap gap-3"></og7-hero-ctas>
-      <!-- <div class="mt-6 border-t border-white/10 pt-6">
-        <og7-hero-stats [stats]="stats()"></og7-hero-stats>
-      </div> -->
+      <div class="mt-5 w-full max-w-[34rem]">
+        <form role="search" class="w-full">
+          <label class="sr-only" for="hero-search-input">{{ 'hero.search.label' | translate }}</label>
+          <div
+            class="relative flex items-center rounded-full border border-white/10 bg-slate-900/70 px-5 py-3 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.85)] backdrop-blur"
+          >
+            <input
+              id="hero-search-input"
+              type="search"
+              autocomplete="off"
+              [attr.placeholder]="'hero.search.placeholder' | translate"
+              [attr.aria-label]="'hero.search.label' | translate"
+              class="w-full bg-transparent pr-10 text-base text-slate-100 placeholder:text-slate-400 focus:outline-none"
+            />
+            <span class="pointer-events-none absolute right-5 text-cyan-200/80" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22">
+                <path
+                  fill="currentColor"
+                  d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 9.5 16c1.6 0 3.08-.59 4.22-1.57l.27.28v.79l5 5L20.5 19l-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
+                />
+              </svg>
+            </span>
+          </div>
+        </form>
+
+        <og7-hero-ctas class="mt-3 w-full" data-og7="hero" data-og7-id="ctas"></og7-hero-ctas>
+
+        <div class="mt-4 w-full">
+          <og7-hero-stats [stats]="heroStats()"></og7-hero-stats>
+        </div>
+      </div>
     </div>
   </div>
 </section>

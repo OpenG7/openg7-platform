@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { HeroCopyComponent } from '../hero-copy/hero-copy.component';
 import { HeroCtasComponent } from '../hero-ctas/hero-ctas.component';
 import { HeroStatsComponent, StatMetric } from '../hero-stats/hero-stats.component';
@@ -19,4 +19,17 @@ import { TranslateModule } from '@ngx-translate/core';
  */
 export class HeroSectionComponent {
   readonly stats = input.required<StatMetric[]>();
+
+  readonly heroStats = computed<StatMetric[]>(() => {
+    const labels: Record<StatMetric['id'], string> = {
+      tradeValue: 'hero.stats.listedInputs',
+      exchangeQty: 'hero.stats.activeRequests',
+      sectors: 'hero.stats.transportCapacity',
+    };
+
+    return this.stats().map((stat) => ({
+      ...stat,
+      labelKey: labels[stat.id] ?? stat.labelKey,
+    }));
+  });
 }

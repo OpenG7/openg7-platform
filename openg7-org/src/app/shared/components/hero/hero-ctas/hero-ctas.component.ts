@@ -24,8 +24,7 @@ export interface HeroCtaClickEvent {
   imports: [CommonModule, RouterModule, TranslateModule, MatButtonModule],
   templateUrl: './hero-ctas.component.html',
   host: {
-    class: 'hero-ctas',
-    style: 'display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;',
+    class: 'hero-ctas flex flex-wrap gap-3 justify-start',
   },
 })
 /**
@@ -38,13 +37,19 @@ export class HeroCtasComponent {
   @Input() primaryCta: HeroCta | null = {
     label: 'hero.actions.registerCompany',
     routerLink: '/register',
-    trackingType: 'hero-primary',
+    trackingType: 'register-company',
   };
 
   @Input() secondaryCta: HeroCta | null = {
+    label: 'hero.actions.proMode',
+    href: '#request',
+    trackingType: 'pro-mode',
+  };
+
+  @Input() tertiaryCta: HeroCta | null = {
     label: 'hero.actions.viewSectors',
     href: '#map',
-    trackingType: 'hero-secondary',
+    trackingType: 'view-sectors',
   };
 
   @Output() readonly ctaClicked = new EventEmitter<HeroCtaClickEvent>();
