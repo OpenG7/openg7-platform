@@ -1,12 +1,12 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
-import type { BillingPlan } from '@openg7/contracts';
-
-import { BillingService, type BillingInvoice } from '@app/core/services/billing.service';
 import { AuthService } from '@app/core/auth/auth.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { BillingService, type BillingInvoice } from '@app/core/services/billing.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import type { BillingPlan } from '@openg7/contracts';
+import { firstValueFrom } from 'rxjs';
+
 
 @Component({
   selector: 'og7-subscription-plans',

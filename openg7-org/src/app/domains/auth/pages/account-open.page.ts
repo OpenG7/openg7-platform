@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { CompanyProfile, TradeScope } from '@app/company-registration-form/models/registration.model';
+import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 //import { CompanyProfile, TradeScope } from '@app/registration/models/registration.model';
 //import { CompanyRegistrationFormComponent } from '@app/registration/components/company-registration-form/company-registration-form.component';
 

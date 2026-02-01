@@ -1,8 +1,8 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { SearchContext } from '@app/core/models/search';
 import { HttpClientService } from '@app/core/http/http-client.service';
+import { SearchContext } from '@app/core/models/search';
+import { Observable } from 'rxjs';
 
 export interface SearchEngineInfo {
   readonly enabled: boolean;

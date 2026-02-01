@@ -1,23 +1,23 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type SectionKey = 'collection' | 'usage' | 'sharing' | 'security' | 'rights' | 'contact';
 
-type SectionConfig = {
+interface SectionConfig {
   readonly key: SectionKey;
   readonly accent: string;
-};
+}
 
-type Highlight = {
+interface Highlight {
   readonly title: string;
   readonly description: string;
-};
+}
 
-type SummaryItem = {
+interface SummaryItem {
   readonly label: string;
   readonly description: string;
-};
+}
 
 @Component({
   standalone: true,

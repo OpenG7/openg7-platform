@@ -1,6 +1,7 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { ConnectionsState } from './connections.reducer';
 import { ConnectionStage, PipelineEvent } from '@app/core/models/connection';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+
+import { ConnectionsState } from './connections.reducer';
 
 export interface PipelineStepStatus {
   readonly stage: ConnectionStage;

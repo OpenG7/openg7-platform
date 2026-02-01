@@ -6,8 +6,8 @@ import {
   input,
   output,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { ConnectionAttachment } from '@app/core/models/connection';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-cta-rail',

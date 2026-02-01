@@ -1,5 +1,6 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+
 import { CryptoService } from './crypto.service';
 
 @Injectable({ providedIn: 'root' })
@@ -78,7 +79,7 @@ export class TokenStorageService {
   }
 
   private canUsePersistentStorage(): boolean {
-    return !!this.storage && this.crypto.isSupported;
+    return Boolean(this.storage) && this.crypto.isSupported;
   }
 
   private resolveStorage(platformId: object): Storage | null {

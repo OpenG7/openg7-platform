@@ -1,11 +1,14 @@
 import { createReducer, on } from '@ngrx/store';
-import { FeedActions } from './feed.actions';
+
 import {
   FeedFilterState,
   FeedPost,
   FeedRealtimeEnvelope,
+  FeedReply,
   FeedSnapshot,
 } from '../../domains/feed/feature/models/feed.models';
+
+import { FeedActions } from './feed.actions';
 
 export interface FeedState {
   readonly posts: readonly FeedPost[];
@@ -274,7 +277,7 @@ function reduceRealtimeEnvelope(state: FeedState, envelope: FeedRealtimeEnvelope
       };
     }
     case 'feed.reply.created': {
-      const reply = payload as any;
+      const reply = payload as FeedReply;
       const posts = state.posts.map(post => {
         if (post.id !== reply.postId) {
           return post;
@@ -291,7 +294,7 @@ function reduceRealtimeEnvelope(state: FeedState, envelope: FeedRealtimeEnvelope
       };
     }
     case 'feed.reply.deleted': {
-      const reply = payload as any;
+      const reply = payload as FeedReply;
       const posts = state.posts.map(post => {
         if (post.id !== reply.postId || !post.replies?.length) {
           return post;

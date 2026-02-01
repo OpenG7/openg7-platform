@@ -1,5 +1,6 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+
 import { EnvironmentConfig, ContentSecurityPolicyConfig } from '../../../environments/environment';
 import {
   createRuntimeConfigSnapshot,
@@ -7,6 +8,7 @@ import {
   readRuntimeConfigFromProcessEnv,
   RuntimeConfigKey,
 } from '../../../runtime-config/runtime-config';
+
 import { AuthMode, FeatureFlags } from './environment.tokens';
 
 @Injectable({ providedIn: 'root' })
@@ -19,9 +21,12 @@ import { AuthMode, FeatureFlags } from './environment.tokens';
 export class RuntimeConfigService {
   private readonly configSnapshot: EnvironmentConfig;
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) platformId: object) {
     if (isPlatformBrowser(platformId)) {
-      const runtimeConfig = typeof window !== 'undefined' ? (window as any).__OG7_CONFIG__ : undefined;
+      const runtimeConfig =
+        typeof window !== 'undefined'
+          ? (window as Window & { __OG7_CONFIG__?: unknown }).__OG7_CONFIG__
+          : undefined;
       const normalizedSource = normalizeRuntimeSource(runtimeConfig);
 
       if (Object.keys(normalizedSource).length > 0) {

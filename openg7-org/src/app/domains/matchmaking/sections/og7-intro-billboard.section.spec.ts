@@ -1,16 +1,17 @@
-import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { Component, NO_ERRORS_SCHEMA, PLATFORM_ID, ViewChild, signal } from '@angular/core';
-import { provideMockStore } from '@ngrx/store/testing';
-import { from, of, throwError } from 'rxjs';
-import { IntroductionRequestContext, Og7IntroBillboardSection } from './og7-intro-billboard.section';
+import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
+import { OpportunityMatch } from '@app/core/models/opportunity';
+import { PartnerProfile } from '@app/core/models/partner-profile';
 import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { NotificationStore } from '@app/core/observability/notification.store';
-import { TranslateService } from '@ngx-translate/core';
 import { PartnerProfileService } from '@app/core/services/partner-profile.service';
-import { PartnerProfile } from '@app/core/models/partner-profile';
 import { ShareResult, ShareService } from '@app/core/services/share.service';
 import { NotificationPanelComponent } from '@app/shared/components/layout/notification-panel.component';
-import { OpportunityMatch } from '@app/core/models/opportunity';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TranslateService } from '@ngx-translate/core';
+import { from, of, throwError } from 'rxjs';
+
+import { IntroductionRequestContext, Og7IntroBillboardSection } from './og7-intro-billboard.section';
 
 describe('Og7IntroBillboardSection (downloads)', () => {
   let fixture: ComponentFixture<Og7IntroBillboardSection>;
@@ -31,7 +32,7 @@ describe('Og7IntroBillboardSection (downloads)', () => {
     legalName: 'Hydrogen Labs',
   };
 
-  function configureTestBed(platformId: Object = 'browser') {
+  function configureTestBed(platformId: object = 'browser') {
     analytics = jasmine.createSpyObj<AnalyticsService>('AnalyticsService', ['emit']);
     partnerProfiles = jasmine.createSpyObj<PartnerProfileService>('PartnerProfileService', [
       'getProfile',

@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { CanMatchFn, Router } from '@angular/router';
+
 import { FEATURE_FLAGS, FeatureFlags } from '../config/environment.tokens';
 
 type FeatureFlagKey = Extract<keyof FeatureFlags, string>;

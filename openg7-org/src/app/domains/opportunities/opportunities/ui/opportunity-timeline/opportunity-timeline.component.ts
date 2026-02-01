@@ -1,37 +1,38 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { PartnerSelection } from '@app/core/models/partner-selection';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { OpportunityViewSheetPayload } from '../opportunity-view-sheet-payload';
 
-type OpportunityActor = {
+interface OpportunityActor {
   readonly name: string;
   readonly province: string;
   readonly sector: string;
   readonly logoUrl?: string | null;
-};
+}
 
-type OpportunityTimelineKpi = {
+interface OpportunityTimelineKpi {
   readonly label: string;
   readonly value: string;
   readonly hint?: string;
-};
+}
 
-type OpportunityTimelineStep = {
+interface OpportunityTimelineStep {
   readonly id: 'need' | 'capacity' | 'logistics' | 'impact' | (string & {});
   readonly title: string;
   readonly summary?: string;
   readonly kpis: ReadonlyArray<OpportunityTimelineKpi>;
-};
+}
 
-type OpportunityTimelineContext = {
+interface OpportunityTimelineContext {
   readonly distanceKm: number;
   readonly leadTime?: string;
   readonly co2SavedTons?: number;
   readonly logisticsCost?: string;
-};
+}
 
-export type OpportunityTimelineVm = {
+export interface OpportunityTimelineVm {
   readonly id: string;
   readonly matchId: string;
   readonly title: string;
@@ -41,7 +42,7 @@ export type OpportunityTimelineVm = {
   readonly context: OpportunityTimelineContext;
   readonly steps: ReadonlyArray<OpportunityTimelineStep>;
   readonly profileSelection: PartnerSelection;
-};
+}
 
 @Component({
   selector: 'og7-opportunity-timeline',

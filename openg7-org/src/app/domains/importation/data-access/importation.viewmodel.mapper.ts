@@ -1,13 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ImportationAnnotationDto,
-  ImportationCommodityCollectionsDto,
-  ImportationFlowsResponseDto,
-  ImportationKnowledgeResponseDto,
-  ImportationRiskFlagDto,
-  ImportationSupplierDto,
-  ImportationWatchlistDto,
-} from './importation-api.client';
+
 import {
   ImportationCollaborationViewModel,
   ImportationCommodityRowViewModel,
@@ -23,6 +15,16 @@ import {
   ImportationSupplierCardViewModel,
   ImportationSupplierSectionViewModel,
 } from '../models/importation.models';
+
+import {
+  ImportationAnnotationDto,
+  ImportationCommodityCollectionsDto,
+  ImportationFlowsResponseDto,
+  ImportationKnowledgeResponseDto,
+  ImportationRiskFlagDto,
+  ImportationSupplierDto,
+  ImportationWatchlistDto,
+} from './importation-api.client';
 
 const GRANULARITY_OPTIONS: ImportationOverviewViewModel['filters']['granularityOptions'] = [
   { id: 'month', label: 'pages.importation.filters.period.month' },

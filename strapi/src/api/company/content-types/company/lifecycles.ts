@@ -6,19 +6,19 @@ import {
 type VerificationStatus = 'unverified' | 'pending' | 'verified' | 'suspended';
 type VerificationSourceStatus = 'pending' | 'validated' | 'revoked';
 
-type VerificationSource = {
+interface VerificationSource {
   status?: VerificationSourceStatus | null;
-};
+}
 
-type TrustRecord = {
+interface TrustRecord {
   score?: unknown;
-};
+}
 
-type CompanyLifecycleEntity = {
+interface CompanyLifecycleEntity {
   trustHistory?: TrustRecord[] | null;
   verificationSources?: VerificationSource[] | null;
   verificationStatus?: VerificationStatus | null;
-};
+}
 
 const clampScore = (value: number): number => {
   if (!Number.isFinite(value)) {

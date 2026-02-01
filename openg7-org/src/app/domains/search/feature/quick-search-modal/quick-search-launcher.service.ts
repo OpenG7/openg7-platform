@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Og7ModalService } from '@app/core/ui/modal/og7-modal.service';
 import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
+
 import { QuickSearchModalComponent, QuickSearchModalData } from './quick-search-modal.component';
 
 @Injectable({ providedIn: 'root' })

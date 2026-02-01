@@ -12,12 +12,6 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { FeedRealtimeService } from '../services/feed-realtime.service';
-import { FeedPost, FeedRealtimeConnectionState } from '../models/feed.models';
-import { Og7FeedCardComponent } from '../og7-feed-card/og7-feed-card.component';
-import { Og7FeedComposerComponent } from '../og7-feed-composer/og7-feed-composer.component';
-import { Og7FeedPostDrawerComponent } from '../og7-feed-post-drawer/og7-feed-post-drawer.component';
 import {
   activeSectorsSig,
   feedSearchSig,
@@ -27,6 +21,13 @@ import {
   needTypeSig,
   selectedProvinceSig,
 } from '@app/state/shared-feed-signals';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { FeedPost, FeedRealtimeConnectionState } from '../models/feed.models';
+import { Og7FeedCardComponent } from '../og7-feed-card/og7-feed-card.component';
+import { Og7FeedComposerComponent } from '../og7-feed-composer/og7-feed-composer.component';
+import { Og7FeedPostDrawerComponent } from '../og7-feed-post-drawer/og7-feed-post-drawer.component';
+import { FeedRealtimeService } from '../services/feed-realtime.service';
 
 @Component({
   selector: 'og7-feed-stream',

@@ -1,4 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
+
 import { Flow, MapKpis } from './map.selectors';
 
 export const MapActions = createActionGroup({

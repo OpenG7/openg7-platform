@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
-import { MapState } from './map.selectors';
+
 import { MapActions } from './map.actions';
+import { MapState } from './map.selectors';
 
 export const initialMapState: MapState = {
   ready: false,

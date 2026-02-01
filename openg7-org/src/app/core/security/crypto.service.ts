@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
 import { Buffer } from 'buffer';
+
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -21,7 +22,7 @@ export class CryptoService {
    */
   get isSupported(): boolean {
     const crypto = globalThis.crypto;
-    return !!this.subtle && !!crypto && typeof crypto.getRandomValues === 'function';
+    return Boolean(this.subtle) && Boolean(crypto) && typeof crypto.getRandomValues === 'function';
   }
 
   /**
@@ -141,7 +142,10 @@ export class CryptoService {
   }
 
   private getSessionStorage(): Storage | null {
-    const candidate = typeof window !== 'undefined' ? window.sessionStorage : (globalThis as any).sessionStorage;
+    const candidate =
+      typeof window !== 'undefined'
+        ? window.sessionStorage
+        : (globalThis as { sessionStorage?: Storage }).sessionStorage;
     if (!candidate) {
       return null;
     }

@@ -1,6 +1,7 @@
 import { Directive, HostListener, Inject, Input, Optional } from '@angular/core';
-import { Og7ModalRef } from './og7-modal.types';
+
 import { OG7_MODAL_REF } from './og7-modal.tokens';
+import { Og7ModalRef } from './og7-modal.types';
 
 @Directive({
   selector: '[og7ModalClose]',

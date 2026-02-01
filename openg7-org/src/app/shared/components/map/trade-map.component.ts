@@ -1,13 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
-import type {
-  ColorSpecification,
-  DataDrivenPropertyValueSpecification,
-  ExpressionSpecification,
-  PropertyValueSpecification,
-} from 'maplibre-gl';
-import { Store } from '@ngrx/store';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import type { AuthUser } from '@app/core/auth/auth.types';
+import { FEATURE_FLAGS } from '@app/core/config/environment.tokens';
+import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
+import {
+  MapFlowFeature,
+  MapFlowFeatureCollection,
+  MapGeojsonService,
+  MapHubFeature,
+  MapHubFeatureCollection,
+  MapProvinceFeature,
+  MapProvinceFeatureCollection,
+} from '@app/core/services/map-geojson.service';
+import { TariffQueryService } from '@app/core/services/tariff-query.service';
 import {
   Flow,
   MapKpiComputed,
@@ -20,23 +25,19 @@ import {
   MapActions,
 } from '@app/state';
 import { AppState } from '@app/state/app.state';
-import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
-import { FEATURE_FLAGS } from '@app/core/config/environment.tokens';
 import { selectUserProfile } from '@app/state/user/user.selectors';
-import type { AuthUser } from '@app/core/auth/auth.types';
-import {
-  MapFlowFeature,
-  MapFlowFeatureCollection,
-  MapGeojsonService,
-  MapHubFeature,
-  MapHubFeatureCollection,
-  MapProvinceFeature,
-  MapProvinceFeatureCollection,
-} from '@app/core/services/map-geojson.service';
-import { TariffQueryService } from '@app/core/services/tariff-query.service';
-import { MapLegendComponent } from './legend/map-legend.component';
-import { MapSectorChipsComponent } from './filters/map-sector-chips.component';
+import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
+import { Store } from '@ngrx/store';
+import type {
+  ColorSpecification,
+  DataDrivenPropertyValueSpecification,
+  ExpressionSpecification,
+  PropertyValueSpecification,
+} from 'maplibre-gl';
+
 import { BasemapToggleComponent } from './controls/basemap-toggle.component';
+import { MapSectorChipsComponent } from './filters/map-sector-chips.component';
+import { MapLegendComponent } from './legend/map-legend.component';
 import { ZoomControlComponent } from './controls/zoom-control.component';
 
 type Coordinates = [number, number];
@@ -77,14 +78,14 @@ const EMPTY_MARKER_COLLECTION: MapHubFeatureCollection = {
   features: [],
 };
 
-type LinePaint = {
+interface LinePaint {
   readonly 'line-opacity'?: DataDrivenPropertyValueSpecification<number>;
   readonly 'line-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
   readonly 'line-width'?: DataDrivenPropertyValueSpecification<number>;
   readonly 'line-blur'?: DataDrivenPropertyValueSpecification<number>;
   readonly 'line-dasharray'?: PropertyValueSpecification<number[]>;
   readonly 'line-gradient'?: ExpressionSpecification;
-};
+}
 type Expression = ExpressionSpecification;
 type FillPaint = {
   readonly 'fill-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
@@ -97,10 +98,10 @@ type LinePaintStyle = {
   readonly 'line-opacity'?: DataDrivenPropertyValueSpecification<number>;
 };
 
-type FlowCollectionState = {
+interface FlowCollectionState {
   readonly collection: MapFlowFeatureCollection;
   readonly hasTariffImpact: boolean;
-};
+}
 
 const DEFAULT_FLOW_LAYER_PAINT: LinePaint = {
   'line-color': '#2563eb',
@@ -490,7 +491,7 @@ export class TradeMapComponent {
    */
   onMapLoad(): void {
     if (!this.ready()) {
-    this.store.dispatch(MapActions.mapLoaded());
+      this.store.dispatch(MapActions.mapLoaded());
     }
   }
 

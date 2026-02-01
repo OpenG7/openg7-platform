@@ -25,14 +25,14 @@ interface IssueSummary {
 
 type SingleSelectKind = 'status' | 'track' | 'difficulty';
 
-type GraphQLError = {
+interface GraphQLError {
   message: string;
-};
+}
 
-type GraphQLResponse<T> = {
+interface GraphQLResponse<T> {
   data?: T;
   errors?: GraphQLError[];
-};
+}
 
 const TOKEN = process.env.GITHUB_TOKEN;
 const ORG = process.env.GITHUB_ORG ?? 'OpenG7';

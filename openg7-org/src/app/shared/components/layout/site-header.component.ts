@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,18 +12,17 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { AuthConfigService } from '@app/core/auth/auth-config.service';
 import { AuthService } from '@app/core/auth/auth.service';
 import { FavoritesService } from '@app/core/favorites.service';
-import { AuthConfigService } from '@app/core/auth/auth-config.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 type LangCode = 'en' | 'fr';
 
-type SpotlightStaticItem = {
+interface SpotlightStaticItem {
   readonly id: string;
   readonly icon: string;
   readonly labelKey: string;
@@ -30,7 +30,7 @@ type SpotlightStaticItem = {
   readonly commands: string[];
   readonly queryParams?: Record<string, unknown>;
   readonly tags: readonly string[];
-};
+}
 
 const SPOTLIGHT_DATA: readonly SpotlightStaticItem[] = [
   {
@@ -279,8 +279,8 @@ export class SiteHeaderComponent {
     closeIfOutside('[data-og7="profile"]', () => this.isProfileOpen.set(false));
 
     if (this.isSearchOpen()) {
-      const isInsideSpotlight = !!target.closest('[data-og7="spotlight-modal"]');
-      const isSpotlightTrigger = !!target.closest('[data-og7="spotlight-trigger"]');
+      const isInsideSpotlight = Boolean(target.closest('[data-og7="spotlight-modal"]'));
+      const isSpotlightTrigger = Boolean(target.closest('[data-og7="spotlight-trigger"]'));
       if (!isInsideSpotlight && !isSpotlightTrigger) {
         this.toggleSearch(false);
       }

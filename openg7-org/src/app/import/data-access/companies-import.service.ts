@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
 import { HttpClientService } from '@app/core/http/http-client.service';
+import { Observable } from 'rxjs';
+
 import { Og7ImportedCompany } from './companies-import.models';
 
 export interface CompaniesImportResponse {

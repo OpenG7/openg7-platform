@@ -1,5 +1,5 @@
 import { EnvironmentProviders, inject, makeEnvironmentProviders } from '@angular/core';
-import { RuntimeConfigService } from './core/config/runtime-config.service';
+
 import {
   API_URL,
   API_WITH_CREDENTIALS,
@@ -11,6 +11,7 @@ import {
   NOTIFICATION_WEBHOOK_URL,
   ANALYTICS_ENDPOINT,
 } from './core/config/environment.tokens';
+import { RuntimeConfigService } from './core/config/runtime-config.service';
 
 export function appConfigProvider(): EnvironmentProviders {
   return makeEnvironmentProviders([

@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
 import { NgFor } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, inject } from '@angular/core';
 import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
 import { MODE_OPTIONS, SECTOR_OPTIONS } from '@app/core/models/opportunity';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { SectorCarouselComponent, Sector } from './sector-carousel.component';
 
 const SECTOR_CAROUSEL_OPTIONS: Sector[] = SECTOR_OPTIONS.map((option) => ({

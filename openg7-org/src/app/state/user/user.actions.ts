@@ -1,4 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
+
 import { UserProfile } from './user.selectors';
 
 export const UserActions = createActionGroup({

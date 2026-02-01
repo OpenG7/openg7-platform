@@ -3,9 +3,9 @@ import {
   syncExchangeToIndex,
 } from '../../../../services/search.service';
 
-type ExchangeEventResult = {
+interface ExchangeEventResult {
   id?: number | string;
-};
+}
 
 const ensureArray = <T>(value: T | T[] | null | undefined): T[] => {
   if (Array.isArray(value)) {

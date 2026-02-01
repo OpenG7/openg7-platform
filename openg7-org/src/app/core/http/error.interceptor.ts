@@ -1,8 +1,10 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { catchError, throwError } from 'rxjs';
+
 import { injectNotificationStore } from '../observability/notification.store';
+
 import { SUPPRESS_ERROR_TOAST } from './error.interceptor.tokens';
 
 /**

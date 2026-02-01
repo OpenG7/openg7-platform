@@ -1,15 +1,16 @@
 import type { Context } from 'koa';
+
 import { performSearch } from '../../../services/search.service';
 
 type QueryType = 'companies' | 'exchanges' | 'all';
 
-type SearchQuery = {
+interface SearchQuery {
   q?: string;
   query?: string;
   locale?: string;
   limit?: string | number;
   type?: string;
-};
+}
 
 const parseLimit = (value: unknown): number | undefined => {
   const parsed = Number(value);

@@ -1,16 +1,18 @@
-import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { AuthService } from './auth.service';
-import { TokenStorageService } from '../security/token-storage.service';
-import { CryptoService } from '../security/crypto.service';
-import { HttpClientService } from '../http/http-client.service';
-import { API_URL } from '../config/environment.tokens';
-import { OidcService } from './oidc.service';
-import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
-import { TranslateService } from '@ngx-translate/core';
-import { RbacFacadeService } from '../security/rbac.facade';
-import { STRAPI_ROUTES, strapiUserById } from '../api/strapi.routes';
+import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+
+import { STRAPI_ROUTES, strapiUserById } from '../api/strapi.routes';
+import { API_URL } from '../config/environment.tokens';
+import { HttpClientService } from '../http/http-client.service';
+import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
+import { CryptoService } from '../security/crypto.service';
+import { RbacFacadeService } from '../security/rbac.facade';
+import { TokenStorageService } from '../security/token-storage.service';
+
+import { AuthService } from './auth.service';
+import { OidcService } from './oidc.service';
 
 function flushAsync(): Promise<void> {
   return new Promise((resolve) => queueMicrotask(resolve));

@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { SectorCarouselComponent } from './sector-carousel.component';
 import { FiltersService } from '@app/core/filters.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+import { SectorCarouselComponent } from './sector-carousel.component';
 
 describe('SectorCarouselComponent', () => {
   beforeEach(() => {

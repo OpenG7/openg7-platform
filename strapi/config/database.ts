@@ -1,15 +1,15 @@
 import path from 'path';
 
-type Env = {
+interface Env {
   (key: string, defaultValue?: any): any;
   int(key: string, defaultValue?: number): number;
   bool(key: string, defaultValue?: boolean): boolean;
   json<T = unknown>(key: string, defaultValue?: T): T;
-};
+}
 
-type ConfigContext = {
+interface ConfigContext {
   env: Env;
-};
+}
 
 function buildPoolConfig(env: Env) {
   return {

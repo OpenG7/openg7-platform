@@ -1,20 +1,23 @@
-import { Component, Type, inject, signal } from '@angular/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Component, Type, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { Og7OnboardingFlowComponent } from '@app/shared/components/layout/og7-onboarding-flow.component';
 import { SiteHeaderComponent } from '@app/shared/components/layout/site-header.component';
 import { UnderConstructionBannerComponent } from '@app/shared/components/layout/under-construction-banner.component';
-import { Og7OnboardingFlowComponent } from '@app/shared/components/layout/og7-onboarding-flow.component';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
-import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.component';
 import { CtrlKDirective } from '@app/shared/directives/ctrl-k.directive';
-import { GlobalShortcutsService } from './core/shortcuts/global-shortcuts.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { map } from 'rxjs';
+
 import { FEATURE_FLAGS } from './core/config/environment.tokens';
+import { GlobalShortcutsService } from './core/shortcuts/global-shortcuts.service';
+import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.component';
+
+
 
 @Component({
   selector: 'og7-shell-root',

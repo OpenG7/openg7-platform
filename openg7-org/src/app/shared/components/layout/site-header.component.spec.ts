@@ -1,19 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { Subject } from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { By } from '@angular/platform-browser';
+import { routes as appRoutes } from '@app/app.routes';
+import { AuthConfigService } from '@app/core/auth/auth-config.service';
+import { AuthService } from '@app/core/auth/auth.service';
+import { AuthMode } from '@app/core/config/environment.tokens';
+import { FavoritesService } from '@app/core/favorites.service';
+import { NotificationStore } from '@app/core/observability/notification.store';
+import { RbacFacadeService } from '@app/core/security/rbac.facade';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 
 import { SiteHeaderComponent } from './site-header.component';
-import { AuthService } from '@app/core/auth/auth.service';
-import { FavoritesService } from '@app/core/favorites.service';
-import { AuthConfigService } from '@app/core/auth/auth-config.service';
-import { AuthMode } from '@app/core/config/environment.tokens';
-import { routes as appRoutes } from '@app/app.routes';
-import { RbacFacadeService } from '@app/core/security/rbac.facade';
-import { NotificationStore } from '@app/core/observability/notification.store';
 
 class MockTranslateService {
   currentLang = 'en';

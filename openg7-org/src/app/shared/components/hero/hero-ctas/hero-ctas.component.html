@@ -34,3 +34,15 @@
 >
   {{ cta.label | translate }}
 </a>
+<a
+  *ngIf="quaternaryCta as cta"
+  class="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-base font-semibold transition-colors bg-white/10 text-white ring-1 ring-inset ring-white/15 hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+  [routerLink]="cta.routerLink ?? null"
+  [attr.href]="cta.routerLink ? null : cta.href ?? null"
+  [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
+  (click)="onCtaClick($event, cta)"
+  [attr.data-og7-id]="cta.trackingType"
+  data-og7="action"
+>
+  {{ cta.label | translate }}
+</a>

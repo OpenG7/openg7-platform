@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { featureFlagGuard } from './feature-flag.guard';
 import { FEATURE_FLAGS } from '../config/environment.tokens';
+
+import { featureFlagGuard } from './feature-flag.guard';
 
 describe('featureFlagGuard', () => {
   beforeEach(() => {

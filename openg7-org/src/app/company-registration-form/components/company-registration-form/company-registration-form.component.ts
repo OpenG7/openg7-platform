@@ -14,10 +14,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+
 import { CompanyProfile, TradeScope } from '../../models/registration.model';
 import { isoCountryValidator } from '../../validators/country.validator';
-import { urlValidator } from '../../validators/url.validator';
 import { caPhoneValidator } from '../../validators/phone.validator';
+import { urlValidator } from '../../validators/url.validator';
 
 const CANADIAN_PROVINCES: readonly string[] = [
   'AB',

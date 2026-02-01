@@ -11,10 +11,11 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
-import { FeedRealtimeService } from '../services/feed-realtime.service';
-import { FeedComposerDraft } from '../models/feed.models';
 import { needTypeSig, selectedProvinceSig, activeSectorsSig } from '@app/state/shared-feed-signals';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { FeedComposerDraft } from '../models/feed.models';
+import { FeedRealtimeService } from '../services/feed-realtime.service';
 
 @Component({
   selector: 'og7-feed-composer',

@@ -3,7 +3,7 @@
   role="group"
   [attr.aria-labelledby]="tradeModeLabelId"
   [attr.aria-describedby]="groupDescriptionId"
-  [attr.data-og7-id]="'filters-group'"
+  data-og7-id="filters-group"
 >
   <div class="space-y-2">
     <label
@@ -38,6 +38,7 @@
       {{ 'home.filters.sectorDescription' | translate }}
     </p>
     <og7-filters-sector-carousel
+      data-og7="sector-carousel"
       data-og7-id="sector-carousel"
       [sectors]="sectors"
       [ariaLabelledBy]="sectorLabelId"

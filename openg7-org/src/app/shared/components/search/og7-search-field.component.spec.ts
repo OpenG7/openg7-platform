@@ -1,9 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Og7SearchFieldComponent } from './og7-search-field.component';
 import { By } from '@angular/platform-browser';
 import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+
+import { Og7SearchFieldComponent } from './og7-search-field.component';
 
 @Component({
   standalone: true,

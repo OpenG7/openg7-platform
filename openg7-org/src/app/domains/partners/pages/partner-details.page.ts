@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { distinctUntilChanged, map } from 'rxjs';
 import { createPartnerSelection } from '@app/core/models/partner-selection';
 import { PartnerDetailsPanelComponent } from '@app/shared/components/partner/partner-details-panel.component';
+import { distinctUntilChanged, map } from 'rxjs';
 
 type PartnerRole = 'buyer' | 'supplier';
 

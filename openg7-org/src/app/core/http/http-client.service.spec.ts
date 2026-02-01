@@ -1,8 +1,11 @@
-import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HttpClientService } from './http-client.service';
+import { TestBed } from '@angular/core/testing';
+
+
 import { API_URL, API_WITH_CREDENTIALS } from '../config/environment.tokens';
 import { RuntimeConfigService } from '../config/runtime-config.service';
+
+import { HttpClientService } from './http-client.service';
 
 describe('HttpClientService', () => {
   let service: HttpClientService;

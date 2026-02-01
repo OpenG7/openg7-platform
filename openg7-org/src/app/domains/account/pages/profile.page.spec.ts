@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
-import { ProfilePage } from './profile.page';
 import { AuthService } from '@app/core/auth/auth.service';
+import { AuthUser } from '@app/core/auth/auth.types';
 import { NotificationStore, NotificationStoreApi } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthUser } from '@app/core/auth/auth.types';
+import { of, throwError } from 'rxjs';
+
+import { ProfilePage } from './profile.page';
 
 class TranslateStub {
   instant(key: string): string {

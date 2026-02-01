@@ -364,7 +364,7 @@ export class LinkupStore {
   });
 
   readonly hasActiveFilters = computed(() => {
-    return this.filterStatus() !== 'all' || this.filterMode() !== 'all' || !!this.searchTerm().trim();
+    return this.filterStatus() !== 'all' || this.filterMode() !== 'all' || Boolean(this.searchTerm().trim());
   });
 
   setStatusFilter(status: LinkupStatus | 'all'): void {

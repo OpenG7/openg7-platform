@@ -25,7 +25,7 @@ type SectorLike =
       slug?: string | null;
     };
 
-type CompanyEntity = {
+interface CompanyEntity {
   id?: PrimitiveId;
   slug?: string | null;
   name?: string | null;
@@ -41,30 +41,30 @@ type CompanyEntity = {
   updatedAt?: string | null;
   sector?: SectorLike;
   province?: ProvinceLike;
-};
+}
 
-type ExchangeEntity = {
+interface ExchangeEntity {
   id?: PrimitiveId;
   unit?: string | null;
   value?: number | string | null;
   sourceProvince?: ProvinceLike;
   targetProvince?: ProvinceLike;
-};
+}
 
-type ProvinceSummary = {
+interface ProvinceSummary {
   id: PrimitiveId | null;
   name: string | null;
   slug: string | null;
   code: string | null;
-};
+}
 
-type SectorSummary = {
+interface SectorSummary {
   id: PrimitiveId | null;
   name: string | null;
   slug: string | null;
-};
+}
 
-type CompanyDocument = {
+interface CompanyDocument {
   id: PrimitiveId;
   slug: string | null;
   name: string | null;
@@ -81,26 +81,26 @@ type CompanyDocument = {
   province: ProvinceSummary | null;
   sector: SectorSummary | null;
   searchText: string;
-};
+}
 
-type ExchangeDocument = {
+interface ExchangeDocument {
   id: PrimitiveId;
   unit: string | null;
   value: number | null;
   sourceProvince: ProvinceSummary | null;
   targetProvince: ProvinceSummary | null;
   searchText: string;
-};
+}
 
 type HighlightMap = Record<string, string>;
 
-type SearchResponse<T> = {
+interface SearchResponse<T> {
   hits: T[];
   took: number;
   total: number;
-};
+}
 
-type SearchResultPayload = {
+interface SearchResultPayload {
   query: string;
   took: number;
   total: number;
@@ -114,43 +114,43 @@ type SearchResultPayload = {
       exchanges: string;
     };
   };
-};
+}
 
-type SearchOptions = {
+interface SearchOptions {
   limit?: number;
   locale?: string | null;
   type?: 'companies' | 'exchanges' | 'all';
-};
+}
 
-type RequestOptions<T> = {
+interface RequestOptions<T> {
   body?: unknown;
   parseJson?: boolean;
   query?: Record<string, string | number | boolean | undefined>;
-};
+}
 
 type MeiliSearchHit<T> = T & {
   _formatted?: Record<string, string> | null;
 };
 
-type MeiliSearchResponse<T> = {
+interface MeiliSearchResponse<T> {
   hits: Array<MeiliSearchHit<T>>;
   estimatedTotalHits?: number;
   processingTimeMs?: number;
-};
+}
 
-type OpenSearchHit<T> = {
+interface OpenSearchHit<T> {
   _id: string;
   _source: T;
   highlight?: Record<string, string[]>;
-};
+}
 
-type OpenSearchResponse<T> = {
+interface OpenSearchResponse<T> {
   took?: number;
   hits?: {
     total?: { value?: number } | number;
     hits?: Array<OpenSearchHit<T>>;
   };
-};
+}
 
 declare const strapi: Core.Strapi;
 
@@ -225,7 +225,7 @@ const logError = (message: string, meta?: Record<string, unknown>) => {
     strapi.log.error(message, meta);
     return;
   }
-  // eslint-disable-next-line no-console
+   
   console.error(message, meta ?? {});
 };
 

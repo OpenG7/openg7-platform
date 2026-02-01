@@ -1,6 +1,7 @@
-import { feedReducer } from './feed.reducer';
-import { FeedActions } from './feed.actions';
 import { FeedPost, FeedRealtimeEnvelope } from '../../domains/feed/feature/models/feed.models';
+
+import { FeedActions } from './feed.actions';
+import { feedReducer } from './feed.reducer';
 
 describe('feedReducer', () => {
   const createPost = (

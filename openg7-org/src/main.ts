@@ -1,9 +1,10 @@
 import { registerLocaleData } from '@angular/common';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
 import localeFr from '@angular/common/locales/fr';
 import { isDevMode } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
 
 interface RuntimeConfigWindow extends Window {
   __OG7_CONFIG__?: unknown;

@@ -1,12 +1,12 @@
 import { hasContentType, upsertByUID } from '../utils/seed-helpers';
 
-type FeatureFlagSeed = {
+interface FeatureFlagSeed {
   slug: string;
   name: { en: string; fr: string };
   description: { en: string; fr: string };
   enabled: boolean;
   audience: 'public' | 'authenticated' | 'admin';
-};
+}
 
 const flags: FeatureFlagSeed[] = [
   {

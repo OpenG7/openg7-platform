@@ -1,13 +1,14 @@
-import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import * as stripeJs from '@stripe/stripe-js';
 import { firstValueFrom } from 'rxjs';
 
-import { BillingService } from './billing.service';
-import { HttpClientService } from '../http/http-client.service';
-import { API_URL } from '../config/environment.tokens';
-import * as stripeJs from '@stripe/stripe-js';
 import { StrapiClient } from '../api/strapi-client';
+import { API_URL } from '../config/environment.tokens';
 import { RuntimeConfigService } from '../config/runtime-config.service';
+import { HttpClientService } from '../http/http-client.service';
+
+import { BillingService } from './billing.service';
 
 class RuntimeConfigStub {
   apiUrl(): string {

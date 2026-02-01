@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+
 import {
   ImportationKpiTile,
   ImportationOverviewViewModel,
@@ -62,7 +63,7 @@ export class ImportationOverviewHeaderComponent {
     const codes = value
       .split(',')
       .map((code) => code.trim())
-      .filter((code) => !!code);
+      .filter((code) => Boolean(code));
     this.originCodesChange.emit(codes);
   }
 

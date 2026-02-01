@@ -1,7 +1,7 @@
-import { Injectable, Signal, signal, inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { TransferState, makeStateKey } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, Signal, signal, inject, PLATFORM_ID } from '@angular/core';
+import { TransferState, makeStateKey } from '@angular/platform-browser';
 
 export interface Og7HeaderPayload {
   announcement: {

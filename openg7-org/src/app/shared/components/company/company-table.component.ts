@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { CompanyDetailComponent } from './company-detail.component';
 import { CompanyRecord, CompanyService, CompanyStatus } from '@app/core/services/company.service';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { CompanyDetailComponent } from './company-detail.component';
 
 const STATUS_LABELS: Record<CompanyStatus, string> = {
   pending: 'Pending',

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FiltersService } from '@app/core/filters.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 import { HomeFiltersSectionComponent } from './home-filters-section.component';
 
 describe('HomeFiltersSectionComponent', () => {

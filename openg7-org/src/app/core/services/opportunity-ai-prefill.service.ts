@@ -1,7 +1,10 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { OpportunityService } from './opportunity.service';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+
 import { Mode, OpportunityMatchQuery, ProvinceCode, SectorType } from '../models/opportunity';
+
+import { OpportunityService } from './opportunity.service';
+
 
 interface AiPreferenceSnapshot {
   readonly sectors?: readonly string[] | null;

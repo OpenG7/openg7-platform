@@ -1,9 +1,15 @@
-## Résumé
-Décrivez brièvement le changement (portée, motivation, impact utilisateur ou technique).
+﻿## Summary
+Describe the change (scope, motivation, user or technical impact).
 
-## Détails / décisions
-- Points de conception ou arbitrages notables
-- Impacts sur la documentation ou la configuration
+## Details / decisions
+- Design choices or tradeoffs
+- Documentation or configuration impact
+
+## Anti-duplication checklist
+- [ ] I reviewed docs/ecosystem/ECOSYSTEM-MAP.md
+- [ ] I confirmed whether this capability already has a canonical repo
+- [ ] If reusable by 2+ repos, I proposed a shared @openg7/* package instead of copy/paste
+- [ ] I did not introduce canonical domain logic into openg7-platform
 
 ## Tests
 - [ ] `yarn lint`
@@ -12,9 +18,9 @@ Décrivez brièvement le changement (portée, motivation, impact utilisateur ou 
 - [ ] `yarn codegen && yarn test`
 - [ ] `yarn predeploy:cms-cache`
 - [ ] `yarn prebuild:web`
-- [ ] Autres (préciser) :
+- [ ] Other (specify):
 
-## Revue
-- [ ] Documentation mise à jour (README, docs, ou commentaires)
-- [ ] Capture d'écran jointe si UI
-- [ ] Issue liée référencée
+## Review
+- [ ] Docs updated (README, docs, or comments)
+- [ ] Screenshot attached if UI
+- [ ] Linked issue referenced

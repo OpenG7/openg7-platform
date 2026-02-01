@@ -12,9 +12,9 @@ function normalizeContentTypeUID(uid: UID): StrapiUID.ContentType {
 
 type Filters = Record<string, any>;
 
-type UpsertOptions = {
+interface UpsertOptions {
   unique?: Filters;
-};
+}
 
 export type SeedFailureStrategy = 'continue-on-error' | 'fail-fast';
 

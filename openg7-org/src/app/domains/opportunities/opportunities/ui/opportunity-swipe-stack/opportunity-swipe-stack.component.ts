@@ -1,34 +1,34 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 
-type OpportunitySwipeStackActorVm = {
+interface OpportunitySwipeStackActorVm {
   readonly name: string;
   readonly provinceLabelKey: string;
   readonly sectorLabelKey: string;
-};
+}
 
-type OpportunitySwipeStackCardVm = {
+interface OpportunitySwipeStackCardVm {
   readonly id: string;
   readonly title: string;
   readonly score: number;
   readonly buyer: OpportunitySwipeStackActorVm;
   readonly supplier: OpportunitySwipeStackActorVm;
   readonly distanceLabel: string | null;
-};
+}
 
-export type OpportunitySwipeStackVm = {
+export interface OpportunitySwipeStackVm {
   readonly id: string;
   readonly title: string;
   readonly subtitle?: string;
   readonly cards: ReadonlyArray<OpportunitySwipeStackCardVm>;
-};
+}
 
 type SwipeDirection = 'interested' | 'dismissed' | 'open';
 
-type SwipeActionState = {
+interface SwipeActionState {
   readonly cardId: string;
   readonly direction: SwipeDirection;
-};
+}
 
 @Component({
   selector: 'og7-opportunity-swipe-stack',

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -15,24 +15,26 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngrx/store';
-import { Og7CtaRailComponent } from '@app/shared/components/cta/og7-cta-rail.component';
-import { Og7ScoreboardPipelineComponent } from '@app/shared/components/pipeline/og7-scoreboard-pipeline.component';
-import { Og7IncotermsRibbonComponent } from '@app/shared/components/logistics/og7-incoterms-ribbon.component';
-import { Og7FinancingBannerComponent } from '@app/shared/components/financing/og7-financing-banner.component';
-import { Og7ComplianceChecklistComponent } from '@app/shared/components/connection/og7-compliance-checklist.component';
-import { Og7MeetingSchedulerComponent } from '@app/shared/components/connection/og7-meeting-scheduler.component';
-import { OpportunityMatch, normalizeConfidencePercent } from '@app/core/models/opportunity';
-import { FinancingBanner, PartnerProfile } from '@app/core/models/partner-profile';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ConnectionAttachment,
   ConnectionDraft,
   IncotermCode,
   TransportMode,
 } from '@app/core/models/connection';
-import { AppState } from '@app/state/app.state';
+import { OpportunityMatch, normalizeConfidencePercent } from '@app/core/models/opportunity';
+import { FinancingBanner, PartnerProfile } from '@app/core/models/partner-profile';
+import { AnalyticsService } from '@app/core/observability/analytics.service';
+import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { PartnerProfileService } from '@app/core/services/partner-profile.service';
+import { ShareResult, ShareService } from '@app/core/services/share.service';
+import { IntroStepperDefaults, Og7IntroStepId, Og7IntroStepperComponent } from '@app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component';
+import { Og7ComplianceChecklistComponent } from '@app/shared/components/connection/og7-compliance-checklist.component';
+import { Og7MeetingSchedulerComponent } from '@app/shared/components/connection/og7-meeting-scheduler.component';
+import { Og7CtaRailComponent } from '@app/shared/components/cta/og7-cta-rail.component';
+import { Og7FinancingBannerComponent } from '@app/shared/components/financing/og7-financing-banner.component';
+import { Og7IncotermsRibbonComponent } from '@app/shared/components/logistics/og7-incoterms-ribbon.component';
+import { Og7ScoreboardPipelineComponent } from '@app/shared/components/pipeline/og7-scoreboard-pipeline.component';
 import {
   selectConnectionCreating,
   selectPipelineSteps,
@@ -44,14 +46,11 @@ import {
   selectAttachments,
   selectMeetingSlots,
 } from '@app/state';
+import { AppState } from '@app/state/app.state';
 import { ConnectionsActions } from '@app/store/connections/connections.actions';
-import { AnalyticsService } from '@app/core/observability/analytics.service';
-import { injectNotificationStore } from '@app/core/observability/notification.store';
-import { PartnerProfileService } from '@app/core/services/partner-profile.service';
-import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Store } from '@ngrx/store';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, catchError, finalize, of, switchMap, tap } from 'rxjs';
-import { ShareService, ShareResult } from '@app/core/services/share.service';
-import { IntroStepperDefaults, Og7IntroStepId, Og7IntroStepperComponent } from '@app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component';
 
 @Component({
   selector: 'og7-intro-billboard-content',
@@ -176,7 +175,7 @@ export class Og7IntroBillboardContentComponent implements AfterViewInit {
       return true;
     }
     const source = this.selectedPartnerId();
-    return !!source && !!source();
+    return source ? Boolean(source()) : false;
   });
 
   public readonly scorePercent = computed(() => {
@@ -652,7 +651,7 @@ export class Og7IntroBillboardContentComponent implements AfterViewInit {
       return false;
     }
     const steps = this.pipelineSteps();
-    return steps.some((step) => step.status !== 'upcoming' || !!step.timestamp);
+    return steps.some((step) => step.status !== 'upcoming' || Boolean(step.timestamp));
   }
 
   public hasIncotermsData(): boolean {
@@ -661,7 +660,7 @@ export class Og7IntroBillboardContentComponent implements AfterViewInit {
     }
     const stepper = this.introStepper;
     if (stepper) {
-      return stepper.selectedTransports().length > 0 || !!stepper.selectedIncoterm();
+      return stepper.selectedTransports().length > 0 || Boolean(stepper.selectedIncoterm());
     }
     const defaults = this.pendingStepperState ?? this.baselineStepperState;
     if (!defaults) {
@@ -671,15 +670,15 @@ export class Og7IntroBillboardContentComponent implements AfterViewInit {
   }
 
   public hasFinancingData(): boolean {
-    return !!this.matchSelected() && !!this.financingBanner();
+    return Boolean(this.matchSelected()) && Boolean(this.financingBanner());
   }
 
   public hasComplianceData(): boolean {
-    return !!this.matchSelected() && this.attachmentsSignal().length > 0;
+    return Boolean(this.matchSelected()) && this.attachmentsSignal().length > 0;
   }
 
   public hasSchedulerData(): boolean {
-    return !!this.matchSelected() && this.meetingSlotsSignal().length > 0;
+    return Boolean(this.matchSelected()) && this.meetingSlotsSignal().length > 0;
   }
 
   public hasUnsavedChanges(): boolean {
@@ -857,7 +856,7 @@ export class Og7IntroBillboardContentComponent implements AfterViewInit {
     const match = this.matchSelected();
     const buyer = this.buyerProfile();
     const supplier = this.supplierProfile();
-    return !!match && !!buyer && !!supplier && stepper.readyToSend();
+    return Boolean(match) && Boolean(buyer) && Boolean(supplier) && stepper.readyToSend();
   }
 
   private buildPrefillIntro(match: OpportunityMatch, locale: 'fr' | 'en'): string {

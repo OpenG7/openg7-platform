@@ -1,6 +1,6 @@
 import { ensureLocale, findId, upsertByUID } from '../utils/seed-helpers';
 
-type CompanySeed = {
+interface CompanySeed {
   slug: string;
   name: { en: string; fr: string };
   description: { en: string; fr: string };
@@ -14,7 +14,7 @@ type CompanySeed = {
   trustScore: number;
   verificationSources: any[];
   trustHistory: any[];
-};
+}
 
 const companySeeds: CompanySeed[] = [
   {

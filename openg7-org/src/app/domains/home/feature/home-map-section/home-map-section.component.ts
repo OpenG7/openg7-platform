@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Og7MapFrameComponent } from '@app/shared/components/map-frame/og7-map-frame.component';
+import { TradeMapComponent } from '@app/shared/components/map/trade-map.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-home-map-section',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, Og7MapFrameComponent, TradeMapComponent],
   templateUrl: './home-map-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

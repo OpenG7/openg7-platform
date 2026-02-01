@@ -1,41 +1,38 @@
-import {
-  ApplicationConfig,
-  importProvidersFrom,
-  provideZoneChangeDetection,
-  TransferState,
-  inject,
-} from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { DialogModule } from '@angular/cdk/dialog';
 import { HttpBackend, provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
-  provideTranslateService,
-  TranslateLoader,
-  TranslateModule,
-} from '@ngx-translate/core';
+  ApplicationConfig,
+  PLATFORM_ID,
+  TransferState,
+  importProvidersFrom,
+  inject,
+  provideZoneChangeDetection,
+} from '@angular/core';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { provideEffects } from '@ngrx/effects';
+import { provideStore } from '@ngrx/store';
+import { TranslateLoader, TranslateModule, provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader, TRANSLATE_HTTP_LOADER_CONFIG } from '@ngx-translate/http-loader';
-import { AppTranslateLoader } from './core/i18n/translate-loader';
+
+import { appConfigProvider } from './app.config.provider';
+import { routes } from './app.routes';
+import { I18N_PREFIX } from './core/config/environment.tokens';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { csrfInterceptor } from './core/http/csrf.interceptor';
 import { errorInterceptor } from './core/http/error.interceptor';
-import { provideStore } from '@ngrx/store';
-import { provideEffects } from '@ngrx/effects';
+import { AppTranslateLoader } from './core/i18n/translate-loader';
 import { authReducer } from './state/auth/auth.reducer';
-import { userReducer } from './state/user/user.reducer';
 import { catalogReducer } from './state/catalog/catalog.reducer';
 import { mapReducer } from './state/map/map.reducer';
-import { appConfigProvider } from './app.config.provider';
-import { PLATFORM_ID } from '@angular/core';
-import { connectionsReducer } from './store/connections/connections.reducer';
+import { userReducer } from './state/user/user.reducer';
 import { ConnectionsEffects } from './store/connections/connections.effects';
+import { connectionsReducer } from './store/connections/connections.reducer';
 import { feedReducer } from './store/feed/feed.reducer';
-import { provideTheme } from './theme/provide-theme';
-import { DialogModule } from '@angular/cdk/dialog';
-import { statisticsReducer } from './store/statistics/statistics.reducer';
 import { StatisticsEffects } from './store/statistics/statistics.effects';
-import { I18N_PREFIX } from './core/config/environment.tokens';
+import { statisticsReducer } from './store/statistics/statistics.reducer';
+import { provideTheme } from './theme/provide-theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import { promises as fs } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
 import ts from 'typescript';
 
-const repoRoot = path.resolve(new URL('.', import.meta.url).pathname, '..');
+const repoRoot = path.resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const checklistPath = path.join(repoRoot, 'openg7-org', 'CHECKLIST.md');
 const appConfigPath = path.join(repoRoot, 'openg7-org', 'src', 'app', 'app.config.ts');
 const appRoutesPath = path.join(repoRoot, 'openg7-org', 'src', 'app', 'app.routes.ts');

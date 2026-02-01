@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { injectNotificationStore } from '@app/core/observability/notification.store';
 import {
   CompanyRecord,
   CompanyService,
@@ -12,7 +13,6 @@ import {
   CompanyVerificationSourceType,
   CompanyVerificationStatus,
 } from '@app/core/services/company.service';
-import { injectNotificationStore } from '@app/core/observability/notification.store';
 
 const VERIFICATION_STATUS_LABELS: Record<CompanyVerificationStatus, string> = {
   unverified: 'Unverified',

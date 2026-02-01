@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { firstValueFrom, from, map } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { firstValueFrom, from, map } from 'rxjs';
 
-import { HttpClientService } from '../http/http-client.service';
 import { StrapiClient } from '../api/strapi-client';
+import { HttpClientService } from '../http/http-client.service';
 
 interface StripeCheckoutResponse {
   provider: 'stripe';

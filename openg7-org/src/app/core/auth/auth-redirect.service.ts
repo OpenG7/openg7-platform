@@ -1,5 +1,5 @@
-import { Inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 
 const STORAGE_KEY = 'og7:auth:redirect';
 const DEFAULT_REDIRECT = '/profile';

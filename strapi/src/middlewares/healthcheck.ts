@@ -1,13 +1,13 @@
 import type { Context, Next } from 'koa';
 
-type HealthcheckConfig = {
+interface HealthcheckConfig {
   checkDatabase?: boolean;
   databaseTimeoutMs?: number;
-};
+}
 
 type HealthStatus = 'ok' | 'degraded';
 
-type HealthResponse = {
+interface HealthResponse {
   status: HealthStatus;
   timestamp: string;
   uptime: number;
@@ -18,7 +18,7 @@ type HealthResponse = {
       error?: string;
     };
   };
-};
+}
 
 const DEFAULT_TIMEOUT_MS = 1_000;
 

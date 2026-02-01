@@ -9,6 +9,7 @@ import {
   output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+
 import { FeedPost } from '../models/feed.models';
 import { Og7FeedRepliesComponent } from '../og7-feed-replies/og7-feed-replies.component';
 import { JsonDateAgoPipe } from '../pipes/json-date-ago.pipe';
@@ -33,7 +34,7 @@ export class Og7FeedPostDrawerComponent {
 
   readonly closed = output<void>();
 
-  protected readonly visible = computed(() => this.open() && !!this.post());
+  protected readonly visible = computed(() => this.open() && Boolean(this.post()));
 
   constructor() {
     effect(() => {

@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, ViewChild, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ViewChild, computed, signal } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Og7SearchFieldComponent } from '@app/shared/components/search/og7-search-field.component';
+import { ConnectionStage, IncotermCode, TransportMode } from '@app/core/models/connection';
+import { FinancingBanner } from '@app/core/models/partner-profile';
+import { createPartnerSelection } from '@app/core/models/partner-selection';
 import {
   Og7IntroStepId,
   Og7IntroStepperComponent,
 } from '@app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component';
-import { PipelineStepStatus } from '@app/store/connections/connections.selectors';
-import { FinancingBanner } from '@app/core/models/partner-profile';
-import { ConnectionStage, IncotermCode, TransportMode } from '@app/core/models/connection';
-import { createPartnerSelection } from '@app/core/models/partner-selection';
 import {
   OpportunityTimelineComponent,
   OpportunityTimelineVm,
 } from '@app/domains/opportunities/opportunities/ui/opportunity-timeline/opportunity-timeline.component';
+import { Og7SearchFieldComponent } from '@app/shared/components/search/og7-search-field.component';
+import { PipelineStepStatus } from '@app/store/connections/connections.selectors';
 
 const DEMO_OPTIONS = [
   {
@@ -35,9 +35,9 @@ const DEMO_OPTIONS = [
 
 type DemoOptionId = (typeof DEMO_OPTIONS)[number]['id'];
 
-type MockCompany = {
+interface MockCompany {
   readonly name: string;
-};
+}
 
 @Component({
   standalone: true,
