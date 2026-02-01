@@ -1984,6 +1984,15 @@
       "author": "Arnold Schwarzenegger"
     },
     "imageAlt": "Illustration de la collaboration entre entreprises canadiennes",
+    "search": {
+      "label": "Rechercher des données d’échange",
+      "placeholder": "Rechercher des secteurs ou des partenaires"
+    },
+    "stats": {
+      "listedInputs": "Intrants répertoriés",
+      "activeRequests": "Demandes actives",
+      "transportCapacity": "Capacité de transport"
+    },
     "actions": {
       "viewSectors": "Voir les secteurs",
       "proMode": "Mode pro",
