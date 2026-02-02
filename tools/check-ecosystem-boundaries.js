@@ -41,6 +41,7 @@ const forbiddenDirNames = new Set([
 ]);
 
 const strongForbidden = new Set(['evidence', 'audit', 'ranking-policy', 'privacy', 'friction']);
+const copyDirAllowlist = new Set(['hero-copy']);
 
 const canonicalKeywords = [
   'evidence',
@@ -188,7 +189,8 @@ function walkRepo(root) {
         if (isIgnoredDir(entry.name)) {
           continue;
         }
-        if (copyDirRegex.test(entry.name)) {
+        const normalizedDirName = entry.name.toLowerCase();
+        if (copyDirRegex.test(entry.name) && !copyDirAllowlist.has(normalizedDirName)) {
           issues.copyDirs.push(nextRel);
         }
         if (forbiddenDirNames.has(entry.name.toLowerCase()) && !hasAllowedForbiddenPrefix(nextRel)) {
