@@ -6018,6 +6018,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@omnedia/ngx-galaxy@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@omnedia/ngx-galaxy@npm:4.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ^21.0.0
+    "@angular/core": ^21.0.0
+    ogl: ^1.0.11
+  checksum: 10c0/737b847c1c3f22bd34608ec16ca7cdba3d8b24b1ae26df3dbc67e776793a706812c24c9c664e67b2b183e0dd078c8010b55cac0f434f28498e2c96e7e351287f
+  languageName: node
+  linkType: hard
+
 "@omnedia/ngx-three-globe@npm:^4.0.1":
   version: 4.0.1
   resolution: "@omnedia/ngx-three-globe@npm:4.0.1"
@@ -6105,6 +6118,7 @@ __metadata:
     "@ngrx/store": "npm:^21.0.0"
     "@ngx-translate/core": "npm:^17.0.0"
     "@ngx-translate/http-loader": "npm:^17.0.0"
+    "@omnedia/ngx-galaxy": "npm:^4.0.1"
     "@omnedia/ngx-three-globe": "npm:^4.0.1"
     "@openg7/contracts": "workspace:*"
     "@playwright/test": "npm:^1.55.0"
@@ -6127,6 +6141,7 @@ __metadata:
     karma-jasmine: "npm:~5.1.0"
     karma-jasmine-html-reporter: "npm:~2.1.0"
     maplibre-gl: "npm:^5.17.0"
+    ogl: "npm:^1.0.11"
     postcss: "npm:^8.5.6"
     prom-client: "npm:^15.1.3"
     qrcode: "npm:^1.5.4"
@@ -20840,6 +20855,13 @@ __metadata:
   version: 1.1.2
   resolution: "obuf@npm:1.1.2"
   checksum: 10c0/520aaac7ea701618eacf000fc96ae458e20e13b0569845800fc582f81b386731ab22d55354b4915d58171db00e79cfcd09c1638c02f89577ef092b38c65b7d81
+  languageName: node
+  linkType: hard
+
+"ogl@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "ogl@npm:1.0.11"
+  checksum: 10c0/93cf2195da1c06a190c30cb8664231dd2d5fb06c5120d517754e11a22ab37fcb001361f9d2163dbac9f754a2aa2beb59ba82df37f972d6a674d6ebf9a2a089b8
   languageName: node
   linkType: hard
 

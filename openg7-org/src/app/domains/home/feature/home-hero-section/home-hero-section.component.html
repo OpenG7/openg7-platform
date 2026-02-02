@@ -1,26 +1,42 @@
 <section class="relative isolate overflow-hidden bg-slate-950">
-  <og7-hero-section
-    class="relative z-10"
-    data-og7="hero"
-    data-og7-id="section"
-    aria-labelledby="home-hero-heading"
-    [stats]="stats()"
-  ></og7-hero-section>
-  <div
-    class="pointer-events-none absolute top-[4%] right-[-10vw] z-0 hidden h-[105%] w-[62vw] items-center justify-end lg:flex"
-    aria-hidden="true"
+  <om-galaxy
+    class="block w-full"
+    [focal]="[0.52, 0.38]"
+    [density]="1.15"
+    [hueShift]="200"
+    [starSpeed]="0.45"
+    [rotationSpeed]="0.06"
+    [glowIntensity]="0.35"
+    [twinkleIntensity]="0.35"
+    [saturation]="0.2"
+    [mouseInteraction]="true"
+    [mouseRepulsion]="true"
+    [repulsionStrength]="1.4"
+    [transparent]="true"
   >
-    <om-three-globe
-      class="ml-auto"
-      [globeSize]="'1200px'"
-      [globeConfig]="{
-        globeColor: '#062056',
-        atmosphereColor: '#ffffff',
-        autoRotate: true,
-        autoRotateSpeed: 1
-      }"
-      [arcAndRingColors]="['#06b6d4', '#3b82f6', '#6366f1']"
-      styleClass="custom-globe-class"
-    ></om-three-globe>
-  </div>
+    <og7-hero-section
+      class="relative z-10"
+      data-og7="hero"
+      data-og7-id="section"
+      aria-labelledby="home-hero-heading"
+      [stats]="stats()"
+    ></og7-hero-section>
+    <div
+      class="pointer-events-none absolute top-[4%] right-[-10vw] z-0 hidden h-[105%] w-[62vw] items-center justify-end lg:flex"
+      aria-hidden="true"
+    >
+      <om-three-globe
+        class="ml-auto"
+        [globeSize]="'1200px'"
+        [globeConfig]="{
+          globeColor: '#062056',
+          atmosphereColor: '#ffffff',
+          autoRotate: true,
+          autoRotateSpeed: 1
+        }"
+        [arcAndRingColors]="['#06b6d4', '#3b82f6', '#6366f1']"
+        styleClass="custom-globe-class"
+      ></om-three-globe>
+    </div>
+  </om-galaxy>
 </section>
