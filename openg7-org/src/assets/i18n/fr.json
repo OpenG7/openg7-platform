@@ -2006,6 +2006,32 @@
       "title": "Visualisez les corridors stratégiques en un coup d’œil",
       "description": "Les flux agrégés alimentent ces métriques pour suivre la valeur, le volume et la diversité sectorielle des échanges interprovinciaux."
     },
+    "inputs": {
+      "title": "Intrants et capacités",
+      "description": "Ressources clés et capacités disponibles pour soutenir les corridors interprovinciaux.",
+      "cards": {
+        "electricity": {
+          "title": "Électricité",
+          "description": "Réseaux stables, capacité de pointe et disponibilité régionale."
+        },
+        "oil": {
+          "title": "Pétrole",
+          "description": "Flux de brut, capacité de raffinage et logistique intégrée."
+        },
+        "services": {
+          "title": "Services",
+          "description": "Services critiques, TI, ingénierie et soutien opérationnel."
+        },
+        "workforce": {
+          "title": "Main-d'œuvre",
+          "description": "Bassins de talents qualifiés, compétences critiques et filières de formation."
+        },
+        "materials": {
+          "title": "Matériaux",
+          "description": "Métaux, composites et intrants critiques sécurisés."
+        }
+      }
+    },
     "map": {
       "kicker": "Carte des échanges",
       "title": "Tracer les corridors interprovinciaux du G7",
@@ -2113,7 +2139,10 @@
       },
       "layout": {
         "label": "Interface des cartes"
-      }
+      },
+      "show": "Afficher les filtres",
+      "hide": "Masquer les filtres",
+      "reset": "Réinitialiser les filtres"
     },
     "buyer": "Acheteur",
     "seller": "Fournisseur",
@@ -2121,6 +2150,11 @@
     "cta": {
       "hint": "Créer une mise en relation pour {{ commodity }}",
       "connect": "Demander une introduction"
+    },
+    "results": {
+      "count": "{{ count, plural, =0 {0 résultat} one {# résultat} other {# résultats} }}",
+      "filtersActive": "Filtres actifs",
+      "filtersNone": "Aucun filtre actif"
     },
     "empty": "Aucune opportunité ne correspond à vos filtres. Ajustez la recherche ou élargissez votre sélection pour découvrir d’autres partenaires.",
     "error": "Impossible de charger les opportunités pour le moment.",

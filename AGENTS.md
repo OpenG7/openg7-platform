@@ -24,6 +24,7 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Hero & marketing | og7-hero-ctas | og7-hero-ctas | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas/hero-ctas.component.ts | ok | Selector Angular aligné (og7-hero-ctas). |
 | Hero & marketing | og7-hero-stats | og7-hero-stats | HeroStatsComponent | openg7-org/src/app/shared/components/hero/hero-stats/hero-stats.component.ts | ok |  |
 | Hero & marketing | og7-home-hero-section | og7-home-hero-section | HomeHeroSectionComponent | openg7-org/src/app/domains/home/feature/home-hero-section/home-hero-section.component.ts | ok |  |
+| Hero & marketing | og7-home-hero-galaxy | og7-home-hero-galaxy | HomeHeroGalaxyClientComponent | openg7-org/src/app/domains/home/feature/home-hero-section/home-hero-galaxy.client.component.ts | ok | Backdrop client-only (galaxy + globe). |
 | Hero & marketing | og7-financing-banner | og7-financing-banner | Og7FinancingBannerComponent | openg7-org/src/app/shared/components/financing/og7-financing-banner.component.ts | ok |  |
 | Hero & marketing | og7-cta-rail | og7-cta-rail | Og7CtaRailComponent | openg7-org/src/app/shared/components/cta/og7-cta-rail.component.ts | ok |  |
 | Hero & marketing | og7-dual-qr-panel | og7-dual-qr-panel | Og7DualQrPanelComponent | openg7-org/src/app/shared/components/qr/og7-dual-qr-panel.component.ts | ok |  |
@@ -74,6 +75,7 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Opportunités & analytics | og7-opportunity-compact-kpi-list | og7-opportunity-compact-kpi-list | OpportunityCompactKpiListComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-compact-kpi-list/opportunity-compact-kpi-list.component.ts | ok |  |
 | Opportunités & analytics | og7-opportunity-impact-banner | og7-opportunity-impact-banner | OpportunityImpactBannerComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-impact-banner/opportunity-impact-banner.component.ts | ok |  |
 | Opportunités & analytics | og7-home-statistics-section | og7-home-statistics-section | HomeStatisticsSectionComponent | openg7-org/src/app/domains/home/feature/home-statistics-section/home-statistics-section.component.ts | ok |  |
+| Opportunités & analytics | og7-home-inputs-section | og7-home-inputs-section | HomeInputsSectionComponent | openg7-org/src/app/domains/home/feature/home-inputs-section/home-inputs-section.component.ts | ok |  |
 
 ## Registry des sélecteurs [data-og7*] (hooks UI & tests)
 
@@ -92,6 +94,7 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Hero & marketing | [data-og7="hero"] | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section/hero-section.component.ts | ok | Selector actuel du composant. |
 | Hero & marketing | [data-og7="hero-copy"] | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy/hero-copy.component.ts | ok |  |
 | Hero & marketing | [data-og7="hero-ctas"] | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas/hero-ctas.component.ts | ok |  |
+| Hero & marketing | [data-og7="home-inputs"] | HomeInputsSectionComponent | openg7-org/src/app/domains/home/feature/home-inputs-section/home-inputs-section.component.ts | ok |  |
 | Hero & marketing | [data-og7="announcement-bar"] | — | — | planned | Doublon volontaire pour l’UI marketing (pas encore utilisé). |
 | Carte & data viz | [data-og7="trade-map"] | TradeMapComponent | openg7-org/src/app/shared/components/map/trade-map.component.ts | ok |  |
 | Carte & data viz | [data-og7="map-basemap-toggle"] | BasemapToggleComponent | openg7-org/src/app/shared/components/map/controls/basemap-toggle.component.ts | ok |  |
@@ -1440,5 +1443,7 @@ Exécuter systématiquement les scripts de validation **avant** d’ouvrir une P
 > ⚠️ Tout échec doit être corrigé **avant commit**. Documentez les écarts (ex.: seeds conditionnels) directement dans la PR.
 
 _MAJ (enhanced) : 2025-09-13 10:15:00Z_
+
+
 
 

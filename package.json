@@ -17,6 +17,7 @@
     "7": "yarn test",
     "8": "yarn lint",
     "9": "yarn format",
+    "00": "yarn cache:clean",
     "dev:web": "yarn workspace @openg7/web start",
     "dev:web:trace": "yarn workspace @openg7/web start:trace",
     "dev:cms": "yarn workspace @openg7/strapi dev",
@@ -44,7 +45,8 @@
     "sync:checklist": "node ./scripts/sync-checklist.mjs",
     "lint": "eslint . --ext .js,.cjs,.mjs,.ts,.tsx",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "cache:clean": "yarn workspace @openg7/web cache clean"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

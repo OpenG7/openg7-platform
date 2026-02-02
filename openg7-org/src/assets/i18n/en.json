@@ -2121,6 +2121,32 @@
       "title": "A snapshot of strategic trade corridors",
       "description": "Aggregated flows feed these metrics to track value, volume and sector diversity across interprovincial exchanges."
     },
+    "inputs": {
+      "title": "Inputs & capacities",
+      "description": "Key resources and capabilities available to support interprovincial corridors.",
+      "cards": {
+        "electricity": {
+          "title": "Electricity",
+          "description": "Stable grids, peak capacity, and regional availability."
+        },
+        "oil": {
+          "title": "Oil",
+          "description": "Crude flows, refining capacity, and integrated logistics."
+        },
+        "services": {
+          "title": "Services",
+          "description": "Critical services, IT, engineering, and operations support."
+        },
+        "workforce": {
+          "title": "Workforce",
+          "description": "Skilled talent pools, critical skills, and training pipelines."
+        },
+        "materials": {
+          "title": "Materials",
+          "description": "Metals, composites, and secured critical inputs."
+        }
+      }
+    },
     "map": {
       "kicker": "Trade map",
       "title": "Navigate G7 interprovincial corridors",
@@ -2208,7 +2234,10 @@
       },
       "layout": {
         "label": "Card interface"
-      }
+      },
+      "show": "Show filters",
+      "hide": "Hide filters",
+      "reset": "Reset filters"
     },
     "buyer": "Buyer",
     "seller": "Supplier",
@@ -2216,6 +2245,11 @@
     "cta": {
       "hint": "Create a match for {{ commodity }}",
       "connect": "Request introduction"
+    },
+    "results": {
+      "count": "{{ count, plural, =0 {0 results} one {# result} other {# results} }}",
+      "filtersActive": "Active filters",
+      "filtersNone": "No active filters"
     },
     "empty": "No opportunities match these filters. Adjust your search or broaden the filters to discover more partners.",
     "error": "We couldn’t load the opportunity matches right now.",
