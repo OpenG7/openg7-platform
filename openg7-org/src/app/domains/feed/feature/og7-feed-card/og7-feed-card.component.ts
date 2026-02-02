@@ -93,7 +93,10 @@ export class Og7FeedCardComponent {
 
   @HostListener('keydown.enter', ['$event'])
   @HostListener('keydown.space', ['$event'])
-  protected onActivate(event: KeyboardEvent): void {
+  protected onActivate(event: Event): void {
+    if (!(event instanceof KeyboardEvent)) {
+      return;
+    }
     event.preventDefault();
     this.handleView();
   }

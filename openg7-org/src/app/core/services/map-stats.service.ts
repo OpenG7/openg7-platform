@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { Flow, MapKpiSnapshot, MapKpis, computeMapKpiSnapshot } from '@app/state';
 
 @Injectable({ providedIn: 'root' })
@@ -119,3 +119,4 @@ export class MapStatsService {
     return `map.badges.units.${normalized}`;
   }
 }
+

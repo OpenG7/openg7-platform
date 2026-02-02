@@ -1,20 +1,30 @@
 <div style="position:absolute; inset:0;">
   <mgl-map
-    [style]="mapStyle"
-    [center]="mapCenter"
+    [mapStyle]="mapStyle"
+    [center]="mapCenter()"
     [zoom]="[mapZoom]"
     [renderWorldCopies]="false"
-    (mapLoad)="onMapLoad()"
+    [projection]="globeEnabled ? { type: 'globe' } : undefined"
+    
     [style.display]="'block'"
     [style.height.%]="100"
     [style.width.%]="100"
   >
+    @if (globeEnabled) {
+      <mgl-control mglGlobe position="top-right"></mgl-control>
+    }
     <mgl-geojson-source id="provinces" [data]="provinceSource()">
       <mgl-layer
         id="provinces-fill"
         type="fill"
         source="provinces"
-        [paint]="provinceLayerPaint"
+        [paint]="provinceLayerPaint()"
+      ></mgl-layer>
+      <mgl-layer
+        id="provinces-outline"
+        type="line"
+        source="provinces"
+        [paint]="provinceOutlinePaint"
       ></mgl-layer>
     </mgl-geojson-source>
 
@@ -50,7 +60,7 @@
       ></mgl-layer>
     </mgl-geojson-source>
 
-    <ng-container *ngIf="hasHighlight()">
+    @if (hasHighlight()) {
       <mgl-geojson-source id="highlight" [data]="highlightSource()" [lineMetrics]="true">
         <mgl-layer
           id="highlight-layer"
@@ -62,20 +72,21 @@
           data-og7-layer="highlight"
         ></mgl-layer>
       </mgl-geojson-source>
-    </ng-container>
+    }
   </mgl-map>
 </div>
 
-<og7-map-legend *ngIf="ready()" data-og7="map-legend"></og7-map-legend>
-<!-- <og7-map-kpi-badges *ngIf="ready()" data-og7="map-kpi-badges"></og7-map-kpi-badges> -->
-<og7-map-sector-chips *ngIf="ready()" data-og7="map-sector-chips"></og7-map-sector-chips>
-<og7-map-basemap-toggle *ngIf="ready()" data-og7="map-basemap-toggle"></og7-map-basemap-toggle>
-<og7-map-zoom-control *ngIf="ready()" data-og7="map-zoom-control"></og7-map-zoom-control>
-<div
-  *ngIf="ready()"
-  data-og7="map-tooltip"
-  style="position:absolute; right:1.5rem; bottom:1.5rem; min-width:12rem; pointer-events:none;"
-></div>
+@if (ready()) {
+  <og7-map-legend data-og7="map-legend"></og7-map-legend>
+  <!-- <og7-map-kpi-badges data-og7="map-kpi-badges"></og7-map-kpi-badges> -->
+  <og7-map-sector-chips data-og7="map-sector-chips"></og7-map-sector-chips>
+  <og7-map-basemap-toggle data-og7="map-basemap-toggle"></og7-map-basemap-toggle>
+  <og7-map-zoom-control data-og7="map-zoom-control"></og7-map-zoom-control>
+  <div
+    data-og7="map-tooltip"
+    style="position:absolute; right:1.5rem; bottom:1.5rem; min-width:12rem; pointer-events:none;"
+  ></div>
+}
 <div
   data-og7="map-aria-live"
   aria-live="polite"

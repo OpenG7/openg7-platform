@@ -14,6 +14,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
+    "preserveSymlinks": true,
     "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
@@ -23,6 +24,8 @@
       "@app/*": ["src/app/*"],
       "@app/domains/*": ["src/app/domains/*"],
       "@app/shared/*": ["src/app/shared/*"],
+      "@omnedia/ngx-three-globe": ["../ngx-three-globe/src/public-api.ts"],
+      "@omnedia/ngx-three-globe/*": ["../ngx-three-globe/src/*"],
       "@openg7/contracts": ["../packages/contracts/src/index.ts"],
       "@openg7/contracts/*": ["../packages/contracts/src/*"]
     }

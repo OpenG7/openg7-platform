@@ -1,23 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FiltersService } from '@app/core/filters.service';
-import {
-  DEMO_OPPORTUNITY_MATCHES,
-  findDemoFinancingBanner,
-} from '@app/core/fixtures/opportunity-demo';
+import { DEMO_OPPORTUNITY_MATCHES, findDemoFinancingBanner } from '@app/core/fixtures/opportunity-demo';
 import { OpportunityMatch } from '@app/core/models/opportunity';
 import { FinancingBanner } from '@app/core/models/partner-profile';
 import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { MapStatsService } from '@app/core/services/map-stats.service';
 import { OpportunityAiPrefillService } from '@app/core/services/opportunity-ai-prefill.service';
 import { OpportunityService } from '@app/core/services/opportunity.service';
-import { HomeFiltersSectionComponent } from '@app/domains/home/feature/home-filters-section.component';
-import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-section.component';
-import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section.component';
-import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section.component';
+import { HomeFiltersSectionComponent } from '@app/domains/home/feature/home-filters-section/home-filters-section.component';
+import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-section/home-hero-section.component';
+import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section/home-map-section.component';
+import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section/home-statistics-section.component';
 import { IntroductionRequestContext } from '@app/domains/matchmaking/sections/og7-intro-billboard.section';
 import { OpportunityMatchesSection } from '@app/domains/opportunities/sections/opportunity-matches.section';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { selectFilteredFlows, selectMapKpis } from '@app/state';
 import { AppState } from '@app/state/app.state';
 import { Store } from '@ngrx/store';
@@ -138,3 +135,4 @@ export class Og7HomePageComponent {
     return findDemoFinancingBanner(match);
   }
 }
+

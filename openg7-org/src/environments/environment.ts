@@ -29,6 +29,8 @@ export const environment: EnvironmentConfig = {
   I18N_PREFIX: '/assets/i18n/',
   FEATURE_FLAGS: {
     componentLab: false,
+    mapGlobe: true,
+    mapNight: false,
   },
   AUTH_MODE: 'hybrid',
   NOTIFICATION_WEBHOOK_URL: null,

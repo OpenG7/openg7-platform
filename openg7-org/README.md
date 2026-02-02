@@ -77,6 +77,11 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 - [Homepage preview workflow](docs/homepage-preview.md)
 - [Déploiement SSR & images Docker multi-stage](docs/ssr-deployment.md)
 
+## MapLibre GL
+
+The MapLibre GL stylesheet must be loaded globally. This is configured in `openg7-org/angular.json`
+via `node_modules/maplibre-gl/dist/maplibre-gl.css` so map controls and overlays render correctly.
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

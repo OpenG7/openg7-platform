@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { HomeStatisticsSectionComponent } from './home-statistics-section.component';
@@ -78,3 +78,4 @@ describe('HomeStatisticsSectionComponent', () => {
     expect(entries.length).toBe(3);
   });
 });
+

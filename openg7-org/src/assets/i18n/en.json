@@ -2099,6 +2099,15 @@
       "author": "Arnold Schwarzenegger"
     },
     "imageAlt": "Illustration of Canadian companies collaborating across provinces",
+    "search": {
+      "label": "Search trade data",
+      "placeholder": "Search sectors or partners"
+    },
+    "stats": {
+      "listedInputs": "Listed inputs",
+      "activeRequests": "Active requests",
+      "transportCapacity": "Transport capacity"
+    },
     "actions": {
       "viewSectors": "View sectors",
       "proMode": "Pro mode",

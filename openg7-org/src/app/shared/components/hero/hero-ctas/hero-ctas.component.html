@@ -1,0 +1,54 @@
+<div class="hero-ctas flex flex-wrap gap-3 justify-start" data-og7="hero-ctas">
+  <a
+    *ngIf="primaryCta as cta"
+    class="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-base font-semibold transition-colors bg-primary text-on-primary hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    [routerLink]="cta.routerLink ?? null"
+    [attr.href]="cta.routerLink ? null : cta.href ?? null"
+    [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
+    (click)="onCtaClick($event, cta)"
+    data-og7="action"
+    data-og7-id="register-company"
+    [attr.data-og7-id]="cta.trackingType"
+  >
+    {{ cta.label | translate }}
+  </a>
+  <a
+    *ngIf="secondaryCta as cta"
+    class="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-base font-semibold transition-colors ring-1 ring-inset ring-white/30 text-white/90 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    [routerLink]="cta.routerLink ?? null"
+    [attr.href]="cta.routerLink ? null : cta.href ?? null"
+    [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
+    (click)="onCtaClick($event, cta)"
+    data-og7="action"
+    data-og7-id="view-sectors"
+    [attr.data-og7-id]="cta.trackingType"
+  >
+    {{ cta.label | translate }}
+  </a>
+  <a
+    *ngIf="tertiaryCta as cta"
+    class="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-base font-semibold transition-colors bg-white/10 text-white ring-1 ring-inset ring-white/15 hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    [routerLink]="cta.routerLink ?? null"
+    [attr.href]="cta.routerLink ? null : cta.href ?? null"
+    [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
+    (click)="onCtaClick($event, cta)"
+    data-og7="action"
+    data-og7-id="pro-mode"
+    [attr.data-og7-id]="cta.trackingType"
+  >
+    {{ cta.label | translate }}
+  </a>
+  <a
+    *ngIf="quaternaryCta as cta"
+    class="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-base font-semibold transition-colors bg-white/10 text-white ring-1 ring-inset ring-white/15 hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    [routerLink]="cta.routerLink ?? null"
+    [attr.href]="cta.routerLink ? null : cta.href ?? null"
+    [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
+    (click)="onCtaClick($event, cta)"
+    data-og7="action"
+    data-og7-id="preview"
+    [attr.data-og7-id]="cta.trackingType"
+  >
+    {{ cta.label | translate }}
+  </a>
+</div>

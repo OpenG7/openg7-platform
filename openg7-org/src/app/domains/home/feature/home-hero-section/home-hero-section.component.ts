@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { HeroSectionComponent } from '@app/shared/components/hero/hero-section.component';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { HeroSectionComponent } from '@app/shared/components/hero/hero-section/hero-section.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
+import { NgxGalaxyComponent } from '@omnedia/ngx-galaxy';
+import { NgxThreeGlobeComponent } from '@omnedia/ngx-three-globe';
 
 @Component({
   selector: 'og7-home-hero-section',
   standalone: true,
-  imports: [HeroSectionComponent],
+  imports: [HeroSectionComponent, NgxGalaxyComponent, NgxThreeGlobeComponent],
   templateUrl: './home-hero-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -18,3 +20,4 @@ import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
 export class HomeHeroSectionComponent {
   readonly stats = input.required<StatMetric[]>();
 }
+

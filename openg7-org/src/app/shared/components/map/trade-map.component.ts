@@ -1,5 +1,7 @@
-import { NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import type { AuthUser } from '@app/core/auth/auth.types';
+import { FEATURE_FLAGS } from '@app/core/config/environment.tokens';
 import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
 import {
   MapFlowFeature,
@@ -7,6 +9,8 @@ import {
   MapGeojsonService,
   MapHubFeature,
   MapHubFeatureCollection,
+  MapProvinceFeature,
+  MapProvinceFeatureCollection,
 } from '@app/core/services/map-geojson.service';
 import { TariffQueryService } from '@app/core/services/tariff-query.service';
 import {
@@ -21,6 +25,7 @@ import {
   MapActions,
 } from '@app/state';
 import { AppState } from '@app/state/app.state';
+import { selectUserProfile } from '@app/state/user/user.selectors';
 import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
 import { Store } from '@ngrx/store';
 import type {
@@ -36,10 +41,36 @@ import { MapSectorChipsComponent } from './filters/map-sector-chips.component';
 import { MapLegendComponent } from './legend/map-legend.component';
 
 type Coordinates = [number, number];
+interface Bbox {
+  minLng: number;
+  maxLng: number;
+  minLat: number;
+  maxLat: number;
+}
 
 const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
-const MAP_CENTER: Coordinates = [-45, 52];
+const MAP_STYLE_NIGHT_LIGHTS_URL = '/assets/map/styles/og7-night-lights.json';
+const MAP_CENTERS: Record<'canada' | 'europe' | 'asia', Coordinates> = {
+  canada: [-98.5795, 57.6443],
+  europe: [15.2551, 54.526],
+  asia: [100.6197, 34.0479],
+};
+const DEFAULT_CENTER: Coordinates = MAP_CENTERS.canada;
 const MAP_ZOOM = 2.35;
+
+const EUROPE_COUNTRY_CODES = new Set([
+  'AT', 'BE', 'BG', 'CH', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI',
+  'FR', 'GB', 'GR', 'HR', 'HU', 'IE', 'IS', 'IT', 'LT', 'LU',
+  'LV', 'NL', 'NO', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
+]);
+
+const ASIA_COUNTRY_CODES = new Set([
+  'AE', 'AF', 'AM', 'AZ', 'BD', 'BH', 'BN', 'BT', 'CN', 'GE',
+  'HK', 'ID', 'IL', 'IN', 'IQ', 'IR', 'JP', 'JO', 'KG', 'KH',
+  'KP', 'KR', 'KW', 'KZ', 'LA', 'LB', 'LK', 'MM', 'MN', 'MO',
+  'MV', 'MY', 'NP', 'OM', 'PH', 'PK', 'QA', 'SA', 'SG', 'SY',
+  'TH', 'TJ', 'TM', 'TR', 'TW', 'UZ', 'VN', 'YE',
+]);
 
 const EMPTY_FLOW_COLLECTION: MapFlowFeatureCollection = {
   type: 'FeatureCollection',
@@ -60,6 +91,16 @@ interface LinePaint {
   readonly 'line-gradient'?: ExpressionSpecification;
 }
 type Expression = ExpressionSpecification;
+interface FillPaint {
+  readonly 'fill-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  readonly 'fill-opacity'?: DataDrivenPropertyValueSpecification<number>;
+  readonly 'fill-outline-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+}
+interface LinePaintStyle {
+  readonly 'line-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  readonly 'line-width'?: DataDrivenPropertyValueSpecification<number>;
+  readonly 'line-opacity'?: DataDrivenPropertyValueSpecification<number>;
+}
 
 interface FlowCollectionState {
   readonly collection: MapFlowFeatureCollection;
@@ -84,7 +125,7 @@ const DEFAULT_FLOW_GLOW_PAINT: LinePaint = {
   selector: 'og7-map-trade',
   standalone: true,
   imports: [
-    NgIf,
+    CommonModule,
     NgxMapLibreGLModule,
     MapLegendComponent,
     //MapKpiBadgesComponent,
@@ -108,24 +149,50 @@ const DEFAULT_FLOW_GLOW_PAINT: LinePaint = {
 export class TradeMapComponent {
   private readonly store = inject(Store<AppState>);
   private readonly filters = inject(FiltersService);
+  private readonly featureFlags = inject(FEATURE_FLAGS, { optional: true });
 
   private readonly geojson = inject(MapGeojsonService);
   private readonly tariffQuery = inject(TariffQueryService);
 
   protected readonly ready = this.store.selectSignal(selectMapReady);
+  private readonly userProfile = this.store.selectSignal(selectUserProfile);
   private readonly flows = this.store.selectSignal(selectFilteredFlows);
   private readonly kpis = this.store.selectSignal(selectMapKpis);
 
-  protected readonly mapStyle = MAP_STYLE_URL;
-  protected readonly mapCenter = MAP_CENTER;
+  readonly mapStyle = (this.featureFlags?.['mapNight'] ?? false)
+    ? MAP_STYLE_NIGHT_LIGHTS_URL
+    : MAP_STYLE_URL;
+  protected readonly mapCenter = computed(() => this.resolveMapCenter());
   protected readonly mapZoom = MAP_ZOOM;
+  readonly globeEnabled = this.featureFlags?.['mapGlobe'] ?? false;
 
   protected readonly provinceSource = this.geojson.provinceCollection;
-  protected readonly provinceLayerPaint = {
-    'fill-color': '#dbeafe',
-    'fill-opacity': 0.45,
-    'fill-outline-color': '#1d4ed8',
-  } as const;
+  private readonly provinceBboxes = computed(() => this.buildProvinceBboxes(this.provinceSource()));
+  private readonly activeProvinces = computed(() => this.resolveActiveProvinces());
+  protected readonly provinceLayerPaint = computed<FillPaint>(() => {
+    const active = Array.from(this.activeProvinces());
+    if (!active.length) {
+      const paint: FillPaint = {
+        'fill-color': '#7fc4b5',
+        'fill-opacity': 0.18,
+        'fill-outline-color': '#a1bcbe',
+      };
+      return paint;
+    }
+
+    const isActive: ExpressionSpecification = ['in', ['get', 'code'], ['literal', active]];
+    const paint: FillPaint = {
+      'fill-color': ['case', isActive, '#7fc4b5', '#334e50'],
+      'fill-opacity': ['case', isActive, 0.78, 0.16],
+      'fill-outline-color': '#a1bcbe',
+    };
+    return paint;
+  });
+  protected readonly provinceOutlinePaint: LinePaintStyle = {
+    'line-color': '#d7f2f2',
+    'line-width': ['interpolate', ['linear'], ['zoom'], 2, 0.6, 6, 1.2, 10, 2],
+    'line-opacity': 0.7,
+  };
 
   protected readonly flowLayerLayout = {
     'line-cap': 'round',
@@ -200,6 +267,153 @@ export class TradeMapComponent {
   protected readonly hasHighlight = computed(() => this.highlightSource().features.length > 0);
 
   private readonly hasTariffImpact = computed(() => this.flowCollectionState().hasTariffImpact);
+
+  private resolveMapCenter(): Coordinates {
+    const profile = this.userProfile();
+    const profileRegion = this.resolveRegionKey(this.extractProfileRegion(profile));
+    if (profileRegion) {
+      return MAP_CENTERS[profileRegion];
+    }
+
+    const localeRegion = this.resolveRegionKey(this.extractLocaleRegion());
+    if (localeRegion) {
+      return MAP_CENTERS[localeRegion];
+    }
+
+    return DEFAULT_CENTER;
+  }
+
+  private extractProfileRegion(profile: AuthUser | null): string | null {
+    if (!profile) {
+      return null;
+    }
+    if ('country' in profile && typeof (profile as { country?: unknown }).country === 'string') {
+      return (profile as { country?: string }).country ?? null;
+    }
+    if ('locale' in profile && typeof (profile as { locale?: unknown }).locale === 'string') {
+      return (profile as { locale?: string }).locale ?? null;
+    }
+    return null;
+  }
+
+  private extractLocaleRegion(): string | null {
+    if (typeof navigator === 'undefined' || !navigator.language) {
+      return null;
+    }
+    const parts = navigator.language.split(/[-_]/).filter(Boolean);
+    if (parts.length < 2) {
+      return null;
+    }
+    return parts[parts.length - 1] ?? null;
+  }
+
+  private resolveRegionKey(value: string | null): keyof typeof MAP_CENTERS | null {
+    if (!value) {
+      return null;
+    }
+    const normalized = value.trim().toUpperCase();
+    if (!normalized) {
+      return null;
+    }
+    if (['CA', 'CAN', 'CANADA'].includes(normalized)) {
+      return 'canada';
+    }
+    if (['EU', 'EUROPE', 'EUROPA'].includes(normalized) || EUROPE_COUNTRY_CODES.has(normalized)) {
+      return 'europe';
+    }
+    if (['ASIA', 'ASIE', 'ASI'].includes(normalized) || ASIA_COUNTRY_CODES.has(normalized)) {
+      return 'asia';
+    }
+    return null;
+  }
+
+  private resolveActiveProvinces(): Set<string> {
+    const active = new Set<string>();
+    const selected = this.filters.matchProvince();
+    if (selected && selected !== 'all') {
+      active.add(String(selected).toUpperCase());
+    }
+
+    const flows = this.filteredFlows();
+    const bboxes = this.provinceBboxes();
+    const flowGeometry = this.flowGeometryById();
+    if (!flows.length || bboxes.size === 0) {
+      return active;
+    }
+
+    for (const flow of flows) {
+      const geometry = flowGeometry.get(flow.id);
+      if (!geometry) {
+        continue;
+      }
+      for (const coordinate of this.getFlowCoordinates(geometry)) {
+        for (const [code, bbox] of bboxes) {
+          if (this.isCoordinateInBbox(coordinate, bbox)) {
+            active.add(code);
+          }
+        }
+      }
+    }
+
+    return active;
+  }
+
+  private buildProvinceBboxes(collection: MapProvinceFeatureCollection): Map<string, Bbox> {
+    const map = new Map<string, Bbox>();
+    for (const feature of collection.features) {
+      const code = feature.properties?.code?.toUpperCase();
+      if (!code) {
+        continue;
+      }
+      map.set(code, this.computeBbox(feature.geometry));
+    }
+    return map;
+  }
+
+  private computeBbox(geometry: MapProvinceFeature['geometry']): Bbox {
+    const bbox: Bbox = {
+      minLng: Number.POSITIVE_INFINITY,
+      maxLng: Number.NEGATIVE_INFINITY,
+      minLat: Number.POSITIVE_INFINITY,
+      maxLat: Number.NEGATIVE_INFINITY,
+    };
+    const polygons = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates;
+    for (const polygon of polygons) {
+      for (const ring of polygon) {
+        for (const coordinate of ring) {
+          const [lng, lat] = coordinate as Coordinates;
+          if (lng < bbox.minLng) bbox.minLng = lng;
+          if (lng > bbox.maxLng) bbox.maxLng = lng;
+          if (lat < bbox.minLat) bbox.minLat = lat;
+          if (lat > bbox.maxLat) bbox.maxLat = lat;
+        }
+      }
+    }
+    return bbox;
+  }
+
+  private isCoordinateInBbox([lng, lat]: Coordinates, bbox: Bbox): boolean {
+    return (
+      lng >= bbox.minLng &&
+      lng <= bbox.maxLng &&
+      lat >= bbox.minLat &&
+      lat <= bbox.maxLat
+    );
+  }
+
+  private getFlowCoordinates(flow: MapFlowFeature): Coordinates[] {
+    const geometry = flow.geometry;
+    if (geometry.type === 'LineString') {
+      return geometry.coordinates as Coordinates[];
+    }
+    const coordinates: Coordinates[] = [];
+    for (const line of geometry.coordinates) {
+      for (const coordinate of line) {
+        coordinates.push(coordinate as Coordinates);
+      }
+    }
+    return coordinates;
+  }
 
   private readonly tariffImpactExpression = computed<Expression>(() => [
     'boolean',
@@ -281,7 +495,7 @@ export class TradeMapComponent {
    */
   onMapLoad(): void {
     if (!this.ready()) {
-    this.store.dispatch(MapActions.mapLoaded());
+      this.store.dispatch(MapActions.mapLoaded());
     }
   }
 

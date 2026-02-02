@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { StatMetric } from '@app/shared/components/hero/hero-stats.component';
+import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { HomeHeroSectionComponent } from './home-hero-section.component';
@@ -83,3 +83,4 @@ describe('HomeHeroSectionComponent', () => {
     expect(badges.length).toBe(3);
   });
 });
+

@@ -24,6 +24,7 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
+            "preserveSymlinks": true,
             "inlineStyleLanguage": "scss",
             "assets": [
               {
@@ -37,6 +38,7 @@
               }
             ],
             "styles": [
+              "../node_modules/maplibre-gl/dist/maplibre-gl.css",
               "src/tailwind.css",
               "src/styles.scss",
               "src/material-theme.scss"
@@ -96,6 +98,7 @@
               }
             ],
             "styles": [
+              "../node_modules/maplibre-gl/dist/maplibre-gl.css",
               "src/tailwind.css",
               "src/styles.scss"
             ],

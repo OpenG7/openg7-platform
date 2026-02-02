@@ -1,0 +1,41 @@
+<section class="relative isolate min-h-[90vh] overflow-hidden">
+  <div class="absolute inset-0 -z-10 overflow-hidden"></div>
+
+  <div class="relative flex w-full flex-col gap-8 px-8 pt-12 pb-16 sm:px-12 sm:pt-14 sm:pb-20 lg:px-20 lg:pt-16 lg:pb-24 lg:pr-[30%]">
+    <div class="max-w-[36rem] text-white">
+      <og7-hero-copy data-og7="hero" data-og7-id="copy"></og7-hero-copy>
+
+      <div class="mt-5 w-full max-w-[34rem]">
+        <form role="search" class="w-full">
+          <label class="sr-only" for="hero-search-input">{{ 'hero.search.label' | translate }}</label>
+          <div
+            class="relative flex items-center rounded-full border border-white/10 bg-slate-900/70 px-5 py-3 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.85)] backdrop-blur"
+          >
+            <input
+              id="hero-search-input"
+              type="search"
+              autocomplete="off"
+              [attr.placeholder]="'hero.search.placeholder' | translate"
+              [attr.aria-label]="'hero.search.label' | translate"
+              class="w-full bg-transparent pr-10 text-base text-slate-100 placeholder:text-slate-400 focus:outline-none"
+            />
+            <span class="pointer-events-none absolute right-5 text-cyan-200/80" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22">
+                <path
+                  fill="currentColor"
+                  d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 9.5 16c1.6 0 3.08-.59 4.22-1.57l.27.28v.79l5 5L20.5 19l-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
+                />
+              </svg>
+            </span>
+          </div>
+        </form>
+
+        <og7-hero-ctas class="mt-3 w-full" data-og7="hero" data-og7-id="ctas"></og7-hero-ctas>
+
+        <div class="mt-4 w-full">
+          <og7-hero-stats [stats]="heroStats()"></og7-hero-stats>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -24,8 +24,7 @@ export interface HeroCtaClickEvent {
   imports: [CommonModule, RouterModule, TranslateModule, MatButtonModule],
   templateUrl: './hero-ctas.component.html',
   host: {
-    class: 'hero-ctas',
-    style: 'display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;',
+    class: 'hero-ctas flex flex-wrap gap-3 justify-start',
   },
 })
 /**

@@ -2,7 +2,7 @@
   position: relative;
   isolation: isolate;
   min-height: 60vh;
-  background-image: url("../../../assets/accueil.png");
+ // background-image: url("../../../assets/accueil.png");
   background-size: cover;
   background-position: center;
 }
@@ -11,7 +11,7 @@
 .hero-with-bg::before {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.35));
+ // background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.35));
   z-index: 0;
 }
 .hero-with-bg .hero-card { position: relative; z-index: 1; }
@@ -26,7 +26,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.5);
+ // background: rgba(0,0,0,.5);
   border-radius: inherit;
   z-index: 0;            /* derrière le contenu */
 }
