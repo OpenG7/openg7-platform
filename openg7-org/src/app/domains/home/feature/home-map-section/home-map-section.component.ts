@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Og7MapFrameComponent } from '@app/shared/components/map-frame/og7-map-frame.component';
 import { TradeMapComponent } from '@app/shared/components/map/trade-map.component';
+import { Og7MapFrameComponent } from '@app/shared/components/map-frame/og7-map-frame.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({

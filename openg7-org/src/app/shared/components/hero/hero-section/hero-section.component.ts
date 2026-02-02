@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { HeroCopyComponent } from '../hero-copy/hero-copy.component';
 import { HeroCtasComponent } from '../hero-ctas/hero-ctas.component';
 import { HeroStatsComponent, StatMetric } from '../hero-stats/hero-stats.component';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'og7-hero-section',

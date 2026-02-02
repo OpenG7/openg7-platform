@@ -36,12 +36,17 @@ import type {
 } from 'maplibre-gl';
 
 import { BasemapToggleComponent } from './controls/basemap-toggle.component';
+import { ZoomControlComponent } from './controls/zoom-control.component';
 import { MapSectorChipsComponent } from './filters/map-sector-chips.component';
 import { MapLegendComponent } from './legend/map-legend.component';
-import { ZoomControlComponent } from './controls/zoom-control.component';
 
 type Coordinates = [number, number];
-type Bbox = { minLng: number; maxLng: number; minLat: number; maxLat: number };
+interface Bbox {
+  minLng: number;
+  maxLng: number;
+  minLat: number;
+  maxLat: number;
+}
 
 const MAP_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
 const MAP_STYLE_NIGHT_LIGHTS_URL = '/assets/map/styles/og7-night-lights.json';
@@ -86,16 +91,16 @@ interface LinePaint {
   readonly 'line-gradient'?: ExpressionSpecification;
 }
 type Expression = ExpressionSpecification;
-type FillPaint = {
+interface FillPaint {
   readonly 'fill-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
   readonly 'fill-opacity'?: DataDrivenPropertyValueSpecification<number>;
   readonly 'fill-outline-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
-};
-type LinePaintStyle = {
+}
+interface LinePaintStyle {
   readonly 'line-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
   readonly 'line-width'?: DataDrivenPropertyValueSpecification<number>;
   readonly 'line-opacity'?: DataDrivenPropertyValueSpecification<number>;
-};
+}
 
 interface FlowCollectionState {
   readonly collection: MapFlowFeatureCollection;
