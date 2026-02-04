@@ -2113,7 +2113,19 @@
     "tradeValue": "Valeur des échanges",
     "exchangeQty": "Quantité d’échanges",
     "sectors": "Secteurs",
-    "transactions": "{{count, plural, =0 {0 transaction} one {# transaction} other {# transactions}}}"
+    "transactions": "{{count, plural, =0 {0 transaction} one {# transaction} other {# transactions}}}",
+    "inputs": "Intrants repertories",
+    "offers": "Offres",
+    "active": "Actives",
+    "requests": "Demandes",
+    "corridors": "Corridors",
+    "updatedAt": "Derniere mise a jour",
+    "systemStatus": "Etat du systeme",
+    "status": {
+      "stable": "Stable",
+      "degraded": "Degrade",
+      "offline": "Hors ligne"
+    }
   },
   "sectors": {
     "energy": "Énergie",

@@ -18,16 +18,22 @@ import { IntroductionRequestContext } from '@app/domains/matchmaking/sections/og
 import { OpportunityMatchesSection } from '@app/domains/opportunities/sections/opportunity-matches.section';
 import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { FeedItem, FeedItemType } from '@app/domains/feed/feature/models/feed.models';
+import { JsonDateAgoPipe } from '@app/domains/feed/feature/pipes/json-date-ago.pipe';
 import { selectFilteredFlows, selectMapKpis } from '@app/state';
 import { selectCatalogFeedItems, selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import { AppState } from '@app/state/app.state';
+import { computeMapKpiSnapshot } from '@app/state/map/map.selectors';
+import { selectFeedConnectionState } from '@app/store/feed/feed.selectors';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
   selector: 'og7-home-page',
   imports: [
     CommonModule,
+    TranslateModule,
+    JsonDateAgoPipe,
     HomeHeroSectionComponent,
     HomeMapSectionComponent,
     HomeStatisticsSectionComponent,
@@ -61,6 +67,14 @@ export class Og7HomePageComponent {
   private readonly catalogFeedItems = this.store.selectSignal(selectCatalogFeedItems);
   private readonly catalogProvinces = this.store.selectSignal(selectProvinces);
   private readonly catalogSectors = this.store.selectSignal(selectSectors);
+  private readonly feedConnection = this.store.selectSignal(selectFeedConnectionState);
+
+  private readonly numberFormatter = new Intl.NumberFormat(undefined);
+  private readonly currencyFormatter = new Intl.NumberFormat(undefined, {
+    style: 'currency',
+    currency: 'CAD',
+    maximumFractionDigits: 0,
+  });
 
   protected readonly matches = this.opportunities.items();
   protected readonly loading = this.opportunities.loading();
@@ -72,6 +86,52 @@ export class Og7HomePageComponent {
 
   protected readonly activeMatch = computed(() => this.resolveMatch(this.selectedMatchId()));
   protected readonly activeFinancingBanner = computed(() => this.financingBanner());
+
+  protected readonly intrantsValue = computed(() => {
+    const snapshot = computeMapKpiSnapshot(this.flows(), this.kpis().default);
+    return snapshot.tradeValue ?? 0;
+  });
+
+  protected readonly offersCount = computed(() => this.countFeedType('OFFER'));
+  protected readonly requestsCount = computed(() => this.countFeedType('REQUEST'));
+  protected readonly activeCount = computed(
+    () => this.catalogFeedItems().filter((item) => item.status !== 'failed').length
+  );
+  protected readonly corridorsCount = computed(() => this.flows().length);
+
+  protected readonly lastFeedUpdate = computed(() => {
+    const items = this.catalogFeedItems();
+    if (!items.length) {
+      return null;
+    }
+    return items
+      .map((item) => item.createdAt)
+      .filter((value): value is string => Boolean(value))
+      .sort()
+      .slice(-1)[0];
+  });
+
+  protected readonly systemStatusKey = computed(() => {
+    const state = this.feedConnection();
+    if (!state.connected) {
+      return 'metrics.status.offline';
+    }
+    if (state.error) {
+      return 'metrics.status.degraded';
+    }
+    return 'metrics.status.stable';
+  });
+
+  protected readonly systemStatusDotClass = computed(() => {
+    const state = this.feedConnection();
+    if (!state.connected) {
+      return 'bg-rose-400';
+    }
+    if (state.error) {
+      return 'bg-amber-400';
+    }
+    return 'bg-emerald-400';
+  });
 
   protected readonly provinceLabelMap = computed(() => {
     const map = new Map<string, string>();
@@ -199,12 +259,24 @@ export class Og7HomePageComponent {
     return item.id ?? `feed-${index}`;
   }
 
+  protected formatCount(value: number): string {
+    return this.numberFormatter.format(value);
+  }
+
+  protected formatCurrency(value: number): string {
+    return this.currencyFormatter.format(value);
+  }
+
   private buildPanelItems(types: FeedItemType[], limit: number): FeedItem[] {
     const items = this.catalogFeedItems().filter((item) => types.includes(item.type));
     return items
       .slice()
       .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
       .slice(0, limit);
+  }
+
+  private countFeedType(type: FeedItemType): number {
+    return this.catalogFeedItems().filter((item) => item.type === type).length;
   }
 }
 
