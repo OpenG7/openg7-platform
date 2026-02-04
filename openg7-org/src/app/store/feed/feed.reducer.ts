@@ -2,17 +2,16 @@ import { createReducer, on } from '@ngrx/store';
 
 import {
   FeedFilterState,
-  FeedPost,
+  FeedItem,
   FeedRealtimeEnvelope,
-  FeedReply,
   FeedSnapshot,
 } from '../../domains/feed/feature/models/feed.models';
 
 import { FeedActions } from './feed.actions';
 
 export interface FeedState {
-  readonly posts: readonly FeedPost[];
-  readonly postIndex: Readonly<Record<string, number>>;
+  readonly items: readonly FeedItem[];
+  readonly itemIndex: Readonly<Record<string, number>>;
   readonly loading: boolean;
   readonly error: string | null;
   readonly cursor: string | null;
@@ -22,24 +21,24 @@ export interface FeedState {
   readonly connectionError: string | null;
   readonly optimisticMap: Readonly<Record<string, string>>; // tempId -> idempotencyKey
   readonly onboardingSeen: boolean;
-  readonly drawerPostId: string | null;
+  readonly drawerItemId: string | null;
   readonly hydrated: boolean;
   readonly unseenIds: readonly string[];
 }
 
 const INITIAL_FILTERS: FeedFilterState = {
-  country: null,
-  province: null,
-  sectors: [],
-  needTypes: [],
-  onlyUnread: false,
-  sort: 'latest',
+  fromProvinceId: null,
+  toProvinceId: null,
+  sectorId: null,
+  type: null,
+  mode: 'BOTH',
+  sort: 'NEWEST',
   search: '',
 };
 
 const INITIAL_STATE: FeedState = {
-  posts: [],
-  postIndex: {},
+  items: [],
+  itemIndex: {},
   loading: false,
   error: null,
   cursor: null,
@@ -49,7 +48,7 @@ const INITIAL_STATE: FeedState = {
   connectionError: null,
   optimisticMap: {},
   onboardingSeen: false,
-  drawerPostId: null,
+  drawerItemId: null,
   hydrated: false,
   unseenIds: [],
 };
@@ -65,16 +64,17 @@ export const feedReducer = createReducer(
     ...state,
     loading: true,
     error: null,
-    posts: append ? state.posts : [],
-    postIndex: append ? state.postIndex : {},
+    items: append ? state.items : [],
+    itemIndex: append ? state.itemIndex : {},
   })),
-  on(FeedActions.loadSuccess, (state, { posts, cursor, append }) => ({
+  on(FeedActions.loadSuccess, (state, { items, cursor, append }) => ({
     ...state,
     loading: false,
     error: null,
     cursor,
-    ...mergePosts(append ? state.posts : [], append ? state.postIndex : {}, posts),
+    ...mergeItems(append ? state.items : [], append ? state.itemIndex : {}, items),
     hydrated: true,
+    unseenIds: append ? state.unseenIds : [],
   })),
   on(FeedActions.loadFailure, (state, { error }) => ({
     ...state,
@@ -88,44 +88,44 @@ export const feedReducer = createReducer(
     ...state,
     filters,
   })),
-  on(FeedActions.optimisticPublish, (state, { post, idempotencyKey }) => {
+  on(FeedActions.optimisticPublish, (state, { item, idempotencyKey }) => {
     const optimisticId = `optimistic-${idempotencyKey}`;
-    const optimisticPost = { ...post, id: optimisticId, status: 'pending' as const };
+    const optimisticItem = { ...item, id: optimisticId, status: 'pending' as const };
     const optimisticMap = { ...state.optimisticMap, [optimisticId]: idempotencyKey };
-    const posts = [optimisticPost, ...state.posts];
+    const items = [optimisticItem, ...state.items];
     return {
       ...state,
-      posts,
-      postIndex: createPostIndex(posts),
+      items,
+      itemIndex: createItemIndex(items),
       optimisticMap,
       unseenIds: state.unseenIds.includes(optimisticId)
         ? state.unseenIds
         : [optimisticId, ...state.unseenIds],
     };
   }),
-  on(FeedActions.publishSuccess, (state, { tempId, post }) => {
+  on(FeedActions.publishSuccess, (state, { tempId, item }) => {
     const { [tempId]: _, ...optimisticMap } = state.optimisticMap;
-    const posts = state.posts.map(existing =>
-      existing.id === tempId ? { ...post, status: 'confirmed' as const } : existing
+    const items = state.items.map(existing =>
+      existing.id === tempId ? { ...item, status: 'confirmed' as const } : existing
     );
     return {
       ...state,
-      posts,
-      postIndex: createPostIndex(posts),
+      items,
+      itemIndex: createItemIndex(items),
       optimisticMap,
-      unseenIds: state.unseenIds.filter(id => id !== tempId && id !== post.id),
+      unseenIds: state.unseenIds.filter(id => id !== tempId && id !== item.id),
     };
   }),
   on(FeedActions.publishFailure, (state, { tempId, error }) => {
-    if (!state.posts.some(post => post.id === tempId)) {
+    if (!state.items.some(item => item.id === tempId)) {
       return state;
     }
-    const posts = state.posts.map(post =>
-      post.id === tempId ? { ...post, status: 'failed' as const, accessibilitySummary: error } : post
+    const items = state.items.map(item =>
+      item.id === tempId ? { ...item, status: 'failed' as const, accessibilitySummary: error } : item
     );
     return {
       ...state,
-      posts,
+      items,
       optimisticMap: state.optimisticMap,
     };
   }),
@@ -140,8 +140,8 @@ export const feedReducer = createReducer(
   })),
   on(FeedActions.hydrateSnapshot, (state, { snapshot }) => ({
     ...state,
-    posts: snapshot.posts,
-    postIndex: createPostIndex(snapshot.posts),
+    items: snapshot.items,
+    itemIndex: createItemIndex(snapshot.items),
     cursor: snapshot.cursor,
     filters: snapshot.filters,
     onboardingSeen: snapshot.onboardingSeen,
@@ -151,160 +151,129 @@ export const feedReducer = createReducer(
     ...state,
     onboardingSeen: true,
   })),
-  on(FeedActions.openDrawer, (state, { postId }) => ({
+  on(FeedActions.openDrawer, (state, { itemId }) => ({
     ...state,
-    drawerPostId: postId,
+    drawerItemId: itemId,
   }))
 );
 
-function mergePosts(
-  current: readonly FeedPost[],
+function mergeItems(
+  current: readonly FeedItem[],
   currentIndex: Readonly<Record<string, number>>,
-  next: readonly FeedPost[]
-): { posts: readonly FeedPost[]; postIndex: Readonly<Record<string, number>> } {
+  next: readonly FeedItem[]
+): { items: readonly FeedItem[]; itemIndex: Readonly<Record<string, number>> } {
   if (!next.length) {
-    return { posts: current, postIndex: currentIndex };
+    return { items: current, itemIndex: currentIndex };
   }
 
-  const dedupedNext: FeedPost[] = [];
-  const seenNext = new Map<string, FeedPost>();
-  for (const post of next) {
-    if (!post?.id) {
+  const dedupedNext: FeedItem[] = [];
+  const seenNext = new Map<string, FeedItem>();
+  for (const item of next) {
+    if (!item?.id) {
       continue;
     }
-    const existing = seenNext.get(post.id);
-    if (!existing || shouldReplace(existing, post)) {
-      seenNext.set(post.id, post);
+    const existing = seenNext.get(item.id);
+    if (!existing || shouldReplace(existing, item)) {
+      seenNext.set(item.id, item);
     }
   }
   dedupedNext.push(...seenNext.values());
 
   if (!dedupedNext.length) {
-    return { posts: current, postIndex: currentIndex };
+    return { items: current, itemIndex: currentIndex };
   }
 
-  const posts = current.slice();
+  const items = current.slice();
   const indexLookup = new Map<string, number>();
-  current.forEach((post, idx) => {
-    if (post?.id) {
-      indexLookup.set(post.id, idx);
+  current.forEach((item, idx) => {
+    if (item?.id) {
+      indexLookup.set(item.id, idx);
     }
   });
 
   const rebuildIndexLookup = () => {
     indexLookup.clear();
-    posts.forEach((post, idx) => {
-      if (post?.id) {
-        indexLookup.set(post.id, idx);
+    items.forEach((item, idx) => {
+      if (item?.id) {
+        indexLookup.set(item.id, idx);
       }
     });
   };
 
   let mutated = false;
 
-  for (const post of dedupedNext) {
-    const postId = post.id;
-    const existingIndex = indexLookup.get(postId);
+  for (const item of dedupedNext) {
+    const itemId = item.id;
+    const existingIndex = indexLookup.get(itemId);
 
     if (existingIndex === undefined) {
-      const insertAt = findInsertIndex(posts, post.createdAt);
-      posts.splice(insertAt, 0, post);
+      const insertAt = findInsertIndex(items, item.createdAt);
+      items.splice(insertAt, 0, item);
       mutated = true;
       rebuildIndexLookup();
       continue;
     }
 
-    const existingPost = posts[existingIndex];
-    if (!shouldReplace(existingPost, post)) {
+    const existingItem = items[existingIndex];
+    if (!shouldReplace(existingItem, item)) {
       continue;
     }
 
-    const createdAtChanged = (existingPost.createdAt ?? '') !== (post.createdAt ?? '');
+    const createdAtChanged = (existingItem.createdAt ?? '') !== (item.createdAt ?? '');
 
     if (createdAtChanged) {
-      posts.splice(existingIndex, 1);
-      const insertAt = findInsertIndex(posts, post.createdAt);
-      posts.splice(insertAt, 0, post);
+      items.splice(existingIndex, 1);
+      const insertAt = findInsertIndex(items, item.createdAt);
+      items.splice(insertAt, 0, item);
       rebuildIndexLookup();
     } else {
-      posts[existingIndex] = post;
-      indexLookup.set(postId, existingIndex);
+      items[existingIndex] = item;
+      indexLookup.set(itemId, existingIndex);
     }
     mutated = true;
   }
 
   if (!mutated) {
-    return { posts: current, postIndex: currentIndex };
+    return { items: current, itemIndex: currentIndex };
   }
 
-  const normalizedPosts = posts.slice();
+  const normalizedItems = items.slice();
   return {
-    posts: normalizedPosts,
-    postIndex: createPostIndex(normalizedPosts),
+    items: normalizedItems,
+    itemIndex: createItemIndex(normalizedItems),
   };
 }
 
 function reduceRealtimeEnvelope(state: FeedState, envelope: FeedRealtimeEnvelope): FeedState {
   const { payload, type, cursor } = envelope;
   switch (type) {
-    case 'feed.post.created': {
-      const post = payload as FeedPost;
-      const merged = mergePosts(state.posts, state.postIndex, [post]);
+    case 'feed.item.created': {
+      const item = payload as FeedItem;
+      const merged = mergeItems(state.items, state.itemIndex, [item]);
       return {
         ...state,
         ...merged,
         cursor: cursor ?? state.cursor,
-        unseenIds: state.unseenIds.includes(post.id)
+        unseenIds: state.unseenIds.includes(item.id)
           ? state.unseenIds
-          : [post.id, ...state.unseenIds].slice(0, 200),
+          : [item.id, ...state.unseenIds].slice(0, 200),
       };
     }
-    case 'feed.post.updated': {
-      const post = payload as FeedPost;
+    case 'feed.item.updated': {
+      const item = payload as FeedItem;
       return {
         ...state,
-        ...mergePosts(state.posts, state.postIndex, [post]),
+        ...mergeItems(state.items, state.itemIndex, [item]),
       };
     }
-    case 'feed.post.deleted': {
-      const post = payload as FeedPost;
-      const posts = state.posts.filter(existing => existing.id !== post.id);
+    case 'feed.item.deleted': {
+      const item = payload as FeedItem;
+      const items = state.items.filter(existing => existing.id !== item.id);
       return {
         ...state,
-        posts,
-        postIndex: createPostIndex(posts),
-        unseenIds: state.unseenIds.filter(id => id !== post.id),
-      };
-    }
-    case 'feed.reply.created': {
-      const reply = payload as FeedReply;
-      const posts = state.posts.map(post => {
-        if (post.id !== reply.postId) {
-          return post;
-        }
-        const replies = post.replies ? [...post.replies] : [];
-        if (!replies.some(existing => existing.id === reply.id)) {
-          replies.push(reply);
-        }
-        return { ...post, replies, metrics: { ...post.metrics, replies: post.metrics.replies + 1 } };
-      });
-      return {
-        ...state,
-        posts,
-      };
-    }
-    case 'feed.reply.deleted': {
-      const reply = payload as FeedReply;
-      const posts = state.posts.map(post => {
-        if (post.id !== reply.postId || !post.replies?.length) {
-          return post;
-        }
-        const replies = post.replies.filter(existing => existing.id !== reply.id);
-        return { ...post, replies, metrics: { ...post.metrics, replies: Math.max(0, post.metrics.replies - 1) } };
-      });
-      return {
-        ...state,
-        posts,
+        items,
+        itemIndex: createItemIndex(items),
+        unseenIds: state.unseenIds.filter(id => id !== item.id),
       };
     }
     default:
@@ -312,17 +281,17 @@ function reduceRealtimeEnvelope(state: FeedState, envelope: FeedRealtimeEnvelope
   }
 }
 
-function createPostIndex(posts: readonly FeedPost[]): Readonly<Record<string, number>> {
+function createItemIndex(items: readonly FeedItem[]): Readonly<Record<string, number>> {
   const index: Record<string, number> = {};
-  posts.forEach((post, position) => {
-    if (post?.id) {
-      index[post.id] = position;
+  items.forEach((item, position) => {
+    if (item?.id) {
+      index[item.id] = position;
     }
   });
   return index;
 }
 
-function shouldReplace(existing: FeedPost, incoming: FeedPost): boolean {
+function shouldReplace(existing: FeedItem, incoming: FeedItem): boolean {
   const incomingUpdatedAt = incoming.updatedAt ?? null;
   const existingUpdatedAt = existing.updatedAt ?? null;
 
@@ -337,14 +306,14 @@ function shouldReplace(existing: FeedPost, incoming: FeedPost): boolean {
   return incomingUpdatedAt > existingUpdatedAt;
 }
 
-function findInsertIndex(posts: readonly FeedPost[], createdAt: string | undefined | null): number {
+function findInsertIndex(items: readonly FeedItem[], createdAt: string | undefined | null): number {
   const target = createdAt ?? '';
   let low = 0;
-  let high = posts.length;
+  let high = items.length;
 
   while (low < high) {
     const mid = (low + high) >>> 1;
-    const midValue = posts[mid]?.createdAt ?? '';
+    const midValue = items[mid]?.createdAt ?? '';
     if (midValue.localeCompare(target) > 0) {
       low = mid + 1;
     } else {
@@ -357,7 +326,7 @@ function findInsertIndex(posts: readonly FeedPost[], createdAt: string | undefin
 
 export function toFeedSnapshot(state: FeedState): FeedSnapshot {
   return {
-    posts: state.posts,
+    items: state.items,
     cursor: state.cursor,
     filters: state.filters,
     onboardingSeen: state.onboardingSeen,

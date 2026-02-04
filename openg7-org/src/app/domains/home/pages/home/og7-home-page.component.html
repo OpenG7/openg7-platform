@@ -2,6 +2,65 @@
   <og7-home-hero-section [stats]="keyMetrics()" class="block"></og7-home-hero-section>
   <og7-home-statistics-section [stats]="keyMetrics()"></og7-home-statistics-section>
   <og7-home-inputs-section class="mx-auto block w-full max-w-6xl px-6 sm:px-10"></og7-home-inputs-section>
+
+  <section class="mx-auto w-full max-w-6xl px-6 sm:px-10">
+    <div class="grid gap-6 lg:grid-cols-3">
+      <article class="rounded-3xl border border-white/10 bg-slate-950/80 p-6 text-white shadow-[0_18px_60px_rgba(15,23,42,0.35)]">
+        <header class="mb-4 flex items-center justify-between">
+          <h3 class="text-lg font-semibold tracking-tight">Alertes</h3>
+          <span class="text-xs uppercase tracking-[0.2em] text-slate-400">Feed</span>
+        </header>
+        <ul class="space-y-4">
+          <li *ngFor="let item of alertItems(); trackBy: trackFeedItem" class="flex gap-3">
+            <span class="mt-1 h-2 w-2 rounded-full bg-amber-400"></span>
+            <div>
+              <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
+              <p class="text-xs text-slate-400">
+                {{ formatFeedRoute(item) || resolveSectorLabel(item.sectorId) }}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="rounded-3xl border border-white/10 bg-slate-950/80 p-6 text-white shadow-[0_18px_60px_rgba(15,23,42,0.35)]">
+        <header class="mb-4 flex items-center justify-between">
+          <h3 class="text-lg font-semibold tracking-tight">Opportunites</h3>
+          <span class="text-xs uppercase tracking-[0.2em] text-slate-400">Feed</span>
+        </header>
+        <ul class="space-y-4">
+          <li *ngFor="let item of opportunityItems(); trackBy: trackFeedItem" class="flex gap-3">
+            <span class="mt-1 h-2 w-2 rounded-full bg-emerald-400"></span>
+            <div>
+              <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
+              <p class="text-xs text-slate-400">
+                {{ formatFeedRoute(item) || resolveSectorLabel(item.sectorId) }}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="rounded-3xl border border-white/10 bg-slate-950/80 p-6 text-white shadow-[0_18px_60px_rgba(15,23,42,0.35)]">
+        <header class="mb-4 flex items-center justify-between">
+          <h3 class="text-lg font-semibold tracking-tight">Statistikes</h3>
+          <span class="text-xs uppercase tracking-[0.2em] text-slate-400">Feed</span>
+        </header>
+        <ul class="space-y-4">
+          <li *ngFor="let item of indicatorItems(); trackBy: trackFeedItem" class="flex gap-3">
+            <span class="mt-1 h-2 w-2 rounded-full bg-cyan-400"></span>
+            <div>
+              <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
+              <p class="text-xs text-slate-400">
+                {{ formatFeedRoute(item) || resolveSectorLabel(item.sectorId) }}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
   <og7-home-map-section></og7-home-map-section>
   <og7-home-filters-section></og7-home-filters-section>
 

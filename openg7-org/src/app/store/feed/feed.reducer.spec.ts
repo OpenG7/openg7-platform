@@ -1,121 +1,123 @@
-import { FeedPost, FeedRealtimeEnvelope } from '../../domains/feed/feature/models/feed.models';
+import { FeedItem, FeedRealtimeEnvelope } from '../../domains/feed/feature/models/feed.models';
 
 import { FeedActions } from './feed.actions';
 import { feedReducer } from './feed.reducer';
 
 describe('feedReducer', () => {
-  const createPost = (
+  const createItem = (
     id: string,
     createdAt: string,
-    overrides: Partial<FeedPost> = {}
-  ): FeedPost => ({
+    overrides: Partial<FeedItem> = {}
+  ): FeedItem => ({
     id,
-    author: overrides.author ?? { id: `author-${id}`, displayName: `Author ${id}` },
-    content: overrides.content ?? `Post ${id}`,
+    type: overrides.type ?? 'OFFER',
+    sectorId: overrides.sectorId ?? 'sector-1',
+    title: overrides.title ?? `Title ${id}`,
+    summary: overrides.summary ?? `Summary ${id}`,
     createdAt,
     updatedAt: overrides.updatedAt ?? null,
-    metrics: overrides.metrics ?? { likes: 0, replies: 0, shares: 0 },
-    channel: overrides.channel ?? 'global',
+    mode: overrides.mode ?? 'BOTH',
+    source: overrides.source ?? { kind: 'USER', label: `Source ${id}` },
     ...overrides,
   });
 
   const reduceEnvelope = (state: ReturnType<typeof feedReducer>, envelope: FeedRealtimeEnvelope) =>
     feedReducer(state, FeedActions.receiveRealtimeEnvelope({ envelope }));
 
-  it('maintains descending order and deduplicates posts across load and realtime events', () => {
+  it('maintains descending order and deduplicates items across load and realtime events', () => {
     const initialBatch = [
-      createPost('a', '2024-01-01T08:00:00.000Z', {
+      createItem('a', '2024-01-01T08:00:00.000Z', {
         updatedAt: '2024-01-01T09:00:00.000Z',
-        content: 'original a',
+        title: 'original a',
       }),
-      createPost('b', '2024-01-02T09:00:00.000Z', { content: 'post b' }),
+      createItem('b', '2024-01-02T09:00:00.000Z', { title: 'item b' }),
     ];
-    const newerVersionOfA = createPost('a', '2024-01-01T08:00:00.000Z', {
+    const newerVersionOfA = createItem('a', '2024-01-01T08:00:00.000Z', {
       updatedAt: '2024-01-01T10:00:00.000Z',
-      content: 'newer a',
+      title: 'newer a',
     });
     initialBatch.push(newerVersionOfA);
 
     let state = feedReducer(
       undefined,
-      FeedActions.loadSuccess({ posts: initialBatch, cursor: null, append: false })
+      FeedActions.loadSuccess({ items: initialBatch, cursor: null, append: false })
     );
 
-    expect(state.posts.map(post => post.id)).toEqual(['b', 'a']);
-    expect(state.posts[1].content).toBe('newer a');
-    expect(state.postIndex['b']).toBe(0);
-    expect(state.postIndex['a']).toBe(1);
+    expect(state.items.map(item => item.id)).toEqual(['b', 'a']);
+    expect(state.items[1].title).toBe('newer a');
+    expect(state.itemIndex['b']).toBe(0);
+    expect(state.itemIndex['a']).toBe(1);
 
     const appendBatch = [
-      createPost('c', '2024-01-03T09:00:00.000Z', { content: 'post c' }),
-      createPost('b', '2024-01-02T09:00:00.000Z', {
+      createItem('c', '2024-01-03T09:00:00.000Z', { title: 'item c' }),
+      createItem('b', '2024-01-02T09:00:00.000Z', {
         updatedAt: '2024-01-02T10:00:00.000Z',
-        content: 'updated b',
+        title: 'updated b',
       }),
     ];
 
     state = feedReducer(
       state,
-      FeedActions.loadSuccess({ posts: appendBatch, cursor: 'cursor-1', append: true })
+      FeedActions.loadSuccess({ items: appendBatch, cursor: 'cursor-1', append: true })
     );
 
-    expect(state.posts.map(post => post.id)).toEqual(['c', 'b', 'a']);
-    expect(state.posts[1].content).toBe('updated b');
+    expect(state.items.map(item => item.id)).toEqual(['c', 'b', 'a']);
+    expect(state.items[1].title).toBe('updated b');
     expect(state.cursor).toBe('cursor-1');
 
     state = reduceEnvelope(state, {
-      type: 'feed.post.updated',
-      payload: createPost('a', '2024-01-01T08:00:00.000Z', {
+      type: 'feed.item.updated',
+      payload: createItem('a', '2024-01-01T08:00:00.000Z', {
         updatedAt: '2024-01-01T11:00:00.000Z',
-        content: 'realtime a',
+        title: 'realtime a',
       }),
     });
 
-    expect(state.posts.map(post => post.id)).toEqual(['c', 'b', 'a']);
-    expect(state.posts[2].content).toBe('realtime a');
+    expect(state.items.map(item => item.id)).toEqual(['c', 'b', 'a']);
+    expect(state.items[2].title).toBe('realtime a');
 
     state = reduceEnvelope(state, {
-      type: 'feed.post.created',
+      type: 'feed.item.created',
       cursor: 'cursor-2',
-      payload: createPost('d', '2024-01-02T12:00:00.000Z', { content: 'post d' }),
+      payload: createItem('d', '2024-01-02T12:00:00.000Z', { title: 'item d' }),
     });
 
     expect(state.cursor).toBe('cursor-2');
-    expect(state.posts.map(post => post.id)).toEqual(['c', 'd', 'b', 'a']);
+    expect(state.items.map(item => item.id)).toEqual(['c', 'd', 'b', 'a']);
 
     state = reduceEnvelope(state, {
-      type: 'feed.post.deleted',
-      payload: createPost('b', '2024-01-02T09:00:00.000Z'),
+      type: 'feed.item.deleted',
+      payload: createItem('b', '2024-01-02T09:00:00.000Z'),
     });
 
-    expect(state.posts.map(post => post.id)).toEqual(['c', 'd', 'a']);
-    expect(state.postIndex['c']).toBe(0);
-    expect(state.postIndex['d']).toBe(1);
-    expect(state.postIndex['a']).toBe(2);
-    expect(state.posts[state.postIndex['d']].content).toBe('post d');
+    expect(state.items.map(item => item.id)).toEqual(['c', 'd', 'a']);
+    expect(state.itemIndex['c']).toBe(0);
+    expect(state.itemIndex['d']).toBe(1);
+    expect(state.itemIndex['a']).toBe(2);
+    expect(state.items[state.itemIndex['d']].title).toBe('item d');
   });
 
-  it('ignores stale updates that are older than the existing post', () => {
-    const basePost = createPost('stale', '2024-02-01T10:00:00.000Z', {
+  it('ignores stale updates that are older than the existing item', () => {
+    const baseItem = createItem('stale', '2024-02-01T10:00:00.000Z', {
       updatedAt: '2024-02-01T11:00:00.000Z',
-      content: 'fresh',
+      title: 'fresh',
     });
 
     let state = feedReducer(
       undefined,
-      FeedActions.loadSuccess({ posts: [basePost], cursor: null, append: false })
+      FeedActions.loadSuccess({ items: [baseItem], cursor: null, append: false })
     );
 
     state = reduceEnvelope(state, {
-      type: 'feed.post.updated',
-      payload: createPost('stale', '2024-02-01T10:00:00.000Z', {
+      type: 'feed.item.updated',
+      payload: createItem('stale', '2024-02-01T10:00:00.000Z', {
         updatedAt: '2024-02-01T10:30:00.000Z',
-        content: 'older',
+        title: 'older',
       }),
     });
 
-    expect(state.posts.length).toBe(1);
-    expect(state.posts[0].content).toBe('fresh');
-    expect(state.postIndex['stale']).toBe(0);
+    expect(state.items.length).toBe(1);
+    expect(state.items[0].title).toBe('fresh');
+    expect(state.itemIndex['stale']).toBe(0);
   });
 });

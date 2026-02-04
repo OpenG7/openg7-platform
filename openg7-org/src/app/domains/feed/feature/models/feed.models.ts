@@ -1,106 +1,90 @@
 import { Signal } from '@angular/core';
 
-export interface FeedAuthor {
-  readonly id: string;
-  readonly displayName: string;
-  readonly avatarUrl?: string | null;
-  readonly organization?: string | null;
-  readonly title?: string | null;
+export type FeedItemType =
+  | 'OFFER'
+  | 'REQUEST'
+  | 'ALERT'
+  | 'TENDER'
+  | 'CAPACITY'
+  | 'INDICATOR';
+
+export type FlowMode = 'EXPORT' | 'IMPORT' | 'BOTH';
+
+export type FeedSort = 'NEWEST' | 'URGENCY' | 'VOLUME' | 'CREDIBILITY';
+
+export type QuantityUnit = 'MW' | 'MWh' | 'bbl_d' | 'ton' | 'kg' | 'hours' | 'cad' | 'usd';
+
+export interface Quantity {
+  readonly value: number;
+  readonly unit: QuantityUnit;
 }
 
-export interface FeedAttachment {
-  readonly id: string;
-  readonly kind: 'image' | 'document' | 'link';
-  readonly url: string;
-  readonly title?: string | null;
-  readonly description?: string | null;
-  readonly mimeType?: string | null;
-  readonly sizeBytes?: number | null;
-  readonly previewUrl?: string | null;
+export interface FeedItemSource {
+  readonly kind: 'GOV' | 'COMPANY' | 'PARTNER' | 'USER';
+  readonly label: string;
+  readonly url?: string;
 }
 
-export interface FeedReply {
+export interface FeedItem {
   readonly id: string;
-  readonly postId: string;
-  readonly author: FeedAuthor;
-  readonly content: string;
   readonly createdAt: string;
   readonly updatedAt?: string | null;
-  readonly expiresAt?: string | null;
-  readonly moderated?: boolean;
-  readonly parentReplyId?: string | null;
-  readonly attachments?: readonly FeedAttachment[];
-}
-
-export type FeedComposerChannel = 'global' | 'sector' | 'province' | 'private';
-
-export interface FeedPost {
-  readonly id: string;
-  readonly author: FeedAuthor;
-  readonly content: string;
-  readonly createdAt: string;
-  readonly updatedAt?: string | null;
-  readonly expiresAt?: string | null;
-  readonly sectors?: readonly string[];
-  readonly province?: string | null;
-  readonly country?: string | null;
-  readonly needTypes?: readonly string[];
-  readonly attachments?: readonly FeedAttachment[];
-  readonly metrics: FeedPostMetrics;
-  readonly replies?: readonly FeedReply[];
-  readonly pinned?: boolean;
-  readonly channel: FeedComposerChannel;
+  readonly type: FeedItemType;
+  readonly sectorId: string | null;
+  readonly title: string;
+  readonly summary: string;
+  readonly fromProvinceId?: string | null;
+  readonly toProvinceId?: string | null;
+  readonly mode: FlowMode;
+  readonly quantity?: Quantity | null;
+  readonly urgency?: 1 | 2 | 3 | null;
+  readonly credibility?: 1 | 2 | 3 | null;
+  readonly volumeScore?: number | null;
+  readonly tags?: readonly string[];
+  readonly source: FeedItemSource;
   readonly status?: 'confirmed' | 'pending' | 'failed';
   readonly optimisticIdempotencyKey?: string;
-  readonly moderationLabels?: readonly string[];
   readonly accessibilitySummary?: string | null;
-}
-
-export interface FeedPostMetrics {
-  readonly likes: number;
-  readonly replies: number;
-  readonly shares: number;
-  readonly impressions?: number;
+  readonly geo?: {
+    readonly from?: { lat: number; lng: number };
+    readonly to?: { lat: number; lng: number };
+  };
 }
 
 export interface FeedRealtimeEnvelope {
   readonly eventId?: string;
-  readonly type:
-    | 'feed.post.created'
-    | 'feed.post.updated'
-    | 'feed.post.deleted'
-    | 'feed.reply.created'
-    | 'feed.reply.deleted'
-    | 'feed.analytics';
+  readonly type: 'feed.item.created' | 'feed.item.updated' | 'feed.item.deleted';
   readonly payload: unknown;
   readonly cursor?: string | null;
 }
 
 export interface FeedFilterState {
-  readonly country: string | null;
-  readonly province: string | null;
-  readonly sectors: readonly string[];
-  readonly needTypes: readonly string[];
-  readonly onlyUnread: boolean;
-  readonly sort: 'latest' | 'trending' | 'recommended';
+  readonly fromProvinceId: string | null;
+  readonly toProvinceId: string | null;
+  readonly sectorId: string | null;
+  readonly type: FeedItemType | null;
+  readonly mode: FlowMode;
+  readonly sort: FeedSort;
   readonly search: string;
 }
 
 export interface FeedSnapshot {
-  readonly posts: readonly FeedPost[];
+  readonly items: readonly FeedItem[];
   readonly cursor: string | null;
   readonly filters: FeedFilterState;
   readonly onboardingSeen: boolean;
 }
 
 export interface FeedComposerDraft {
-  readonly content: string;
-  readonly attachments?: readonly FeedAttachment[];
-  readonly channel: FeedComposerChannel;
-  readonly province?: string | null;
-  readonly country?: string | null;
-  readonly sectors?: readonly string[];
-  readonly needTypes?: readonly string[];
+  readonly type: FeedItemType | null;
+  readonly title: string;
+  readonly summary: string;
+  readonly sectorId: string | null;
+  readonly fromProvinceId?: string | null;
+  readonly toProvinceId?: string | null;
+  readonly mode: FlowMode;
+  readonly quantity?: Quantity | null;
+  readonly tags?: readonly string[];
 }
 
 export interface FeedComposerValidationResult {
@@ -113,4 +97,12 @@ export interface FeedRealtimeConnectionState {
   readonly connected: Signal<boolean>;
   readonly reconnecting: Signal<boolean>;
   readonly error: Signal<string | null>;
+}
+
+// Legacy reply model retained for paused UI components.
+export interface FeedReply {
+  readonly id: string;
+  readonly author: { displayName: string };
+  readonly content: string;
+  readonly createdAt: string;
 }

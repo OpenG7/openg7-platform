@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FiltersService } from '@app/core/filters.service';
@@ -16,7 +17,9 @@ import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-s
 import { IntroductionRequestContext } from '@app/domains/matchmaking/sections/og7-intro-billboard.section';
 import { OpportunityMatchesSection } from '@app/domains/opportunities/sections/opportunity-matches.section';
 import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
+import { FeedItem, FeedItemType } from '@app/domains/feed/feature/models/feed.models';
 import { selectFilteredFlows, selectMapKpis } from '@app/state';
+import { selectCatalogFeedItems, selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import { AppState } from '@app/state/app.state';
 import { Store } from '@ngrx/store';
 
@@ -24,6 +27,7 @@ import { Store } from '@ngrx/store';
   standalone: true,
   selector: 'og7-home-page',
   imports: [
+    CommonModule,
     HomeHeroSectionComponent,
     HomeMapSectionComponent,
     HomeStatisticsSectionComponent,
@@ -54,6 +58,9 @@ export class Og7HomePageComponent {
 
   private readonly flows = this.store.selectSignal(selectFilteredFlows);
   private readonly kpis = this.store.selectSignal(selectMapKpis);
+  private readonly catalogFeedItems = this.store.selectSignal(selectCatalogFeedItems);
+  private readonly catalogProvinces = this.store.selectSignal(selectProvinces);
+  private readonly catalogSectors = this.store.selectSignal(selectSectors);
 
   protected readonly matches = this.opportunities.items();
   protected readonly loading = this.opportunities.loading();
@@ -65,6 +72,34 @@ export class Og7HomePageComponent {
 
   protected readonly activeMatch = computed(() => this.resolveMatch(this.selectedMatchId()));
   protected readonly activeFinancingBanner = computed(() => this.financingBanner());
+
+  protected readonly provinceLabelMap = computed(() => {
+    const map = new Map<string, string>();
+    for (const province of this.catalogProvinces()) {
+      map.set(province.id, province.name);
+    }
+    return map;
+  });
+
+  protected readonly sectorLabelMap = computed(() => {
+    const map = new Map<string, string>();
+    for (const sector of this.catalogSectors()) {
+      map.set(sector.id, sector.name);
+    }
+    return map;
+  });
+
+  protected readonly alertItems = computed(() =>
+    this.buildPanelItems(['ALERT'], 2)
+  );
+
+  protected readonly opportunityItems = computed(() =>
+    this.buildPanelItems(['OFFER', 'REQUEST', 'CAPACITY', 'TENDER'], 2)
+  );
+
+  protected readonly indicatorItems = computed(() =>
+    this.buildPanelItems(['INDICATOR'], 2)
+  );
 
   constructor() {
     this.aiPrefill.prefillFromPreferences();
@@ -135,6 +170,41 @@ export class Og7HomePageComponent {
 
   private resolveFinancing(match: OpportunityMatch): FinancingBanner | null {
     return findDemoFinancingBanner(match);
+  }
+
+  protected resolveProvinceLabel(id?: string | null): string | null {
+    if (!id) {
+      return null;
+    }
+    return this.provinceLabelMap().get(id) ?? id;
+  }
+
+  protected resolveSectorLabel(id?: string | null): string | null {
+    if (!id) {
+      return null;
+    }
+    return this.sectorLabelMap().get(id) ?? id;
+  }
+
+  protected formatFeedRoute(item: FeedItem): string | null {
+    const from = this.resolveProvinceLabel(item.fromProvinceId ?? null);
+    const to = this.resolveProvinceLabel(item.toProvinceId ?? null);
+    if (from && to) {
+      return `${from} → ${to}`;
+    }
+    return from ?? to ?? this.resolveSectorLabel(item.sectorId ?? null);
+  }
+
+  protected trackFeedItem(index: number, item: FeedItem): string {
+    return item.id ?? `feed-${index}`;
+  }
+
+  private buildPanelItems(types: FeedItemType[], limit: number): FeedItem[] {
+    const items = this.catalogFeedItems().filter((item) => types.includes(item.type));
+    return items
+      .slice()
+      .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
+      .slice(0, limit);
   }
 }
 

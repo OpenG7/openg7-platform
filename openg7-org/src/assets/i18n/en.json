@@ -1,4 +1,4 @@
-{
+﻿{
   "announcement": "Welcome to OpenG7",
   "banner": {
     "underConstruction": {
@@ -517,118 +517,157 @@
     }
   },
   "feed": {
-    "title": "Collaboration feed",
-    "subtitle": "Stay on top of partner updates, needs, and real-time collaboration signals.",
+    "title": "Trade exchange feed",
+    "subtitle": "Offers, requests, and economic signals across Canadian provinces.",
     "shortcuts": {
       "title": "Keyboard shortcuts",
       "description": "Navigate faster on desktop and tablets.",
       "refresh": "Refresh the feed",
-      "loadMore": "Load more posts",
-      "closeDrawer": "Close the post drawer"
+      "loadMore": "Load more items",
+      "closeDrawer": "Close the details panel"
     },
     "status": {
       "online": "Live updates active",
-      "degraded": "Live updates degraded — some data may be delayed",
-      "offline": "Offline — attempting to reconnect",
-      "reconnecting": "Reconnecting…"
+      "degraded": "Live updates degraded - some data may be delayed",
+      "offline": "Offline - attempting to reconnect",
+      "reconnecting": "Reconnecting...",
+      "pending": "Publishing...",
+      "failed": "Publish failed"
     },
     "stream": {
       "refresh": "Retry connection",
-      "newPosts": "{{ count, plural, one {# new post available.} other {# new posts available.} }}",
+      "newItems": "{{ count, plural, one {# new item available.} other {# new items available.} }}",
       "showNew": "Show latest",
-      "onboarding": "Share quick updates or needs so partners can respond in time.",
-      "onboardingAction": "Post an update",
+      "onboarding": "Share an offer or request so partners can respond in time.",
+      "onboardingAction": "Publish an item",
       "filters": "Active filters",
-      "clearFilters": "Clear all",
-      "loading": "Loading more updates…"
+      "loading": "Loading more items..."
     },
     "filters": {
-      "search": "Search feed",
-      "province": "Province",
+      "search": "Search",
+      "searchPlaceholder": "Search offers, requests, resources...",
+      "type": "Type",
+      "allTypes": "All types",
       "sector": "Sector",
-      "need": "Need tag",
-      "onlyUnread": "Unread only",
+      "allSectors": "All sectors",
+      "fromProvince": "From",
+      "toProvince": "To",
+      "allProvinces": "All provinces",
+      "mode": "Mode",
       "sort": {
         "label": "Sort",
-        "latest": "Latest",
-        "trending": "Trending",
-        "recommended": "Recommended"
-      }
+        "newest": "Newest",
+        "urgency": "Urgency",
+        "volume": "Volume",
+        "credibility": "Credibility"
+      },
+      "clear": "Clear filters"
     },
-    "card": {
-      "edited": "Edited",
-      "pinned": "Pinned update",
-      "pending": "Sending…",
-      "failed": "Not delivered",
-      "expires": "Expires {{ value }}",
-      "view": "Open",
-      "reply": "Reply",
-      "like": "Like",
-      "share": "Share"
+    "mode": {
+      "export": "Export",
+      "import": "Import",
+      "both": "All"
     },
-    "replies": {
-      "title": "Replies"
+    "type": {
+      "OFFER": "Offer",
+      "REQUEST": "Request",
+      "ALERT": "Alert",
+      "TENDER": "Tender",
+      "CAPACITY": "Capacity",
+      "INDICATOR": "Indicator"
+    },
+    "cta": {
+      "open": "Open",
+      "save": "Save",
+      "contact": "Contact"
+    },
+    "from": "From",
+    "to": "To",
+    "source": "Source",
+    "sourceUnknown": "Unknown source",
+    "sourceYou": "You",
+    "quantity": "Quantity",
+    "urgency": {
+      "label": "Urgency",
+      "1": "Low",
+      "2": "Medium",
+      "3": "High"
+    },
+    "credibility": {
+      "label": "Credibility",
+      "1": "Declared",
+      "2": "Verified",
+      "3": "Official"
     },
     "drawer": {
-      "close": "Close post",
-      "aria": "Post details panel"
+      "close": "Close details",
+      "aria": "Item details panel"
     },
     "composer": {
-      "title": "Share an update",
-      "channelLabel": "Choose an audience",
-      "channel": {
-        "global": "All partners",
-        "sector": "Sector group",
-        "province": "Province channel",
-        "private": "Private note"
-      },
-      "placeholder": "Summarize what you need or can offer…",
-      "help": "Keep the message concise and note any deadlines or accessibility considerations.",
+      "title": "Publish an exchange",
+      "subtitle": "Share offers or requests with a clear title, sector, and route.",
+      "type": "Type",
+      "typePlaceholder": "Select a type",
+      "sector": "Sector",
+      "sectorPlaceholder": "Select a sector",
+      "mode": "Mode",
+      "fromProvince": "From province",
+      "toProvince": "To province",
+      "provincePlaceholder": "Select a province",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Short, explicit title",
+      "summaryLabel": "Summary",
+      "summaryPlaceholder": "Describe volumes, constraints, and timelines...",
+      "quantityValue": "Quantity",
+      "quantityValuePlaceholder": "e.g. 1200",
+      "quantityUnit": "Unit",
+      "quantityUnitPlaceholder": "Select a unit",
+      "tags": "Tags",
+      "tagsPlaceholder": "e.g. priority, cold-chain, certified",
       "submit": "Publish",
-      "submitting": "Publishing…",
+      "submitting": "Publishing...",
       "clear": "Clear draft"
     },
     "validation": {
-      "tooShort": "Write at least three characters.",
-      "tooLong": "Limit updates to 5,000 characters.",
-      "moderationFlag": "Review the language for a respectful, inclusive tone.",
-      "channelRequired": "Select where to publish this update."
-    },
-    "toast": {
-      "publishSuccess": "Update shared with the feed.",
-      "publishFailure": "We could not send your update. Try again.",
-      "loadFailure": "The feed did not load. Check your connection.",
-      "reconnected": "Connection restored. New updates will appear automatically."
+      "typeRequired": "Select a type.",
+      "sectorRequired": "Select a sector.",
+      "titleTooShort": "Title must be at least three characters.",
+      "titleTooLong": "Keep the title under 160 characters.",
+      "summaryTooShort": "Summary must be at least ten characters.",
+      "summaryTooLong": "Summary cannot exceed 5,000 characters.",
+      "quantityInvalid": "Quantity must be a positive number.",
+      "quantityUnitRequired": "Select a quantity unit.",
+      "routeIncomplete": "Add both origin and destination for import/export flows.",
+      "moderationFlag": "Review the language for a respectful, inclusive tone."
     },
     "notifications": {
-      "publishSuccess": "Update shared with the feed.",
-      "publishFailure": "We could not send your update: {{ reason }}.",
+      "publishSuccess": "Item shared with the feed.",
+      "publishFailure": "We could not publish this item: {{ reason }}.",
       "loadError": "The feed did not load: {{ reason }}.",
       "connectionLost": "Live updates are temporarily paused. We will retry shortly.",
       "connectionRestored": "Live updates are back online.",
-      "reconnecting": "Reconnecting in {{ seconds }}s…"
+      "reconnecting": "Reconnecting in {{ seconds }}s..."
     },
     "error": {
       "generic": "Something went wrong. Please try again.",
       "offline": "You are offline. Reconnect to refresh the feed.",
-      "forbidden": "You do not have permission to publish in this channel.",
-      "expired": "This post is no longer available."
+      "forbidden": "You do not have permission to publish this item.",
+      "expired": "This item is no longer available."
     },
     "aria": {
-      "newPosts": "{{ count, plural, one {# new post ready.} other {# new posts ready.} }}",
-      "postFailed": "Post failed to send. Edit and try again.",
+      "newItems": "{{ count, plural, one {# new item ready.} other {# new items ready.} }}",
+      "itemFailed": "Item failed to send. Edit and try again.",
       "connectionLost": "Feed connection lost. Reconnecting.",
       "connectionRestored": "Feed connection restored."
     },
     "analytics": {
       "pageLoaded": "Feed page loaded",
-      "postPublish": "Feed post published",
-      "postPublishFailed": "Feed post publish failed",
-      "postReceived": "Feed post received",
-      "drawerOpened": "Feed post opened"
+      "itemPublish": "Feed item published",
+      "itemPublishFailed": "Feed item publish failed",
+      "itemReceived": "Feed item received",
+      "drawerOpened": "Feed item opened"
     }
-  },
-  "pages": {
+  },  "pages": {
     "credits": {
       "kicker": "COLLECTIVE IMPACT",
       "title": "An ecosystem built together",
@@ -2780,3 +2819,4 @@
     }
   }
 }
+

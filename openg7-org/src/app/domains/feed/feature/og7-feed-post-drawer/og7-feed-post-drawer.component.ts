@@ -10,31 +10,27 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { FeedPost } from '../models/feed.models';
-import { Og7FeedRepliesComponent } from '../og7-feed-replies/og7-feed-replies.component';
+import { FeedItem } from '../models/feed.models';
 import { JsonDateAgoPipe } from '../pipes/json-date-ago.pipe';
 
 @Component({
   selector: 'og7-feed-post-drawer',
   standalone: true,
-  imports: [CommonModule, TranslateModule, Og7FeedRepliesComponent, JsonDateAgoPipe],
+  imports: [CommonModule, TranslateModule, JsonDateAgoPipe],
   templateUrl: './og7-feed-post-drawer.component.html',
   styleUrls: ['./og7-feed-post-drawer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/**
- * Contexte : Affichée dans les vues du dossier « domains/feed/feature/og7-feed-post-drawer » en tant que composant Angular standalone.
- * Raison d’être : Encapsule l'interface utilisateur et la logique propre à « Og7 Feed Post Drawer ».
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns Og7FeedPostDrawerComponent gérée par le framework.
- */
 export class Og7FeedPostDrawerComponent {
-  readonly post = input<FeedPost | null>(null);
+  readonly item = input<FeedItem | null>(null);
   readonly open = input(false);
+  readonly fromLabel = input<string | null>(null);
+  readonly toLabel = input<string | null>(null);
+  readonly sectorLabel = input<string | null>(null);
 
   readonly closed = output<void>();
 
-  protected readonly visible = computed(() => this.open() && Boolean(this.post()));
+  protected readonly visible = computed(() => this.open() && Boolean(this.item()));
 
   constructor() {
     effect(() => {

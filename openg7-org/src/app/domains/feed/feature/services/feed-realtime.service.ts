@@ -10,55 +10,57 @@ import {
   effect,
   inject,
   makeStateKey,
-  signal,
 } from '@angular/core';
 import { API_URL } from '@app/core/config/environment.tokens';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
 import {
-  activeSectorsSig,
+  feedModeSig,
   feedSearchSig,
   feedSortSig,
-  focusPostIdSig,
-  needTypeSig,
-  selectedCountrySig,
-  selectedProvinceSig,
+  feedTypeSig,
+  focusItemIdSig,
+  fromProvinceIdSig,
+  sectorIdSig,
+  toProvinceIdSig,
 } from '@app/state/shared-feed-signals';
 import { FeedActions } from '@app/store/feed/feed.actions';
 import { toFeedSnapshot } from '@app/store/feed/feed.reducer';
 import {
   selectFeedConnectionState,
-  selectFeedDrawerPostId,
+  selectFeedDrawerItemId,
   selectFeedCursor,
   selectFeedError,
   selectFeedFilters,
   selectFeedHydrated,
   selectFeedLoading,
-  selectFeedPosts,
+  selectFeedItems,
+  selectFeedOnboardingSeen,
   selectFeedState,
   selectFeedUnreadCount,
 } from '@app/store/feed/feed.selectors';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { FeedComposerDraft, FeedComposerValidationResult, FeedFilterState, FeedPost, FeedRealtimeEnvelope, FeedSnapshot } from '../models/feed.models';
+import {
+  FeedComposerDraft,
+  FeedComposerValidationResult,
+  FeedFilterState,
+  FeedItem,
+  FeedRealtimeEnvelope,
+  FeedSnapshot,
+} from '../models/feed.models';
 
 const STREAM_ENDPOINT = '/api/feed/stream';
 const COLLECTION_ENDPOINT = '/api/feed';
 const TRANSFER_STATE_KEY = makeStateKey<FeedSnapshot>('OG7_FEED_SNAPSHOT');
 const MODERATION_TERMS = ['spam', 'fake', 'fraud'];
 
-interface PostResponse {
-  readonly data: FeedPost | FeedPost[];
+interface ItemResponse {
+  readonly data: FeedItem | FeedItem[];
   readonly cursor?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
-/**
- * Contexte : Injecté via Angular DI par les autres briques du dossier « domains/feed/feature/services ».
- * Raison d’être : Centralise la logique métier et les appels nécessaires autour de « Feed Realtime ».
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns FeedRealtimeService gérée par le framework.
- */
 export class FeedRealtimeService {
   private readonly http = inject(HttpClient);
   private readonly store = inject(Store);
@@ -77,23 +79,24 @@ export class FeedRealtimeService {
   private reconnectAttempts = 0;
   private readonly seenEventIds: string[] = [];
   private connectionNotifiedDown = false;
+  private lastFetchedFilters: FeedFilterState | null = null;
 
   private readonly filtersSig = this.store.selectSignal(selectFeedFilters);
   private readonly cursorSig = this.store.selectSignal(selectFeedCursor);
   private readonly hydratedSig = this.store.selectSignal(selectFeedHydrated);
   private readonly unreadSig = this.store.selectSignal(selectFeedUnreadCount);
   private readonly connectionSig = this.store.selectSignal(selectFeedConnectionState);
-  private readonly postsSig = this.store.selectSignal(selectFeedPosts);
+  private readonly itemsSig = this.store.selectSignal(selectFeedItems);
   private readonly loadingSig = this.store.selectSignal(selectFeedLoading);
   private readonly errorSig = this.store.selectSignal(selectFeedError);
-  private readonly drawerSig = this.store.selectSignal(selectFeedDrawerPostId);
+  private readonly drawerSig = this.store.selectSignal(selectFeedDrawerItemId);
   private readonly stateSig = this.store.selectSignal(selectFeedState);
+  private readonly onboardingSeenSig = this.store.selectSignal(selectFeedOnboardingSeen);
 
-  private readonly onlyUnreadSig = signal(false);
-
-  readonly posts = this.postsSig;
+  readonly items = this.itemsSig;
   readonly loading = this.loadingSig;
   readonly error = this.errorSig;
+  readonly onboardingSeen = this.onboardingSeenSig;
 
   readonly connectionState = {
     connected: computed(() => this.connectionSig().connected),
@@ -123,13 +126,13 @@ export class FeedRealtimeService {
     effect(
       () => {
         const filters = this.filtersSig();
-        this.updateSignalIfChanged(selectedCountrySig, filters.country);
-        this.updateSignalIfChanged(selectedProvinceSig, filters.province);
-        this.updateArraySignalIfChanged(activeSectorsSig, filters.sectors);
-        this.updateArraySignalIfChanged(needTypeSig, filters.needTypes);
+        this.updateSignalIfChanged(fromProvinceIdSig, filters.fromProvinceId);
+        this.updateSignalIfChanged(toProvinceIdSig, filters.toProvinceId);
+        this.updateSignalIfChanged(sectorIdSig, filters.sectorId);
+        this.updateSignalIfChanged(feedTypeSig, filters.type);
+        this.updateSignalIfChanged(feedModeSig, filters.mode);
         this.updateSignalIfChanged(feedSearchSig, filters.search);
         this.updateSignalIfChanged(feedSortSig, filters.sort);
-        this.updateSignalIfChanged(this.onlyUnreadSig, filters.onlyUnread);
       },
       { allowSignalWrites: true }
     );
@@ -137,11 +140,11 @@ export class FeedRealtimeService {
     effect(
       () => {
         const filters: FeedFilterState = {
-          country: selectedCountrySig(),
-          province: selectedProvinceSig(),
-          sectors: [...activeSectorsSig()],
-          needTypes: [...needTypeSig()],
-          onlyUnread: this.onlyUnreadSig(),
+          fromProvinceId: fromProvinceIdSig(),
+          toProvinceId: toProvinceIdSig(),
+          sectorId: sectorIdSig(),
+          type: feedTypeSig(),
+          mode: feedModeSig(),
           sort: feedSortSig(),
           search: feedSearchSig(),
         };
@@ -153,11 +156,25 @@ export class FeedRealtimeService {
       { allowSignalWrites: true }
     );
 
+    effect(() => {
+      const hydrated = this.hydratedSig();
+      const filters = this.filtersSig();
+      if (!hydrated) {
+        this.lastFetchedFilters = filters;
+        return;
+      }
+      if (this.lastFetchedFilters && this.equalFilters(this.lastFetchedFilters, filters)) {
+        return;
+      }
+      this.lastFetchedFilters = filters;
+      this.fetchPage({ replace: true });
+    });
+
     effect(
       () => {
-        const postId = this.drawerSig();
-        if (focusPostIdSig() !== postId) {
-          focusPostIdSig.set(postId);
+        const itemId = this.drawerSig();
+        if (focusItemIdSig() !== itemId) {
+          focusItemIdSig.set(itemId);
         }
       },
       { allowSignalWrites: true }
@@ -199,41 +216,55 @@ export class FeedRealtimeService {
     this.refreshConnection();
   }
 
-  openDrawer(postId: string | null): void {
-    focusPostIdSig.set(postId);
-    this.store.dispatch(FeedActions.openDrawer({ postId }));
+  openDrawer(itemId: string | null): void {
+    focusItemIdSig.set(itemId);
+    this.store.dispatch(FeedActions.openDrawer({ itemId }));
   }
 
   markOnboardingSeen(): void {
     this.store.dispatch(FeedActions.markOnboardingSeen());
   }
 
-  toggleUnreadOnly(next?: boolean): void {
-    if (typeof next === 'boolean') {
-      this.onlyUnreadSig.set(next);
-    } else {
-      this.onlyUnreadSig.update(value => !value);
-    }
-  }
-
   validateDraft(draft: FeedComposerDraft): FeedComposerValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
-    const normalized = draft.content?.trim() ?? '';
-    if (normalized.length < 3) {
-      errors.push('feed.validation.tooShort');
+    const title = draft.title?.trim() ?? '';
+    const summary = draft.summary?.trim() ?? '';
+    if (!draft.type) {
+      errors.push('feed.validation.typeRequired');
     }
-    if (normalized.length > 5000) {
-      errors.push('feed.validation.tooLong');
+    if (!draft.sectorId) {
+      errors.push('feed.validation.sectorRequired');
     }
+    if (title.length < 3) {
+      errors.push('feed.validation.titleTooShort');
+    }
+    if (title.length > 160) {
+      errors.push('feed.validation.titleTooLong');
+    }
+    if (summary.length < 10) {
+      errors.push('feed.validation.summaryTooShort');
+    }
+    if (summary.length > 5000) {
+      errors.push('feed.validation.summaryTooLong');
+    }
+    if (draft.quantity?.value !== undefined && draft.quantity?.value !== null) {
+      if (!Number.isFinite(draft.quantity.value) || draft.quantity.value <= 0) {
+        errors.push('feed.validation.quantityInvalid');
+      }
+      if (!draft.quantity.unit) {
+        errors.push('feed.validation.quantityUnitRequired');
+      }
+    }
+    if (draft.mode !== 'BOTH' && (!draft.fromProvinceId || !draft.toProvinceId)) {
+      warnings.push('feed.validation.routeIncomplete');
+    }
+    const moderationText = `${title} ${summary}`.toLowerCase();
     for (const term of MODERATION_TERMS) {
-      if (normalized.toLowerCase().includes(term)) {
+      if (moderationText.includes(term)) {
         warnings.push('feed.validation.moderationFlag');
         break;
       }
-    }
-    if (!draft.channel) {
-      errors.push('feed.validation.channelRequired');
     }
     return {
       valid: errors.length === 0,
@@ -247,26 +278,27 @@ export class FeedRealtimeService {
     if (!validation.valid) {
       return validation;
     }
+    this.markOnboardingSeen();
     const normalized = this.normalizeDraft(draft);
     const idempotencyKey = this.generateIdempotencyKey();
-    const optimisticPost = this.buildOptimisticPost(normalized, idempotencyKey);
-    this.store.dispatch(FeedActions.optimisticPublish({ draft: normalized, post: optimisticPost, idempotencyKey }));
+    const optimisticItem = this.buildOptimisticItem(normalized, idempotencyKey);
+    this.store.dispatch(FeedActions.optimisticPublish({ draft: normalized, item: optimisticItem, idempotencyKey }));
     const url = this.composeUrl(COLLECTION_ENDPOINT);
     const headers = new HttpHeaders({ 'Idempotency-Key': idempotencyKey });
-    this.http.post<PostResponse | FeedPost>(url, normalized, { headers }).subscribe({
+    this.http.post<ItemResponse | FeedItem>(url, normalized, { headers }).subscribe({
       next: response => {
-        const post = this.normalizePostResponse(response);
-        this.store.dispatch(FeedActions.publishSuccess({ tempId: optimisticPost.id, post }));
-        this.emitAnalytics('feed_post_publish', { postId: post.id, channel: post.channel });
+        const item = this.normalizeItemResponse(response);
+        this.store.dispatch(FeedActions.publishSuccess({ tempId: optimisticItem.id, item }));
+        this.emitAnalytics('feed.item.publish', { itemId: item.id, type: item.type });
         this.notifications.success(this.translate.instant('feed.notifications.publishSuccess'), {
           source: 'feed',
-          metadata: { postId: post.id, channel: post.channel },
+          metadata: { itemId: item.id, type: item.type },
         });
       },
       error: error => {
         const message = this.extractError(error);
-        this.store.dispatch(FeedActions.publishFailure({ tempId: optimisticPost.id, error: message }));
-        this.emitAnalytics('feed_post_publish_failed', { reason: message });
+        this.store.dispatch(FeedActions.publishFailure({ tempId: optimisticItem.id, error: message }));
+        this.emitAnalytics('feed.item.publish.failed', { reason: message });
         this.notifications.error(this.translate.instant('feed.notifications.publishFailure', { reason: message }), {
           source: 'feed',
           context: error,
@@ -298,13 +330,13 @@ export class FeedRealtimeService {
     }
     const url = this.composeUrl(COLLECTION_ENDPOINT);
     this.http
-      .get<PostResponse>(url, { params })
+      .get<ItemResponse>(url, { params })
       .subscribe({
         next: response => {
-          const posts = this.normalizeArrayResponse(response?.data);
+          const items = this.normalizeArrayResponse(response?.data);
           const nextCursor = response?.cursor ?? null;
-          this.store.dispatch(FeedActions.loadSuccess({ posts, cursor: nextCursor, append: Boolean(append) }));
-          this.emitAnalytics('feed_page_loaded', { count: posts.length, cursor: nextCursor });
+          this.store.dispatch(FeedActions.loadSuccess({ items, cursor: nextCursor, append: Boolean(append) }));
+          this.emitAnalytics('feed.page.loaded', { count: items.length, cursor: nextCursor });
         },
         error: error => {
           const message = this.extractError(error);
@@ -412,8 +444,8 @@ export class FeedRealtimeService {
       this.trackEventId(eventId);
     }
     this.store.dispatch(FeedActions.receiveRealtimeEnvelope({ envelope }));
-    if (envelope.type === 'feed.post.created') {
-      this.emitAnalytics('feed_post_received', { postId: (envelope.payload as FeedPost)?.id });
+    if (envelope.type === 'feed.item.created') {
+      this.emitAnalytics('feed.item.received', { itemId: (envelope.payload as FeedItem)?.id });
     }
   }
 
@@ -484,20 +516,20 @@ export class FeedRealtimeService {
     if (filters.cursor) {
       params = params.set('cursor', filters.cursor);
     }
-    if (filters.country) {
-      params = params.set('country', filters.country);
+    if (filters.fromProvinceId) {
+      params = params.set('fromProvince', filters.fromProvinceId);
     }
-    if (filters.province) {
-      params = params.set('province', filters.province);
+    if (filters.toProvinceId) {
+      params = params.set('toProvince', filters.toProvinceId);
     }
-    if (filters.sectors?.length) {
-      params = params.set('sectors', filters.sectors.join(','));
+    if (filters.sectorId) {
+      params = params.set('sector', filters.sectorId);
     }
-    if (filters.needTypes?.length) {
-      params = params.set('needTypes', filters.needTypes.join(','));
+    if (filters.type) {
+      params = params.set('type', filters.type);
     }
-    if (filters.onlyUnread) {
-      params = params.set('unread', 'true');
+    if (filters.mode && filters.mode !== 'BOTH') {
+      params = params.set('mode', filters.mode);
     }
     if (filters.sort) {
       params = params.set('sort', filters.sort);
@@ -513,65 +545,62 @@ export class FeedRealtimeService {
     return `${base}${path}`;
   }
 
-  private normalizeArrayResponse(data: FeedPost | FeedPost[] | null | undefined): FeedPost[] {
+  private normalizeArrayResponse(data: FeedItem | FeedItem[] | null | undefined): FeedItem[] {
     if (!data) {
       return [];
     }
-    return Array.isArray(data) ? data.map(post => this.normalizePost(post)) : [this.normalizePost(data)];
+    return Array.isArray(data) ? data.map(item => this.normalizeItem(item)) : [this.normalizeItem(data)];
   }
 
-  private normalizePostResponse(response: PostResponse | FeedPost): FeedPost {
+  private normalizeItemResponse(response: ItemResponse | FeedItem): FeedItem {
     if (!response) {
       throw new Error('Empty response');
     }
     if ('data' in response) {
       const data = response.data;
       if (Array.isArray(data)) {
-        return data.length ? this.normalizePost(data[0]) : this.buildPlaceholderPost();
+        return data.length ? this.normalizeItem(data[0]) : this.buildPlaceholderItem();
       }
-      return this.normalizePost(data as FeedPost);
+      return this.normalizeItem(data as FeedItem);
     }
-    return this.normalizePost(response);
+    return this.normalizeItem(response);
   }
 
-  private normalizePost(post: FeedPost): FeedPost {
+  private normalizeItem(item: FeedItem): FeedItem {
     return {
-      ...post,
-      attachments: Array.isArray(post.attachments) ? post.attachments : [],
-      replies: Array.isArray(post.replies) ? post.replies : [],
-      metrics: {
-        likes: post.metrics?.likes ?? 0,
-        replies: post.metrics?.replies ?? post.replies?.length ?? 0,
-        shares: post.metrics?.shares ?? 0,
-        impressions: post.metrics?.impressions ?? 0,
-      },
-      sectors: post.sectors ?? [],
-      needTypes: post.needTypes ?? [],
-      country: post.country ?? null,
-      province: post.province ?? null,
+      ...item,
+      sectorId: item.sectorId ?? null,
+      fromProvinceId: item.fromProvinceId ?? null,
+      toProvinceId: item.toProvinceId ?? null,
+      mode: item.mode ?? 'BOTH',
+      quantity: item.quantity ?? null,
+      urgency: item.urgency ?? null,
+      credibility: item.credibility ?? null,
+      tags: item.tags ?? [],
+      source: item.source ?? { kind: 'USER', label: this.translate.instant('feed.sourceUnknown') },
     };
   }
 
-  private buildOptimisticPost(draft: FeedComposerDraft, key: string): FeedPost {
+  private buildOptimisticItem(draft: FeedComposerDraft, key: string): FeedItem {
     const now = new Date().toISOString();
     return {
       id: `optimistic-${key}`,
       optimisticIdempotencyKey: key,
-      author: {
-        id: 'me',
-        displayName: 'You',
-      },
-      content: draft.content.trim(),
+      type: draft.type ?? 'OFFER',
+      sectorId: draft.sectorId ?? null,
+      title: draft.title.trim(),
+      summary: draft.summary.trim(),
       createdAt: now,
       updatedAt: now,
-      country: draft.country ?? null,
-      province: draft.province ?? null,
-      sectors: draft.sectors ?? [],
-      needTypes: draft.needTypes ?? [],
-      channel: draft.channel,
-      attachments: draft.attachments ?? [],
-      metrics: { likes: 0, replies: 0, shares: 0 },
-      replies: [],
+      fromProvinceId: draft.fromProvinceId ?? null,
+      toProvinceId: draft.toProvinceId ?? null,
+      mode: draft.mode ?? 'BOTH',
+      quantity: draft.quantity ?? null,
+      tags: draft.tags ?? [],
+      source: {
+        kind: 'USER',
+        label: this.translate.instant('feed.sourceYou'),
+      },
       status: 'pending' as const,
     };
   }
@@ -579,10 +608,14 @@ export class FeedRealtimeService {
   private normalizeDraft(draft: FeedComposerDraft): FeedComposerDraft {
     return {
       ...draft,
-      content: draft.content.trim(),
-      sectors: draft.sectors?.filter(Boolean) ?? [],
-      needTypes: draft.needTypes?.filter(Boolean) ?? [],
-      attachments: draft.attachments?.map(attachment => ({ ...attachment })) ?? [],
+      title: draft.title.trim(),
+      summary: draft.summary.trim(),
+      sectorId: draft.sectorId ?? null,
+      fromProvinceId: draft.fromProvinceId ?? null,
+      toProvinceId: draft.toProvinceId ?? null,
+      mode: draft.mode ?? 'BOTH',
+      quantity: draft.quantity ?? null,
+      tags: draft.tags?.filter(Boolean) ?? [],
     };
   }
 
@@ -605,7 +638,7 @@ export class FeedRealtimeService {
         return message;
       }
     }
-    return 'feed.error.generic';
+    return this.translate.instant('feed.error.generic');
   }
 
   private generateIdempotencyKey(): string {
@@ -617,21 +650,14 @@ export class FeedRealtimeService {
 
   private equalFilters(a: FeedFilterState, b: FeedFilterState): boolean {
     return (
-      a.country === b.country &&
-      a.province === b.province &&
-      a.onlyUnread === b.onlyUnread &&
+      a.fromProvinceId === b.fromProvinceId &&
+      a.toProvinceId === b.toProvinceId &&
+      a.sectorId === b.sectorId &&
+      a.type === b.type &&
+      a.mode === b.mode &&
       a.sort === b.sort &&
-      a.search === b.search &&
-      this.equalArray(a.sectors, b.sectors) &&
-      this.equalArray(a.needTypes, b.needTypes)
+      a.search === b.search
     );
-  }
-
-  private equalArray(a: readonly string[], b: readonly string[]): boolean {
-    if (a.length !== b.length) {
-      return false;
-    }
-    return a.every((value, index) => value === b[index]);
   }
 
   private hasSeenEvent(eventId: string): boolean {
@@ -651,12 +677,6 @@ export class FeedRealtimeService {
     }
   }
 
-  private updateArraySignalIfChanged(target: { set(value: readonly string[]): void; (): readonly string[] }, value: readonly string[]): void {
-    const prev = target();
-    if (!this.equalArray(prev, value)) {
-      target.set([...value]);
-    }
-  }
 
   private emitAnalytics(event: string, payload: Record<string, unknown>): void {
     if (!this.browser) {
@@ -674,16 +694,18 @@ export class FeedRealtimeService {
     }
   }
 
-  private buildPlaceholderPost(): FeedPost {
+  private buildPlaceholderItem(): FeedItem {
     return {
       id: 'placeholder',
-      author: { id: 'placeholder', displayName: 'Unknown' },
-      content: '',
+      type: 'OFFER',
+      sectorId: null,
+      title: '',
+      summary: '',
       createdAt: new Date().toISOString(),
-      channel: 'global',
-      country: null,
-      province: null,
-      metrics: { likes: 0, replies: 0, shares: 0 },
+      fromProvinceId: null,
+      toProvinceId: null,
+      mode: 'BOTH',
+      source: { kind: 'USER', label: this.translate.instant('feed.sourceUnknown') },
     };
   }
 }

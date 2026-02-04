@@ -3,70 +3,63 @@
   gap: 1rem;
   padding: 1.5rem;
   border-radius: 1rem;
-  background: linear-gradient(145deg, rgba(37, 99, 235, 0.08), rgba(59, 130, 246, 0.12));
-  border: 1px solid rgba(37, 99, 235, 0.2);
+  background: linear-gradient(145deg, rgba(15, 118, 110, 0.08), rgba(20, 184, 166, 0.12));
+  border: 1px solid rgba(15, 118, 110, 0.2);
 }
 
-.feed-composer__header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.feed-composer__channels {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.feed-composer__channel {
-  border: none;
-  border-radius: 999px;
-  padding: 0.4rem 1rem;
-  background: rgba(15, 23, 42, 0.08);
-  cursor: pointer;
+.feed-composer__header h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
-.feed-composer__channel--active {
-  background: #1d4ed8;
-  color: #fff;
+.feed-composer__header p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.7);
+  font-size: 0.9rem;
 }
 
-.feed-composer__textarea {
-  min-height: 8rem;
+.feed-composer__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.feed-composer__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.feed-composer__field--full {
+  grid-column: 1 / -1;
+}
+
+.feed-composer__field label {
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.feed-composer__field input,
+.feed-composer__field select,
+.feed-composer__field textarea {
   border-radius: 0.75rem;
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  padding: 1rem;
-  font-size: 1rem;
-  resize: vertical;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
   background: #fff;
 }
 
-.feed-composer__textarea:focus {
-  outline: 2px solid #2563eb;
+.feed-composer__field textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+.feed-composer__field input:focus,
+.feed-composer__field select:focus,
+.feed-composer__field textarea:focus {
+  outline: 2px solid #0f766e;
   outline-offset: 2px;
-}
-
-.feed-composer__help {
-  margin: 0;
-  color: rgba(15, 23, 42, 0.7);
-  font-size: 0.875rem;
-}
-
-.feed-composer__tags {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.feed-composer__tag {
-  border: none;
-  border-radius: 999px;
-  padding: 0.35rem 0.9rem;
-  background: rgba(15, 23, 42, 0.08);
-  cursor: pointer;
 }
 
 .feed-composer__errors,
@@ -100,7 +93,7 @@
 }
 
 .feed-composer__submit {
-  background: #1d4ed8;
+  background: #0f766e;
   color: #fff;
 }
 
@@ -111,7 +104,7 @@
 
 .feed-composer__clear {
   background: transparent;
-  color: #1e293b;
+  color: #0f172a;
 }
 
 @media (max-width: 720px) {

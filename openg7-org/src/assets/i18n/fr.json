@@ -1,4 +1,4 @@
-{
+﻿{
   "announcement": "Bienvenue sur OpenG7",
   "banner": {
     "underConstruction": {
@@ -411,118 +411,157 @@
     "info": "Informations"
   },
   "feed": {
-    "title": "Fil de collaboration",
-    "subtitle": "Suivez les mises à jour, besoins et signaux de collaboration en temps réel.",
+    "title": "Fil des echanges",
+    "subtitle": "Offres, demandes et signaux economiques entre provinces canadiennes.",
     "shortcuts": {
       "title": "Raccourcis clavier",
-      "description": "Naviguez plus vite sur ordinateur ou tablette.",
+      "description": "Naviguez plus vite sur ordinateur et tablette.",
       "refresh": "Actualiser le fil",
-      "loadMore": "Charger plus de publications",
-      "closeDrawer": "Fermer le panneau de détail"
+      "loadMore": "Charger plus d'elements",
+      "closeDrawer": "Fermer le panneau de details"
     },
     "status": {
-      "online": "Mises à jour en direct actives",
-      "degraded": "Mises à jour en direct dégradées — certaines données peuvent être retardées",
-      "offline": "Hors connexion — tentative de reconnexion",
-      "reconnecting": "Reconnexion…"
+      "online": "Mises a jour en direct actives",
+      "degraded": "Mises a jour degradees - certaines donnees peuvent etre retardees",
+      "offline": "Hors connexion - tentative de reconnexion",
+      "reconnecting": "Reconnexion...",
+      "pending": "Publication en cours...",
+      "failed": "Echec de publication"
     },
     "stream": {
-      "refresh": "Réessayer la connexion",
-      "newPosts": "{{ count, plural, one {# nouvelle publication disponible.} other {# nouvelles publications disponibles.} }}",
-      "showNew": "Voir les nouveautés",
-      "onboarding": "Partagez des mises à jour ou besoins pour informer rapidement vos partenaires.",
-      "onboardingAction": "Publier une mise à jour",
+      "refresh": "Reessayer la connexion",
+      "newItems": "{{ count, plural, one {# nouvel element disponible.} other {# nouveaux elements disponibles.} }}",
+      "showNew": "Voir les nouveautes",
+      "onboarding": "Partagez une offre ou une demande pour informer rapidement vos partenaires.",
+      "onboardingAction": "Publier un element",
       "filters": "Filtres actifs",
-      "clearFilters": "Tout effacer",
-      "loading": "Chargement des mises à jour…"
+      "loading": "Chargement des elements..."
     },
     "filters": {
-      "search": "Rechercher dans le fil",
-      "province": "Province",
+      "search": "Recherche",
+      "searchPlaceholder": "Rechercher une offre, une demande, une ressource...",
+      "type": "Type",
+      "allTypes": "Tous les types",
       "sector": "Secteur",
-      "need": "Étiquette besoin",
-      "onlyUnread": "Non lus seulement",
+      "allSectors": "Tous les secteurs",
+      "fromProvince": "De",
+      "toProvince": "Vers",
+      "allProvinces": "Toutes les provinces",
+      "mode": "Mode",
       "sort": {
-        "label": "Trier",
-        "latest": "Plus récentes",
-        "trending": "Tendances",
-        "recommended": "Recommandées"
-      }
+        "label": "Tri",
+        "newest": "Recent",
+        "urgency": "Urgence",
+        "volume": "Volume",
+        "credibility": "Credibilite"
+      },
+      "clear": "Reinitialiser"
     },
-    "card": {
-      "edited": "Modifié",
-      "pinned": "Publication épinglée",
-      "pending": "Envoi en cours…",
-      "failed": "Non envoyé",
-      "expires": "Expire {{ value }}",
-      "view": "Ouvrir",
-      "reply": "Répondre",
-      "like": "Approuver",
-      "share": "Partager"
+    "mode": {
+      "export": "Export",
+      "import": "Import",
+      "both": "Tous"
     },
-    "replies": {
-      "title": "Réponses"
+    "type": {
+      "OFFER": "Offre",
+      "REQUEST": "Demande",
+      "ALERT": "Alerte",
+      "TENDER": "Appel d'offres",
+      "CAPACITY": "Capacite",
+      "INDICATOR": "Indicateur"
+    },
+    "cta": {
+      "open": "Ouvrir",
+      "save": "Sauvegarder",
+      "contact": "Contacter"
+    },
+    "from": "De",
+    "to": "Vers",
+    "source": "Source",
+    "sourceUnknown": "Source inconnue",
+    "sourceYou": "Vous",
+    "quantity": "Quantite",
+    "urgency": {
+      "label": "Urgence",
+      "1": "Faible",
+      "2": "Moyenne",
+      "3": "Elevee"
+    },
+    "credibility": {
+      "label": "Credibilite",
+      "1": "Declare",
+      "2": "Verifie",
+      "3": "Officiel"
     },
     "drawer": {
-      "close": "Fermer la publication",
-      "aria": "Panneau des détails de la publication"
+      "close": "Fermer le detail",
+      "aria": "Panneau de details"
     },
     "composer": {
-      "title": "Partager une mise à jour",
-      "channelLabel": "Choisir une audience",
-      "channel": {
-        "global": "Tous les partenaires",
-        "sector": "Groupe sectoriel",
-        "province": "Canal provincial",
-        "private": "Note privée"
-      },
-      "placeholder": "Résumez ce dont vous avez besoin ou ce que vous pouvez offrir…",
-      "help": "Restez concis et précisez les échéances ou consignes d’accessibilité.",
+      "title": "Publier un echange",
+      "subtitle": "Partagez des offres ou des demandes avec un titre clair, un secteur et un trajet.",
+      "type": "Type",
+      "typePlaceholder": "Choisir un type",
+      "sector": "Secteur",
+      "sectorPlaceholder": "Choisir un secteur",
+      "mode": "Mode",
+      "fromProvince": "Province source",
+      "toProvince": "Province destination",
+      "provincePlaceholder": "Choisir une province",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Titre court et explicite",
+      "summaryLabel": "Resume",
+      "summaryPlaceholder": "Decrivez volumes, contraintes et delais...",
+      "quantityValue": "Quantite",
+      "quantityValuePlaceholder": "ex. 1200",
+      "quantityUnit": "Unite",
+      "quantityUnitPlaceholder": "Choisir une unite",
+      "tags": "Etiquettes",
+      "tagsPlaceholder": "ex. priorite, chaine-froid, certifie",
       "submit": "Publier",
-      "submitting": "Publication…",
-      "clear": "Effacer le brouillon"
+      "submitting": "Publication...",
+      "clear": "Effacer"
     },
     "validation": {
-      "tooShort": "Rédigez au moins trois caractères.",
-      "tooLong": "Limitez vos mises à jour à 5 000 caractères.",
-      "moderationFlag": "Relisez le message pour conserver un ton respectueux et inclusif.",
-      "channelRequired": "Sélectionnez un canal de publication."
-    },
-    "toast": {
-      "publishSuccess": "Mise à jour partagée dans le fil.",
-      "publishFailure": "Votre mise à jour n’a pas pu être envoyée. Réessayez.",
-      "loadFailure": "Le fil ne s’est pas chargé. Vérifiez votre connexion.",
-      "reconnected": "Connexion rétablie. Les nouvelles mises à jour s’afficheront automatiquement."
+      "typeRequired": "Selectionnez un type.",
+      "sectorRequired": "Selectionnez un secteur.",
+      "titleTooShort": "Le titre doit contenir au moins trois caracteres.",
+      "titleTooLong": "Limitez le titre a 160 caracteres.",
+      "summaryTooShort": "Le resume doit contenir au moins dix caracteres.",
+      "summaryTooLong": "Le resume ne peut pas depasser 5 000 caracteres.",
+      "quantityInvalid": "La quantite doit etre un nombre positif.",
+      "quantityUnitRequired": "Selectionnez une unite.",
+      "routeIncomplete": "Ajoutez origine et destination pour les flux import/export.",
+      "moderationFlag": "Verifiez le langage pour un ton respectueux et inclusif."
     },
     "notifications": {
-      "publishSuccess": "Mise à jour partagée dans le fil.",
-      "publishFailure": "Impossible d’envoyer la mise à jour : {{ reason }}.",
-      "loadError": "Le fil ne s’est pas chargé : {{ reason }}.",
-      "connectionLost": "Les mises à jour en direct sont en pause. Nouvelle tentative imminente.",
-      "connectionRestored": "Les mises à jour en direct sont rétablies.",
-      "reconnecting": "Reconnexion dans {{ seconds }} s…"
+      "publishSuccess": "Element publie dans le fil.",
+      "publishFailure": "Impossible de publier : {{ reason }}.",
+      "loadError": "Le fil n'a pas charge : {{ reason }}.",
+      "connectionLost": "Mises a jour en pause. Nouvelle tentative imminente.",
+      "connectionRestored": "Mises a jour retablies.",
+      "reconnecting": "Reconnexion dans {{ seconds }} s..."
     },
     "error": {
-      "generic": "Un problème est survenu. Veuillez réessayer.",
-      "offline": "Vous êtes hors connexion. Reconnectez-vous pour actualiser le fil.",
-      "forbidden": "Vous n’avez pas les droits pour publier dans ce canal.",
-      "expired": "Cette publication n’est plus disponible."
+      "generic": "Un probleme est survenu. Veuillez reessayer.",
+      "offline": "Vous etes hors connexion. Reconnectez-vous pour actualiser le fil.",
+      "forbidden": "Vous n'avez pas les droits pour publier cet element.",
+      "expired": "Cet element n'est plus disponible."
     },
     "aria": {
-      "newPosts": "{{ count, plural, one {# nouvelle publication prête.} other {# nouvelles publications prêtes.} }}",
-      "postFailed": "Échec de l’envoi. Modifiez puis réessayez.",
+      "newItems": "{{ count, plural, one {# nouvel element pret.} other {# nouveaux elements prets.} }}",
+      "itemFailed": "Echec d'envoi. Modifiez puis reessayez.",
       "connectionLost": "Connexion au fil perdue. Reconnexion en cours.",
-      "connectionRestored": "Connexion au fil rétablie."
+      "connectionRestored": "Connexion au fil retablie."
     },
     "analytics": {
       "pageLoaded": "Chargement de la page du fil",
-      "postPublish": "Publication envoyée dans le fil",
-      "postPublishFailed": "Échec de la publication dans le fil",
-      "postReceived": "Publication reçue en temps réel",
-      "drawerOpened": "Consultation du détail d’une publication"
+      "itemPublish": "Element publie dans le fil",
+      "itemPublishFailed": "Echec de publication dans le fil",
+      "itemReceived": "Element recu en temps reel",
+      "drawerOpened": "Consultation du detail d'un element"
     }
-  },
-  "pages": {
+  },  "pages": {
     "credits": {
       "kicker": "IMPACT COLLECTIF",
       "title": "Un écosystème construit ensemble",
@@ -2694,3 +2733,4 @@
     }
   }
 }
+

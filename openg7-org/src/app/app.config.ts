@@ -2,6 +2,7 @@ import { DialogModule } from '@angular/cdk/dialog';
 import { HttpBackend, provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
+  APP_INITIALIZER,
   PLATFORM_ID,
   TransferState,
   importProvidersFrom,
@@ -25,6 +26,7 @@ import { errorInterceptor } from './core/http/error.interceptor';
 import { AppTranslateLoader } from './core/i18n/translate-loader';
 import { authReducer } from './state/auth/auth.reducer';
 import { catalogReducer } from './state/catalog/catalog.reducer';
+import { CatalogMockService } from './state/catalog/catalog-mock.service';
 import { mapReducer } from './state/map/map.reducer';
 import { userReducer } from './state/user/user.reducer';
 import { ConnectionsEffects } from './store/connections/connections.effects';
@@ -70,6 +72,14 @@ export const appConfig: ApplicationConfig = {
       feed: feedReducer,
       statistics: statisticsReducer,
     }),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: () => {
+        const loader = inject(CatalogMockService);
+        return () => loader.load();
+      },
+    },
     provideEffects(ConnectionsEffects, StatisticsEffects),
   ],
 };
