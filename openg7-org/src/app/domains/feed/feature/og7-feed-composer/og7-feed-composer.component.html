@@ -1,47 +1,112 @@
-<form class="feed-composer" (ngSubmit)="handleSubmit()" role="form" aria-describedby="composer-help">
+<form class="feed-composer" (ngSubmit)="handleSubmit()" role="form">
   <header class="feed-composer__header">
-    <h2>{{ 'feed.composer.title' | translate }}</h2>
-    <nav
-      class="feed-composer__channels"
-      [attr.aria-label]="'feed.composer.channelLabel' | translate"
-    >
-      <button
-        type="button"
-        *ngFor="let option of channels"
-        class="feed-composer__channel"
-        [class.feed-composer__channel--active]="channel() === option"
-        (click)="setChannel(option)"
-      >
-        {{ ('feed.composer.channel.' + option) | translate }}
-      </button>
-    </nav>
+    <div>
+      <h2>{{ 'feed.composer.title' | translate }}</h2>
+      <p>{{ 'feed.composer.subtitle' | translate }}</p>
+    </div>
   </header>
 
-  <textarea
-    #composerTextarea
-    class="feed-composer__textarea"
-    [placeholder]="placeholder() | translate"
-    [value]="draftValue()"
-    (input)="updateDraft($any($event.target).value || '')"
-    [attr.aria-invalid]="errors().length > 0"
-    minlength="3"
-    maxlength="5000"
-    required
-  ></textarea>
+  <div class="feed-composer__grid">
+    <div class="feed-composer__field">
+      <label for="composer-type">{{ 'feed.composer.type' | translate }}</label>
+      <select id="composer-type" [value]="type() ?? ''" (change)="updateType($any($event.target).value)">
+        <option value="">{{ 'feed.composer.typePlaceholder' | translate }}</option>
+        <option *ngFor="let option of typeOptions" [value]="option">
+          {{ ('feed.type.' + option) | translate }}
+        </option>
+      </select>
+    </div>
 
-  <p id="composer-help" class="feed-composer__help">
-    {{ 'feed.composer.help' | translate }}
-  </p>
+    <div class="feed-composer__field">
+      <label for="composer-sector">{{ 'feed.composer.sector' | translate }}</label>
+      <select id="composer-sector" [value]="sectorId() ?? ''" (change)="updateSector($any($event.target).value)">
+        <option value="">{{ 'feed.composer.sectorPlaceholder' | translate }}</option>
+        <option *ngFor="let sector of sectors()" [value]="sector.id">{{ sector.name }}</option>
+      </select>
+    </div>
 
-  <div class="feed-composer__tags" *ngIf="needTypes().length">
-    <button
-      type="button"
-      *ngFor="let need of needTypes()"
-      class="feed-composer__tag"
-      (click)="toggleNeedType(need)"
-    >
-      #{{ need }}
-    </button>
+    <div class="feed-composer__field">
+      <label for="composer-mode">{{ 'feed.composer.mode' | translate }}</label>
+      <select id="composer-mode" [value]="mode()" (change)="updateMode($any($event.target).value)">
+        <option *ngFor="let option of modeOptions" [value]="option">
+          {{ ('feed.mode.' + (option | lowercase)) | translate }}
+        </option>
+      </select>
+    </div>
+
+    <div class="feed-composer__field">
+      <label for="composer-from">{{ 'feed.composer.fromProvince' | translate }}</label>
+      <select id="composer-from" [value]="fromProvinceId() ?? ''" (change)="updateFromProvince($any($event.target).value)">
+        <option value="">{{ 'feed.composer.provincePlaceholder' | translate }}</option>
+        <option *ngFor="let province of provinces()" [value]="province.id">{{ province.name }}</option>
+      </select>
+    </div>
+
+    <div class="feed-composer__field">
+      <label for="composer-to">{{ 'feed.composer.toProvince' | translate }}</label>
+      <select id="composer-to" [value]="toProvinceId() ?? ''" (change)="updateToProvince($any($event.target).value)">
+        <option value="">{{ 'feed.composer.provincePlaceholder' | translate }}</option>
+        <option *ngFor="let province of provinces()" [value]="province.id">{{ province.name }}</option>
+      </select>
+    </div>
+
+    <div class="feed-composer__field feed-composer__field--full">
+      <label for="composer-title">{{ 'feed.composer.titleLabel' | translate }}</label>
+      <input
+        id="composer-title"
+        type="text"
+        [value]="title()"
+        (input)="title.set($any($event.target).value || '')"
+        [placeholder]="'feed.composer.titlePlaceholder' | translate"
+      />
+    </div>
+
+    <div class="feed-composer__field feed-composer__field--full">
+      <label for="composer-summary">{{ 'feed.composer.summaryLabel' | translate }}</label>
+      <textarea
+        id="composer-summary"
+        rows="4"
+        [value]="summary()"
+        (input)="summary.set($any($event.target).value || '')"
+        [placeholder]="'feed.composer.summaryPlaceholder' | translate"
+      ></textarea>
+    </div>
+
+    <div class="feed-composer__field">
+      <label for="composer-quantity-value">{{ 'feed.composer.quantityValue' | translate }}</label>
+      <input
+        id="composer-quantity-value"
+        type="number"
+        min="0"
+        step="any"
+        [value]="quantityValue()"
+        (input)="quantityValue.set($any($event.target).value || '')"
+        [placeholder]="'feed.composer.quantityValuePlaceholder' | translate"
+      />
+    </div>
+
+    <div class="feed-composer__field">
+      <label for="composer-quantity-unit">{{ 'feed.composer.quantityUnit' | translate }}</label>
+      <select
+        id="composer-quantity-unit"
+        [value]="quantityUnit()"
+        (change)="quantityUnit.set($any($event.target).value || '')"
+      >
+        <option value="">{{ 'feed.composer.quantityUnitPlaceholder' | translate }}</option>
+        <option *ngFor="let unit of unitOptions" [value]="unit">{{ unit }}</option>
+      </select>
+    </div>
+
+    <div class="feed-composer__field feed-composer__field--full">
+      <label for="composer-tags">{{ 'feed.composer.tags' | translate }}</label>
+      <input
+        id="composer-tags"
+        type="text"
+        [value]="tagsInput()"
+        (input)="tagsInput.set($any($event.target).value || '')"
+        [placeholder]="'feed.composer.tagsPlaceholder' | translate"
+      />
+    </div>
   </div>
 
   <ul *ngIf="errors().length" class="feed-composer__errors" role="alert">

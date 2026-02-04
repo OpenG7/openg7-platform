@@ -22,6 +22,11 @@ jobs:
       NOTIFICATION_WEBHOOK_URL: ${{ github.event.inputs.environment == 'prod' && secrets.PROD_NOTIFICATION_WEBHOOK_URL || secrets.PREPROD_NOTIFICATION_WEBHOOK_URL }}
       API_TOKEN: ${{ github.event.inputs.environment == 'prod' && secrets.PROD_STRAPI_API_TOKEN || secrets.PREPROD_STRAPI_API_TOKEN }}
       HOMEPAGE_PREVIEW_TOKEN: ${{ github.event.inputs.environment == 'prod' && secrets.PROD_HOMEPAGE_PREVIEW_TOKEN || secrets.PREPROD_HOMEPAGE_PREVIEW_TOKEN }}
+      API_WITH_CREDENTIALS: 'true'
+      AUTH_MODE: hybrid
+      I18N_PREFIX: /assets/i18n/
+      FEATURE_FLAGS: '{}'
+      CONTENT_SECURITY_POLICY: '{}'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

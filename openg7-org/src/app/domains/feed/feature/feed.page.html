@@ -6,15 +6,15 @@
   <div class="og7-feed__layout">
     <og7-feed-stream
       data-og7="feed-stream"
-      [posts]="posts()"
+      [items]="items()"
       [loading]="loading()"
       [error]="error()"
       [unreadCount]="unreadCount()"
       [connectionState]="connectionState"
       (loadMore)="handleLoadMore()"
       (refresh)="handleRefresh()"
-      (openPost)="openPost($event)"
-      (closePost)="closePost()"
+      (openItem)="openItem($event)"
+      (closeItem)="closeItem()"
     ></og7-feed-stream>
     <section
       class="og7-feed__aside"

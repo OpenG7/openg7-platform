@@ -21,18 +21,12 @@ import { FeedRealtimeService } from './services/feed-realtime.service';
   styleUrls: ['./feed.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/**
- * Contexte : Chargée par le routeur Angular pour afficher la page « Feed » du dossier « domains/feed/feature ».
- * Raison d’être : Lie le template standalone et les dépendances de cette page pour la rendre navigable.
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns FeedPage gérée par le framework.
- */
 export class FeedPage {
   private readonly feed = inject(FeedRealtimeService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  readonly posts = this.feed.posts;
+  readonly items = this.feed.items;
   readonly loading = this.feed.loading;
   readonly error = this.feed.error;
   readonly unreadCount = computed(() => this.feed.unreadCount());
@@ -57,6 +51,18 @@ export class FeedPage {
     if (event.metaKey || event.ctrlKey || event.altKey) {
       return;
     }
+    const target = event.target;
+    if (target instanceof HTMLElement) {
+      const tagName = target.tagName;
+      if (
+        target.isContentEditable ||
+        tagName === 'INPUT' ||
+        tagName === 'TEXTAREA' ||
+        tagName === 'SELECT'
+      ) {
+        return;
+      }
+    }
     const key = event.key.toLowerCase();
     if (key === 'r') {
       event.preventDefault();
@@ -76,15 +82,15 @@ export class FeedPage {
     this.feed.reload();
   }
 
-  openPost(postId: string): void {
-    this.feed.openDrawer(postId);
-    void this.router.navigate([postId], {
+  openItem(itemId: string): void {
+    this.feed.openDrawer(itemId);
+    void this.router.navigate([itemId], {
       relativeTo: this.route,
       queryParamsHandling: 'preserve',
     });
   }
 
-  closePost(): void {
+  closeItem(): void {
     this.feed.openDrawer(null);
     void this.router.navigate(['../'], {
       relativeTo: this.route,

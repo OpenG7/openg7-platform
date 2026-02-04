@@ -1,35 +1,21 @@
-import { computed, effect, signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
+import { FeedItemType, FeedSort, FlowMode } from '@app/domains/feed/feature/models/feed.models';
 
-export const selectedCountrySig = signal<string | null>(null);
-export const selectedProvinceSig = signal<string | null>(null);
-export const activeSectorsSig = signal<readonly string[]>([]);
-export const needTypeSig = signal<readonly string[]>([]);
+export const fromProvinceIdSig = signal<string | null>(null);
+export const toProvinceIdSig = signal<string | null>(null);
+export const sectorIdSig = signal<string | null>(null);
+export const feedTypeSig = signal<FeedItemType | null>(null);
+export const feedModeSig = signal<FlowMode>('BOTH');
 export const feedSearchSig = signal('');
-export const feedSortSig = signal<'latest' | 'trending' | 'recommended'>('latest');
-export const focusPostIdSig = signal<string | null>(null);
+export const feedSortSig = signal<FeedSort>('NEWEST');
+export const focusItemIdSig = signal<string | null>(null);
 
 export const hasActiveFiltersSig = computed(
   () =>
-    Boolean(selectedProvinceSig()) ||
-    activeSectorsSig().length > 0 ||
-    needTypeSig().length > 0 ||
+    Boolean(fromProvinceIdSig()) ||
+    Boolean(toProvinceIdSig()) ||
+    Boolean(sectorIdSig()) ||
+    Boolean(feedTypeSig()) ||
+    feedModeSig() !== 'BOTH' ||
     feedSearchSig().trim().length > 0
 );
-
-// Keep bidirectional sync helpers minimal but available for host modules.
-export function syncArraySignal(
-  source: () => readonly string[],
-  target: typeof activeSectorsSig
-): void {
-  effect(
-    () => {
-      const next = source();
-      const prev = target();
-      if (next.length === prev.length && next.every((value, index) => value === prev[index])) {
-        return;
-      }
-      target.set([...next]);
-    },
-    { allowSignalWrites: true }
-  );
-}

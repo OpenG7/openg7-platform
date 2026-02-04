@@ -7,29 +7,49 @@
     [attr.aria-labelledby]="'feed-drawer-title'"
   >
     <header class="feed-drawer__header">
-      <h2 id="feed-drawer-title">{{ post()?.author?.displayName || '' }}</h2>
-      <p>{{ post()?.createdAt | jsonDateAgo }}</p>
+      <div>
+        <span class="feed-drawer__type">{{ ('feed.type.' + item()?.type) | translate }}</span>
+        <h2 id="feed-drawer-title">{{ item()?.title || '' }}</h2>
+        <p>{{ item()?.createdAt | jsonDateAgo }}</p>
+      </div>
       <button
         type="button"
         class="feed-drawer__close"
         (click)="closed.emit()"
         [attr.aria-label]="'feed.drawer.close' | translate"
       >
-        ✕
+        x
       </button>
     </header>
 
     <article class="feed-drawer__content">
-      <p>{{ post()?.content }}</p>
-      <ul *ngIf="post()?.attachments?.length" class="feed-drawer__attachments">
-        <li *ngFor="let attachment of post()?.attachments">
-          <a [href]="attachment.url" target="_blank" rel="noopener">
-            {{ attachment.title || attachment.url }}
-          </a>
+      <p>{{ item()?.summary }}</p>
+      <ul class="feed-drawer__details">
+        <li *ngIf="fromLabel() || item()?.fromProvinceId">
+          {{ 'feed.from' | translate }}: {{ fromLabel() || item()?.fromProvinceId }}
+        </li>
+        <li *ngIf="toLabel() || item()?.toProvinceId">
+          {{ 'feed.to' | translate }}: {{ toLabel() || item()?.toProvinceId }}
+        </li>
+        <li *ngIf="sectorLabel() || item()?.sectorId">
+          {{ 'feed.filters.sector' | translate }}: {{ sectorLabel() || item()?.sectorId }}
+        </li>
+        <li *ngIf="item()?.mode">
+          {{ 'feed.filters.mode' | translate }}: {{ ('feed.mode.' + (item()?.mode | lowercase)) | translate }}
+        </li>
+        <li *ngIf="item()?.quantity">
+          {{ 'feed.quantity' | translate }}: {{ item()?.quantity?.value }} {{ item()?.quantity?.unit }}
+        </li>
+        <li *ngIf="item()?.urgency">
+          {{ 'feed.urgency.label' | translate }}: {{ ('feed.urgency.' + item()?.urgency) | translate }}
+        </li>
+        <li *ngIf="item()?.credibility">
+          {{ 'feed.credibility.label' | translate }}: {{ ('feed.credibility.' + item()?.credibility) | translate }}
+        </li>
+        <li *ngIf="item()?.source">
+          {{ 'feed.source' | translate }}: {{ item()?.source?.label || ('feed.sourceUnknown' | translate) }}
         </li>
       </ul>
     </article>
-
-    <og7-feed-replies [replies]="post()?.replies || []"></og7-feed-replies>
   </section>
 </div>

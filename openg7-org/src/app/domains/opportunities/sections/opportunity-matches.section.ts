@@ -96,6 +96,7 @@ export class OpportunityMatchesSection {
   protected readonly selectedSector = computed<SectorType | 'all'>(() => this.filters.tradeFilters().sector ?? 'all');
   protected readonly selectedMode = computed<Mode>(() => this.filters.tradeFilters().mode);
   readonly selectedPartnerId = signal<string | null>(null);
+  protected readonly filtersOpen = signal(false);
 
   protected readonly provinceOptions = PROVINCE_OPTIONS;
   protected readonly sectorOptions = SECTOR_OPTIONS;
@@ -121,6 +122,18 @@ export class OpportunityMatchesSection {
   protected readonly showEmptyState = computed(
     () => !this.loading() && !this.error() && this.filteredMatches().length === 0
   );
+  protected readonly hasActiveFilters = computed(() => {
+    if (this.query().trim()) {
+      return true;
+    }
+    if (this.province() !== 'all') {
+      return true;
+    }
+    if (this.selectedSector() !== 'all') {
+      return true;
+    }
+    return this.selectedMode() !== 'all';
+  });
 
   protected readonly selectedLayout = computed<OpportunityMatchLayout>(() => this.filters.matchCardLayout());
   private readonly suggestedLayout = computed<OpportunityMatchLayout>(() =>
@@ -199,6 +212,10 @@ export class OpportunityMatchesSection {
     this.filters.tradeMode.set(mode);
   }
 
+  protected toggleFilters(): void {
+    this.filtersOpen.set(!this.filtersOpen());
+  }
+
   clearFilters(): void {
     this.filters.matchQuery.set('');
     this.filters.matchProvince.set('all');
@@ -262,7 +279,7 @@ export class OpportunityMatchesSection {
   }
 
   protected trackByMatchId(index: number, match: OpportunityMatch): string {
-    return `${index}:${match.id}:${match.buyer.id}:${match.seller.id}`;
+    return `${match.id}`;
   }
 
   protected supplierSelected(match: OpportunityMatch): boolean {

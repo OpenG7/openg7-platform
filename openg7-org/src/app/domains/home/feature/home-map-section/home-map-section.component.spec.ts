@@ -64,6 +64,6 @@ describe('HomeMapSectionComponent', () => {
     expect(section?.getAttribute('id')).toBe('map');
     const heading: HTMLElement | null = fixture.nativeElement.querySelector('#home-map-heading');
     expect(heading?.textContent).toContain('Navigate');
-    expect(fixture.nativeElement.querySelector('om-three-globe[data-og7="trade-map"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('og7-map-trade[data-og7="trade-map"]')).toBeTruthy();
   });
 });

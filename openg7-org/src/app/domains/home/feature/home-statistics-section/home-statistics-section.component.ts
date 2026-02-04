@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { HeroStatsComponent, StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'og7-home-statistics-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, HeroStatsComponent],
+  imports: [TranslateModule, HeroStatsComponent],
   templateUrl: './home-statistics-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

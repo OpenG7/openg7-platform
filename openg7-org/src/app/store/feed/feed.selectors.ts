@@ -4,7 +4,7 @@ import { FeedState } from './feed.reducer';
 
 export const selectFeedState = createFeatureSelector<FeedState>('feed');
 
-export const selectFeedPosts = createSelector(selectFeedState, state => state.posts);
+export const selectFeedItems = createSelector(selectFeedState, state => state.items);
 
 export const selectFeedLoading = createSelector(selectFeedState, state => state.loading);
 
@@ -25,9 +25,9 @@ export const selectFeedOnboardingSeen = createSelector(
   state => state.onboardingSeen
 );
 
-export const selectFeedDrawerPostId = createSelector(
+export const selectFeedDrawerItemId = createSelector(
   selectFeedState,
-  state => state.drawerPostId
+  state => state.drawerItemId
 );
 
 export const selectFeedHydrated = createSelector(selectFeedState, state => state.hydrated);

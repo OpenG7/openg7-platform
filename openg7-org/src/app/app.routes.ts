@@ -114,7 +114,7 @@ export const routes: Routes = [
   },
   {
     path: 'feed',
-    canMatch: [authGuard],
+    //canMatch: [authGuard],
     loadChildren: () => import('./domains/feed/feature/feed.routes').then(m => m.routes),
   },
   {
@@ -163,7 +163,7 @@ export const routes: Routes = [
   },
   {
     path: '_dev/component-lab',
-    canMatch: [featureFlagGuard('componentLab')],
+    //canMatch: [featureFlagGuard('componentLab')],
     loadComponent: () => import('./domains/developer/pages/component-lab.page').then(m => m.ComponentLabPage),
   },
 ];

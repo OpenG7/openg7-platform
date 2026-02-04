@@ -7,7 +7,7 @@
   </div>
 
   <div *ngIf="bannerVisible()" class="feed-stream__banner" role="alert">
-    <span>{{ 'feed.stream.newPosts' | translate:{ count: unreadCount() } }}</span>
+    <span>{{ 'feed.stream.newItems' | translate:{ count: unreadCount() } }}</span>
     <button type="button" (click)="refresh.emit()">{{ 'feed.stream.showNew' | translate }}</button>
   </div>
 
@@ -18,28 +18,119 @@
 
   <og7-feed-composer></og7-feed-composer>
 
-  <div class="feed-stream__filters" *ngIf="hasFilters()">
+  <div class="feed-stream__filters">
+    <div class="feed-stream__filter">
+      <label for="feed-search">{{ 'feed.filters.search' | translate }}</label>
+      <input
+        id="feed-search"
+        type="search"
+        [value]="searchTerm()"
+        (input)="updateSearch($any($event.target).value || '')"
+        [placeholder]="'feed.filters.searchPlaceholder' | translate"
+      />
+    </div>
+
+    <div class="feed-stream__filter">
+      <label for="feed-type">{{ 'feed.filters.type' | translate }}</label>
+      <select id="feed-type" [value]="selectedType() ?? ''" (change)="updateType($any($event.target).value)">
+        <option value="">{{ 'feed.filters.allTypes' | translate }}</option>
+        <option *ngFor="let type of typeOptions" [value]="type">
+          {{ ('feed.type.' + type) | translate }}
+        </option>
+      </select>
+    </div>
+
+    <div class="feed-stream__filter">
+      <label for="feed-sector">{{ 'feed.filters.sector' | translate }}</label>
+      <select id="feed-sector" [value]="sectorId() ?? ''" (change)="updateSector($any($event.target).value)">
+        <option value="">{{ 'feed.filters.allSectors' | translate }}</option>
+        <option *ngFor="let sector of sectors()" [value]="sector.id">
+          {{ sector.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="feed-stream__filter">
+      <label for="feed-from">{{ 'feed.filters.fromProvince' | translate }}</label>
+      <select id="feed-from" [value]="fromProvinceId() ?? ''" (change)="updateFromProvince($any($event.target).value)">
+        <option value="">{{ 'feed.filters.allProvinces' | translate }}</option>
+        <option *ngFor="let province of provinces()" [value]="province.id">
+          {{ province.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="feed-stream__filter">
+      <label for="feed-to">{{ 'feed.filters.toProvince' | translate }}</label>
+      <select id="feed-to" [value]="toProvinceId() ?? ''" (change)="updateToProvince($any($event.target).value)">
+        <option value="">{{ 'feed.filters.allProvinces' | translate }}</option>
+        <option *ngFor="let province of provinces()" [value]="province.id">
+          {{ province.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="feed-stream__filter">
+      <label for="feed-mode">{{ 'feed.filters.mode' | translate }}</label>
+      <select id="feed-mode" [value]="selectedMode()" (change)="updateMode($any($event.target).value)">
+        <option *ngFor="let mode of modeOptions" [value]="mode">
+          {{ ('feed.mode.' + (mode | lowercase)) | translate }}
+        </option>
+      </select>
+    </div>
+
+    <div class="feed-stream__filter">
+      <label for="feed-sort">{{ 'feed.filters.sort.label' | translate }}</label>
+      <select id="feed-sort" [value]="sortOrder()" (change)="updateSort($any($event.target).value)">
+        <option *ngFor="let sort of sortOptions" [value]="sort">
+          {{ ('feed.sort.' + (sort | lowercase)) | translate }}
+        </option>
+      </select>
+    </div>
+
+    <div class="feed-stream__filter feed-stream__filter--actions">
+      <button type="button" class="feed-stream__filters-clear" (click)="clearFilters()">
+        {{ 'feed.filters.clear' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="feed-stream__filters feed-stream__filters--active" *ngIf="hasFilters()">
     <span class="feed-stream__filters-label">{{ 'feed.stream.filters' | translate }}</span>
     <ul class="feed-stream__chips">
-      <li *ngIf="selectedProvince()">{{ selectedProvince() }}</li>
-      <li *ngFor="let sector of activeSectors()">{{ sector }}</li>
-      <li *ngFor="let need of needTypes()">#{{ need }}</li>
+      <li *ngIf="fromProvinceId()">
+        {{ 'feed.filters.fromProvince' | translate }}: {{ resolveProvinceLabel(fromProvinceId()) }}
+      </li>
+      <li *ngIf="toProvinceId()">
+        {{ 'feed.filters.toProvince' | translate }}: {{ resolveProvinceLabel(toProvinceId()) }}
+      </li>
+      <li *ngIf="sectorId()">
+        {{ 'feed.filters.sector' | translate }}: {{ resolveSectorLabel(sectorId()) }}
+      </li>
+      <li *ngIf="selectedType()">
+        {{ 'feed.filters.type' | translate }}: {{ ('feed.type.' + selectedType()) | translate }}
+      </li>
+      <li *ngIf="selectedMode() !== 'BOTH'">
+        {{ 'feed.filters.mode' | translate }}: {{ ('feed.mode.' + (selectedMode() | lowercase)) | translate }}
+      </li>
+      <li *ngIf="searchTerm()">
+        {{ 'feed.filters.search' | translate }}: "{{ searchTerm() }}"
+      </li>
     </ul>
-    <button type="button" class="feed-stream__filters-clear" (click)="clearFilters()">
-      {{ 'feed.stream.clearFilters' | translate }}
-    </button>
   </div>
 
   <p *ngIf="error()" class="feed-stream__error" role="alert">{{ error() }}</p>
 
   <ul class="feed-stream__list">
-    <li *ngFor="let post of posts(); trackBy: trackPost">
+    <li *ngFor="let item of items(); trackBy: trackItem">
       <og7-feed-card
-        [post]="post"
-        (view)="handleViewPost($event)"
-        (reply)="handleViewPost($event)"
-        (share)="handleViewPost($event)"
-        (like)="handleViewPost($event)"
+        [item]="item"
+        [fromLabel]="resolveProvinceLabel(item.fromProvinceId)"
+        [toLabel]="resolveProvinceLabel(item.toProvinceId)"
+        [sectorLabel]="resolveSectorLabel(item.sectorId)"
+        (open)="handleViewItem($event)"
+        (save)="handleSaveItem($event)"
+        (contact)="handleContactItem($event)"
       ></og7-feed-card>
     </li>
   </ul>
@@ -49,8 +140,11 @@
   </div>
 
   <og7-feed-post-drawer
-    [post]="selectedPost()"
-    [open]="!!selectedPost()"
+    [item]="selectedItem()"
+    [open]="!!selectedItem()"
+    [fromLabel]="resolveProvinceLabel(selectedItem()?.fromProvinceId)"
+    [toLabel]="resolveProvinceLabel(selectedItem()?.toProvinceId)"
+    [sectorLabel]="resolveSectorLabel(selectedItem()?.sectorId)"
     (closed)="handleCloseDrawer()"
   ></og7-feed-post-drawer>
 </section>

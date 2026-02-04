@@ -12,18 +12,22 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import {
-  activeSectorsSig,
+  feedModeSig,
   feedSearchSig,
   feedSortSig,
-  focusPostIdSig,
+  feedTypeSig,
+  focusItemIdSig,
+  fromProvinceIdSig,
   hasActiveFiltersSig,
-  needTypeSig,
-  selectedProvinceSig,
+  sectorIdSig,
+  toProvinceIdSig,
 } from '@app/state/shared-feed-signals';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { FeedPost, FeedRealtimeConnectionState } from '../models/feed.models';
+import { FeedItem, FeedItemType, FeedRealtimeConnectionState, FeedSort, FlowMode } from '../models/feed.models';
 import { Og7FeedCardComponent } from '../og7-feed-card/og7-feed-card.component';
 import { Og7FeedComposerComponent } from '../og7-feed-composer/og7-feed-composer.component';
 import { Og7FeedPostDrawerComponent } from '../og7-feed-post-drawer/og7-feed-post-drawer.component';
@@ -43,18 +47,13 @@ import { FeedRealtimeService } from '../services/feed-realtime.service';
   styleUrls: ['./og7-feed-stream.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/**
- * Contexte : Affichée dans les vues du dossier « domains/feed/feature/og7-feed-stream » en tant que composant Angular standalone.
- * Raison d’être : Encapsule l'interface utilisateur et la logique propre à « Og7 Feed Stream ».
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns Og7FeedStreamComponent gérée par le framework.
- */
 export class Og7FeedStreamComponent {
   private readonly zone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);
   private readonly feed = inject(FeedRealtimeService);
+  private readonly store = inject(Store);
 
-  readonly posts = input<readonly FeedPost[]>([]);
+  readonly items = input<readonly FeedItem[]>([]);
   readonly loading = input(false);
   readonly error = input<string | null>(null);
   readonly unreadCount = input(0);
@@ -62,20 +61,44 @@ export class Og7FeedStreamComponent {
 
   readonly loadMore = output<void>();
   readonly refresh = output<void>();
-  readonly openPost = output<string>();
-  readonly closePost = output<void>();
+  readonly openItem = output<string>();
+  readonly closeItem = output<void>();
+  readonly saveItem = output<FeedItem>();
+  readonly contactItem = output<FeedItem>();
 
   private readonly sentinelRef = viewChild<ElementRef<HTMLElement>>('sentinel');
   private lastFocusedElement: HTMLElement | null = null;
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
-  protected readonly selectedProvince = selectedProvinceSig;
-  protected readonly activeSectors = activeSectorsSig;
-  protected readonly needTypes = needTypeSig;
+  protected readonly fromProvinceId = fromProvinceIdSig;
+  protected readonly toProvinceId = toProvinceIdSig;
+  protected readonly sectorId = sectorIdSig;
+  protected readonly selectedType = feedTypeSig;
+  protected readonly selectedMode = feedModeSig;
   protected readonly searchTerm = feedSearchSig;
   protected readonly sortOrder = feedSortSig;
   protected readonly hasFilters = hasActiveFiltersSig;
 
-  protected readonly onboardingVisible = computed(() => !this.feed.hasHydrated());
+  protected readonly provinces = this.store.selectSignal(selectProvinces);
+  protected readonly sectors = this.store.selectSignal(selectSectors);
+
+  protected readonly provinceLabelMap = computed(() => {
+    const map = new Map<string, string>();
+    for (const province of this.provinces()) {
+      map.set(province.id, province.name);
+    }
+    return map;
+  });
+
+  protected readonly sectorLabelMap = computed(() => {
+    const map = new Map<string, string>();
+    for (const sector of this.sectors()) {
+      map.set(sector.id, sector.name);
+    }
+    return map;
+  });
+
+  protected readonly onboardingVisible = computed(() => !this.feed.onboardingSeen());
   protected readonly bannerVisible = computed(() => this.unreadCount() > 0);
   protected readonly connectionLabel = computed(() => {
     const state = this.connectionState();
@@ -88,13 +111,26 @@ export class Og7FeedStreamComponent {
     return state.error() ? 'feed.status.degraded' : 'feed.status.online';
   });
 
-  protected readonly selectedPost = computed(() => {
-    const id = focusPostIdSig();
+  protected readonly selectedItem = computed(() => {
+    const id = focusItemIdSig();
     if (!id) {
       return null;
     }
-    return this.posts().find(post => post.id === id) ?? null;
+    return this.items().find(item => item.id === id) ?? null;
   });
+
+  protected readonly typeOptions: FeedItemType[] = [
+    'OFFER',
+    'REQUEST',
+    'ALERT',
+    'TENDER',
+    'CAPACITY',
+    'INDICATOR',
+  ];
+
+  protected readonly modeOptions: FlowMode[] = ['BOTH', 'EXPORT', 'IMPORT'];
+
+  protected readonly sortOptions: FeedSort[] = ['NEWEST', 'URGENCY', 'VOLUME', 'CREDIBILITY'];
 
   private observer?: IntersectionObserver;
 
@@ -106,35 +142,97 @@ export class Og7FeedStreamComponent {
       }
       this.setupObserver(sentinel.nativeElement);
     });
+    this.destroyRef.onDestroy(() => {
+      if (this.searchTimer) {
+        clearTimeout(this.searchTimer);
+        this.searchTimer = null;
+      }
+    });
   }
 
   protected handleRefresh(): void {
     this.refresh.emit();
   }
 
-  protected handleViewPost(post: FeedPost): void {
+  protected handleViewItem(item: FeedItem): void {
     if (typeof document !== 'undefined') {
       const active = document.activeElement;
       this.lastFocusedElement = active instanceof HTMLElement ? active : null;
     }
-    this.openPost.emit(post.id);
+    this.openItem.emit(item.id);
+  }
+
+  protected handleSaveItem(item: FeedItem): void {
+    this.saveItem.emit(item);
+  }
+
+  protected handleContactItem(item: FeedItem): void {
+    this.contactItem.emit(item);
   }
 
   protected handleCloseDrawer(): void {
-    focusPostIdSig.set(null);
-    this.closePost.emit();
+    focusItemIdSig.set(null);
+    this.closeItem.emit();
     this.restoreFocus();
   }
 
   protected clearFilters(): void {
-    selectedProvinceSig.set(null);
-    activeSectorsSig.set([]);
-    needTypeSig.set([]);
+    fromProvinceIdSig.set(null);
+    toProvinceIdSig.set(null);
+    sectorIdSig.set(null);
+    feedTypeSig.set(null);
+    feedModeSig.set('BOTH');
     feedSearchSig.set('');
+    feedSortSig.set('NEWEST');
   }
 
-  protected trackPost(index: number, post: FeedPost): string {
-    return post.id ?? `post-${index}`;
+  protected updateSearch(value: string): void {
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+    this.searchTimer = setTimeout(() => feedSearchSig.set(value), 300);
+  }
+
+  protected updateType(value: string): void {
+    feedTypeSig.set(value ? (value as FeedItemType) : null);
+  }
+
+  protected updateSector(value: string): void {
+    sectorIdSig.set(value || null);
+  }
+
+  protected updateFromProvince(value: string): void {
+    fromProvinceIdSig.set(value || null);
+  }
+
+  protected updateToProvince(value: string): void {
+    toProvinceIdSig.set(value || null);
+  }
+
+  protected updateMode(value: string): void {
+    feedModeSig.set((value as FlowMode) || 'BOTH');
+  }
+
+  protected updateSort(value: string): void {
+    feedSortSig.set((value as FeedSort) || 'NEWEST');
+  }
+
+  protected resolveProvinceLabel(id: string | null | undefined): string | null {
+    if (!id) {
+      return null;
+    }
+    return this.provinceLabelMap().get(id) ?? id;
+  }
+
+  protected resolveSectorLabel(id: string | null | undefined): string | null {
+    if (!id) {
+      return null;
+    }
+    return this.sectorLabelMap().get(id) ?? id;
+  }
+
+  protected trackItem(index: number, item: FeedItem): string {
+    return item.id ?? `item-${index}`;
   }
 
   private setupObserver(element: HTMLElement): void {
