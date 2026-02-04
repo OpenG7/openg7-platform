@@ -1,5 +1,5 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { FeedItem, FeedItemType } from '@app/domains/feed/feature/models/feed.models';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 export type CatalogSource = 'real' | 'mock';
 

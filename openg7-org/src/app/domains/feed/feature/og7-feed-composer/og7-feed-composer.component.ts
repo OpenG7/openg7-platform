@@ -6,10 +6,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
 import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import { feedModeSig, feedTypeSig, fromProvinceIdSig, sectorIdSig, toProvinceIdSig } from '@app/state/shared-feed-signals';
+import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { FeedComposerDraft, FeedItemType, FlowMode, QuantityUnit } from '../models/feed.models';
 import { FeedRealtimeService } from '../services/feed-realtime.service';

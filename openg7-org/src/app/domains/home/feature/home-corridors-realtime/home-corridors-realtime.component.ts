@@ -10,14 +10,13 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-
 import {
   CorridorsRealtimeItem,
   CorridorsRealtimeSnapshot,
   CorridorsRealtimeStatus,
   HomeCorridorsRealtimeService,
 } from '@app/domains/home/services/home-corridors-realtime.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 const FALLBACK_SNAPSHOT: CorridorsRealtimeSnapshot = {
   titleKey: 'home.corridorsRealtime.title',

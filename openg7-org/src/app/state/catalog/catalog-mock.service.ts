@@ -1,10 +1,10 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
 import { Store } from '@ngrx/store';
 import { firstValueFrom } from 'rxjs';
 
-import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
 import { CatalogActions } from './catalog.actions';
 import { Company, Province, Sector } from './catalog.selectors';
 

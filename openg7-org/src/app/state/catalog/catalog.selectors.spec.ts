@@ -1,4 +1,5 @@
 import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
+
 import {
   selectCatalogState,
   selectSectors,

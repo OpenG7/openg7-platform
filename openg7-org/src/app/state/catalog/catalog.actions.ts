@@ -1,6 +1,6 @@
+import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
-import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
 import { CatalogSource, CatalogSources, Company, Province, Sector } from './catalog.selectors';
 
 export const CatalogActions = createActionGroup({

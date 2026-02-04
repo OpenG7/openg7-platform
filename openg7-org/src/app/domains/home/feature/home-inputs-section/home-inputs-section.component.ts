@@ -50,10 +50,10 @@ const INPUT_CARDS: readonly InputCard[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 /**
- * Contexte : AffichÃ©e dans les vues du dossier Â« domains/home/feature Â» en tant que composant Angular standalone.
- * Raison dâ€™Ãªtre : Encapsule l'interface utilisateur et la logique propre Ã  Â« Home Inputs Section Â».
- * @param dependencies DÃ©pendances injectÃ©es automatiquement par Angular.
- * @returns HomeInputsSectionComponent gÃ©rÃ©e par le framework.
+ * Contexte : Affichee dans les vues du dossier "domains/home/feature" en tant que composant Angular standalone.
+ * Raison d'etre : Encapsule l'interface utilisateur et la logique propre a "Home Inputs Section".
+ * @param dependencies Dependances injectees automatiquement par Angular.
+ * @returns HomeInputsSectionComponent geree par le framework.
  */
 export class HomeInputsSectionComponent {
   protected readonly cards = INPUT_CARDS;

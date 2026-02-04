@@ -1,6 +1,7 @@
+import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
+
 import { CatalogActions } from './catalog.actions';
 import { catalogReducer, initialCatalogState } from './catalog.reducer';
-import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
 import { CatalogSources, Company, Province, Sector } from './catalog.selectors';
 
 describe('catalogReducer', () => {

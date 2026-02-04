@@ -12,6 +12,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import {
   feedModeSig,
   feedSearchSig,
@@ -23,7 +24,6 @@ import {
   sectorIdSig,
   toProvinceIdSig,
 } from '@app/state/shared-feed-signals';
-import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 
