@@ -1,0 +1,137 @@
+<section
+  class="og7-corridors-realtime"
+  data-og7="corridors-realtime"
+  role="region"
+  [attr.aria-busy]="loading()"
+  [attr.aria-label]="'home.corridorsRealtime.title' | translate"
+>
+  <div class="og7-corridors-realtime__content">
+    <div class="flex items-start justify-between gap-4">
+      <div class="space-y-1">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-400">
+          @if (snapshot().title; as title) {
+            {{ title }}
+          } @else {
+            {{ (snapshot().titleKey ?? 'home.corridorsRealtime.title') | translate }}
+          }
+        </p>
+        @if (snapshot().subtitle || snapshot().subtitleKey) {
+          <p class="text-xs text-slate-400">
+            @if (snapshot().subtitle; as subtitle) {
+              {{ subtitle }}
+            } @else {
+              {{ (snapshot().subtitleKey ?? 'home.corridorsRealtime.subtitle') | translate }}
+            }
+          </p>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/15 bg-white/5 text-slate-200 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 disabled:cursor-not-allowed disabled:opacity-40"
+        data-og7-id="fullscreen"
+        [attr.aria-pressed]="isFullscreen()"
+        [attr.aria-label]="
+          (isFullscreen()
+            ? ('home.corridorsRealtime.fullscreen.exit' | translate)
+            : ('home.corridorsRealtime.fullscreen.enter' | translate))
+        "
+        [disabled]="!fullscreenAvailable()"
+        (click)="toggleFullscreen()"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M7 3H3v4h2V5h2V3zm14 0h-4v2h2v2h2V3zM5 17H3v4h4v-2H5v-2zm16 0h-2v2h-2v2h4v-4z"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div class="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex flex-col gap-2">
+        @if (loading()) {
+          <div class="space-y-2 animate-pulse">
+            <div class="h-3 w-44 rounded-full bg-white/10"></div>
+            <div class="h-3 w-28 rounded-full bg-white/10"></div>
+          </div>
+        } @else if (items().length) {
+          <ul class="flex flex-col gap-2 text-sm text-slate-200" role="list">
+            @for (item of items(); track trackItem($index, item)) {
+              <li class="flex flex-wrap items-center gap-3" data-og7-id="corridor-item">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan-300/70"></span>
+                <span class="font-semibold">
+                  @if (item.label; as label) {
+                    {{ label }}
+                  } @else {
+                    {{ (item.labelKey ?? 'home.corridorsRealtime.itemFallback') | translate }}
+                  }
+                </span>
+                @if (item.route || item.routeKey) {
+                  <span class="text-xs text-slate-400">
+                    @if (item.route; as route) {
+                      {{ route }}
+                    } @else {
+                      {{ item.routeKey | translate }}
+                    }
+                  </span>
+                }
+                @if (item.meta || item.metaKey) {
+                  <span class="text-xs text-slate-500">
+                    @if (item.meta; as meta) {
+                      {{ meta }}
+                    } @else {
+                      {{ item.metaKey | translate }}
+                    }
+                  </span>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="text-xs text-slate-400">{{ 'home.corridorsRealtime.empty' | translate }}</p>
+        }
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 text-xs text-slate-300 lg:justify-end">
+        <span
+          class="rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]"
+          data-og7-id="status"
+          [ngClass]="statusBadgeClass()"
+        >
+          @if (status().label; as label) {
+            {{ label }}
+          } @else {
+            {{ (status().labelKey ?? 'home.corridorsRealtime.status.monitoring') | translate }}
+          }
+        </span>
+
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200/90 transition hover:text-cyan-100 disabled:cursor-not-allowed disabled:text-slate-500"
+          data-og7-id="view-map"
+          [disabled]="true"
+          [attr.aria-disabled]="true"
+        >
+          @if (snapshot().cta?.label; as label) {
+            {{ label }}
+          } @else {
+            {{ (snapshot().cta?.labelKey ?? 'home.corridorsRealtime.cta.viewMap') | translate }}
+          }
+        </button>
+
+        @if (formattedTime(); as time) {
+          <span data-og7-id="timestamp" class="text-xs text-slate-400">
+            {{ 'home.corridorsRealtime.timestamp' | translate: { time: time } }}
+          </span>
+        }
+      </div>
+    </div>
+
+    @if (error()) {
+      <p class="mt-3 text-xs text-rose-200">
+        {{ error() | translate }}
+      </p>
+    }
+  </div>
+</section>

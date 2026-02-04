@@ -2160,6 +2160,30 @@
       "title": "A snapshot of strategic trade corridors",
       "description": "Aggregated flows feed these metrics to track value, volume and sector diversity across interprovincial exchanges."
     },
+    "corridorsRealtime": {
+      "title": "Real-time corridors",
+      "subtitle": "Live step-by-step staging",
+      "cta": {
+        "viewMap": "View on the map"
+      },
+      "status": {
+        "capacityReached": "Capacity reached",
+        "monitoring": "Active monitoring"
+      },
+      "fullscreen": {
+        "enter": "Full screen",
+        "exit": "Exit full screen"
+      },
+      "timestamp": "at {{ time }}",
+      "empty": "No active corridors.",
+      "error": "Unable to load real-time corridors.",
+      "itemFallback": "Corridor",
+      "items": {
+        "essentialServices": "MIN Essential services",
+        "qcOn": "QC → ON",
+        "stepLive": "Live step-by-step staging"
+      }
+    },
     "inputs": {
       "title": "Inputs & capacities",
       "description": "Key resources and capabilities available to support interprovincial corridors.",

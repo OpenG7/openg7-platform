@@ -1,0 +1,22 @@
+{
+  "titleKey": "home.corridorsRealtime.title",
+  "items": [
+    {
+      "id": "essential-services",
+      "labelKey": "home.corridorsRealtime.items.essentialServices",
+      "routeKey": "home.corridorsRealtime.items.qcOn"
+    },
+    {
+      "id": "step-live",
+      "labelKey": "home.corridorsRealtime.items.stepLive"
+    }
+  ],
+  "status": {
+    "level": "warning",
+    "labelKey": "home.corridorsRealtime.status.capacityReached"
+  },
+  "cta": {
+    "labelKey": "home.corridorsRealtime.cta.viewMap"
+  },
+  "timestamp": "2026-02-04T15:04:00"
+}

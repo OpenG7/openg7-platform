@@ -32,6 +32,7 @@ export const environment: EnvironmentConfig = {
     mapGlobe: true,
     mapNight: false,
     homeFeedMocks: true,
+    homeCorridorsRealtimeMocks: true,
   },
   AUTH_MODE: 'hybrid',
   NOTIFICATION_WEBHOOK_URL: null,

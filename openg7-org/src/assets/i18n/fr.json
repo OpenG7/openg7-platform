@@ -2045,6 +2045,30 @@
       "title": "Visualisez les corridors stratégiques en un coup d’œil",
       "description": "Les flux agrégés alimentent ces métriques pour suivre la valeur, le volume et la diversité sectorielle des échanges interprovinciaux."
     },
+    "corridorsRealtime": {
+      "title": "Corridors en temps réel",
+      "subtitle": "Étapes en temps réel par stalle",
+      "cta": {
+        "viewMap": "Voir sur la carte"
+      },
+      "status": {
+        "capacityReached": "Capacité atteinte",
+        "monitoring": "Surveillance active"
+      },
+      "fullscreen": {
+        "enter": "Plein écran",
+        "exit": "Quitter le plein écran"
+      },
+      "timestamp": "à {{ time }}",
+      "empty": "Aucun corridor actif.",
+      "error": "Impossible de charger les corridors en temps réel.",
+      "itemFallback": "Corridor",
+      "items": {
+        "essentialServices": "MIN Services essentiels",
+        "qcOn": "QC → ON",
+        "stepLive": "Étape temps réel par stalle"
+      }
+    },
     "inputs": {
       "title": "Intrants et capacités",
       "description": "Ressources clés et capacités disponibles pour soutenir les corridors interprovinciaux.",

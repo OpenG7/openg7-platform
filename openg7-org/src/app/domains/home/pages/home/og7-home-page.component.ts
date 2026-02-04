@@ -12,6 +12,7 @@ import { OpportunityAiPrefillService } from '@app/core/services/opportunity-ai-p
 import { OpportunityService } from '@app/core/services/opportunity.service';
 import { HomeFiltersSectionComponent } from '@app/domains/home/feature/home-filters-section/home-filters-section.component';
 import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-section/home-hero-section.component';
+import { HomeCorridorsRealtimeComponent } from '@app/domains/home/feature/home-corridors-realtime/home-corridors-realtime.component';
 import { HomeInputsSectionComponent } from '@app/domains/home/feature/home-inputs-section/home-inputs-section.component';
 import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section/home-map-section.component';
 import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section/home-statistics-section.component';
@@ -38,6 +39,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
     TranslateModule,
     JsonDateAgoPipe,
     HomeHeroSectionComponent,
+    HomeCorridorsRealtimeComponent,
     HomeMapSectionComponent,
     HomeStatisticsSectionComponent,
     HomeInputsSectionComponent,
