@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { FiltersService } from '@app/core/filters.service';
 import { DEMO_OPPORTUNITY_MATCHES, findDemoFinancingBanner } from '@app/core/fixtures/opportunity-demo';
@@ -14,18 +15,20 @@ import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-se
 import { HomeInputsSectionComponent } from '@app/domains/home/feature/home-inputs-section/home-inputs-section.component';
 import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section/home-map-section.component';
 import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section/home-statistics-section.component';
+import { HomeFeedFilter, HomeFeedScope, HomeFeedService } from '@app/domains/home/services/home-feed.service';
 import { IntroductionRequestContext } from '@app/domains/matchmaking/sections/og7-intro-billboard.section';
 import { OpportunityMatchesSection } from '@app/domains/opportunities/sections/opportunity-matches.section';
 import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { FeedItem, FeedItemType } from '@app/domains/feed/feature/models/feed.models';
 import { JsonDateAgoPipe } from '@app/domains/feed/feature/pipes/json-date-ago.pipe';
 import { selectFilteredFlows, selectMapKpis } from '@app/state';
-import { selectCatalogFeedItems, selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
+import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import { AppState } from '@app/state/app.state';
 import { computeMapKpiSnapshot } from '@app/state/map/map.selectors';
 import { selectFeedConnectionState } from '@app/store/feed/feed.selectors';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   standalone: true,
@@ -58,16 +61,52 @@ export class Og7HomePageComponent {
   private readonly store = inject(Store<AppState>);
   private readonly filters = inject(FiltersService);
   private readonly mapStats = inject(MapStatsService);
+  private readonly homeFeed = inject(HomeFeedService);
 
   private readonly selectedMatchId = signal<number | null>(null);
   private readonly financingBanner = signal<FinancingBanner | null>(null);
 
   private readonly flows = this.store.selectSignal(selectFilteredFlows);
   private readonly kpis = this.store.selectSignal(selectMapKpis);
-  private readonly catalogFeedItems = this.store.selectSignal(selectCatalogFeedItems);
   private readonly catalogProvinces = this.store.selectSignal(selectProvinces);
   private readonly catalogSectors = this.store.selectSignal(selectSectors);
   private readonly feedConnection = this.store.selectSignal(selectFeedConnectionState);
+
+  protected readonly feedScopes: ReadonlyArray<{ id: HomeFeedScope; label: string }> = [
+    { id: 'canada', label: 'home.feed.tabs.canada' },
+    { id: 'g7', label: 'home.feed.tabs.g7' },
+    { id: 'world', label: 'home.feed.tabs.world' },
+  ];
+
+  protected readonly feedFilters: ReadonlyArray<{ id: HomeFeedFilter; label: string }> = [
+    { id: 'all', label: 'home.feed.filters.all' },
+    { id: 'offer', label: 'home.feed.filters.offer' },
+    { id: 'request', label: 'home.feed.filters.request' },
+    { id: 'labor', label: 'home.feed.filters.labor' },
+    { id: 'transport', label: 'home.feed.filters.transport' },
+  ];
+
+  protected readonly activeFeedScope = signal<HomeFeedScope>('canada');
+  protected readonly activeFeedFilter = signal<HomeFeedFilter>('all');
+  protected readonly searchDraft = signal('');
+  private readonly searchQuery = toSignal(
+    toObservable(this.searchDraft).pipe(
+      map((value) => value.trim()),
+      debounceTime(250),
+      distinctUntilChanged()
+    ),
+    { initialValue: '' }
+  );
+
+  private readonly homeFeedItems = signal<FeedItem[]>([]);
+  protected readonly homeFeedLoading = signal(false);
+  protected readonly homeFeedError = signal<string | null>(null);
+  private readonly homeFeedRequest = computed(() => ({
+    scope: this.activeFeedScope(),
+    filter: this.activeFeedFilter(),
+    search: this.searchQuery(),
+    limit: 60,
+  }));
 
   private readonly numberFormatter = new Intl.NumberFormat(undefined);
   private readonly currencyFormatter = new Intl.NumberFormat(undefined, {
@@ -92,15 +131,15 @@ export class Og7HomePageComponent {
     return snapshot.tradeValue ?? 0;
   });
 
-  protected readonly offersCount = computed(() => this.countFeedType('OFFER'));
-  protected readonly requestsCount = computed(() => this.countFeedType('REQUEST'));
+  protected readonly offersCount = computed(() => this.countFeedType(this.homeFeedItems(), 'OFFER'));
+  protected readonly requestsCount = computed(() => this.countFeedType(this.homeFeedItems(), 'REQUEST'));
   protected readonly activeCount = computed(
-    () => this.catalogFeedItems().filter((item) => item.status !== 'failed').length
+    () => this.homeFeedItems().filter((item) => item.status !== 'failed').length
   );
   protected readonly corridorsCount = computed(() => this.flows().length);
 
   protected readonly lastFeedUpdate = computed(() => {
-    const items = this.catalogFeedItems();
+    const items = this.homeFeedItems();
     if (!items.length) {
       return null;
     }
@@ -150,15 +189,15 @@ export class Og7HomePageComponent {
   });
 
   protected readonly alertItems = computed(() =>
-    this.buildPanelItems(['ALERT'], 2)
+    this.buildPanelItems(this.homeFeedItems(), ['ALERT'], 2)
   );
 
   protected readonly opportunityItems = computed(() =>
-    this.buildPanelItems(['OFFER', 'REQUEST', 'CAPACITY', 'TENDER'], 2)
+    this.buildPanelItems(this.homeFeedItems(), ['OFFER', 'REQUEST', 'CAPACITY', 'TENDER'], 2)
   );
 
   protected readonly indicatorItems = computed(() =>
-    this.buildPanelItems(['INDICATOR'], 2)
+    this.buildPanelItems(this.homeFeedItems(), ['INDICATOR'], 2)
   );
 
   constructor() {
@@ -174,6 +213,8 @@ export class Og7HomePageComponent {
         this.applySelection(list[0].id);
       }
     });
+
+    this.setupHomeFeed();
   }
 
   protected onConnectRequested(matchId: number): void {
@@ -267,16 +308,65 @@ export class Og7HomePageComponent {
     return this.currencyFormatter.format(value);
   }
 
-  private buildPanelItems(types: FeedItemType[], limit: number): FeedItem[] {
-    const items = this.catalogFeedItems().filter((item) => types.includes(item.type));
-    return items
+  protected setFeedScope(scope: HomeFeedScope): void {
+    if (this.activeFeedScope() === scope) {
+      return;
+    }
+    this.activeFeedScope.set(scope);
+  }
+
+  protected setFeedFilter(filter: HomeFeedFilter): void {
+    if (this.activeFeedFilter() === filter) {
+      return;
+    }
+    this.activeFeedFilter.set(filter);
+  }
+
+  protected onSearchInput(value: string): void {
+    this.searchDraft.set(value);
+  }
+
+  protected trackFeedScope(_index: number, scope: { id: HomeFeedScope }): HomeFeedScope {
+    return scope.id;
+  }
+
+  protected trackFeedFilter(_index: number, filter: { id: HomeFeedFilter }): HomeFeedFilter {
+    return filter.id;
+  }
+
+  private buildPanelItems(items: FeedItem[], types: FeedItemType[], limit: number): FeedItem[] {
+    const filtered = items.filter((item) => types.includes(item.type));
+    return filtered
       .slice()
       .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
       .slice(0, limit);
   }
 
-  private countFeedType(type: FeedItemType): number {
-    return this.catalogFeedItems().filter((item) => item.type === type).length;
+  private countFeedType(items: FeedItem[], type: FeedItemType): number {
+    return items.filter((item) => item.type === type).length;
+  }
+
+  private setupHomeFeed(): void {
+    effect((onCleanup) => {
+      const request = this.homeFeedRequest();
+      this.homeFeedLoading.set(true);
+      this.homeFeedError.set(null);
+
+      const sub = this.homeFeed.loadHighlights(request).subscribe({
+        next: (items) => {
+          this.homeFeedItems.set(items);
+          this.homeFeedLoading.set(false);
+        },
+        error: (error) => {
+          const message = error instanceof Error ? error.message : 'home.feed.error';
+          this.homeFeedItems.set([]);
+          this.homeFeedError.set(message);
+          this.homeFeedLoading.set(false);
+        },
+      });
+
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 }
 

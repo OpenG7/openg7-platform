@@ -2191,6 +2191,33 @@
       "title": "Navigate G7 interprovincial corridors",
       "description": "Explore logistics routes, energy hubs and industrial partnerships shaping Canada’s economy."
     },
+    "feed": {
+      "tabs": {
+        "canada": "Canada",
+        "g7": "G7",
+        "world": "World"
+      },
+      "searchPlaceholder": "Electricity, Alberta, Hydro-Québec, infrastructure…",
+      "searchAria": "Search the feed",
+      "filters": {
+        "all": "All",
+        "offer": "Offer",
+        "request": "Request",
+        "labor": "Skilled labour",
+        "transport": "Transport"
+      },
+      "cta": {
+        "exploreMap": "Explore the map",
+        "publishRequest": "Publish a request",
+        "proposeOffer": "Propose an offer"
+      },
+      "panels": {
+        "alerts": "Alerts",
+        "opportunities": "Opportunities",
+        "indicators": "Indicators"
+      },
+      "kicker": "Feed"
+    },
     "filters": {
       "kicker": "Refine the view",
       "title": "Filter exchanges by your priorities",
