@@ -15,6 +15,10 @@ jobs:
       NOTIFICATION_WEBHOOK_URL: https://notifications.ci.openg7.org/email
       API_TOKEN: ci-readonly-token
       HOMEPAGE_PREVIEW_TOKEN: ci-preview-token
+      AUTH_MODE: hybrid
+      I18N_PREFIX: /assets/i18n/
+      FEATURE_FLAGS: '{}'
+      CONTENT_SECURITY_POLICY: '{}'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
