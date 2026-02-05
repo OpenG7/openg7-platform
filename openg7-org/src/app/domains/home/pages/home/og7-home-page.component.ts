@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -11,12 +10,15 @@ import { MapStatsService } from '@app/core/services/map-stats.service';
 import { OpportunityAiPrefillService } from '@app/core/services/opportunity-ai-prefill.service';
 import { OpportunityService } from '@app/core/services/opportunity.service';
 import { FeedItem, FeedItemType } from '@app/domains/feed/feature/models/feed.models';
-import { JsonDateAgoPipe } from '@app/domains/feed/feature/pipes/json-date-ago.pipe';
 import { HomeCorridorsRealtimeComponent } from '@app/domains/home/feature/home-corridors-realtime/home-corridors-realtime.component';
+import { HomeCtaRowComponent } from '@app/domains/home/feature/home-cta-row/home-cta-row.component';
+import { HomeFeedPanelsComponent } from '@app/domains/home/feature/home-feed-panels/home-feed-panels.component';
+import { HomeFeedSectionComponent } from '@app/domains/home/feature/home-feed-section/home-feed-section.component';
 import { HomeFiltersSectionComponent } from '@app/domains/home/feature/home-filters-section/home-filters-section.component';
 import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-section/home-hero-section.component';
 import { HomeInputsSectionComponent } from '@app/domains/home/feature/home-inputs-section/home-inputs-section.component';
 import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section/home-map-section.component';
+import { HomeMetricsStripComponent } from '@app/domains/home/feature/home-metrics-strip/home-metrics-strip.component';
 import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section/home-statistics-section.component';
 import { HomeFeedFilter, HomeFeedScope, HomeFeedService } from '@app/domains/home/services/home-feed.service';
 import { IntroductionRequestContext } from '@app/domains/matchmaking/sections/og7-intro-billboard.section';
@@ -28,18 +30,18 @@ import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selec
 import { computeMapKpiSnapshot } from '@app/state/map/map.selectors';
 import { selectFeedConnectionState } from '@app/store/feed/feed.selectors';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   standalone: true,
   selector: 'og7-home-page',
   imports: [
-    CommonModule,
-    TranslateModule,
-    JsonDateAgoPipe,
     HomeHeroSectionComponent,
     HomeCorridorsRealtimeComponent,
+    HomeFeedSectionComponent,
+    HomeCtaRowComponent,
+    HomeMetricsStripComponent,
+    HomeFeedPanelsComponent,
     HomeMapSectionComponent,
     HomeStatisticsSectionComponent,
     HomeInputsSectionComponent,
@@ -202,6 +204,10 @@ export class Og7HomePageComponent {
     this.buildPanelItems(this.homeFeedItems(), ['INDICATOR'], 2)
   );
 
+  protected readonly feedSubtitleForItem = (item: FeedItem): string => {
+    return this.formatFeedRoute(item) || this.resolveSectorLabel(item.sectorId) || '';
+  };
+
   constructor() {
     this.aiPrefill.prefillFromPreferences();
 
@@ -298,10 +304,6 @@ export class Og7HomePageComponent {
     return from ?? to ?? this.resolveSectorLabel(item.sectorId ?? null);
   }
 
-  protected trackFeedItem(index: number, item: FeedItem): string {
-    return item.id ?? `feed-${index}`;
-  }
-
   protected formatCount(value: number): string {
     return this.numberFormatter.format(value);
   }
@@ -326,14 +328,6 @@ export class Og7HomePageComponent {
 
   protected onSearchInput(value: string): void {
     this.searchDraft.set(value);
-  }
-
-  protected trackFeedScope(_index: number, scope: { id: HomeFeedScope }): HomeFeedScope {
-    return scope.id;
-  }
-
-  protected trackFeedFilter(_index: number, filter: { id: HomeFeedFilter }): HomeFeedFilter {
-    return filter.id;
   }
 
   private buildPanelItems(items: FeedItem[], types: FeedItemType[], limit: number): FeedItem[] {
