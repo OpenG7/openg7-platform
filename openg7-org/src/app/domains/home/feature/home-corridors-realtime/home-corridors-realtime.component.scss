@@ -10,9 +10,9 @@
 .og7-corridors-realtime {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: linear-gradient(135deg, rgba(10, 15, 25, 0.98), rgba(8, 12, 20, 0.98) 55%, rgba(5, 8, 15, 0.98));
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(180deg, rgba(10, 14, 22, 0.94), rgba(8, 12, 20, 0.94) 60%, rgba(6, 9, 16, 0.94));
   color: #e2e8f0;
 }
 
@@ -21,10 +21,10 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
-  background-size: 120px 120px;
-  opacity: 0.2;
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 140px 140px;
+  opacity: 0.12;
   pointer-events: none;
 }
 
@@ -33,10 +33,10 @@
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 18% 32%, rgba(255, 255, 255, 0.22), transparent 35%),
-    radial-gradient(circle at 82% 28%, rgba(56, 189, 248, 0.18), transparent 30%),
-    radial-gradient(circle at 64% 70%, rgba(129, 140, 248, 0.16), transparent 38%);
-  opacity: 0.7;
+    radial-gradient(circle at 18% 32%, rgba(255, 255, 255, 0.16), transparent 38%),
+    radial-gradient(circle at 82% 28%, rgba(56, 189, 248, 0.14), transparent 32%),
+    radial-gradient(circle at 64% 70%, rgba(129, 140, 248, 0.12), transparent 40%);
+  opacity: 0.45;
   pointer-events: none;
 }
 
@@ -45,12 +45,12 @@
   z-index: 1;
   margin: 0 auto;
   max-width: 72rem;
-  padding: 16px 24px;
+  padding: 14px 24px;
 }
 
 @media (min-width: 640px) {
   .og7-corridors-realtime__content {
-    padding: 18px 40px;
+    padding: 16px 32px;
   }
 }
 

@@ -1,0 +1,57 @@
+<section class="mx-auto w-full max-w-6xl px-6 sm:px-10">
+  <div class="grid gap-6 lg:grid-cols-3">
+    <article class="rounded-2xl border border-white/10 bg-slate-900/70 p-5 text-white shadow-[0_16px_50px_rgba(2,6,23,0.55)]">
+      <header class="mb-3 flex items-center justify-between">
+        <h3 class="text-base font-semibold tracking-tight">{{ 'home.feed.panels.alerts' | translate }}</h3>
+        <span class="text-[10px] uppercase tracking-[0.3em] text-slate-400">{{ 'home.feed.kicker' | translate }}</span>
+      </header>
+      <ul class="space-y-3">
+        <li *ngFor="let item of alertItems(); trackBy: trackFeedItem" class="flex gap-3">
+          <span class="mt-1 h-1.5 w-1.5 rounded-full bg-amber-300"></span>
+          <div>
+            <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
+            <p class="text-[11px] text-slate-400">
+              {{ subtitle(item) }}
+            </p>
+          </div>
+        </li>
+      </ul>
+    </article>
+
+    <article class="rounded-2xl border border-white/10 bg-slate-900/70 p-5 text-white shadow-[0_16px_50px_rgba(2,6,23,0.55)]">
+      <header class="mb-3 flex items-center justify-between">
+        <h3 class="text-base font-semibold tracking-tight">{{ 'home.feed.panels.opportunities' | translate }}</h3>
+        <span class="text-[10px] uppercase tracking-[0.3em] text-slate-400">{{ 'home.feed.kicker' | translate }}</span>
+      </header>
+      <ul class="space-y-3">
+        <li *ngFor="let item of opportunityItems(); trackBy: trackFeedItem" class="flex gap-3">
+          <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
+          <div>
+            <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
+            <p class="text-[11px] text-slate-400">
+              {{ subtitle(item) }}
+            </p>
+          </div>
+        </li>
+      </ul>
+    </article>
+
+    <article class="rounded-2xl border border-white/10 bg-slate-900/70 p-5 text-white shadow-[0_16px_50px_rgba(2,6,23,0.55)]">
+      <header class="mb-3 flex items-center justify-between">
+        <h3 class="text-base font-semibold tracking-tight">{{ 'home.feed.panels.indicators' | translate }}</h3>
+        <span class="text-[10px] uppercase tracking-[0.3em] text-slate-400">{{ 'home.feed.kicker' | translate }}</span>
+      </header>
+      <ul class="space-y-3">
+        <li *ngFor="let item of indicatorItems(); trackBy: trackFeedItem" class="flex gap-3">
+          <span class="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-300"></span>
+          <div>
+            <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
+            <p class="text-[11px] text-slate-400">
+              {{ subtitle(item) }}
+            </p>
+          </div>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
