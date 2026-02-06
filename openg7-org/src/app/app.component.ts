@@ -11,7 +11,7 @@ import { SiteHeaderComponent } from '@app/shared/components/layout/site-header.c
 import { UnderConstructionBannerComponent } from '@app/shared/components/layout/under-construction-banner.component';
 import { CtrlKDirective } from '@app/shared/directives/ctrl-k.directive';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxParticlesComponent } from '@omnedia/ngx-particles';
+import { NgxGalaxyComponent } from '@omnedia/ngx-galaxy';
 import { map } from 'rxjs';
 
 import { FEATURE_FLAGS } from './core/config/environment.tokens';
@@ -36,7 +36,7 @@ import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.
     RouterLink,
     TranslateModule,
     CtrlKDirective,
-    NgxParticlesComponent,
+    NgxGalaxyComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
