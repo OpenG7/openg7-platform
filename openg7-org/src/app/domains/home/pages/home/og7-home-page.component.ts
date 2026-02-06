@@ -49,6 +49,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
     OpportunityMatchesSection,
   ],
   templateUrl: './og7-home-page.component.html',
+  styleUrls: ['./og7-home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 /**

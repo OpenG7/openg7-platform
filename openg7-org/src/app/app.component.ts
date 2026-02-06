@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { CommonModule } from '@angular/common';
-import { Component, Type, inject, signal } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, PLATFORM_ID, Type, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -11,6 +11,7 @@ import { SiteHeaderComponent } from '@app/shared/components/layout/site-header.c
 import { UnderConstructionBannerComponent } from '@app/shared/components/layout/under-construction-banner.component';
 import { CtrlKDirective } from '@app/shared/directives/ctrl-k.directive';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxParticlesComponent } from '@omnedia/ngx-particles';
 import { map } from 'rxjs';
 
 import { FEATURE_FLAGS } from './core/config/environment.tokens';
@@ -35,6 +36,7 @@ import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.
     RouterLink,
     TranslateModule,
     CtrlKDirective,
+    NgxParticlesComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -46,11 +48,13 @@ import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.
  * @returns AppComponent gérée par le framework.
  */
 export class AppComponent {
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly globalShortcuts = inject(GlobalShortcutsService);
   private readonly featureFlags = inject(FEATURE_FLAGS);
 
   readonly componentLabComponent = signal<Type<unknown> | null>(null);
+  readonly isBrowser = isPlatformBrowser(this.platformId);
 
   readonly isHandset = toSignal(
     this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),

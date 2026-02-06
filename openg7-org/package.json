@@ -37,6 +37,8 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@omnedia/ngx-galaxy": "^4.0.1",
+    "@omnedia/ngx-neon-underline": "^4.0.1",
+    "@omnedia/ngx-particles": "^4.0.1",
     "@omnedia/ngx-three-globe": "^4.0.1",
     "@openg7/contracts": "workspace:*",
     "@stripe/stripe-js": "^4.8.0",

@@ -6031,6 +6031,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@omnedia/ngx-neon-underline@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@omnedia/ngx-neon-underline@npm:4.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ^21.0.0
+    "@angular/core": ^21.0.0
+  checksum: 10c0/4bb7397978c89ddaf113eab37b35743da74e64c1d98c632031dce7615d96c3d9f6d856dfeeeadf01752f5c9530113a00cfcf998ca73a472fb071ec6c3439d76a
+  languageName: node
+  linkType: hard
+
+"@omnedia/ngx-particles@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@omnedia/ngx-particles@npm:4.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ^21.0.0
+    "@angular/core": ^21.0.0
+  checksum: 10c0/e98bf67d10f37fb92e83ee82970b0d006d0698ace5fac127fd9c2295589cc25ba7251a5e592c00f58c4e720f0932a6fe29e6190696aabea36812b7321e673341
+  languageName: node
+  linkType: hard
+
 "@omnedia/ngx-three-globe@npm:^4.0.1":
   version: 4.0.1
   resolution: "@omnedia/ngx-three-globe@npm:4.0.1"
@@ -6119,6 +6143,8 @@ __metadata:
     "@ngx-translate/core": "npm:^17.0.0"
     "@ngx-translate/http-loader": "npm:^17.0.0"
     "@omnedia/ngx-galaxy": "npm:^4.0.1"
+    "@omnedia/ngx-neon-underline": "npm:^4.0.1"
+    "@omnedia/ngx-particles": "npm:^4.0.1"
     "@omnedia/ngx-three-globe": "npm:^4.0.1"
     "@openg7/contracts": "workspace:*"
     "@playwright/test": "npm:^1.55.0"

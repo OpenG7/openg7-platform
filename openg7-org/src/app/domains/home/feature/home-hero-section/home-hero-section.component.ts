@@ -29,7 +29,7 @@ export class HomeHeroSectionComponent {
   }
 
   private async loadBackdrop(): Promise<void> {
-    const module = await import('./home-hero-galaxy.client.component');
+    const module = await import('./home-hero-galaxy/home-hero-galaxy.client.component');
     this.backdropComponent.set(module.HomeHeroGalaxyClientComponent);
   }
 }
