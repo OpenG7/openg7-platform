@@ -20,6 +20,26 @@
   pointer-events: none;
 }
 
+.particles-grid,
+.particles-galaxy {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.particles-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  mix-blend-mode: screen;
+}
+
+.particles-galaxy {
+  position: absolute;
+  inset: 0;
+  opacity: 0.9;
+}
+
 .particles om-galaxy {
   display: block;
   width: 100%;

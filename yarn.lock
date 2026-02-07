@@ -6031,6 +6031,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@omnedia/ngx-gridpattern@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@omnedia/ngx-gridpattern@npm:4.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ^21.0.0
+    "@angular/core": ^21.0.0
+  checksum: 10c0/eeb83479e815bbbeb58ebd469cba584315b0a1ae0a8f3f6e52b0a769315e197d5f63e64369b2c72f1cabc532dc4aad95b5a5c2676a4d99fc072ffc6dd3ddfe59
+  languageName: node
+  linkType: hard
+
 "@omnedia/ngx-neon-underline@npm:^4.0.1":
   version: 4.0.1
   resolution: "@omnedia/ngx-neon-underline@npm:4.0.1"
@@ -6143,6 +6155,7 @@ __metadata:
     "@ngx-translate/core": "npm:^17.0.0"
     "@ngx-translate/http-loader": "npm:^17.0.0"
     "@omnedia/ngx-galaxy": "npm:^4.0.1"
+    "@omnedia/ngx-gridpattern": "npm:^4.0.1"
     "@omnedia/ngx-neon-underline": "npm:^4.0.1"
     "@omnedia/ngx-particles": "npm:^4.0.1"
     "@omnedia/ngx-three-globe": "npm:^4.0.1"

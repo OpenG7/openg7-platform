@@ -10,8 +10,8 @@ import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
-import { SearchHistoryStore } from '../search-history.store';
-import { SearchService } from '../search.service';
+import { SearchHistoryStore } from '../../search-history.store';
+import { SearchService } from '../../search.service';
 
 import { QuickSearchModalComponent, QuickSearchModalData } from './quick-search-modal.component';
 

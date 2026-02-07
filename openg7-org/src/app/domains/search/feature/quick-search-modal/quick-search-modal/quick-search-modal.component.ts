@@ -25,12 +25,12 @@ import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { fromEvent } from 'rxjs';
 
-import { SearchHistoryStore } from '../search-history.store';
-import { handleQuickSearchKeydown } from '../search-keyboard.manager';
-import { SearchService } from '../search.service';
+import { SearchHistoryStore } from '../../search-history.store';
+import { handleQuickSearchKeydown } from '../../search-keyboard.manager';
+import { SearchService } from '../../search.service';
 
-import { QuickSearchResultItemComponent } from './quick-search-result-item.component';
-import { QuickSearchSectionSkeletonComponent } from './quick-search-section-skeleton.component';
+import { QuickSearchResultItemComponent } from '../quick-search-result-item/quick-search-result-item.component';
+import { QuickSearchSectionSkeletonComponent } from '../quick-search-section-skeleton/quick-search-section-skeleton.component';
 export interface QuickSearchModalData {
   readonly initialQuery?: string;
   readonly source?: string;

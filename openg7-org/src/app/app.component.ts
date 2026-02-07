@@ -12,6 +12,7 @@ import { UnderConstructionBannerComponent } from '@app/shared/components/layout/
 import { CtrlKDirective } from '@app/shared/directives/ctrl-k.directive';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxGalaxyComponent } from '@omnedia/ngx-galaxy';
+import { NgxGridpatternComponent } from '@omnedia/ngx-gridpattern';
 import { map } from 'rxjs';
 
 import { FEATURE_FLAGS } from './core/config/environment.tokens';
@@ -37,6 +38,7 @@ import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.
     TranslateModule,
     CtrlKDirective,
     NgxGalaxyComponent,
+    NgxGridpatternComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
