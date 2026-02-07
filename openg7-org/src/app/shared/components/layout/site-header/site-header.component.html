@@ -11,20 +11,24 @@
 
     <div class="mx-auto hidden max-w-xl flex-1 sm:flex">
       <div class="relative w-full">
-        <label for="desktop-search" class="sr-only">{{ 'header.search.aria' | translate }}</label>
-        <input
+        <span id="desktop-search-label" class="sr-only">{{ 'header.search.aria' | translate }}</span>
+        <button
           id="desktop-search"
-          type="search"
-          [formControl]="queryControl"
-          data-og7="spotlight-trigger"
-          class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-cyan-400/40 focus:ring-2 focus:ring-cyan-400/30"
-          [placeholder]="'header.search.placeholder' | translate"
-          (focus)="toggleSearch(true)"
-          role="combobox"
+          type="button"
+          data-og7="search-box"
+          data-og7-id="spotlight-trigger"
+          class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-left text-sm text-white/70 outline-none transition focus:border-cyan-400/40 focus:ring-2 focus:ring-cyan-400/30"
+          (click)="toggleSearch(true)"
           aria-haspopup="dialog"
           [attr.aria-expanded]="isSearchOpen()"
-        />
+          aria-controls="quick-search-modal"
+          aria-labelledby="desktop-search-label"
+          aria-describedby="desktop-search-hint"
+        >
+          {{ 'header.search.placeholder' | translate }}
+        </button>
         <kbd
+          id="desktop-search-hint"
           class="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md border border-white/20 px-2 py-0.5 text-[10px] font-medium text-white/60 sm:block"
         >
           CTRL K
@@ -278,16 +282,21 @@
   </div>
 
   <div *ngIf="isMobileMenuOpen()" class="border-t border-white/10 bg-slate-950/95 px-3 py-3 backdrop-blur sm:hidden">
-    <label for="mobile-search" class="sr-only">{{ 'header.search.aria' | translate }}</label>
-    <input
+    <span id="mobile-search-label" class="sr-only">{{ 'header.search.aria' | translate }}</span>
+    <button
       id="mobile-search"
-      type="search"
-      [formControl]="queryControl"
-      data-og7="spotlight-trigger"
-      class="mb-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-cyan-400/40 focus:ring-2 focus:ring-cyan-400/30"
-      [placeholder]="'header.search.placeholder' | translate"
-      (focus)="toggleSearch(true)"
-    />
+      type="button"
+      data-og7="search-box"
+      data-og7-id="spotlight-trigger"
+      class="mb-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-left text-sm text-white/70 outline-none focus:border-cyan-400/40 focus:ring-2 focus:ring-cyan-400/30"
+      (click)="toggleSearch(true)"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="isSearchOpen()"
+      aria-controls="quick-search-modal"
+      aria-labelledby="mobile-search-label"
+    >
+      {{ 'header.search.placeholder' | translate }}
+    </button>
 
     <div class="flex flex-wrap items-center gap-2">
       <a
@@ -397,59 +406,4 @@
     </ul>
   </div>
 
-  <div
-    *ngIf="isSearchOpen()"
-    class="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 backdrop-blur-sm"
-    (click)="toggleSearch(false)"
-  >
-    <div
-      class="mt-20 w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 bg-slate-900/95 shadow-2xl"
-      data-og7="spotlight-modal"
-      (click)="$event.stopPropagation()"
-    >
-      <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-        <svg viewBox="0 0 24 24" class="h-5 w-5 text-white/50" fill="currentColor" aria-hidden="true">
-          <path d="M21 21l-4.35-4.35M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
-        </svg>
-        <input
-          type="search"
-          [formControl]="queryControl"
-          autofocus
-          class="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/40"
-          [placeholder]="'header.search.spotlight' | translate"
-        />
-        <button
-          type="button"
-          (click)="toggleSearch(false)"
-          class="rounded-lg px-2 py-1 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
-        >
-          Esc
-        </button>
-      </div>
-      <div class="spotlight-scroll max-h-72 overflow-auto p-2" data-og7="search-results">
-        <p *ngIf="!hasQuery()" class="px-2 py-3 text-sm text-white/60">
-          {{ 'header.search.hint' | translate }}
-        </p>
-        <ul *ngIf="hasQuery()" class="divide-y divide-white/5">
-          <li
-            *ngFor="let item of spotlightResults(); trackBy: trackResult"
-            class="px-3 py-3 text-sm text-white/80 transition hover:bg-white/5"
-          >
-            <a
-              [routerLink]="item.commands"
-              [queryParams]="item.queryParams ?? null"
-              (click)="toggleSearch(false)"
-              class="flex items-start gap-3"
-            >
-              <span class="text-lg" aria-hidden="true">{{ item.icon }}</span>
-              <span>
-                <span class="block font-medium text-white">{{ item.label }}</span>
-                <span *ngIf="item.description" class="mt-0.5 block text-xs text-white/60">{{ item.description }}</span>
-              </span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </header>
