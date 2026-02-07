@@ -1,12 +1,27 @@
 import { NgComponentOutlet, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, PLATFORM_ID, Type, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, PLATFORM_ID, Type, inject, input, signal } from '@angular/core';
+import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
+import { HomeCorridorsRealtimeComponent } from '@app/domains/home/feature/home-corridors-realtime/home-corridors-realtime.component';
+import { HomeCtaRowComponent } from '@app/domains/home/feature/home-cta-row/home-cta-row.component';
+import { HomeFeedPanelsComponent } from '@app/domains/home/feature/home-feed-panels/home-feed-panels.component';
+import { HomeFeedSectionComponent } from '@app/domains/home/feature/home-feed-section/home-feed-section.component';
+import { HomeMetricsStripComponent } from '@app/domains/home/feature/home-metrics-strip/home-metrics-strip.component';
+import { HomeFeedFilter, HomeFeedScope } from '@app/domains/home/services/home-feed.service';
 import { HeroSectionComponent } from '@app/shared/components/hero/hero-section/hero-section.component';
 import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 
 @Component({
   selector: 'og7-home-hero-section',
   standalone: true,
-  imports: [HeroSectionComponent, NgComponentOutlet],
+  imports: [
+    HeroSectionComponent,
+    NgComponentOutlet,
+    HomeFeedSectionComponent,
+    HomeCtaRowComponent,
+    HomeMetricsStripComponent,
+    HomeFeedPanelsComponent,
+    HomeCorridorsRealtimeComponent,
+  ],
   templateUrl: './home-hero-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -19,6 +34,28 @@ import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.co
 export class HomeHeroSectionComponent {
   private readonly platformId = inject(PLATFORM_ID);
   readonly stats = input.required<StatMetric[]>();
+  readonly feedScopes = input.required<ReadonlyArray<{ id: HomeFeedScope; label: string }>>();
+  readonly activeFeedScope = input.required<HomeFeedScope>();
+  readonly feedFilters = input.required<ReadonlyArray<{ id: HomeFeedFilter; label: string }>>();
+  readonly activeFeedFilter = input.required<HomeFeedFilter>();
+  readonly searchDraft = input.required<string>();
+  readonly homeFeedLoading = input.required<boolean>();
+  readonly intrantsValue = input.required<string>();
+  readonly offersCount = input.required<string>();
+  readonly activeCount = input.required<string>();
+  readonly requestsCount = input.required<string>();
+  readonly corridorsCount = input.required<string>();
+  readonly lastFeedUpdate = input.required<string | null>();
+  readonly systemStatusKey = input.required<string>();
+  readonly systemStatusDotClass = input.required<string>();
+  readonly alertItems = input.required<ReadonlyArray<FeedItem>>();
+  readonly opportunityItems = input.required<ReadonlyArray<FeedItem>>();
+  readonly indicatorItems = input.required<ReadonlyArray<FeedItem>>();
+  readonly subtitleForItem = input.required<(item: FeedItem) => string>();
+
+  @Output() readonly scopeChanged = new EventEmitter<HomeFeedScope>();
+  @Output() readonly filterChanged = new EventEmitter<HomeFeedFilter>();
+  @Output() readonly searchChanged = new EventEmitter<string>();
   readonly isBrowser = isPlatformBrowser(this.platformId);
   readonly backdropComponent = signal<Type<unknown> | null>(null);
 

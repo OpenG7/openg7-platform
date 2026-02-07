@@ -6,6 +6,7 @@ import { NgxThreeGlobeComponent } from '@omnedia/ngx-three-globe';
   standalone: true,
   imports: [NgxThreeGlobeComponent],
   templateUrl: './home-hero-galaxy.client.component.html',
+  styleUrls: ['./home-hero-galaxy.client.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeHeroGalaxyClientComponent {}

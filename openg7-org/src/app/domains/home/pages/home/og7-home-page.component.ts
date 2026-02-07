@@ -10,19 +10,9 @@ import { MapStatsService } from '@app/core/services/map-stats.service';
 import { OpportunityAiPrefillService } from '@app/core/services/opportunity-ai-prefill.service';
 import { OpportunityService } from '@app/core/services/opportunity.service';
 import { FeedItem, FeedItemType } from '@app/domains/feed/feature/models/feed.models';
-import { HomeCorridorsRealtimeComponent } from '@app/domains/home/feature/home-corridors-realtime/home-corridors-realtime.component';
-import { HomeCtaRowComponent } from '@app/domains/home/feature/home-cta-row/home-cta-row.component';
-import { HomeFeedPanelsComponent } from '@app/domains/home/feature/home-feed-panels/home-feed-panels.component';
-import { HomeFeedSectionComponent } from '@app/domains/home/feature/home-feed-section/home-feed-section.component';
-import { HomeFiltersSectionComponent } from '@app/domains/home/feature/home-filters-section/home-filters-section.component';
 import { HomeHeroSectionComponent } from '@app/domains/home/feature/home-hero-section/home-hero-section.component';
-import { HomeInputsSectionComponent } from '@app/domains/home/feature/home-inputs-section/home-inputs-section.component';
-import { HomeMapSectionComponent } from '@app/domains/home/feature/home-map-section/home-map-section.component';
-import { HomeMetricsStripComponent } from '@app/domains/home/feature/home-metrics-strip/home-metrics-strip.component';
-import { HomeStatisticsSectionComponent } from '@app/domains/home/feature/home-statistics-section/home-statistics-section.component';
 import { HomeFeedFilter, HomeFeedScope, HomeFeedService } from '@app/domains/home/services/home-feed.service';
 import { IntroductionRequestContext } from '@app/domains/matchmaking/sections/og7-intro-billboard.section';
-import { OpportunityMatchesSection } from '@app/domains/opportunities/sections/opportunity-matches.section';
 import { StatMetric } from '@app/shared/components/hero/hero-stats/hero-stats.component';
 import { selectFilteredFlows, selectMapKpis } from '@app/state';
 import { AppState } from '@app/state/app.state';
@@ -37,16 +27,6 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
   selector: 'og7-home-page',
   imports: [
     HomeHeroSectionComponent,
-    HomeCorridorsRealtimeComponent,
-    HomeFeedSectionComponent,
-    HomeCtaRowComponent,
-    HomeMetricsStripComponent,
-    HomeFeedPanelsComponent,
-    HomeMapSectionComponent,
-    HomeStatisticsSectionComponent,
-    HomeInputsSectionComponent,
-    HomeFiltersSectionComponent,
-    OpportunityMatchesSection,
   ],
   templateUrl: './og7-home-page.component.html',
   styleUrls: ['./og7-home-page.component.scss'],
