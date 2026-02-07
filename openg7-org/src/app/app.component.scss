@@ -9,6 +9,68 @@
 .app-main {
   flex: 1 1 auto;
   background-color: #051840;
+  position: relative;
+  overflow: hidden;
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.particles om-galaxy {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.particles-gradient {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: radial-gradient(350px 200px at top, transparent 20%, #fff);
+  mask-image: radial-gradient(350px 150px at top, transparent 20%, #fff);
+  background-color: rgba(15, 23, 42, 0.08);
+  z-index: 1;
+}
+
+.app-main__globe {
+  position: absolute;
+  top: -4vh;
+  right: -12vw;
+  width: 62vw;
+  max-width: 1000px;
+  height: 90vh;
+  min-height: 600px;
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.app-main__globe om-three-globe {
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 1024px) {
+  .app-main__globe {
+    display: flex;
+  }
+}
+
+.app-main__content {
+  position: relative;
+  z-index: 2;
 }
 
 .app-footer {

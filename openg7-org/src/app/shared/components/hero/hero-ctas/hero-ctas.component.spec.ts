@@ -23,23 +23,23 @@ describe('HeroCtasComponent', () => {
 
   it('emits analytics event when CTA is clicked', () => {
     const fixture = TestBed.createComponent(HeroCtasComponent);
-    const secondary: HeroCta = {
+    const primary: HeroCta = {
       label: 'hero.actions.viewSectors',
       href: '#map-section',
       trackingType: 'view-sectors-cta',
     };
-    fixture.componentInstance.secondaryCta = secondary;
+    fixture.componentInstance.primaryCta = primary;
     const spy = jasmine.createSpy('ctaClicked');
     fixture.componentInstance.ctaClicked.subscribe(spy);
 
     fixture.detectChanges();
 
     const ctas = fixture.nativeElement.querySelectorAll('a');
-    ctas[1].click();
+    ctas[0].click();
 
     expect(spy).toHaveBeenCalled();
     const event: HeroCtaClickEvent = spy.calls.mostRecent().args[0];
-    expect(event.cta).toEqual(secondary);
+    expect(event.cta).toEqual(primary);
     expect(event.trackingType).toBe('view-sectors-cta');
     expect(event.event instanceof MouseEvent).toBeTrue();
   });

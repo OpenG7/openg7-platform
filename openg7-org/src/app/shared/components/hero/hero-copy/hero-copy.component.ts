@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxNeonUnderlineComponent } from '@omnedia/ngx-neon-underline';
+
 
 @Component({
   selector: 'og7-hero-copy',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, NgxNeonUnderlineComponent],
+  styleUrls: ['./hero-copy.component.scss'],
   templateUrl: './hero-copy.component.html',
 })
 /**

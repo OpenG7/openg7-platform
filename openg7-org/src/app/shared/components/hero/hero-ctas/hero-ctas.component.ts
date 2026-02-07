@@ -35,24 +35,18 @@ export interface HeroCtaClickEvent {
  */
 export class HeroCtasComponent {
   @Input() primaryCta: HeroCta | null = {
-    label: 'hero.actions.registerCompany',
-    routerLink: '/register',
-    trackingType: 'register-company',
-  };
-
-  @Input() secondaryCta: HeroCta | null = {
     label: 'hero.actions.viewSectors',
     href: '#map',
     trackingType: 'view-sectors',
   };
 
-  @Input() tertiaryCta: HeroCta | null = {
+  @Input() secondaryCta: HeroCta | null = {
     label: 'hero.actions.proMode',
     routerLink: '/pricing',
     trackingType: 'pro-mode',
   };
 
-  @Input() quaternaryCta: HeroCta | null = {
+  @Input() tertiaryCta: HeroCta | null = {
     label: 'hero.actions.preview',
     routerLink: '/preview/homepage',
     trackingType: 'preview',

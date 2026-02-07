@@ -29,8 +29,8 @@ import { injectNotificationStore } from '@app/core/observability/notification.st
 import { PartnerProfileService } from '@app/core/services/partner-profile.service';
 import { ShareResult, ShareService } from '@app/core/services/share.service';
 import { IntroStepperDefaults, Og7IntroStepId, Og7IntroStepperComponent } from '@app/domains/matchmaking/og7-mise-en-relation/og7-intro-stepper.component';
-import { Og7ComplianceChecklistComponent } from '@app/shared/components/connection/og7-compliance-checklist.component';
-import { Og7MeetingSchedulerComponent } from '@app/shared/components/connection/og7-meeting-scheduler.component';
+import { Og7ComplianceChecklistComponent } from '@app/shared/components/connection/og7-compliance-checklist/og7-compliance-checklist.component';
+import { Og7MeetingSchedulerComponent } from '@app/shared/components/connection/og7-meeting-scheduler/og7-meeting-scheduler.component';
 import { Og7CtaRailComponent } from '@app/shared/components/cta/og7-cta-rail.component';
 import { Og7FinancingBannerComponent } from '@app/shared/components/financing/og7-financing-banner.component';
 import { Og7IncotermsRibbonComponent } from '@app/shared/components/logistics/og7-incoterms-ribbon.component';

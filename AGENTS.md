@@ -179,7 +179,6 @@ Construire la section héros (hero, hero-copy, hero-ctas) avec les CTAs `[data-o
   - Sous-actions (boutons) :  
     - Voir secteurs : `[data-og7="action"] [data-og7-id="view-sectors"]`  
     - Mode pro : `[data-og7="action"] [data-og7-id="pro-mode"]`  
-    - Inscrire entreprise : `[data-og7="action"] [data-og7-id="register-company"]`  
     - Prévisualiser : `[data-og7="action"] [data-og7-id="preview"]`
 
 ### 1.3 — Carte (Leaflet / jsVectorMap bridge)

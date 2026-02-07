@@ -36,3 +36,16 @@
   z-index: 1;            /* le texte/CTAs passent au-dessus du voile */
 }
 
+.hero-slot {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+:host ::ng-deep .hero-slot > * {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+

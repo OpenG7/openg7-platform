@@ -1,21 +1,13 @@
 <div class="flex flex-col gap-10 sm:gap-14 lg:gap-16">
-  <og7-home-hero-section [stats]="keyMetrics()" class="block"></og7-home-hero-section>
-
-  <section class="mx-auto w-full max-w-6xl px-6 sm:px-10" [attr.aria-busy]="homeFeedLoading()">
-    <og7-home-feed-section
-      [feedScopes]="feedScopes"
-      [activeFeedScope]="activeFeedScope()"
-      [feedFilters]="feedFilters"
-      [activeFeedFilter]="activeFeedFilter()"
-      [searchDraft]="searchDraft()"
-      (scopeChanged)="setFeedScope($event)"
-      (filterChanged)="setFeedFilter($event)"
-      (searchChanged)="onSearchInput($event)"
-    ></og7-home-feed-section>
-    <og7-home-cta-row></og7-home-cta-row>
-  </section>
-
-  <og7-home-metrics-strip
+  <og7-home-hero-section
+    class="block"
+    [stats]="keyMetrics()"
+    [feedScopes]="feedScopes"
+    [activeFeedScope]="activeFeedScope()"
+    [feedFilters]="feedFilters"
+    [activeFeedFilter]="activeFeedFilter()"
+    [searchDraft]="searchDraft()"
+    [homeFeedLoading]="homeFeedLoading()"
     [intrantsValue]="formatCurrency(intrantsValue())"
     [offersCount]="formatCount(offersCount())"
     [activeCount]="formatCount(activeCount())"
@@ -24,18 +16,14 @@
     [lastFeedUpdate]="lastFeedUpdate()"
     [systemStatusKey]="systemStatusKey()"
     [systemStatusDotClass]="systemStatusDotClass()"
-  ></og7-home-metrics-strip>
-
-  <og7-home-feed-panels
     [alertItems]="alertItems()"
     [opportunityItems]="opportunityItems()"
     [indicatorItems]="indicatorItems()"
     [subtitleForItem]="feedSubtitleForItem"
-  ></og7-home-feed-panels>
-
-  <section class="mx-auto w-full max-w-6xl px-6 sm:px-10">
-    <og7-home-corridors-realtime></og7-home-corridors-realtime>
-  </section>
+    (scopeChanged)="setFeedScope($event)"
+    (filterChanged)="setFeedFilter($event)"
+    (searchChanged)="onSearchInput($event)"
+  ></og7-home-hero-section>
 
   <!-- 
   <og7-home-inputs-section class="mx-auto block w-full max-w-6xl px-6 sm:px-10"></og7-home-inputs-section>

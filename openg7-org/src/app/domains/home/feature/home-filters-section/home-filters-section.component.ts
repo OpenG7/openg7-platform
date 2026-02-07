@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { GlobalFiltersComponent } from '@app/shared/components/filters/global-filters.component';
+import { GlobalFiltersComponent } from '@app/shared/components/filters/global-filters/global-filters.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({

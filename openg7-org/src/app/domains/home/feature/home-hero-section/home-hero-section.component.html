@@ -1,12 +1,48 @@
-<section class="relative isolate overflow-hidden bg-slate-950">
+<section class="relative isolate overflow-hidden">
   @if (isBrowser && backdropComponent()) {
     <ng-container *ngComponentOutlet="backdropComponent()"></ng-container>
   }
   <og7-hero-section
-    class="relative z-10"
+    class="relative z-10 flex flex-col gap-10 sm:gap-14 lg:gap-16"
     data-og7="hero"
     data-og7-id="section"
     aria-labelledby="home-hero-heading"
     [stats]="stats()"
-  ></og7-hero-section>
+  >
+    <section class="mx-auto w-full max-w-6xl" [attr.aria-busy]="homeFeedLoading()">
+      <og7-home-feed-section
+        [feedScopes]="feedScopes()"
+        [activeFeedScope]="activeFeedScope()"
+        [feedFilters]="feedFilters()"
+        [activeFeedFilter]="activeFeedFilter()"
+        [searchDraft]="searchDraft()"
+        (scopeChanged)="scopeChanged.emit($event)"
+        (filterChanged)="filterChanged.emit($event)"
+        (searchChanged)="searchChanged.emit($event)"
+      ></og7-home-feed-section>
+      <og7-home-cta-row></og7-home-cta-row>
+    </section>
+
+    <og7-home-metrics-strip
+      [intrantsValue]="intrantsValue()"
+      [offersCount]="offersCount()"
+      [activeCount]="activeCount()"
+      [requestsCount]="requestsCount()"
+      [corridorsCount]="corridorsCount()"
+      [lastFeedUpdate]="lastFeedUpdate()"
+      [systemStatusKey]="systemStatusKey()"
+      [systemStatusDotClass]="systemStatusDotClass()"
+    ></og7-home-metrics-strip>
+
+    <og7-home-feed-panels
+      [alertItems]="alertItems()"
+      [opportunityItems]="opportunityItems()"
+      [indicatorItems]="indicatorItems()"
+      [subtitleForItem]="subtitleForItem()"
+    ></og7-home-feed-panels>
+
+    <section class="mx-auto w-full max-w-6xl">
+      <og7-home-corridors-realtime></og7-home-corridors-realtime>
+    </section>
+  </og7-hero-section>
 </section>
