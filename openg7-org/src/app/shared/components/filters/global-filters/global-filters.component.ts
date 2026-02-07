@@ -4,7 +4,7 @@ import { FiltersService, TradeModeFilter } from '@app/core/filters.service';
 import { MODE_OPTIONS, SECTOR_OPTIONS } from '@app/core/models/opportunity';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SectorCarouselComponent, Sector } from './sector-carousel.component';
+import { SectorCarouselComponent, Sector } from '../sector-carousel/sector-carousel.component';
 
 const SECTOR_CAROUSEL_OPTIONS: Sector[] = SECTOR_OPTIONS.map((option) => ({
   id: option.value,
