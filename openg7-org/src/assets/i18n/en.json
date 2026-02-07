@@ -375,6 +375,9 @@
       "importation": "Import",
       "stats": "Statistics",
       "pricing": "Pricing",
+      "discord": "Discord",
+      "github": "GitHub",
+      "docs": "Docs",
       "open": "More options"
     },
     "profile": {
