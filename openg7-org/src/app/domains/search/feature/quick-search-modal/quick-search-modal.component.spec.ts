@@ -220,7 +220,7 @@ describe('QuickSearchModalComponent', () => {
 
   it('prevents bubbling when close button is clicked', () => {
     modalRef.close.calls.reset();
-    const event = jasmine.createSpyObj<MouseEvent>('MouseEvent', ['preventDefault', 'stopPropagation']);
+    const event = jasmine.createSpyObj<Event>('Event', ['preventDefault', 'stopPropagation']);
 
     component.onCloseClick(event);
 

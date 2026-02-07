@@ -1,4 +1,5 @@
 <div
+  id="quick-search-modal"
   cdkTrapFocus
   cdkTrapFocusAutoCapture
   class="quick-search flex max-h-[80vh] flex-col gap-6"
@@ -15,8 +16,9 @@
     </div>
     <button
       type="button"
-      class="rounded-full p-2 text-subtle transition hover:bg-slate-100"
-      (click)="onCloseClick($event)"
+      class="relative z-10 rounded-full p-2 text-subtle transition hover:bg-slate-100 pointer-events-auto"
+      (pointerdown)="onCloseClick($event)"
+      data-og7-id="quick-search-close"
       [attr.aria-label]="'search.quick.actions.close' | translate"
     >
       <span aria-hidden="true">✕</span>

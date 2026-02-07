@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,65 +12,21 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthConfigService } from '@app/core/auth/auth-config.service';
 import { AuthService } from '@app/core/auth/auth.service';
 import { FavoritesService } from '@app/core/favorites.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
+import type { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
 import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 type LangCode = 'en' | 'fr';
 
-interface SpotlightStaticItem {
-  readonly id: string;
-  readonly icon: string;
-  readonly labelKey: string;
-  readonly descriptionKey?: string;
-  readonly commands: string[];
-  readonly queryParams?: Record<string, unknown>;
-  readonly tags: readonly string[];
-}
-
-const SPOTLIGHT_DATA: readonly SpotlightStaticItem[] = [
-  {
-    id: 'matches',
-    icon: '🤝',
-    labelKey: 'header.search.results.matches',
-    descriptionKey: 'header.search.results.matchesDesc',
-    commands: ['/favorites'],
-    tags: ['match', 'matches', 'favoris', 'favorites', 'opportunité'],
-  },
-  {
-    id: 'stats',
-    icon: '📊',
-    labelKey: 'header.search.results.stats',
-    descriptionKey: 'header.search.results.statsDesc',
-    commands: ['/statistics'],
-    tags: ['stat', 'stats', 'statistics', 'données', 'data'],
-  },
-  {
-    id: 'pricing',
-    icon: '💳',
-    labelKey: 'header.search.results.pricing',
-    descriptionKey: 'header.search.results.pricingDesc',
-    commands: ['/pricing'],
-    tags: ['pricing', 'tarifs', 'abonnement', 'plan'],
-  },
-  {
-    id: 'registration',
-    icon: '📝',
-    labelKey: 'header.search.results.registration',
-    descriptionKey: 'header.search.results.registrationDesc',
-    commands: ['/inscription'],
-    tags: ['registration', 'inscription', 'company', 'international', 'signup'],
-  },
-];
-
 @Component({
   selector: 'og7-site-header',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, RouterLink, TranslateModule],
   templateUrl: './site-header.component.html',
   styleUrl: './site-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,6 +47,8 @@ export class SiteHeaderComponent {
   private readonly favorites = inject(FavoritesService);
   private readonly authConfig = inject(AuthConfigService);
   private readonly notifications = injectNotificationStore();
+  private readonly quickSearchLauncher = inject(QuickSearchLauncherService);
+  private activeQuickSearchRef: Og7ModalRef<void> | null = null;
 
   readonly isMobileMenuOpen = signal(false);
   readonly isLangOpen = signal(false);
@@ -101,10 +59,6 @@ export class SiteHeaderComponent {
 
   readonly currentLang = signal<LangCode>((this.translate.currentLang as LangCode) || 'fr');
   readonly languages: readonly LangCode[] = ['fr', 'en'];
-
-  readonly queryControl = new FormControl<string>('', { nonNullable: true });
-  readonly query = signal('');
-  readonly hasQuery = computed(() => this.query().trim().length > 0);
 
   readonly authMode = this.authConfig.authMode;
   readonly loginLabelKey = computed(() => (this.authMode() === 'sso-only' ? 'header.signin' : 'header.login'));
@@ -139,52 +93,8 @@ export class SiteHeaderComponent {
   readonly hasUnread = computed(() => this.unreadCount() > 0);
   readonly notificationEntries = computed(() => this.notifications.entries().slice(0, 5));
 
-  readonly spotlightResults = computed(() => {
-    const lang = this.currentLang();
-    const rawQuery = this.query().trim();
-    const normalized = rawQuery.toLowerCase();
-    if (!normalized) {
-      return [] as {
-        readonly id: string;
-        readonly icon: string;
-        readonly label: string;
-        readonly description?: string;
-        readonly commands: string[];
-        readonly queryParams?: Record<string, unknown>;
-      }[];
-    }
-
-    const translate = (key: string, params?: Record<string, unknown>) =>
-      this.translate.instant(key, params);
-
-    const staticMatches = SPOTLIGHT_DATA.filter((item) =>
-      item.tags.some((tag) => tag.includes(normalized))
-    ).map((item) => ({
-      id: item.id,
-      icon: item.icon,
-      label: translate(item.labelKey, { query: rawQuery, lang }),
-      description: item.descriptionKey ? translate(item.descriptionKey, { lang }) : undefined,
-      commands: item.commands,
-      queryParams: item.queryParams,
-    }));
-
-    return [
-      {
-        id: 'query',
-        icon: '🔍',
-        label: translate('header.search.results.query', { query: rawQuery, lang }),
-        description: translate('header.search.results.queryDesc', { query: rawQuery, lang }),
-        commands: ['/search'],
-        queryParams: { q: rawQuery },
-      },
-      ...staticMatches,
-    ];
-  });
 
   constructor() {
-    const sub = this.queryControl.valueChanges.subscribe((value) => this.query.set(value));
-    this.destroyRef.onDestroy(() => sub.unsubscribe());
-
     const langSub = this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.currentLang.set(event.lang as LangCode);
     });
@@ -193,12 +103,6 @@ export class SiteHeaderComponent {
     effect(() => {
       const lang = this.currentLang();
       this.translate.use(lang);
-    });
-
-    effect(() => {
-      const q = this.query();
-      // Future integration point: dispatch NgRx search action or trigger local filtering.
-      void q;
     });
   }
 
@@ -210,17 +114,25 @@ export class SiteHeaderComponent {
   }
 
   toggleSearch(force?: boolean) {
-    const next = force ?? !this.isSearchOpen();
-    this.isSearchOpen.set(next);
-    if (next) {
-      this.isMoreOpen.set(false);
-      this.isNotifOpen.set(false);
-      this.isProfileOpen.set(false);
-      this.isMobileMenuOpen.set(false);
-    } else {
-      this.queryControl.setValue('', { emitEvent: false });
-      this.query.set('');
+    if (force === false) {
+      this.activeQuickSearchRef?.close();
+      this.activeQuickSearchRef = null;
+      this.isSearchOpen.set(false);
+      return;
     }
+    const ref = this.quickSearchLauncher.open({ source: 'site-header' });
+    this.activeQuickSearchRef = ref;
+    this.isSearchOpen.set(true);
+    ref.result.then(() => {
+      if (this.activeQuickSearchRef === ref) {
+        this.activeQuickSearchRef = null;
+        this.isSearchOpen.set(false);
+      }
+    });
+    this.isMoreOpen.set(false);
+    this.isNotifOpen.set(false);
+    this.isProfileOpen.set(false);
+    this.isMobileMenuOpen.set(false);
   }
 
   toggleMobileMenu() {
@@ -258,8 +170,6 @@ export class SiteHeaderComponent {
 
   trackNotification = (_: number, item: { id: string }) => item.id;
 
-  trackResult = (_: number, item: { id: string }) => item.id;
-
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement | null;
@@ -277,14 +187,6 @@ export class SiteHeaderComponent {
     closeIfOutside('[data-og7="more"]', () => this.isMoreOpen.set(false));
     closeIfOutside('[data-og7="notif"]', () => this.isNotifOpen.set(false));
     closeIfOutside('[data-og7="profile"]', () => this.isProfileOpen.set(false));
-
-    if (this.isSearchOpen()) {
-      const isInsideSpotlight = Boolean(target.closest('[data-og7="spotlight-modal"]'));
-      const isSpotlightTrigger = Boolean(target.closest('[data-og7="spotlight-trigger"]'));
-      if (!isInsideSpotlight && !isSpotlightTrigger) {
-        this.toggleSearch(false);
-      }
-    }
   }
 
   @HostListener('document:keydown', ['$event'])

@@ -6,6 +6,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  HostListener,
   ViewChild,
   computed,
   effect,
@@ -193,6 +194,18 @@ export class QuickSearchModalComponent implements AfterViewInit {
       });
   }
 
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+    if (target.closest('[data-og7-id="quick-search-close"]')) {
+      event.preventDefault();
+      this.close();
+    }
+  }
+
   private handleKeydown(event: KeyboardEvent): void {
     handleQuickSearchKeydown(event, {
       move: (delta) => this.moveActive(delta),
@@ -283,14 +296,14 @@ export class QuickSearchModalComponent implements AfterViewInit {
     this.select(result);
   }
 
-  onCloseClick(event: MouseEvent): void {
+  close(): void {
+    this.modalRef.close();
+  }
+
+  onCloseClick(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.close();
-  }
-
-  close(): void {
-    this.modalRef.close();
   }
 
   onHistorySelect(entry: RecentSearch): void {
