@@ -18,6 +18,7 @@
     "8": "yarn lint",
     "9": "yarn format",
     "00": "yarn cache:clean",
+    "01": "yarn predeploy:preprod",
     "dev:web": "yarn workspace @openg7/web start",
     "dev:web:trace": "yarn workspace @openg7/web start:trace",
     "dev:cms": "yarn workspace @openg7/strapi dev",
