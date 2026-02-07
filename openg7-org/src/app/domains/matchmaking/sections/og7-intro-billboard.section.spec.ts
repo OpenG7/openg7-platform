@@ -6,7 +6,7 @@ import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { PartnerProfileService } from '@app/core/services/partner-profile.service';
 import { ShareResult, ShareService } from '@app/core/services/share.service';
-import { NotificationPanelComponent } from '@app/shared/components/layout/notification-panel.component';
+import { NotificationPanelComponent } from '@app/shared/components/layout/notification-panel/notification-panel.component';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { from, of, throwError } from 'rxjs';
