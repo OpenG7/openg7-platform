@@ -34,12 +34,6 @@ export interface HeroCtaClickEvent {
  * @returns HeroCtasComponent gérée par le framework.
  */
 export class HeroCtasComponent {
-  @Input() primaryCta: HeroCta | null = {
-    label: 'hero.actions.registerCompany',
-    routerLink: '/register',
-    trackingType: 'register-company',
-  };
-
   @Input() secondaryCta: HeroCta | null = {
     label: 'hero.actions.viewSectors',
     href: '#map',
