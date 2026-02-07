@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 export interface HeroCta {
   label: string;
   trackingType: string;
-  dataOg7Id?: string;
   routerLink?: string | Array<string | number>;
   href?: string;
   ariaLabel?: string;
@@ -39,21 +38,18 @@ export class HeroCtasComponent {
     label: 'hero.actions.viewSectors',
     href: '#map',
     trackingType: 'view-sectors',
-    dataOg7Id: 'view-sectors',
   };
 
   @Input() secondaryCta: HeroCta | null = {
     label: 'hero.actions.proMode',
     routerLink: '/pricing',
     trackingType: 'pro-mode',
-    dataOg7Id: 'pro-mode',
   };
 
   @Input() tertiaryCta: HeroCta | null = {
     label: 'hero.actions.preview',
     routerLink: '/preview/homepage',
     trackingType: 'preview',
-    dataOg7Id: 'preview',
   };
 
   @Output() readonly ctaClicked = new EventEmitter<HeroCtaClickEvent>();

@@ -7,7 +7,7 @@
       [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
       (click)="onCtaClick($event, cta)"
       data-og7="action"
-      [attr.data-og7-id]="cta.dataOg7Id ?? cta.trackingType"
+      data-og7-id="view-sectors"
     >
       {{ cta.label | translate }}
     </a>
@@ -20,7 +20,7 @@
       [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
       (click)="onCtaClick($event, cta)"
       data-og7="action"
-      [attr.data-og7-id]="cta.dataOg7Id ?? cta.trackingType"
+      data-og7-id="pro-mode"
     >
       {{ cta.label | translate }}
     </a>
@@ -33,7 +33,7 @@
       [attr.aria-label]="(cta.ariaLabel ?? cta.label) | translate"
       (click)="onCtaClick($event, cta)"
       data-og7="action"
-      [attr.data-og7-id]="cta.dataOg7Id ?? cta.trackingType"
+      data-og7-id="preview"
     >
       {{ cta.label | translate }}
     </a>
