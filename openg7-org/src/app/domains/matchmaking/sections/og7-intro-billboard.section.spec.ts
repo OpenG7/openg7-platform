@@ -1,347 +1,158 @@
-import { Component, NO_ERRORS_SCHEMA, PLATFORM_ID, ViewChild, signal } from '@angular/core';
-import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output, Signal, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { OpportunityMatch } from '@app/core/models/opportunity';
-import { PartnerProfile } from '@app/core/models/partner-profile';
-import { AnalyticsService } from '@app/core/observability/analytics.service';
-import { NotificationStore } from '@app/core/observability/notification.store';
-import { PartnerProfileService } from '@app/core/services/partner-profile.service';
-import { ShareResult, ShareService } from '@app/core/services/share.service';
-import { NotificationPanelComponent } from '@app/shared/components/layout/notification-panel/notification-panel.component';
-import { provideMockStore } from '@ngrx/store/testing';
-import { TranslateService } from '@ngx-translate/core';
-import { from, of, throwError } from 'rxjs';
+import { FinancingBanner, PartnerProfile } from '@app/core/models/partner-profile';
 
 import { IntroductionRequestContext, Og7IntroBillboardSection } from './og7-intro-billboard.section';
 
-describe('Og7IntroBillboardSection (downloads)', () => {
+@Component({
+  selector: 'og7-partner-details-panel',
+  standalone: true,
+  template: '',
+})
+class PartnerDetailsPanelStubComponent {
+  @Input() selectedPartnerId: Signal<string | null> | null = null;
+  @Input() matchContext: OpportunityMatch | null = null;
+  @Input() financingContext: FinancingBanner | null = null;
+
+  @Output() closed = new EventEmitter<void>();
+  @Output() introductionRequested = new EventEmitter<PartnerProfile>();
+}
+
+@Component({
+  selector: 'og7-partner-quick-actions',
+  standalone: true,
+  template: '',
+})
+class PartnerQuickActionsStubComponent {
+  @Input() partnerId = '';
+  @Input() matchId: number | string | null = null;
+  @Input() partnerName: string | null = null;
+}
+
+describe('Og7IntroBillboardSection', () => {
   let fixture: ComponentFixture<Og7IntroBillboardSection>;
   let component: Og7IntroBillboardSection;
-  let analytics: jasmine.SpyObj<AnalyticsService>;
-  let partnerProfiles: jasmine.SpyObj<PartnerProfileService>;
-  let notifications: {
-    info: jasmine.Spy;
-    success: jasmine.Spy;
-    error: jasmine.Spy;
-    dismiss: jasmine.Spy;
+
+  const match: OpportunityMatch = {
+    id: 73,
+    commodity: 'Hydrogen',
+    mode: 'import',
+    buyer: { id: 1, name: 'Buyer Inc', province: 'QC', sector: 'energy', capability: 'import' },
+    seller: { id: 2, name: 'Supplier Ltd', province: 'ON', sector: 'energy', capability: 'export' },
+    confidence: 0.78,
   };
-  let shareService: jasmine.SpyObj<ShareService>;
+
+  const financingBanner: FinancingBanner = {
+    id: 'fin-73',
+    province: 'QC',
+    sector: 'energy',
+    title: { fr: 'Financement', en: 'Financing' },
+    body: { fr: 'Option adaptée', en: 'Tailored option' },
+    ctaLabel: { fr: 'Voir', en: 'View' },
+    ctaUrl: 'https://example.com/financing',
+  };
 
   const profile: PartnerProfile = {
-    id: 42,
+    id: 2,
     role: 'supplier',
-    legalName: 'Hydrogen Labs',
+    legalName: 'Supplier Ltd',
   };
 
-  function configureTestBed(platformId: object = 'browser') {
-    analytics = jasmine.createSpyObj<AnalyticsService>('AnalyticsService', ['emit']);
-    partnerProfiles = jasmine.createSpyObj<PartnerProfileService>('PartnerProfileService', [
-      'getProfile',
-      'downloadProfile',
-    ]);
-    partnerProfiles.getProfile.and.returnValue(of(null));
-
-    shareService = jasmine.createSpyObj<ShareService>('ShareService', ['sharePartnerProfile']);
-    shareService.sharePartnerProfile.and.returnValue(from(Promise.resolve<ShareResult>('shared')));
-
-    notifications = {
-      info: jasmine.createSpy('info').and.returnValue('pending-id'),
-      success: jasmine.createSpy('success'),
-      error: jasmine.createSpy('error'),
-      dismiss: jasmine.createSpy('dismiss'),
-    };
-
-    const translateStub = {
-      currentLang: 'en',
-      instant: (key: string) => key,
-    } as unknown as TranslateService;
-
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [Og7IntroBillboardSection],
-      providers: [
-        provideMockStore(),
-        { provide: AnalyticsService, useValue: analytics },
-        { provide: NotificationStore, useValue: notifications },
-        { provide: TranslateService, useValue: translateStub },
-        { provide: PartnerProfileService, useValue: partnerProfiles },
-        { provide: ShareService, useValue: shareService },
-        { provide: PLATFORM_ID, useValue: platformId },
-      ],
-      schemas: [NO_ERRORS_SCHEMA],
-    });
+    })
+      .overrideComponent(Og7IntroBillboardSection, {
+        set: {
+          imports: [CommonModule, PartnerDetailsPanelStubComponent, PartnerQuickActionsStubComponent],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(Og7IntroBillboardSection);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  function getPartnerPanelStub(): PartnerDetailsPanelStubComponent {
+    const panelDebug = fixture.debugElement.query(By.directive(PartnerDetailsPanelStubComponent));
+    return panelDebug.componentInstance as PartnerDetailsPanelStubComponent;
   }
 
-  afterEach(() => {
-    if (fixture) {
-      fixture.destroy();
-    }
-    TestBed.resetTestingModule();
-  });
+  function getQuickActionsStub(): PartnerQuickActionsStubComponent | null {
+    const quickActionsDebug = fixture.debugElement.query(By.directive(PartnerQuickActionsStubComponent));
+    return quickActionsDebug?.componentInstance ?? null;
+  }
 
-  it('renders the introduction assistant in the primary panel slot when opened', fakeAsync(() => {
-    configureTestBed('browser');
+  it('forwards selected partner, match and financing inputs to partner panel', () => {
+    const selectedPartnerId = signal<string | null>('buyer:1');
 
-    const selection = signal<string | null>('42');
-    fixture.componentRef.setInput('selectedPartnerId', selection);
-    fixture.componentRef.setInput('forcePanelOpen', true);
-
-    fixture.detectChanges();
-    flushMicrotasks();
+    fixture.componentRef.setInput('selectedPartnerId', selectedPartnerId);
+    fixture.componentRef.setInput('matchSelected', match);
+    fixture.componentRef.setInput('financingBanner', financingBanner);
     fixture.detectChanges();
 
-    const primarySlot: HTMLElement | null = fixture.nativeElement.querySelector('[og7panelprimary]');
-    expect(primarySlot).withContext('primary slot should exist').not.toBeNull();
-    expect(primarySlot!.querySelector('og7-intro-stepper')).withContext('stepper should render inside primary slot').not.toBeNull();
-  }));
-
-  describe('introduction requests', () => {
-    const profile: PartnerProfile = {
-      id: 11,
-      role: 'buyer',
-      legalName: 'Northern Buyer',
-    };
-
-    const match: OpportunityMatch = {
-      id: 73,
-      commodity: 'Hydrogen',
-      mode: 'import',
-      buyer: { id: 1, name: 'Buyer Inc', province: 'QC', sector: 'energy', capability: 'import' },
-      seller: { id: 2, name: 'Supplier Ltd', province: 'ON', sector: 'energy', capability: 'export' },
-      confidence: 0.78,
-    };
-
-    it('delegates introduction requests to the inline content and emits the request context', fakeAsync(() => {
-      configureTestBed('browser');
-      fixture.componentRef.setInput('forcePanelOpen', true);
-      fixture.componentRef.setInput('matchSelected', match);
-
-      fixture.detectChanges();
-      flushMicrotasks();
-      fixture.detectChanges();
-
-      const content = (component as any).contentRef();
-      expect(content).withContext('inline content should be available').not.toBeNull();
-      const handler = spyOn(content!, 'handleIntroductionRequest');
-      const requests: IntroductionRequestContext[] = [];
-      component.introductionRequested.subscribe((ctx) => requests.push(ctx));
-
-      (component as any).handleIntroductionRequested(profile);
-
-      expect(handler).toHaveBeenCalledWith(profile);
-      expect(requests).toEqual([{ profile, match }]);
-    }));
+    const panel = getPartnerPanelStub();
+    expect(panel.selectedPartnerId).toBe(selectedPartnerId);
+    expect(panel.matchContext).toEqual(match);
+    expect(panel.financingContext).toEqual(financingBanner);
   });
 
-  describe('sharing (unit)', () => {
-    it('shares buyer link and notifies success', fakeAsync(() => {
-      configureTestBed('browser');
-      shareService.sharePartnerProfile.and.returnValue(from(Promise.resolve<ShareResult>('copied')));
+  it('renders quick actions with parsed id and buyer name when a buyer is selected', () => {
+    fixture.componentRef.setInput('selectedPartnerId', signal<string | null>('buyer:1'));
+    fixture.componentRef.setInput('matchSelected', match);
+    fixture.detectChanges();
 
-      const buyerProfile: PartnerProfile = {
-        id: 7,
-        role: 'buyer',
-        legalName: 'Northwind Buyer',
-      };
-
-      (component as any).buyerProfileSignal.set(buyerProfile);
-
-      (component as any).handleShare(buyerProfile);
-
-      expect(shareService.sharePartnerProfile).toHaveBeenCalledWith(buyerProfile);
-
-      flushMicrotasks();
-
-      expect(notifications.success).toHaveBeenCalledWith(
-        'introBillboard.shareSuccess',
-        jasmine.objectContaining({
-          source: 'matches',
-          metadata: jasmine.objectContaining({
-            action: 'share-profile',
-            profileId: 7,
-            strategy: 'copied',
-          }),
-        })
-      );
-      expect(notifications.error).not.toHaveBeenCalled();
-    }));
-
-    it('shares supplier link and reports an error when the share fails', fakeAsync(() => {
-      configureTestBed('browser');
-      shareService.sharePartnerProfile.and.returnValue(from(Promise.reject(new Error('share_failed'))));
-
-      const supplierProfile: PartnerProfile = {
-        id: 9,
-        role: 'supplier',
-        legalName: 'Supplier Labs',
-      };
-
-      (component as any).supplierProfileSignal.set(supplierProfile);
-
-      (component as any).handleShare(supplierProfile);
-
-      expect(shareService.sharePartnerProfile).toHaveBeenCalledWith(supplierProfile);
-
-      flushMicrotasks();
-
-      expect(notifications.error).toHaveBeenCalledWith(
-        'introBillboard.shareError',
-        jasmine.objectContaining({
-          source: 'matches',
-          metadata: jasmine.objectContaining({
-            action: 'share-profile',
-            profileId: 9,
-          }),
-        })
-      );
-      expect(notifications.success).not.toHaveBeenCalled();
-    }));
+    const quickActions = getQuickActionsStub();
+    expect(quickActions).not.toBeNull();
+    expect(quickActions!.partnerId).toBe('1');
+    expect(quickActions!.partnerName).toBe('Buyer Inc');
+    expect(quickActions!.matchId).toBe(73);
   });
 
-  describe('sharing (integration)', () => {
-    @Component({
-      selector: 'og7-intro-billboard-host',
-      standalone: true,
-      imports: [Og7IntroBillboardSection, NotificationPanelComponent],
-      templateUrl: './og7-intro-billboard.section.spec.html',
-    })
-    class HostComponent {
-      @ViewChild(Og7IntroBillboardSection, { static: true })
-      section!: Og7IntroBillboardSection;
-    }
+  it('falls back to seller id and name when no selected partner is provided', () => {
+    fixture.componentRef.setInput('selectedPartnerId', signal<string | null>(null));
+    fixture.componentRef.setInput('matchSelected', match);
+    fixture.detectChanges();
 
-    let hostFixture: ComponentFixture<HostComponent> | null = null;
-    let hostComponent: HostComponent | null = null;
-
-    afterEach(() => {
-      if (hostFixture) {
-        hostFixture.destroy();
-        hostFixture = null;
-        hostComponent = null;
-      }
-    });
-
-    it('renders the success notification when sharing succeeds', fakeAsync(() => {
-      TestBed.resetTestingModule();
-
-      shareService = jasmine.createSpyObj<ShareService>('ShareService', ['sharePartnerProfile']);
-      shareService.sharePartnerProfile.and.returnValue(from(Promise.resolve<ShareResult>('shared')));
-
-      const translateStub = {
-        currentLang: 'en',
-        instant: (key: string) => key,
-      } as unknown as TranslateService;
-
-      analytics = jasmine.createSpyObj<AnalyticsService>('AnalyticsService', ['emit']);
-      partnerProfiles = jasmine.createSpyObj<PartnerProfileService>('PartnerProfileService', [
-        'getProfile',
-        'downloadProfile',
-      ]);
-      partnerProfiles.getProfile.and.returnValue(of(null));
-
-      TestBed.configureTestingModule({
-        imports: [HostComponent],
-        providers: [
-          provideMockStore(),
-          { provide: AnalyticsService, useValue: analytics },
-          NotificationStore,
-          { provide: TranslateService, useValue: translateStub },
-          { provide: PartnerProfileService, useValue: partnerProfiles },
-          { provide: ShareService, useValue: shareService },
-          { provide: PLATFORM_ID, useValue: 'browser' },
-        ],
-      });
-
-      hostFixture = TestBed.createComponent(HostComponent);
-      hostComponent = hostFixture.componentInstance;
-      hostFixture!.detectChanges();
-
-      const profile: PartnerProfile = {
-        id: 12,
-        role: 'buyer',
-        legalName: 'Integration Buyer',
-      };
-
-      (hostComponent!.section as any).buyerProfileSignal.set(profile);
-      (hostComponent!.section as any).handleShare(profile);
-
-      flushMicrotasks();
-      hostFixture!.detectChanges();
-
-      const panel: HTMLElement | null = hostFixture!.nativeElement.querySelector('[data-og7="notification-panel"]');
-      expect(panel?.textContent).toContain('introBillboard.shareSuccess');
-    }));
+    const quickActions = getQuickActionsStub();
+    expect(quickActions).not.toBeNull();
+    expect(quickActions!.partnerId).toBe('2');
+    expect(quickActions!.partnerName).toBe('Supplier Ltd');
+    expect(quickActions!.matchId).toBe(73);
   });
 
-  it('downloads the partner profile and notifies success', () => {
-    configureTestBed('browser');
-    const blob = new Blob(['test'], { type: 'application/pdf' });
-    partnerProfiles.downloadProfile.and.returnValue(of(blob));
+  it('does not render quick actions when neither selection nor match is available', () => {
+    fixture.componentRef.setInput('selectedPartnerId', signal<string | null>(null));
+    fixture.componentRef.setInput('matchSelected', null);
+    fixture.detectChanges();
 
-    const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.returnValue('blob:download');
-    const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
-    const originalCreateElement = document.createElement.bind(document);
-    const anchor = originalCreateElement('a');
-    const clickSpy = spyOn(anchor, 'click');
-    spyOn(document, 'createElement').and.callFake((tagName: string) => {
-      if (tagName.toLowerCase() === 'a') {
-        return anchor;
-      }
-      return originalCreateElement(tagName);
-    });
-
-    (component as any).handleDownload(profile);
-
-    expect(analytics.emit).toHaveBeenCalledWith(
-      'partner_card_download',
-      { id: profile.id, role: profile.role },
-      { priority: true }
-    );
-    expect(partnerProfiles.downloadProfile).toHaveBeenCalledWith(String(profile.id), profile.role);
-    expect(createObjectURLSpy).toHaveBeenCalledWith(blob);
-    expect(clickSpy).toHaveBeenCalled();
-    expect(revokeObjectURLSpy).toHaveBeenCalledWith('blob:download');
-    expect(notifications.info).toHaveBeenCalledWith('introBillboard.downloadPending', jasmine.any(Object));
-    expect(notifications.success).toHaveBeenCalledWith('introBillboard.downloadSuccess', jasmine.any(Object));
-    expect(notifications.dismiss).toHaveBeenCalledWith('pending-id');
-    expect((component as any).downloadingProfileSignal()).toBeFalse();
+    expect(getQuickActionsStub()).toBeNull();
   });
 
-  it('emits an error notification when the download fails', () => {
-    configureTestBed('browser');
-    partnerProfiles.downloadProfile.and.returnValue(throwError(() => new Error('network')));
+  it('emits panelClosed when the partner panel emits closed', () => {
+    const onPanelClosed = jasmine.createSpy('onPanelClosed');
+    component.panelClosed.subscribe(onPanelClosed);
 
-    const createObjectURLSpy = spyOn(URL, 'createObjectURL');
+    const panel = getPartnerPanelStub();
+    panel.closed.emit();
 
-    (component as any).handleDownload(profile);
-
-    expect(analytics.emit).toHaveBeenCalled();
-    expect(partnerProfiles.downloadProfile).toHaveBeenCalledWith(String(profile.id), profile.role);
-    expect(createObjectURLSpy).not.toHaveBeenCalled();
-    expect(notifications.error).toHaveBeenCalled();
-    expect(notifications.success).not.toHaveBeenCalled();
-    expect(notifications.dismiss).toHaveBeenCalledWith('pending-id');
-    expect((component as any).downloadingProfileSignal()).toBeFalse();
+    expect(onPanelClosed).toHaveBeenCalledTimes(1);
   });
 
-  it('shows an unsupported message when running outside the browser', () => {
-    configureTestBed('server');
+  it('emits introductionRequested with profile and current match context', () => {
+    fixture.componentRef.setInput('matchSelected', match);
+    fixture.detectChanges();
 
-    (component as any).handleDownload(profile);
+    const requests: IntroductionRequestContext[] = [];
+    component.introductionRequested.subscribe((context) => requests.push(context));
 
-    expect(analytics.emit).toHaveBeenCalledWith(
-      'partner_card_download',
-      { id: profile.id, role: profile.role },
-      { priority: true }
-    );
-    expect(partnerProfiles.downloadProfile).not.toHaveBeenCalled();
-    expect(notifications.error).toHaveBeenCalledWith(
-      'introBillboard.downloadUnsupported',
-      jasmine.objectContaining({ metadata: jasmine.objectContaining({ profileId: profile.id }) })
-    );
-    expect(notifications.info).not.toHaveBeenCalled();
-    expect((component as any).downloadingProfileSignal()).toBeFalse();
+    const panel = getPartnerPanelStub();
+    panel.introductionRequested.emit(profile);
+
+    expect(requests).toEqual([{ profile, match }]);
   });
 });

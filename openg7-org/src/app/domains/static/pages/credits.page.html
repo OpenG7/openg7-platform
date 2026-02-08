@@ -1,166 +1,384 @@
-<!-- HERO / WOW EFFECT -->
 <section
-  class="relative isolate overflow-hidden"
-  style="--grid: 72px"
-  aria-labelledby="creditsTitle"
+  class="credits-shell og7-page og7-page--static relative isolate overflow-hidden"
+  data-og7="static-page"
+  data-og7-page="credits"
 >
-  <!-- Aurora / Maple parallax -->
-  <div class="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_90%)]">
-    <div class="absolute -top-16 left-1/2 h-[120vh] w-[160vw] -translate-x-1/2 rounded-full blur-3xl opacity-35 bg-gradient-to-r from-red-500/40 via-rose-300/35 to-amber-300/35"></div>
-    <div class="absolute top-0 right-0 h-[60vh] w-[60vh] translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl opacity-40 bg-gradient-to-br from-cyan-300/50 to-blue-400/40"></div>
-    <div class="absolute left-0 bottom-0 h-[40vh] w-[40vh] -translate-x-1/3 translate-y-1/3 rounded-full blur-3xl opacity-40 bg-gradient-to-tr from-emerald-300/50 to-cyan-300/40"></div>
+  <div aria-hidden="true" class="og7-static-backdrop">
+    <div class="og7-static-backdrop__aurora"></div>
+    <div class="og7-static-backdrop__stars"></div>
+    <div class="og7-static-backdrop__veil"></div>
   </div>
 
-  <div class="mx-auto max-w-7xl px-6 pt-6 pb-16 md:pt-12 md:pb-24">
-    <div class="max-w-3xl">
-      <p class="hero-eyebrow mb-2 text-xs font-semibold">{{ 'pages.credits.kicker' | translate }}</p>
-      <h1 id="creditsTitle" class="hero-title text-balance text-4xl/tight md:text-6xl/tight font-extrabold tracking-tight">
-        {{ 'pages.credits.title' | translate }}
-      </h1>
-      <p class="hero-subtitle mt-4 text-pretty text-lg md:text-xl">
-        {{ 'pages.credits.subtitle' | translate }}
-      </p>
+  <div class="relative z-10 og7-static-shell og7-static-flow">
+    <header
+      class="og7-static-hero grid gap-8 p-6 md:p-8 lg:grid-cols-[minmax(0,1fr)_340px]"
+      aria-labelledby="creditsTitle"
+      data-og7="credits-hero"
+    >
+      <div class="space-y-5">
+        <p class="og7-static-kicker text-xs font-semibold uppercase tracking-[0.3em]">
+          {{ 'pages.credits.kicker' | translate }}
+        </p>
+        <h1 id="creditsTitle" class="og7-static-title text-balance text-4xl font-semibold md:text-5xl">
+          {{ 'pages.credits.title' | translate }}
+        </h1>
+        <p class="og7-static-intro text-base md:text-lg">
+          {{ 'pages.credits.subtitle' | translate }}
+        </p>
 
-      <!-- KPI rail -->
-      <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        <div class="surface-soft rounded-2xl p-4 text-center">
-          <div class="text-3xl font-bold text-white">{{ contributors().length }}</div>
-          <div class="text-muted text-sm">{{ 'pages.credits.kpis.contributors' | translate }}</div>
-        </div>
-        <div class="surface-soft rounded-2xl p-4 text-center">
-          <div class="text-3xl font-bold text-white">{{ provincesUnique().length }}</div>
-          <div class="text-muted text-sm">{{ 'pages.credits.kpis.provinces' | translate }}</div>
-        </div>
-        <div class="surface-soft rounded-2xl p-4 text-center">
-          <div class="text-3xl font-bold text-white">{{ pillars().length }}</div>
-          <div class="text-muted text-sm">{{ 'pages.credits.kpis.pillars' | translate }}</div>
-        </div>
-        <div class="surface-soft rounded-2xl p-4 text-center">
-          <div class="text-3xl font-bold text-white">{{ currentYear }}</div>
-          <div class="text-muted text-sm">{{ 'pages.credits.kpis.since' | translate }}</div>
+        <div class="flex flex-wrap items-center gap-3" data-og7="credits-hero-ctas">
+          <a
+            class="og7-static-action-primary inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm"
+            href="#join"
+            data-og7="credits-hero-cta"
+            data-og7-id="join"
+          >
+            {{ 'pages.credits.cta.join' | translate }}
+          </a>
+          <a
+            class="og7-static-action-secondary inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm"
+            href="#governance"
+            data-og7="credits-hero-cta"
+            data-og7-id="charter"
+          >
+            {{ 'pages.credits.cta.readCharter' | translate }}
+          </a>
         </div>
       </div>
 
-      <!-- CTA join -->
-      <div class="mt-8 flex flex-wrap items-center gap-3">
-        <a
-          class="inline-flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2 font-semibold text-slate-900 shadow hover:bg-white"
-          href="#join"
+      <aside class="og7-static-card og7-static-card--muted space-y-4 rounded-2xl p-5">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-tertiary">
+          {{ 'pages.credits.kpis.since' | translate }} {{ currentYear }}
+        </p>
+        <div class="grid grid-cols-2 gap-3" data-og7="credits-kpis">
+          <article class="credits-kpi-card" data-og7="credits-kpi" data-og7-id="contributors">
+            <p class="credits-kpi-value">{{ contributors().length }}</p>
+            <p class="credits-kpi-label">{{ 'pages.credits.kpis.contributors' | translate }}</p>
+          </article>
+          <article class="credits-kpi-card" data-og7="credits-kpi" data-og7-id="provinces">
+            <p class="credits-kpi-value">{{ provincesUnique().length }}</p>
+            <p class="credits-kpi-label">{{ 'pages.credits.kpis.provinces' | translate }}</p>
+          </article>
+          <article class="credits-kpi-card" data-og7="credits-kpi" data-og7-id="pillars">
+            <p class="credits-kpi-value">{{ pillars().length }}</p>
+            <p class="credits-kpi-label">{{ 'pages.credits.kpis.pillars' | translate }}</p>
+          </article>
+          <article class="credits-kpi-card" data-og7="credits-kpi" data-og7-id="since">
+            <p class="credits-kpi-value">{{ currentYear }}</p>
+            <p class="credits-kpi-label">{{ 'pages.credits.kpis.since' | translate }}</p>
+          </article>
+        </div>
+      </aside>
+    </header>
+
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <article class="space-y-6">
+        <section data-og7="credits-filters" class="og7-static-card space-y-4 rounded-3xl p-5">
+          <div class="space-y-1">
+            <p class="text-sm font-semibold text-primary">
+              {{ 'pages.credits.contributors.title' | translate }}
+            </p>
+            <p class="text-xs text-subtle">
+              {{ 'pages.credits.filters.provincesLabel' | translate }}
+            </p>
+          </div>
+
+          <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div
+              class="credits-filter-chips flex items-center gap-2 overflow-x-auto pb-1"
+              role="group"
+              [attr.aria-label]="'pages.credits.filters.provincesLabel' | translate"
+              data-og7="credits-province-filters"
+            >
+              <button
+                type="button"
+                class="og7-static-chip shrink-0"
+                (click)="resetFilters()"
+                [attr.aria-pressed]="!provinceFilter()"
+                data-og7="credits-filter"
+                data-og7-id="reset"
+              >
+                {{ 'pages.credits.filters.reset' | translate }}
+              </button>
+
+              <ng-container *ngFor="let p of provincesUnique()">
+                <button
+                  type="button"
+                  class="og7-static-chip shrink-0"
+                  [ngClass]="{ 'is-active': isProvinceActive(p) }"
+                  (click)="toggleProvinceFilter(p)"
+                  [attr.aria-pressed]="isProvinceActive(p)"
+                  data-og7="credits-filter"
+                  [attr.data-og7-id]="p"
+                >
+                  {{ p }}
+                </button>
+              </ng-container>
+            </div>
+
+            <div class="flex min-w-0 flex-1 flex-col gap-2 md:max-w-xs md:items-end">
+              <label class="sr-only" [attr.for]="searchFieldId"
+                >{{ 'pages.credits.filters.searchLabel' | translate }}</label
+              >
+              <input
+                [id]="searchFieldId"
+                type="search"
+                [value]="search()"
+                (input)="search.set($any($event.target).value)"
+                [placeholder]="'pages.credits.filters.search' | translate"
+                class="og7-static-input w-full"
+                data-og7="credits-search"
+              />
+              <p class="text-xs text-subtle" data-og7="credits-search-results">
+                {{ 'pages.credits.contributors.count' | translate: { visible:
+                filteredContributors().length, total: contributors().length } }}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section data-og7="credits-contributors" class="space-y-5">
+          <header class="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 class="text-2xl font-semibold text-title md:text-3xl">
+                {{ 'pages.credits.contributors.title' | translate }}
+              </h2>
+              <p class="text-sm text-subtle">
+                {{ 'pages.credits.contributors.caption' | translate }}
+              </p>
+            </div>
+            <p class="text-sm text-subtle" aria-live="polite" data-og7="credits-contributors-count">
+              {{ 'pages.credits.contributors.count' | translate: { visible:
+              filteredContributors().length, total: contributors().length } }}
+            </p>
+          </header>
+
+          <ng-container *ngIf="filteredContributors().length; else noContributors">
+            <div
+              class="credits-contributors-grid grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+            >
+              <article
+                *ngFor="let c of filteredContributors(); let i = index"
+                class="credits-contributor-card og7-static-card og7-static-card--muted og7-static-fade-in relative overflow-hidden rounded-2xl p-5"
+                [style.--og7-reveal-order]="i + 1"
+                data-og7="credits-contributor-card"
+                [attr.data-og7-id]="c.id"
+              >
+                <div class="contributors-badge absolute right-4 top-4">{{ c.province }}</div>
+
+                <div class="flex items-center gap-3">
+                  <div class="contributors-avatar size-12 shrink-0">
+                    <img
+                      *ngIf="c.avatarUrl"
+                      [src]="c.avatarUrl"
+                      [alt]="c.name"
+                      class="size-full object-cover"
+                    />
+                    <div
+                      *ngIf="!c.avatarUrl"
+                      class="contributors-initials grid size-full place-content-center text-base font-semibold"
+                    >
+                      {{ initials(c.name) }}
+                    </div>
+                  </div>
+                  <div class="pr-16">
+                    <h3 class="text-base font-semibold text-title">{{ c.name }}</h3>
+                    <p class="text-sm text-subtle">{{ c.role }}</p>
+                  </div>
+                </div>
+
+                <p class="mt-3 text-sm leading-relaxed text-body">{{ c.impact }}</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <og7-chip *ngFor="let s of c.skills" [label]="s"></og7-chip>
+                </div>
+              </article>
+            </div>
+          </ng-container>
+
+          <ng-template #noContributors>
+            <div
+              class="og7-static-card og7-static-card--muted space-y-3 rounded-2xl p-6 text-center"
+              data-og7="credits-empty"
+            >
+              <p class="text-lg font-semibold text-title">
+                {{ 'pages.credits.contributors.emptyTitle' | translate }}
+              </p>
+              <p class="text-sm text-subtle">
+                {{ 'pages.credits.contributors.emptyDescription' | translate }}
+              </p>
+              <button
+                type="button"
+                class="og7-static-action-secondary inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm"
+                (click)="resetFilters()"
+                data-og7="credits-empty-reset"
+              >
+                {{ 'pages.credits.filters.reset' | translate }}
+              </button>
+            </div>
+          </ng-template>
+        </section>
+
+        <section data-og7="credits-pillars" class="og7-static-card space-y-5 rounded-3xl p-6">
+          <div class="space-y-1">
+            <h2 class="text-2xl font-semibold text-title">
+              {{ 'pages.credits.kpis.pillars' | translate }}
+            </h2>
+            <p class="text-sm text-subtle">{{ 'pages.credits.methodology.copy' | translate }}</p>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <article
+              *ngFor="let pillar of pillars(); let i = index"
+              class="og7-static-card og7-static-card--muted og7-static-fade-in space-y-3 rounded-2xl p-4"
+              [style.--og7-reveal-order]="i + 1"
+              data-og7="credits-pillar"
+            >
+              <h3 class="text-base font-semibold text-title">{{ pillar.title }}</h3>
+              <p class="text-sm text-body">{{ pillar.summary }}</p>
+              <div class="flex flex-wrap gap-2">
+                <og7-chip *ngFor="let t of pillar.tags">
+                  <span class="size-1.5 rounded-full bg-[color:var(--og7-color-border)]"></span>
+                  <span class="sr-only">bullet</span>
+                  {{ t }}
+                </og7-chip>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section
+          id="join"
+          data-og7="credits-community"
+          class="og7-static-card og7-static-card--accent space-y-4 rounded-3xl p-6"
         >
-          <span>{{ 'pages.credits.cta.join' | translate }}</span>
-        </a>
-        <a
-          class="inline-flex items-center gap-2 rounded-xl ring-1 ring-inset ring-white/20 px-4 py-2 text-white/90 hover:bg-white/5"
-          href="#governance"
+          <p class="text-lg font-semibold text-title">
+            {{ 'pages.credits.community.title' | translate }}
+          </p>
+          <p class="text-sm text-body">{{ 'pages.credits.community.copy' | translate }}</p>
+          <a
+            class="og7-static-action-primary inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm"
+            href="/inscription"
+            data-og7="credits-community-cta"
+          >
+            {{ 'pages.credits.community.btn' | translate }}
+          </a>
+        </section>
+      </article>
+
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <section data-og7="credits-methodology" class="og7-static-card space-y-5 rounded-3xl p-6">
+          <div class="space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-tertiary">
+              {{ 'pages.credits.methodology.kicker' | translate }}
+            </p>
+            <h2 class="text-2xl font-semibold text-title">
+              {{ 'pages.credits.methodology.title' | translate }}
+            </h2>
+            <p class="text-sm text-body">
+              {{ 'pages.credits.methodology.copy' | translate }}
+            </p>
+            <a
+              href="#governance"
+              class="og7-static-action-secondary inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm"
+              data-og7="credits-methodology-cta"
+            >
+              {{ 'pages.credits.methodology.cta' | translate }}
+            </a>
+          </div>
+
+          <div class="space-y-3" data-og7="credits-methodology-steps">
+            <article
+              *ngFor="let step of methodologySteps(); let i = index"
+              class="og7-static-card og7-static-card--muted og7-static-fade-in rounded-2xl p-4"
+              [style.--og7-reveal-order]="i + 1"
+              data-og7="credits-methodology-step"
+              [attr.data-og7-id]="i + 1"
+            >
+              <p class="method-step-index">0{{ i + 1 }}</p>
+              <h3 class="mt-1 text-base font-semibold text-title">{{ step.title }}</h3>
+              <p class="mt-2 text-sm text-body">{{ step.copy }}</p>
+            </article>
+          </div>
+        </section>
+
+        <section data-og7="credits-stack" class="og7-static-card space-y-4 rounded-3xl p-6">
+          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-tertiary">
+            {{ 'pages.credits.stack.title' | translate }}
+          </p>
+
+          <div class="grid grid-cols-2 gap-3">
+            <article
+              class="og7-static-card og7-static-card--muted rounded-2xl p-4"
+              data-og7="credits-stack-item"
+              data-og7-id="angular"
+            >
+              <span class="stack-marker">A</span>
+              <p class="mt-2 text-sm font-semibold text-title">
+                {{ 'pages.credits.stack.items.angular.name' | translate }}
+              </p>
+              <p class="text-xs text-subtle">
+                {{ 'pages.credits.stack.items.angular.caption' | translate }}
+              </p>
+            </article>
+
+            <article
+              class="og7-static-card og7-static-card--muted rounded-2xl p-4"
+              data-og7="credits-stack-item"
+              data-og7-id="ngrx"
+            >
+              <span class="stack-marker">N</span>
+              <p class="mt-2 text-sm font-semibold text-title">
+                {{ 'pages.credits.stack.items.ngrx.name' | translate }}
+              </p>
+              <p class="text-xs text-subtle">
+                {{ 'pages.credits.stack.items.ngrx.caption' | translate }}
+              </p>
+            </article>
+
+            <article
+              class="og7-static-card og7-static-card--muted rounded-2xl p-4"
+              data-og7="credits-stack-item"
+              data-og7-id="typescript"
+            >
+              <span class="stack-marker">TS</span>
+              <p class="mt-2 text-sm font-semibold text-title">
+                {{ 'pages.credits.stack.items.ts.name' | translate }}
+              </p>
+              <p class="text-xs text-subtle">
+                {{ 'pages.credits.stack.items.ts.caption' | translate }}
+              </p>
+            </article>
+
+            <article
+              class="og7-static-card og7-static-card--muted rounded-2xl p-4"
+              data-og7="credits-stack-item"
+              data-og7-id="tailwind"
+            >
+              <span class="stack-marker">TW</span>
+              <p class="mt-2 text-sm font-semibold text-title">
+                {{ 'pages.credits.stack.items.tailwind.name' | translate }}
+              </p>
+              <p class="text-xs text-subtle">
+                {{ 'pages.credits.stack.items.tailwind.caption' | translate }}
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section
+          id="governance"
+          data-og7="credits-governance"
+          class="og7-static-card og7-static-card--muted space-y-4 rounded-3xl p-6"
         >
-          <span>{{ 'pages.credits.cta.readCharter' | translate }}</span>
-        </a>
-      </div>
+          <h2 class="text-xl font-semibold text-title">
+            {{ 'pages.credits.governance.title' | translate }}
+          </h2>
+          <p class="text-sm text-body">{{ 'pages.credits.governance.copy' | translate }}</p>
+          <ul class="governance-list og7-static-border-list list-disc pl-5 text-sm">
+            <li *ngFor="let p of governancePoints()">{{ p }}</li>
+          </ul>
+        </section>
+      </aside>
     </div>
-  </div>
-
-  <!-- Top divider using subtle wave -->
-  <svg class="absolute bottom-0 left-0 right-0 h-16 text-white/10" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
-    <path fill="currentColor" d="M0,96L80,74.7C160,53,320,11,480,10.7C640,11,800,53,960,69.3C1120,85,1280,75,1360,69.3L1440,64L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z" />
-  </svg>
-</section>
-
-<!-- FILTERS + PILLARS  -->
-<section class="mx-auto -mt-2 max-w-7xl px-6 pb-8">
-  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-    <div class="flex flex-wrap items-center gap-2">
-      <button
-        type="button"
-        class="filter-chip"
-        (click)="resetFilters()"
-      >
-        {{ 'pages.credits.filters.reset' | translate }}
-      </button>
-
-      <ng-container *ngFor="let p of provincesUnique()">
-        <button
-          type="button"
-          class="filter-chip"
-          [ngClass]="{ 'is-active': provinceFilter() === p }"
-          (click)="provinceFilter.set(provinceFilter() === p ? null : p)"
-        >
-          {{ p }}
-        </button>
-      </ng-container>
-    </div>
-
-    <div class="flex gap-2">
-      <input type="search" [value]="search()" (input)="search.set($any($event.target).value)"
-        [placeholder]="'pages.credits.filters.search' | translate"
-        class="glass-input min-w-[240px]" />
-    </div>
-  </div>
-
-  <!-- Pillars rail -->
-  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    <div *ngFor="let pillar of pillars()" class="surface-strong rounded-2xl p-5">
-      <div class="mb-3 flex items-center gap-2">
-        <span class="size-2.5 rounded-full bg-emerald-400/80"></span>
-        <h3 class="text-lg font-semibold text-white">{{ pillar.title }}</h3>
-      </div>
-      <p class="text-muted text-sm">{{ pillar.summary }}</p>
-      <div class="mt-3 flex flex-wrap gap-2">
-        <og7-chip *ngFor="let t of pillar.tags">
-          <span class="size-1.5 rounded-full bg-white/40"></span><span class="sr-only"> • </span>{{ t }}
-        </og7-chip>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTRIBUTORS GRID / CARDS WITH PRIDE -->
-<section class="mx-auto max-w-7xl px-6 py-10">
-  <header class="mb-6 flex items-end justify-between gap-4">
-    <div>
-      <h2 class="text-2xl md:text-3xl font-bold text-white">{{ 'pages.credits.contributors.title' | translate }}</h2>
-      <p class="text-muted">{{ 'pages.credits.contributors.caption' | translate }}</p>
-    </div>
-    <div class="text-sm text-subtle">{{ filteredContributors().length }} / {{ contributors().length }}</div>
-  </header>
-
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    <article *ngFor="let c of filteredContributors()"
-      class="contributors-card relative overflow-hidden rounded-2xl surface-strong p-5">
-      <div class="contributors-badge absolute right-3 top-3">{{ c.province }}</div>
-      <div class="flex items-center gap-3">
-        <div class="contributors-avatar size-12 shrink-0">
-          <img *ngIf="c.avatarUrl" [src]="c.avatarUrl" [alt]="c.name" class="size-full object-cover" />
-          <div *ngIf="!c.avatarUrl" class="contributors-initials grid size-full place-content-center text-lg font-bold">{{ initials(c.name) }}</div>
-        </div>
-        <div>
-          <h3 class="text-base font-semibold text-white">{{ c.name }}</h3>
-          <p class="text-muted text-sm">{{ c.role }}</p>
-        </div>
-      </div>
-      <p class="mt-3 text-muted text-sm line-clamp-3">{{ c.impact }}</p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <og7-chip *ngFor="let s of c.skills" [label]="s"></og7-chip>
-      </div>
-    </article>
-  </div>
-
-  <!-- Community banner -->
-  <div id="join" class="community-banner mt-10 rounded-3xl p-6 text-center">
-    <p class="text-lg font-semibold text-white">{{ 'pages.credits.community.title' | translate }}</p>
-    <p class="mt-1 text-muted">{{ 'pages.credits.community.copy' | translate }}</p>
-    <a class="mt-4 inline-flex items-center justify-center rounded-xl bg-emerald-400/90 px-5 py-2.5 font-semibold text-slate-900 hover:bg-emerald-300" href="/rejoindre">
-      {{ 'pages.credits.community.btn' | translate }}
-    </a>
-  </div>
-</section>
-
-<!-- GOVERNANCE / FOOTER STRIP -->
-<section id="governance" class="mx-auto max-w-7xl px-6 pb-20">
-  <div class="governance-card surface-strong p-6">
-    <h3 class="text-xl font-bold text-white">{{ 'pages.credits.governance.title' | translate }}</h3>
-    <p class="mt-2 text-muted">{{ 'pages.credits.governance.copy' | translate }}</p>
-    <ul class="governance-list mt-4 grid list-disc gap-1 pl-5 sm:grid-cols-2">
-      <li *ngFor="let p of governancePoints()">{{ p }}</li>
-    </ul>
   </div>
 </section>

@@ -37,10 +37,19 @@ describe('Static informational pages', () => {
 
     expect(container).toBeTruthy();
     const headings = Array.from(container!.querySelectorAll('h2')).map(h => h.textContent?.trim());
-    expect(headings).toContain('2. Acceptable use');
+    expect(headings).toContain('2. Account stewardship');
 
     const bulletLists = container!.querySelectorAll('ul');
     expect(bulletLists.length).withContext('Expected at least one bullet list').toBeGreaterThan(0);
+
+    const toc = container!.querySelector('[data-og7="terms-toc"]');
+    expect(toc).toBeTruthy();
+
+    const sectionCards = container!.querySelectorAll('[data-og7="terms-section"]');
+    expect(sectionCards.length).withContext('Expected section cards to be tagged').toBeGreaterThan(0);
+
+    const supportCta = container!.querySelector('[data-og7-id="support-cta"]');
+    expect((supportCta as HTMLAnchorElement | null)?.getAttribute('href')).toContain('mailto:legal@openg7.org');
   });
 
   it('renders the Privacy page with collection and rights sections', () => {
@@ -77,6 +86,15 @@ describe('Static informational pages', () => {
       a.textContent?.trim()
     );
     expect(contactEmails).toContain('legal@openg7.org');
+
+    const toc = container!.querySelector('[data-og7="legal-toc"]');
+    expect(toc).toBeTruthy();
+
+    const downloadPdf = container!.querySelector('[data-og7-id="download-pdf"]') as HTMLAnchorElement | null;
+    expect(downloadPdf?.getAttribute('href')).toContain('legal-notice.pdf');
+
+    const copyLegal = container!.querySelector('[data-og7-id="copy-legal"]');
+    expect(copyLegal).toBeTruthy();
   });
 
   it('displays the FAQ items with questions and answers', () => {
@@ -85,10 +103,12 @@ describe('Static informational pages', () => {
     const container = element.querySelector('[data-og7-page="faq"]');
 
     expect(container).toBeTruthy();
-    const questions = Array.from(container!.querySelectorAll('dt')).map(dt => dt.textContent?.trim());
-    expect(questions).toContain('What is OpenG7?');
+    const questions = Array.from(container!.querySelectorAll('[data-og7="faq-item"] h2 button')).map(button =>
+      button.textContent?.trim()
+    );
+    expect(questions.some((question) => question?.includes('What is OpenG7?'))).toBeTrue();
 
-    const answers = container!.querySelectorAll('dd p');
+    const answers = container!.querySelectorAll('[data-og7="faq-item"] p.leading-relaxed');
     expect(answers.length).withContext('Expected FAQ answers to be rendered').toBeGreaterThan(0);
   });
 
@@ -96,14 +116,22 @@ describe('Static informational pages', () => {
     const fixture = createComponent(CreditsPage);
     const element: HTMLElement = fixture.nativeElement;
 
+    const container = element.querySelector('[data-og7-page="credits"]');
+    expect(container).toBeTruthy();
+
     const heroTitle = element.querySelector('#creditsTitle');
     expect(heroTitle?.textContent?.trim()).toBe('An ecosystem built together');
 
-    const contributorCards = element.querySelectorAll('article');
+    const contributorCards = element.querySelectorAll('[data-og7="credits-contributor-card"]');
     expect(contributorCards.length).withContext('Expected four contributor cards by default').toBe(4);
 
-    const filterButtons = Array.from(element.querySelectorAll('button')).map(btn => btn.textContent?.trim());
+    const filterButtons = Array.from(element.querySelectorAll('[data-og7="credits-filter"]')).map(btn =>
+      btn.textContent?.trim()
+    );
     expect(filterButtons).toContain('Reset');
+
+    const communityCta = element.querySelector('[data-og7="credits-community-cta"]');
+    expect(communityCta?.getAttribute('href')).toBe('/inscription');
   });
 
   it('presents the Governance page with commitments and board members', () => {
@@ -132,13 +160,19 @@ describe('Static informational pages', () => {
     component.provinceFilter.set('QC');
     fixture.detectChanges();
 
-    const filteredCards = fixture.nativeElement.querySelectorAll('article');
+    const filteredCards = fixture.nativeElement.querySelectorAll('[data-og7="credits-contributor-card"]');
     expect(filteredCards.length).toBe(2);
+
+    component.search.set('does-not-exist');
+    fixture.detectChanges();
+
+    const emptyState = fixture.nativeElement.querySelector('[data-og7="credits-empty"]');
+    expect(emptyState).toBeTruthy();
 
     component.resetFilters();
     fixture.detectChanges();
 
-    const allCards = fixture.nativeElement.querySelectorAll('article');
+    const allCards = fixture.nativeElement.querySelectorAll('[data-og7="credits-contributor-card"]');
     expect(allCards.length).toBe(component.contributors().length);
   });
 });

@@ -22,27 +22,29 @@ import { combineLatest } from 'rxjs';
 
       .chip {
         align-items: center;
-        background: rgba(148, 163, 184, 0.22);
-        border: 1px solid rgba(226, 232, 240, 0.24);
+        background: var(--og7-color-surface-muted);
+        border: 1px solid var(--og7-color-border);
         border-radius: 9999px;
-        color: #f8fafc;
+        color: var(--og7-color-body);
         display: inline-flex;
         gap: 0.5rem;
         line-height: 1.6;
         padding: 0.35rem 0.85rem;
-        transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
-        backdrop-filter: blur(8px);
+        transition:
+          background-color 150ms ease,
+          border-color 150ms ease,
+          transform 150ms ease;
       }
 
       .chip:hover,
       .chip:focus-visible {
-        background: rgba(148, 163, 184, 0.36);
-        border-color: rgba(226, 232, 240, 0.45);
+        background: var(--og7-color-card-hover);
+        border-color: var(--og7-color-border);
         transform: translateY(-1px);
       }
 
       .chip:focus-visible {
-        outline: 2px solid rgba(244, 244, 245, 0.6);
+        outline: 2px solid var(--og7-ring-focus);
         outline-offset: 2px;
       }
 
@@ -53,12 +55,6 @@ import { combineLatest } from 'rxjs';
     `,
   ],
 })
-/**
- * Contexte : Affichée dans les vues du dossier « domains/static/pages » en tant que composant Angular standalone.
- * Raison d’être : Encapsule l'interface utilisateur et la logique propre à « Chip ».
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns ChipComponent gérée par le framework.
- */
 export class ChipComponent {
   @Input() label = '';
 }
@@ -71,220 +67,200 @@ export class ChipComponent {
   styles: [
     `
       :host {
-        background: radial-gradient(160% 140% at 10% 10%, rgba(56, 189, 248, 0.08), transparent 60%),
-          radial-gradient(140% 120% at 80% 20%, rgba(249, 115, 22, 0.08), transparent 55%),
-          #020617;
-        color: #e2e8f0;
+        background: var(--og7-color-page);
+        color: var(--og7-color-body);
         display: block;
-        font-family: 'Inter', 'Satoshi', 'Segoe UI', system-ui, -apple-system, sans-serif;
       }
 
-      .hero-eyebrow {
-        color: rgba(241, 245, 249, 0.88);
-        letter-spacing: 0.28em;
-        text-transform: uppercase;
+      .credits-shell {
+        position: relative;
       }
 
-      .hero-title {
-        color: #f8fafc;
-        text-shadow: 0 1px 12px rgba(15, 23, 42, 0.35);
+      .credits-kpi-card {
+        background: var(--og7-color-surface);
+        border: 1px solid var(--og7-color-border);
+        border-radius: 0.95rem;
+        display: grid;
+        gap: 0.15rem;
+        padding: 0.8rem;
+        text-align: center;
       }
 
-      .hero-subtitle {
-        color: rgba(226, 232, 240, 0.88);
-        max-width: 46rem;
+      .credits-kpi-value {
+        color: var(--og7-color-title);
+        font-size: 1.45rem;
+        font-weight: 700;
+        line-height: 1.1;
       }
 
-      .surface-soft {
-        background: rgba(15, 23, 42, 0.62);
-        border: 1px solid rgba(148, 163, 184, 0.28);
-        box-shadow: 0 18px 40px -26px rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(18px);
+      .credits-kpi-label {
+        color: var(--og7-color-subtle);
+        font-size: 0.78rem;
+        line-height: 1.35;
       }
 
-      .surface-strong {
-        background: rgba(15, 23, 42, 0.78);
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        box-shadow: 0 22px 48px -24px rgba(15, 23, 42, 0.85);
-        backdrop-filter: blur(22px);
+      .credits-filter-chips {
+        scrollbar-width: thin;
       }
 
-      .text-muted {
-        color: rgba(226, 232, 240, 0.82);
+      .credits-filter-chips::-webkit-scrollbar {
+        height: 6px;
       }
 
-      .text-subtle {
-        color: rgba(203, 213, 225, 0.78);
-      }
-
-      .filter-chip {
-        align-items: center;
-        background: rgba(15, 23, 42, 0.65);
-        border: 1px solid rgba(148, 163, 184, 0.4);
+      .credits-filter-chips::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, var(--og7-color-border) 76%, transparent);
         border-radius: 9999px;
-        color: #f8fafc;
-        display: inline-flex;
-        font-size: 0.875rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-        padding: 0.4rem 0.95rem;
-        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
       }
 
-      .filter-chip:hover,
-      .filter-chip:focus-visible {
-        background: rgba(148, 163, 184, 0.32);
-        border-color: rgba(226, 232, 240, 0.52);
-        transform: translateY(-1px);
+      .credits-contributor-card {
+        min-height: 14.5rem;
+        transition:
+          transform var(--og7-transition-base),
+          box-shadow var(--og7-transition-base),
+          border-color var(--og7-transition-base);
       }
 
-      .filter-chip:focus-visible {
-        outline: 2px solid rgba(244, 244, 245, 0.65);
-        outline-offset: 2px;
-      }
-
-      .filter-chip.is-active {
-        background: rgba(148, 163, 184, 0.8);
-        border-color: rgba(226, 232, 240, 0.85);
-        color: #0f172a;
-        text-shadow: 0 0 2px rgba(255, 255, 255, 0.4);
-      }
-
-      .glass-input {
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid rgba(148, 163, 184, 0.45);
-        border-radius: 0.875rem;
-        color: #f8fafc;
-        padding: 0.55rem 1.1rem;
-        transition: border-color 150ms ease, box-shadow 150ms ease;
-      }
-
-      .glass-input::placeholder {
-        color: rgba(203, 213, 225, 0.72);
-      }
-
-      .glass-input:focus-visible {
-        border-color: rgba(244, 244, 245, 0.9);
-        box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
-        outline: none;
-      }
-
-      .contributors-card {
-        transition: transform 200ms ease, box-shadow 200ms ease;
-      }
-
-      .contributors-card:hover,
-      .contributors-card:focus-within {
-        transform: translateY(-3px);
-        box-shadow: 0 30px 65px -32px rgba(15, 23, 42, 0.88);
-      }
-
-      .contributors-badge {
-        background: rgba(51, 65, 85, 0.85);
-        border: 1px solid rgba(148, 163, 184, 0.45);
-        border-radius: 9999px;
-        color: #f8fafc;
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        padding: 0.2rem 0.5rem;
+      .credits-contributor-card:hover,
+      .credits-contributor-card:focus-within {
+        border-color: color-mix(in srgb, var(--og7-color-primary) 34%, var(--og7-color-border));
+        box-shadow: var(--og7-shadow-card);
+        transform: translateY(-2px);
       }
 
       .contributors-avatar {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(148, 163, 184, 0.45);
-        border-radius: 0.9rem;
+        background: var(--og7-color-surface-muted);
+        border: 1px solid var(--og7-color-border);
+        border-radius: 0.85rem;
         overflow: hidden;
       }
 
       .contributors-initials {
-        color: #f1f5f9;
+        color: var(--og7-color-title);
       }
 
-      .community-banner {
-        background: linear-gradient(135deg, rgba(148, 163, 184, 0.32), rgba(226, 232, 240, 0.12));
-        border: 1px solid rgba(148, 163, 184, 0.38);
-        box-shadow: 0 18px 42px -28px rgba(148, 163, 184, 0.65);
+      .contributors-badge {
+        background: color-mix(in srgb, var(--og7-color-primary-soft) 66%, var(--og7-color-surface));
+        border: 1px solid color-mix(in srgb, var(--og7-color-primary) 26%, var(--og7-color-border));
+        border-radius: 9999px;
+        color: color-mix(in srgb, var(--og7-color-primary) 66%, var(--og7-color-title));
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        padding: 0.18rem 0.52rem;
       }
 
-      .governance-card {
-        border-radius: 1.75rem;
+      .stack-marker {
+        align-items: center;
+        background: color-mix(in srgb, var(--og7-color-primary-soft) 84%, var(--og7-color-surface));
+        border: 1px solid color-mix(in srgb, var(--og7-color-primary) 24%, var(--og7-color-border));
+        border-radius: 0.7rem;
+        color: var(--og7-color-primary);
+        display: inline-flex;
+        font-size: 0.72rem;
+        font-weight: 700;
+        height: 1.6rem;
+        justify-content: center;
+        letter-spacing: 0.03em;
+        min-width: 1.6rem;
+        padding-inline: 0.45rem;
+      }
+
+      .method-step-index {
+        color: var(--og7-color-primary);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
       }
 
       .governance-list {
-        color: rgba(226, 232, 240, 0.86);
+        color: var(--og7-color-body);
       }
 
       .governance-list li::marker {
-        color: rgba(226, 232, 240, 0.56);
+        color: color-mix(in srgb, var(--og7-color-primary) 55%, var(--og7-color-subtle));
+      }
+
+      @media (max-width: 767px) {
+        .credits-contributor-card {
+          min-height: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .credits-contributor-card {
+          transition: none;
+        }
       }
     `,
   ],
 })
-/**
- * Contexte : Chargée par le routeur Angular pour afficher la page « Credits » du dossier « domains/static/pages ».
- * Raison d’être : Lie le template standalone et les dépendances de cette page pour la rendre navigable.
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns CreditsPage gérée par le framework.
- */
 export class CreditsPage {
   private readonly i18n = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly baseKey = 'pages.credits';
 
-  readonly contributors = signal<Contributor[]>([]);
+  readonly searchFieldId = 'credits-search';
+  readonly currentYear = new Date().getFullYear();
 
+  readonly contributors = signal<Contributor[]>([]);
   readonly pillars = signal<Pillar[]>([]);
+  readonly methodologySteps = signal<MethodologyStep[]>([]);
+  readonly governancePoints = signal<string[]>([]);
 
   readonly provinceFilter = signal<string | null>(null);
   readonly search = signal<string>('');
 
-  readonly provincesUnique = computed(() => Array.from(new Set(this.contributors().map(c => c.province))));
+  readonly provincesUnique = computed(() =>
+    Array.from(new Set(this.contributors().map((c) => c.province))),
+  );
 
   readonly filteredContributors = computed(() => {
-    const q = this.search().trim().toLowerCase();
-    const pf = this.provinceFilter();
-    return this.contributors().filter(c => {
-      const matchesProvince = !pf || c.province === pf;
-      const haystack = [c.name, c.role, c.impact, ...(c.skills ?? [])].join(' ').toLowerCase();
-      const inText = !q || haystack.includes(q);
-      return matchesProvince && inText;
+    const query = this.search().trim().toLowerCase();
+    const province = this.provinceFilter();
+
+    return this.contributors().filter((contributor) => {
+      const matchesProvince = !province || contributor.province === province;
+      const haystack = [contributor.name, contributor.role, contributor.impact, ...contributor.skills]
+        .join(' ')
+        .toLowerCase();
+      const matchesText = !query || haystack.includes(query);
+      return matchesProvince && matchesText;
     });
   });
-
-  readonly governancePoints = signal<string[]>([]);
-
-  readonly currentYear = new Date().getFullYear();
 
   constructor() {
     combineLatest({
       contributors: this.i18n.stream(`${this.baseKey}.contributors.items`),
       pillars: this.i18n.stream(`${this.baseKey}.pillars.items`),
       governance: this.i18n.stream(`${this.baseKey}.governance.points`),
+      methodology: this.i18n.stream(`${this.baseKey}.methodology.steps`),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ contributors, pillars, governance }) => {
-        const contributorItems = this.coerceArray<Contributor>(contributors).map(item => ({
+      .subscribe(({ contributors, pillars, governance, methodology }) => {
+        const contributorItems = this.coerceArray<Contributor>(contributors).map((item) => ({
           ...item,
           skills: item.skills ?? [],
         }));
         this.contributors.set(contributorItems);
 
-        const pillarItems = this.coerceArray<Pillar>(pillars).map(item => ({
+        const pillarItems = this.coerceArray<Pillar>(pillars).map((item) => ({
           ...item,
           tags: item.tags ?? [],
         }));
         this.pillars.set(pillarItems);
 
-        const governancePoints = this.coerceRecord<string>(governance);
-        this.governancePoints.set(governancePoints ? Object.values(governancePoints) : []);
+        const governanceMap = this.coerceRecord<string>(governance);
+        this.governancePoints.set(governanceMap ? Object.values(governanceMap) : []);
+
+        this.methodologySteps.set(this.coerceArray<MethodologyStep>(methodology));
       });
 
     effect(() => {
-      const pf = this.provinceFilter();
-      const q = this.search();
-      if (pf || q) {
-        // store.dispatch(logFiltersChanged({ province: pf, q }));
+      const province = this.provinceFilter();
+      const query = this.search();
+      if (province || query) {
+        // store.dispatch(logFiltersChanged({ province, query }));
       }
     });
   }
@@ -294,10 +270,18 @@ export class CreditsPage {
     this.search.set('');
   }
 
+  toggleProvinceFilter(province: string): void {
+    this.provinceFilter.set(this.provinceFilter() === province ? null : province);
+  }
+
+  isProvinceActive(province: string): boolean {
+    return this.provinceFilter() === province;
+  }
+
   initials(name: string): string {
     return name
       .split(' ')
-      .map(part => part[0])
+      .map((part) => part[0])
       .filter(Boolean)
       .slice(0, 2)
       .join('')
@@ -309,7 +293,9 @@ export class CreditsPage {
   }
 
   private coerceRecord<T>(value: unknown): Record<string, T> | null {
-    return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, T>) : null;
+    return value && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, T>)
+      : null;
   }
 }
 
@@ -327,4 +313,9 @@ export interface Pillar {
   title: string;
   summary: string;
   tags: string[];
+}
+
+export interface MethodologyStep {
+  title: string;
+  copy: string;
 }

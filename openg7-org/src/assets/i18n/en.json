@@ -228,9 +228,18 @@
       "submit": "Update password",
       "loading": "Updating…",
       "success": "Your password has been reset. You can now sign in with the new credentials.",
+      "redirecting": "Redirecting to sign in…",
       "tokenLabel": "Reset token",
       "tokenRequired": "A reset token is required.",
-      "passwordLabel": "New password"
+      "passwordLabel": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordHint": "Use at least 10 characters with uppercase letters, numbers and a symbol.",
+      "passwordStrength": {
+        "label": "Password strength",
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      }
     },
     "register": {
       "submit": "Create account",
@@ -282,6 +291,14 @@
         "title": "Tell us who you are",
         "subtitle": "We vet each request individually to protect sensitive data across the ecosystem.",
         "review": "A trusted operations team reviews every submission. Expect a personalised acknowledgement in your inbox.",
+        "confirmPassword": "Confirm password",
+        "passwordHint": "Use at least 10 characters with uppercase letters, numbers and a symbol.",
+        "passwordStrength": {
+          "label": "Password strength",
+          "weak": "Weak",
+          "medium": "Medium",
+          "strong": "Strong"
+        },
         "ssoOnly": {
           "title": "Continue with your identity provider",
           "copy": "This environment is configured for SSO only. Start the flow from your corporate portal to access OpenG7.",
@@ -307,6 +324,9 @@
       "emailRequired": "Email is required.",
       "emailInvalid": "Enter a valid email address.",
       "passwordRequired": "Password is required.",
+      "passwordMinLength": "Password must be at least 10 characters long.",
+      "confirmPasswordRequired": "Password confirmation is required.",
+      "passwordMismatch": "Passwords do not match.",
       "invalidCredentials": "Incorrect credentials. Double-check your email and password.",
       "accountDisabled": "Your account is inactive. Please reach out to your administrator to reactivate it.",
       "accountLocked": "Too many attempts. Your account is temporarily locked.",
@@ -685,13 +705,59 @@
         "join": "Join the initiative",
         "readCharter": "Read the charter"
       },
+      "stack": {
+        "title": "Powered by these exceptional technologies",
+        "items": {
+          "angular": {
+            "name": "Angular",
+            "caption": "Built with Angular"
+          },
+          "ngrx": {
+            "name": "NgRx",
+            "caption": "State management with NgRx"
+          },
+          "ts": {
+            "name": "TypeScript",
+            "caption": "Typed in TypeScript"
+          },
+          "tailwind": {
+            "name": "Tailwind CSS",
+            "caption": "Styled with Tailwind CSS"
+          }
+        }
+      },
+      "methodology": {
+        "kicker": "OUR METHOD",
+        "title": "How a contribution becomes measurable impact",
+        "copy": "We operate in short loops: field listening, rapid delivery, and open validation with public and private partners.",
+        "cta": "See governance",
+        "steps": [
+          {
+            "title": "1. Surface a concrete need",
+            "copy": "Field teams report the highest-friction issues across corridors and value chains."
+          },
+          {
+            "title": "2. Co-design the response",
+            "copy": "Product, data and partner teams shape a testable solution within a few sprints."
+          },
+          {
+            "title": "3. Ship and measure",
+            "copy": "Every release is tracked with adoption, impact and qualitative feedback indicators."
+          }
+        ]
+      },
       "filters": {
         "reset": "Reset",
-        "search": "Search name, skill…"
+        "search": "Search name, skill…",
+        "searchLabel": "Search contributors",
+        "provincesLabel": "Filter contributors by province"
       },
       "contributors": {
         "title": "Contributors",
         "caption": "A multidisciplinary crew spanning product, data, design and partnership enablement.",
+        "count": "{{visible}} of {{total}} shown",
+        "emptyTitle": "No contributors match your filters",
+        "emptyDescription": "Try another query or reset filters to see the full team again.",
         "items": [
           {
             "id": "amina",
@@ -999,6 +1065,10 @@
       "quickNav": {
         "title": "Navigate this page",
         "description": "Skip directly to the topic you are looking for."
+      },
+      "controls": {
+        "expand": "Expand",
+        "collapse": "Collapse"
       },
       "summaryCard": {
         "title": "Privacy at a glance",
@@ -1612,6 +1682,10 @@
       "toc": {
         "title": "Navigate the terms"
       },
+      "controls": {
+        "expand": "Expand",
+        "collapse": "Collapse"
+      },
       "obligations": {
         "title": "Shared obligations",
         "items": [
@@ -1794,8 +1868,29 @@
       }
     },
     "legal": {
+      "kicker": "GOVERNANCE & COMPLIANCE",
       "title": "Legal notice",
       "intro": "Official information about the organisation operating OpenG7.",
+      "meta": {
+        "title": "Quick reference",
+        "downloadLabel": "Download PDF version",
+        "downloadHint": "Reference document for audits and internal validation workflows.",
+        "pdfHref": "https://openg7.org/policies/legal-notice.pdf",
+        "items": {
+          "updated": {
+            "label": "Last updated",
+            "value": "September 2024"
+          },
+          "version": {
+            "label": "Version",
+            "value": "v2.4"
+          },
+          "jurisdiction": {
+            "label": "Jurisdiction",
+            "value": "Ontario, Canada"
+          }
+        }
+      },
       "highlights": {
         "registration": {
           "label": "Registration",
@@ -1851,9 +1946,19 @@
           ]
         }
       },
+      "toc": {
+        "title": "Contents",
+        "description": "Jump directly to the main legal sections."
+      },
+      "controls": {
+        "expand": "Expand",
+        "collapse": "Collapse"
+      },
       "contact": {
         "title": "Reach our compliance desk",
         "description": "Dedicated contacts respond to formal notices, privacy requests, and incident escalations.",
+        "copy": "Copy",
+        "copied": "Copied",
         "channels": {
           "legal": {
             "label": "Legal desk",
@@ -1886,6 +1991,11 @@
       "kicker": "SUPPORT & TRUST",
       "title": "Frequently asked questions",
       "intro": "Answers to the most common questions from organisations joining OpenG7.",
+      "topQuestions": {
+        "title": "Top 5 questions",
+        "description": "Start with the most viewed topics from new organisations.",
+        "badge": "Top"
+      },
       "cta": {
         "title": "Need a quick answer?",
         "description": "Our concierge team can help you scope integrations, onboarding, or partnership questions.",
@@ -1899,12 +2009,27 @@
       "search": {
         "label": "Search",
         "placeholder": "Search by question or keyword",
+        "clear": "Clear",
         "results": "Results: {{count}}",
         "noResults": {
           "title": "No questions match your search",
           "description": "Try different keywords or reach out to the concierge team for tailored assistance.",
-          "button": "Contact the concierge team"
+          "button": "Contact the concierge team",
+          "clear": "Reset search"
         }
+      },
+      "categories": {
+        "all": "All",
+        "platform": "Platform",
+        "data": "Data",
+        "pricing": "Pricing",
+        "support": "Support",
+        "partners": "Partners"
+      },
+      "controls": {
+        "expandAll": "Expand all",
+        "collapseAll": "Collapse all",
+        "clearSearch": "Clear search"
       },
       "contact": {
         "title": "Still looking for something specific?",
@@ -1913,6 +2038,15 @@
         "phoneLabel": "Call us",
         "hours": "Available Monday to Friday, 9am–6pm EST",
         "sla": "First response within one business day"
+      },
+      "feedback": {
+        "prompt": "Did this answer help?",
+        "yes": "Yes",
+        "no": "Not yet",
+        "thanks": {
+          "yes": "Great, thanks for your feedback.",
+          "no": "Thanks, we will improve this answer."
+        }
       },
       "items": {
         "platform": {

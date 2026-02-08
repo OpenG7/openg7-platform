@@ -1,96 +1,104 @@
-<section class="relative overflow-hidden bg-slate-950 py-16" data-og7="auth-register-hero">
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.16),_transparent_65%)]"></div>
-  <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
+<section class="relative overflow-hidden bg-transparent py-14 sm:py-20" data-og7="auth-register-hero">
+  <div
+    aria-hidden="true"
+    class="absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,_rgba(56,189,248,0.24)_0%,_transparent_32%),radial-gradient(circle_at_84%_10%,_rgba(59,130,246,0.2)_0%,_transparent_36%),linear-gradient(180deg,_rgba(2,6,23,0.26)_0%,_rgba(2,6,23,0.58)_52%,_rgba(2,6,23,0.8)_100%)]"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="absolute inset-0 opacity-45 [background-image:radial-gradient(circle,_rgba(255,255,255,0.55)_0.9px,_transparent_1.1px)] [background-size:3px_3px] [mask-image:radial-gradient(circle_at_top,_black_12%,_transparent_74%)] motion-safe:animate-[pulse_9s_ease-in-out_infinite]"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="absolute inset-0 opacity-35 [background-image:radial-gradient(circle,_rgba(125,211,252,0.52)_1.1px,_transparent_1.2px)] [background-size:190px_190px] [background-position:20px_24px]"
+  ></div>
+  <div aria-hidden="true" class="absolute -left-20 top-24 h-56 w-56 rounded-full bg-cyan-300/20 blur-3xl"></div>
+  <div aria-hidden="true" class="absolute -right-20 top-2 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"></div>
+  <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-slate-950/70 via-slate-900/30 to-transparent"></div>
+
   <div class="relative mx-auto max-w-6xl px-4">
-    <div class="grid items-start gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-      <div class="space-y-10 text-white" data-og7="auth-register-overview">
+    <div class="grid items-start gap-10 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)] lg:gap-12">
+      <section class="space-y-8 text-slate-100" data-og7="auth-register-overview">
         <div class="space-y-4" data-og7="auth-register-header">
-          <p class="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-300">
+          <p class="text-sm font-semibold uppercase tracking-[0.32em] text-sky-300">
             {{ 'auth.register.hero.tagline' | translate }}
           </p>
           <h1 class="text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
             {{ 'auth.register.hero.title' | translate }}
           </h1>
-          <p class="max-w-2xl text-base text-cyan-100 md:text-lg">
+          <p class="max-w-2xl text-base text-slate-200/90 md:text-lg">
             {{ 'auth.register.hero.subtitle' | translate }}
           </p>
         </div>
 
         <div class="flex flex-wrap gap-3" data-og7="auth-register-badges">
-          <span
-            class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-cyan-100 backdrop-blur"
-          >
-            <span class="text-lg">🔐</span>
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/35 px-4 py-2 text-sm font-medium text-slate-100 backdrop-blur-md">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/30 text-[0.62rem] font-bold">S</span>
             {{ 'auth.register.badges.security' | translate }}
           </span>
-          <span
-            class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-cyan-100 backdrop-blur"
-          >
-            <span class="text-lg">🤝</span>
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/35 px-4 py-2 text-sm font-medium text-slate-100 backdrop-blur-md">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/30 text-[0.62rem] font-bold">N</span>
             {{ 'auth.register.badges.network' | translate }}
           </span>
-          <span
-            class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-cyan-100 backdrop-blur"
-          >
-            <span class="text-lg">⚡</span>
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/35 px-4 py-2 text-sm font-medium text-slate-100 backdrop-blur-md">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/30 text-[0.62rem] font-bold">F</span>
             {{ 'auth.register.badges.speed' | translate }}
           </span>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2" data-og7="auth-register-benefits">
-          <article class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-lg backdrop-blur">
-            <p class="text-sm font-semibold text-cyan-200">
+          <article class="rounded-3xl border border-white/20 bg-slate-950/35 p-5 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md">
+            <p class="text-sm font-semibold text-sky-300">
               {{ 'auth.register.benefits.visibility.title' | translate }}
             </p>
-            <p class="mt-2 text-sm text-cyan-100">
+            <p class="mt-2 text-sm text-slate-200/90">
               {{ 'auth.register.benefits.visibility.copy' | translate }}
             </p>
           </article>
-          <article class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-lg backdrop-blur">
-            <p class="text-sm font-semibold text-cyan-200">
+          <article class="rounded-3xl border border-white/20 bg-slate-950/35 p-5 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md">
+            <p class="text-sm font-semibold text-sky-300">
               {{ 'auth.register.benefits.compliance.title' | translate }}
             </p>
-            <p class="mt-2 text-sm text-cyan-100">
+            <p class="mt-2 text-sm text-slate-200/90">
               {{ 'auth.register.benefits.compliance.copy' | translate }}
             </p>
           </article>
-          <article class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-lg backdrop-blur sm:col-span-2">
-            <p class="text-sm font-semibold text-cyan-200">
+          <article class="rounded-3xl border border-white/20 bg-slate-950/35 p-5 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md sm:col-span-2">
+            <p class="text-sm font-semibold text-sky-300">
               {{ 'auth.register.benefits.support.title' | translate }}
             </p>
-            <p class="mt-2 text-sm text-cyan-100">
+            <p class="mt-2 text-sm text-slate-200/90">
               {{ 'auth.register.benefits.support.copy' | translate }}
             </p>
           </article>
         </div>
 
-        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur" data-og7="auth-register-timeline">
-          <h2 class="text-base font-semibold text-cyan-200">
+        <div class="rounded-3xl border border-white/20 bg-slate-950/35 p-6 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md" data-og7="auth-register-timeline">
+          <h2 class="text-base font-semibold text-sky-300">
             {{ 'auth.register.timeline.title' | translate }}
           </h2>
-          <ol class="mt-4 space-y-4 text-sm text-cyan-100">
+          <ol class="mt-4 space-y-4 text-sm text-slate-200/90">
             <li class="flex gap-3">
-              <span class="mt-1 text-lg">①</span>
+              <span class="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/30 text-[0.68rem] font-semibold">01</span>
               <div>
-                <p class="font-semibold text-white">
+                <p class="font-semibold text-slate-100">
                   {{ 'auth.register.timeline.items.intake.title' | translate }}
                 </p>
                 <p>{{ 'auth.register.timeline.items.intake.copy' | translate }}</p>
               </div>
             </li>
             <li class="flex gap-3">
-              <span class="mt-1 text-lg">②</span>
+              <span class="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/30 text-[0.68rem] font-semibold">02</span>
               <div>
-                <p class="font-semibold text-white">
+                <p class="font-semibold text-slate-100">
                   {{ 'auth.register.timeline.items.review.title' | translate }}
                 </p>
                 <p>{{ 'auth.register.timeline.items.review.copy' | translate }}</p>
               </div>
             </li>
             <li class="flex gap-3">
-              <span class="mt-1 text-lg">③</span>
+              <span class="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/30 text-[0.68rem] font-semibold">03</span>
               <div>
-                <p class="font-semibold text-white">
+                <p class="font-semibold text-slate-100">
                   {{ 'auth.register.timeline.items.activation.title' | translate }}
                 </p>
                 <p>{{ 'auth.register.timeline.items.activation.copy' | translate }}</p>
@@ -98,26 +106,31 @@
             </li>
           </ol>
         </div>
-      </div>
+      </section>
 
-      <div
-        class="relative flex h-full flex-col gap-6 rounded-3xl bg-white/95 p-6 shadow-2xl ring-1 ring-white/60 backdrop-blur-lg lg:p-8"
+      <section
+        class="relative flex h-full flex-col gap-6 rounded-3xl border border-white/30 bg-surface p-6 shadow-[0_48px_130px_-58px_rgba(2,6,23,0.95)] backdrop-blur-xl lg:p-8"
         data-og7="auth-register-shell"
       >
-        <div class="space-y-3 text-slate-900">
-          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-cyan-600">
+        <div
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent opacity-80"
+        ></div>
+
+        <div class="space-y-3 text-title">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-tertiary">
             {{ 'auth.register.form.lead' | translate }}
           </p>
           <h2 class="text-2xl font-semibold">
             {{ 'auth.register.form.title' | translate }}
           </h2>
-          <p class="text-sm text-slate-600 md:text-base">
+          <p class="text-sm text-subtle md:text-base">
             {{ 'auth.register.form.subtitle' | translate }}
           </p>
         </div>
 
         <div
-          class="rounded-2xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-cyan-900"
+          class="rounded-2xl border border-[color:var(--og7-color-border)] bg-[color:var(--og7-color-primary-soft)] p-4 text-sm text-body"
           data-og7="auth-register-review-note"
         >
           {{ 'auth.register.form.review' | translate }}
@@ -128,22 +141,24 @@
         }
 
         @if (authMode() === 'hybrid') {
-          <div class="text-center text-xs font-medium uppercase tracking-wider text-slate-400" data-og7="auth-register-divider">
-            {{ 'auth.or' | translate }}
+          <div class="flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-subtle" data-og7="auth-register-divider">
+            <span class="h-px flex-1 bg-[color:var(--og7-color-border)]"></span>
+            <span>{{ 'auth.or' | translate }}</span>
+            <span class="h-px flex-1 bg-[color:var(--og7-color-border)]"></span>
           </div>
         }
 
         @if (authMode() === 'sso-only') {
           <section
-            class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700"
+            class="space-y-3 rounded-2xl border border-[color:var(--og7-color-border)] bg-surface-muted p-4 text-sm text-body"
             data-og7="auth-register-sso-only"
           >
-            <p class="font-semibold text-slate-900">
+            <p class="font-semibold text-title">
               {{ 'auth.register.form.ssoOnly.title' | translate }}
             </p>
             <p>{{ 'auth.register.form.ssoOnly.copy' | translate }}</p>
             <a
-              class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary focus-outline"
               [routerLink]="['/faq']"
               fragment="sso"
               data-og7="auth-register-sso-only-link"
@@ -160,18 +175,26 @@
             class="flex flex-col gap-4"
           >
             <div class="flex flex-col gap-2">
-              <label class="sr-only" for="auth-register-email">{{ 'auth.email' | translate }}</label>
-              <input
-                id="auth-register-email"
-                type="email"
-                formControlName="email"
-                placeholder="{{ 'auth.email' | translate }}"
-                autocomplete="email"
-                [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
-                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
+              <label class="text-sm font-medium text-body" for="auth-register-email">{{ 'auth.email' | translate }}</label>
+              <div class="relative">
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute inset-y-0 left-4 inline-flex items-center text-sm font-semibold text-subtle"
+                >
+                  @
+                </span>
+                <input
+                  id="auth-register-email"
+                  type="email"
+                  formControlName="email"
+                  placeholder="{{ 'auth.email' | translate }}"
+                  autocomplete="email"
+                  [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+                  class="w-full rounded-xl border border-[color:var(--og7-color-border)] bg-surface px-4 py-3 pl-10 text-title shadow-sm placeholder:text-subtle transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-[color:var(--og7-ring-focus)]"
+                />
+              </div>
               @if (form.controls.email.touched && form.controls.email.invalid) {
-                <p class="text-sm text-red-600" data-og7="auth-register-email-error" role="alert">
+                <p class="text-sm text-error" data-og7="auth-register-email-error" role="alert">
                   @if (form.controls.email.hasError('required')) {
                     {{ 'auth.errors.emailRequired' | translate }}
                   } @else {
@@ -182,25 +205,129 @@
             </div>
 
             <div class="flex flex-col gap-2">
-              <label class="sr-only" for="auth-register-password">{{ 'auth.password' | translate }}</label>
-              <input
-                id="auth-register-password"
-                type="password"
-                formControlName="password"
-                placeholder="{{ 'auth.password' | translate }}"
-                autocomplete="new-password"
-                [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
-                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-              @if (form.controls.password.touched && form.controls.password.hasError('required')) {
-                <p class="text-sm text-red-600" data-og7="auth-register-password-error" role="alert">
-                  {{ 'auth.errors.passwordRequired' | translate }}
+              <label class="text-sm font-medium text-body" for="auth-register-password">{{ 'auth.password' | translate }}</label>
+              <div class="relative">
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute inset-y-0 left-4 inline-flex items-center text-sm font-semibold text-subtle"
+                >
+                  *
+                </span>
+                <input
+                  id="auth-register-password"
+                  [type]="passwordVisible() ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="{{ 'auth.password' | translate }}"
+                  autocomplete="new-password"
+                  [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+                  class="w-full rounded-xl border border-[color:var(--og7-color-border)] bg-surface px-4 py-3 pl-10 pr-24 text-title shadow-sm placeholder:text-subtle transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-[color:var(--og7-ring-focus)]"
+                  (input)="onPasswordInput()"
+                />
+                <button
+                  type="button"
+                  class="absolute inset-y-1 right-1 inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-subtle transition hover:bg-surface-muted hover:text-title focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--og7-ring-focus)]"
+                  (click)="togglePasswordVisibility()"
+                  [disabled]="loading()"
+                  [attr.aria-label]="
+                    passwordVisible()
+                      ? ('auth.passwordToggle.hide' | translate)
+                      : ('auth.passwordToggle.show' | translate)
+                  "
+                  [attr.aria-pressed]="passwordVisible()"
+                >
+                  {{
+                    passwordVisible()
+                      ? ('auth.passwordToggle.hide' | translate)
+                      : ('auth.passwordToggle.show' | translate)
+                  }}
+                </button>
+              </div>
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                <p class="text-sm text-error" data-og7="auth-register-password-error" role="alert">
+                  @if (form.controls.password.hasError('required')) {
+                    {{ 'auth.errors.passwordRequired' | translate }}
+                  } @else {
+                    {{ 'auth.errors.passwordMinLength' | translate }}
+                  }
                 </p>
               }
             </div>
 
             <div
-              class="min-h-[1.5rem] rounded-lg border border-transparent bg-transparent px-1 text-sm text-red-600 empty:hidden"
+              class="rounded-xl border border-[color:var(--og7-color-border)] bg-surface-muted px-3 py-3"
+              data-og7="auth-register-password-strength"
+            >
+              <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wide">
+                <span class="text-subtle">{{ 'auth.register.form.passwordStrength.label' | translate }}</span>
+                <span [style.color]="passwordStrengthLabelColor()">
+                  {{ passwordStrengthLabelKey() | translate }}
+                </span>
+              </div>
+              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--og7-color-border)]">
+                <span
+                  class="block h-full rounded-full transition-all duration-300"
+                  [style.width.%]="passwordStrengthPercent()"
+                  [style.background-color]="passwordStrengthBarColor()"
+                ></span>
+              </div>
+              <p class="mt-2 text-xs text-subtle">{{ 'auth.register.form.passwordHint' | translate }}</p>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-medium text-body" for="auth-register-confirm-password">
+                {{ 'auth.register.form.confirmPassword' | translate }}
+              </label>
+              <div class="relative">
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute inset-y-0 left-4 inline-flex items-center text-sm font-semibold text-subtle"
+                >
+                  *
+                </span>
+                <input
+                  id="auth-register-confirm-password"
+                  [type]="confirmPasswordVisible() ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  placeholder="{{ 'auth.register.form.confirmPassword' | translate }}"
+                  autocomplete="new-password"
+                  [attr.aria-invalid]="
+                    (form.controls.confirmPassword.invalid && form.controls.confirmPassword.touched) ||
+                    (form.hasError('passwordMismatch') && form.controls.confirmPassword.touched)
+                  "
+                  class="w-full rounded-xl border border-[color:var(--og7-color-border)] bg-surface px-4 py-3 pl-10 pr-24 text-title shadow-sm placeholder:text-subtle transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-[color:var(--og7-ring-focus)]"
+                />
+                <button
+                  type="button"
+                  class="absolute inset-y-1 right-1 inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-subtle transition hover:bg-surface-muted hover:text-title focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--og7-ring-focus)]"
+                  (click)="toggleConfirmPasswordVisibility()"
+                  [disabled]="loading()"
+                  [attr.aria-label]="
+                    confirmPasswordVisible()
+                      ? ('auth.passwordToggle.hide' | translate)
+                      : ('auth.passwordToggle.show' | translate)
+                  "
+                  [attr.aria-pressed]="confirmPasswordVisible()"
+                >
+                  {{
+                    confirmPasswordVisible()
+                      ? ('auth.passwordToggle.hide' | translate)
+                      : ('auth.passwordToggle.show' | translate)
+                  }}
+                </button>
+              </div>
+              @if (form.controls.confirmPassword.touched && (form.controls.confirmPassword.invalid || form.hasError('passwordMismatch'))) {
+                <p class="text-sm text-error" data-og7="auth-register-confirm-password-error" role="alert">
+                  @if (form.controls.confirmPassword.hasError('required')) {
+                    {{ 'auth.errors.confirmPasswordRequired' | translate }}
+                  } @else {
+                    {{ 'auth.errors.passwordMismatch' | translate }}
+                  }
+                </p>
+              }
+            </div>
+
+            <div
+              class="min-h-[1.5rem] rounded-lg border border-transparent bg-transparent px-1 text-sm text-error empty:hidden"
               aria-live="assertive"
               role="alert"
               data-og7="auth-register-api-error"
@@ -217,43 +344,26 @@
               class="btn-primary w-full justify-center py-3"
             >
               @if (loading()) {
+                <span
+                  aria-hidden="true"
+                  class="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                ></span>
                 {{ 'auth.register.loading' | translate }}
               } @else {
                 {{ 'auth.register.submit' | translate }}
               }
             </button>
+
+            <a
+              routerLink="/login"
+              class="mx-auto text-sm font-semibold text-primary underline-offset-2 transition hover:underline"
+              data-og7="auth-register-login-link"
+            >
+              {{ 'header.login' | translate }}
+            </a>
           </form>
         }
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="relative z-10 -mt-12 pb-16" data-og7="auth-register-support">
-  <div class="mx-auto max-w-5xl px-4">
-    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl md:p-10">
-      <div class="mx-auto max-w-3xl space-y-3 text-center">
-        <h2 class="text-2xl font-semibold text-slate-900">
-          {{ 'auth.register.support.title' | translate }}
-        </h2>
-        <p class="text-sm text-slate-600 md:text-base">
-          {{ 'auth.register.support.subtitle' | translate }}
-        </p>
-      </div>
-      <div class="mt-8 grid gap-4 md:grid-cols-3">
-        <div class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-left text-sm text-slate-700">
-          <span class="mt-0.5 text-lg">✅</span>
-          <span>{{ 'auth.register.support.items.onboarding' | translate }}</span>
-        </div>
-        <div class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-left text-sm text-slate-700">
-          <span class="mt-0.5 text-lg">🛡️</span>
-          <span>{{ 'auth.register.support.items.security' | translate }}</span>
-        </div>
-        <div class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-left text-sm text-slate-700">
-          <span class="mt-0.5 text-lg">📞</span>
-          <span>{{ 'auth.register.support.items.contact' | translate }}</span>
-        </div>
-      </div>
+      </section>
     </div>
   </div>
 </section>

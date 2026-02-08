@@ -1,4 +1,4 @@
-import './setup';
+﻿import './setup';
 import { expect, test } from '@playwright/test';
 
 interface PageExpectation {
@@ -10,6 +10,12 @@ interface PageExpectation {
 
 const staticPages: readonly PageExpectation[] = [
   {
+    linkSelector: '[data-og7="footer-link-credits"]',
+    urlPart: '/credits',
+    pageAttr: 'credits',
+    headings: ['An ecosystem built together', 'Un ecosysteme construit ensemble'],
+  },
+  {
     linkSelector: '[data-og7="footer-link-faq"]',
     urlPart: '/faq',
     pageAttr: 'faq',
@@ -19,19 +25,19 @@ const staticPages: readonly PageExpectation[] = [
     linkSelector: '[data-og7="footer-link-terms"]',
     urlPart: '/terms',
     pageAttr: 'terms',
-    headings: ['Terms of Service', 'Conditions d’utilisation'],
+    headings: ['Terms of Service', "Conditions d'utilisation"],
   },
   {
     linkSelector: '[data-og7="footer-link-privacy"]',
     urlPart: '/privacy',
     pageAttr: 'privacy',
-    headings: ['Privacy policy', 'Politique de confidentialité'],
+    headings: ['Privacy policy', 'Politique de confidentialite'],
   },
   {
     linkSelector: '[data-og7="footer-link-legal"]',
     urlPart: '/legal',
     pageAttr: 'legal',
-    headings: ['Legal notice', 'Mentions légales'],
+    headings: ['Legal notice', 'Mentions legales'],
   },
 ];
 
@@ -48,7 +54,14 @@ test.describe('Static informational pages', () => {
       const heading = container.locator('h1');
       await expect(heading).toBeVisible();
       const text = (await heading.innerText()).trim();
-      expect(pageExpectation.headings.some(expected => text.includes(expected))).toBeTruthy();
+      const normalized = text.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+
+      expect(
+        pageExpectation.headings.some((expected) => {
+          const normalizedExpected = expected.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+          return normalized.includes(normalizedExpected);
+        }),
+      ).toBeTruthy();
     });
   }
 });

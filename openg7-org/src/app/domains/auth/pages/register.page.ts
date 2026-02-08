@@ -1,6 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthConfigService } from '@app/core/auth/auth-config.service';
 import { AuthRedirectService } from '@app/core/auth/auth-redirect.service';
@@ -36,11 +42,55 @@ export class RegisterPage implements OnInit {
   protected readonly apiError = signal<string | null>(null);
   protected readonly authMode = this.authConfig.authMode;
   protected readonly redirectTarget = signal('/profile');
-
-  protected readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+  protected readonly passwordVisible = signal(false);
+  protected readonly confirmPasswordVisible = signal(false);
+  protected readonly passwordStrengthScore = signal(0);
+  protected readonly passwordStrengthLabelKey = computed(() => {
+    switch (this.passwordStrengthScore()) {
+      case 3:
+        return 'auth.register.form.passwordStrength.strong';
+      case 2:
+        return 'auth.register.form.passwordStrength.medium';
+      default:
+        return 'auth.register.form.passwordStrength.weak';
+    }
   });
+  protected readonly passwordStrengthPercent = computed(() => {
+    const score = this.passwordStrengthScore();
+    if (score <= 0) {
+      return 10;
+    }
+    return score * 33.3333;
+  });
+  protected readonly passwordStrengthBarColor = computed(() => {
+    switch (this.passwordStrengthScore()) {
+      case 3:
+        return 'var(--og7-color-success)';
+      case 2:
+        return 'var(--og7-color-warning)';
+      default:
+        return 'var(--og7-color-error)';
+    }
+  });
+  protected readonly passwordStrengthLabelColor = computed(() => {
+    switch (this.passwordStrengthScore()) {
+      case 3:
+        return 'var(--og7-color-success)';
+      case 2:
+        return 'var(--og7-color-warning)';
+      default:
+        return 'var(--og7-color-error)';
+    }
+  });
+
+  protected readonly form = this.fb.nonNullable.group(
+    {
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(10)]],
+      confirmPassword: ['', Validators.required],
+    },
+    { validators: this.passwordsMatchValidator }
+  );
 
   ngOnInit(): void {
     const redirectParam = this.route.snapshot.queryParamMap.get('redirect');
@@ -64,7 +114,8 @@ export class RegisterPage implements OnInit {
     this.apiError.set(null);
     this.loading.set(true);
 
-    const payload = this.form.getRawValue();
+    const { email, password } = this.form.getRawValue();
+    const payload = { email, password };
 
     this.auth
       .register(payload)
@@ -75,7 +126,10 @@ export class RegisterPage implements OnInit {
             source: 'auth',
             metadata: { action: 'register' },
           });
-          this.form.reset({ email: '', password: '' });
+          this.form.reset({ email: '', password: '', confirmPassword: '' });
+          this.passwordStrengthScore.set(0);
+          this.passwordVisible.set(false);
+          this.confirmPasswordVisible.set(false);
           const destination = this.authRedirect.consumeRedirectUrl('/profile');
           void this.router.navigateByUrl(destination);
         },
@@ -89,6 +143,55 @@ export class RegisterPage implements OnInit {
           });
         },
       });
+  }
+
+  protected togglePasswordVisibility(): void {
+    this.passwordVisible.update((value) => !value);
+  }
+
+  protected toggleConfirmPasswordVisibility(): void {
+    this.confirmPasswordVisible.update((value) => !value);
+  }
+
+  protected onPasswordInput(): void {
+    const password = this.form.controls.password.value ?? '';
+    this.passwordStrengthScore.set(this.calculatePasswordStrength(password));
+    this.form.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private passwordsMatchValidator(
+    group: AbstractControl
+  ): ValidationErrors | null {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+
+    if (!confirmPassword) {
+      return null;
+    }
+
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
+
+  private calculatePasswordStrength(password: string): number {
+    if (!password.trim()) {
+      return 0;
+    }
+
+    let score = 0;
+
+    if (password.length >= 10) {
+      score += 1;
+    }
+
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+      score += 1;
+    }
+
+    if (/\d/.test(password) && /[^A-Za-z0-9]/.test(password)) {
+      score += 1;
+    }
+
+    return Math.max(1, Math.min(score, 3));
   }
 
   private resolveErrorMessage(error: unknown): string {

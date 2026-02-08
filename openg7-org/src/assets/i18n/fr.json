@@ -228,9 +228,18 @@
       "submit": "Mettre à jour le mot de passe",
       "loading": "Mise à jour…",
       "success": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter avec les nouveaux identifiants.",
+      "redirecting": "Redirection vers la connexion…",
       "tokenLabel": "Jeton de réinitialisation",
       "tokenRequired": "Un jeton de réinitialisation est requis.",
-      "passwordLabel": "Nouveau mot de passe"
+      "passwordLabel": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "passwordHint": "Utilisez au moins 10 caractères, avec majuscules, chiffres et symbole.",
+      "passwordStrength": {
+        "label": "Niveau de sécurité",
+        "weak": "Faible",
+        "medium": "Moyen",
+        "strong": "Fort"
+      }
     },
     "register": {
       "submit": "Créer un compte",
@@ -282,6 +291,14 @@
         "title": "Identifiez-vous pour démarrer",
         "subtitle": "Nous vérifions chaque demande afin de protéger les données sensibles de l'écosystème.",
         "review": "Chaque inscription est relue manuellement par une cellule habilitée. Vous recevrez un accusé de réception personnalisé.",
+        "confirmPassword": "Confirmer le mot de passe",
+        "passwordHint": "Utilisez au moins 10 caractères, avec majuscules, chiffres et symbole.",
+        "passwordStrength": {
+          "label": "Niveau de sécurité",
+          "weak": "Faible",
+          "medium": "Moyen",
+          "strong": "Fort"
+        },
         "ssoOnly": {
           "title": "Connexion via votre fournisseur d'identité",
           "copy": "Cette instance est configurée en mode SSO. Lancez la procédure depuis votre portail d'entreprise pour rejoindre OpenG7.",
@@ -307,6 +324,9 @@
       "emailRequired": "Le courriel est requis.",
       "emailInvalid": "Veuillez saisir un courriel valide.",
       "passwordRequired": "Le mot de passe est requis.",
+      "passwordMinLength": "Le mot de passe doit contenir au moins 10 caractères.",
+      "confirmPasswordRequired": "La confirmation du mot de passe est requise.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "invalidCredentials": "Identifiants invalides. Vérifiez votre courriel et votre mot de passe.",
       "accountDisabled": "Votre compte est inactif. Contactez votre administrateur pour le réactiver.",
       "accountLocked": "Trop de tentatives. Votre compte est temporairement verrouillé.",
@@ -579,13 +599,59 @@
         "join": "Rejoindre l’initiative",
         "readCharter": "Lire la charte"
       },
+      "stack": {
+        "title": "Propulsé grâce à ces technologies exceptionnelles",
+        "items": {
+          "angular": {
+            "name": "Angular",
+            "caption": "Développé avec Angular"
+          },
+          "ngrx": {
+            "name": "NgRx",
+            "caption": "Gestion d’état avec NgRx"
+          },
+          "ts": {
+            "name": "TypeScript",
+            "caption": "Langage écrit en TypeScript"
+          },
+          "tailwind": {
+            "name": "Tailwind CSS",
+            "caption": "Style avec Tailwind CSS"
+          }
+        }
+      },
+      "methodology": {
+        "kicker": "NOTRE MÉTHODE",
+        "title": "Comment une contribution devient un impact mesurable",
+        "copy": "Nous opérons en boucle courte : écoute terrain, livraison rapide et validation ouverte avec les partenaires publics et privés.",
+        "cta": "Voir la gouvernance",
+        "steps": [
+          {
+            "title": "1. Signaler un besoin concret",
+            "copy": "Les équipes terrain partagent les frictions prioritaires sur les corridors et les chaînes de valeur."
+          },
+          {
+            "title": "2. Co-concevoir la réponse",
+            "copy": "Produit, data et partenaires conçoivent une solution testable en quelques sprints."
+          },
+          {
+            "title": "3. Publier puis mesurer",
+            "copy": "Chaque livraison est suivie d’indicateurs d’adoption, d’impact et de retours qualitatifs."
+          }
+        ]
+      },
       "filters": {
         "reset": "Réinitialiser",
-        "search": "Rechercher un nom, une compétence…"
+        "search": "Rechercher un nom, une compétence…",
+        "searchLabel": "Rechercher un contributeur",
+        "provincesLabel": "Filtrer les contributeurs par province"
       },
       "contributors": {
         "title": "Contributeurs",
         "caption": "Une équipe pluridisciplinaire réunissant produit, données, design et accompagnement.",
+        "count": "{{visible}} sur {{total}} affichés",
+        "emptyTitle": "Aucun contributeur ne correspond à vos filtres",
+        "emptyDescription": "Essayez une autre recherche ou réinitialisez les filtres pour revoir toute l’équipe.",
         "items": [
           {
             "id": "amina",
@@ -893,6 +959,10 @@
       "quickNav": {
         "title": "Naviguer dans la page",
         "description": "Accédez directement à la section recherchée."
+      },
+      "controls": {
+        "expand": "Déplier",
+        "collapse": "Replier"
       },
       "summaryCard": {
         "title": "Confidentialité en bref",
@@ -1644,6 +1714,10 @@
       "toc": {
         "title": "Parcourir les sections"
       },
+      "controls": {
+        "expand": "Déplier",
+        "collapse": "Replier"
+      },
       "obligations": {
         "title": "Obligations communes",
         "items": [
@@ -1826,8 +1900,29 @@
       }
     },
     "legal": {
+      "kicker": "GOUVERNANCE & CONFORMITÉ",
       "title": "Mentions légales",
       "intro": "Informations officielles concernant l’organisme exploitant OpenG7.",
+      "meta": {
+        "title": "Références rapides",
+        "downloadLabel": "Télécharger la version PDF",
+        "downloadHint": "Document de référence pour les audits et validations internes.",
+        "pdfHref": "https://openg7.org/policies/legal-notice.pdf",
+        "items": {
+          "updated": {
+            "label": "Dernière mise à jour",
+            "value": "Septembre 2024"
+          },
+          "version": {
+            "label": "Version",
+            "value": "v2.4"
+          },
+          "jurisdiction": {
+            "label": "Juridiction",
+            "value": "Ontario, Canada"
+          }
+        }
+      },
       "highlights": {
         "registration": {
           "label": "Statut juridique",
@@ -1883,9 +1978,19 @@
           ]
         }
       },
+      "toc": {
+        "title": "Sommaire",
+        "description": "Accédez directement aux rubriques juridiques principales."
+      },
+      "controls": {
+        "expand": "Déplier",
+        "collapse": "Replier"
+      },
       "contact": {
         "title": "Contacter l’équipe conformité",
         "description": "Nos responsables répondent aux notifications officielles, demandes d’accès et signalements de sécurité.",
+        "copy": "Copier",
+        "copied": "Copié",
         "channels": {
           "legal": {
             "label": "Cellule juridique",
@@ -1918,6 +2023,11 @@
       "kicker": "SOUTIEN & CONFIANCE",
       "title": "Foire aux questions",
       "intro": "Retrouvez les réponses aux questions les plus fréquentes des organisations rejoignant OpenG7.",
+      "topQuestions": {
+        "title": "Top 5 des questions",
+        "description": "Commencez par les sujets les plus consultés par les nouvelles organisations.",
+        "badge": "Top"
+      },
       "cta": {
         "title": "Besoin d’une réponse rapide ?",
         "description": "L’équipe concierge vous aide à cadrer intégrations, embarquement ou questions de partenariat.",
@@ -1931,12 +2041,27 @@
       "search": {
         "label": "Recherche",
         "placeholder": "Rechercher par question ou mot-clé",
+        "clear": "Effacer",
         "results": "Résultats : {{count}}",
         "noResults": {
           "title": "Aucun résultat ne correspond à votre recherche",
           "description": "Essayez d’autres mots-clés ou contactez l’équipe concierge pour obtenir une réponse personnalisée.",
-          "button": "Contacter l’équipe concierge"
+          "button": "Contacter l’équipe concierge",
+          "clear": "Réinitialiser la recherche"
         }
+      },
+      "categories": {
+        "all": "Toutes",
+        "platform": "Plateforme",
+        "data": "Données",
+        "pricing": "Tarifs",
+        "support": "Support",
+        "partners": "Partenaires"
+      },
+      "controls": {
+        "expandAll": "Tout ouvrir",
+        "collapseAll": "Tout fermer",
+        "clearSearch": "Effacer la recherche"
       },
       "contact": {
         "title": "Vous cherchez quelque chose de plus précis ?",
@@ -1945,6 +2070,15 @@
         "phoneLabel": "Nous appeler",
         "hours": "Disponibles du lundi au vendredi, 9 h à 18 h (HE)",
         "sla": "Première réponse sous un jour ouvrable"
+      },
+      "feedback": {
+        "prompt": "Cette réponse vous aide ?",
+        "yes": "Oui",
+        "no": "Pas encore",
+        "thanks": {
+          "yes": "Parfait, merci pour votre retour.",
+          "no": "Merci, nous améliorerons cette réponse."
+        }
       },
       "items": {
         "platform": {

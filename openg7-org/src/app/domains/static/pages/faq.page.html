@@ -1,53 +1,49 @@
 <section
   data-og7="static-page"
   data-og7-page="faq"
-  class="og7-page og7-page--static space-y-12"
+  class="og7-page og7-page--static relative isolate overflow-hidden"
 >
-  <header class="grid gap-8 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur md:grid-cols-[minmax(0,1fr)_320px]">
-    <div class="space-y-4">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-200">
-        {{ 'pages.faq.kicker' | translate }}
-      </p>
-      <h1 class="og7-page__title text-balance text-4xl font-semibold md:text-5xl">
-        {{ 'pages.faq.title' | translate }}
-      </h1>
-      <p class="og7-page__intro text-lg text-subtle md:text-xl">
-        {{ 'pages.faq.intro' | translate }}
-      </p>
-    </div>
-    <div class="surface-strong flex h-full flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-      <div class="space-y-2">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-primary-200">
-          {{ 'pages.faq.cta.title' | translate }}
-        </h2>
-        <p class="text-body text-sm leading-relaxed">
-          {{ 'pages.faq.cta.description' | translate }}
+  <div aria-hidden="true" class="og7-static-backdrop">
+    <div class="og7-static-backdrop__aurora"></div>
+    <div class="og7-static-backdrop__stars"></div>
+    <div class="og7-static-backdrop__veil"></div>
+  </div>
+
+  <div class="relative z-10 og7-static-shell og7-static-flow">
+    <span id="sso" class="sr-only"></span>
+
+    <header class="og7-static-hero grid gap-8 p-6 md:grid-cols-[minmax(0,1fr)_360px] md:p-8">
+      <div class="space-y-4">
+        <p class="og7-static-kicker text-xs font-semibold uppercase tracking-[0.32em]">
+          {{ 'pages.faq.kicker' | translate }}
+        </p>
+        <h1
+          class="og7-page__title og7-static-title text-balance text-4xl font-semibold md:text-5xl"
+        >
+          {{ 'pages.faq.title' | translate }}
+        </h1>
+        <p class="og7-page__intro og7-static-intro text-base md:text-lg">
+          {{ 'pages.faq.intro' | translate }}
         </p>
       </div>
-      <div class="space-y-2">
-        <a
-          class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-          [href]="'mailto:' + supportEmail"
+
+      <div
+        data-og7="faq-search"
+        class="og7-static-card og7-static-card--muted space-y-4 rounded-2xl p-5"
+      >
+        <label
+          class="og7-static-kicker block text-xs font-semibold uppercase tracking-[0.3em]"
+          [attr.for]="searchFieldId"
         >
-          {{ 'pages.faq.cta.button' | translate }}
-        </a>
-        <p class="text-xs text-muted">{{ 'pages.faq.cta.responseTime' | translate }}</p>
-      </div>
-    </div>
-  </header>
-  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
-    @let filtered = filteredItems;
-    <article class="og7-page__content space-y-8">
-      <div class="space-y-3 rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur">
-        <label class="block text-xs font-semibold uppercase tracking-[0.3em] text-primary-200" [attr.for]="searchFieldId">
           {{ 'pages.faq.search.label' | translate }}
         </label>
+
         <div class="relative">
           <span
             aria-hidden="true"
-            class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm text-muted"
+            class="pointer-events-none absolute inset-y-0 left-4 inline-flex items-center text-xs font-semibold text-subtle"
           >
-            ⌕
+            FIND
           </span>
           <input
             [id]="searchFieldId"
@@ -55,108 +51,331 @@
             inputmode="search"
             name="faq-search"
             autocomplete="off"
-            [value]="query"
-            (input)="onQueryChange($any($event.target).value)"
-            class="w-full rounded-2xl border border-white/10 bg-slate-950/70 py-2 pl-11 pr-4 text-sm text-white placeholder:text-muted focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400/60"
+            [value]="queryDraft()"
+            (input)="onQueryInput($any($event.target).value)"
+            class="og7-static-input w-full py-2.5 pl-16 pr-24 text-sm"
             [attr.placeholder]="'pages.faq.search.placeholder' | translate"
-            [attr.aria-describedby]="query.trim().length ? 'faq-search-hint' : null"
+            [attr.aria-describedby]="hasQuery() ? 'faq-search-hint' : null"
           />
+          @if (queryDraft().trim().length) {
+          <button
+            type="button"
+            class="absolute inset-y-1 right-1 inline-flex items-center rounded-xl border border-[color:var(--og7-color-border)] bg-surface px-3 text-xs font-semibold text-body transition hover:border-primary hover:bg-surface-muted"
+            (click)="clearQuery()"
+            data-og7="faq-search-clear"
+          >
+            {{ 'pages.faq.search.clear' | translate }}
+          </button>
+          }
         </div>
-        @if (query.trim().length) {
-          <p id="faq-search-hint" class="text-xs text-muted">
-            {{ 'pages.faq.search.results' | translate: { count: filtered.length } }}
+
+        <p id="faq-search-hint" class="og7-static-note text-xs" data-og7="faq-search-results">
+          {{ 'pages.faq.search.results' | translate: { count: filteredEntries().length } }}
+        </p>
+      </div>
+    </header>
+
+    <section data-og7="faq-top-questions" class="og7-static-card space-y-4 rounded-3xl p-6">
+      <div class="space-y-1">
+        <p class="og7-static-kicker text-xs font-semibold uppercase tracking-[0.28em]">
+          {{ 'pages.faq.topQuestions.title' | translate }}
+        </p>
+        <p class="text-sm text-subtle">{{ 'pages.faq.topQuestions.description' | translate }}</p>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        @for (entry of topEntries(); track entry.key) {
+        <a
+          class="og7-static-nav-link group flex-col items-start rounded-2xl border border-[color:var(--og7-color-border)] bg-surface-muted px-4 py-3"
+          [href]="'#faq-' + entry.key"
+          (click)="selectTopQuestion(entry.key)"
+          data-og7="faq-top-question"
+          [attr.data-og7-id]="entry.key"
+        >
+          <p class="og7-static-kicker text-[0.7rem] font-semibold uppercase tracking-[0.2em]">
+            {{ 'pages.faq.topQuestions.badge' | translate }} {{ $index + 1 }}
           </p>
+          <p class="mt-1 text-sm font-medium text-title transition">{{ entry.question }}</p>
+        </a>
         }
       </div>
-      <ng-container *ngIf="filtered.length; else noResults">
-        <dl class="space-y-6">
-          <div
-            *ngFor="let item of filtered"
-            class="space-y-4 rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-sm backdrop-blur"
-          >
-            <dt [attr.id]="'faq-' + item" class="scroll-mt-28 text-2xl font-semibold text-white">
-              {{ 'pages.faq.items.' + item + '.question' | translate }}
-            </dt>
-            <dd class="space-y-3 text-body">
-              <p *ngFor="let answer of answers(item)" class="leading-relaxed">
-                {{ answer }}
+    </section>
+
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+      @let filtered = filteredEntries();
+
+      <article class="space-y-5">
+        <section data-og7="faq-categories" class="og7-static-card space-y-4 rounded-3xl p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-primary">
+                {{ 'pages.faq.quickNav.title' | translate }}
               </p>
-              <ul *ngIf="bullets(item).length" class="list-disc space-y-2 pl-6">
-                <li *ngFor="let entry of bullets(item)" class="leading-relaxed">{{ entry }}</li>
-              </ul>
-            </dd>
+              <p class="text-xs text-subtle">{{ 'pages.faq.quickNav.description' | translate }}</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                class="og7-static-action-secondary rounded-xl px-3 py-2 text-xs uppercase tracking-wide"
+                (click)="toggleVisibleItems()"
+                data-og7="faq-toggle-visible"
+              >
+                {{ (allVisibleExpanded() ? 'pages.faq.controls.collapseAll' :
+                'pages.faq.controls.expandAll') | translate }}
+              </button>
+              @if (hasQuery()) {
+              <button
+                type="button"
+                class="og7-static-action-secondary rounded-xl px-3 py-2 text-xs uppercase tracking-wide"
+                (click)="clearQuery()"
+                data-og7="faq-clear-search"
+              >
+                {{ 'pages.faq.controls.clearSearch' | translate }}
+              </button>
+              }
+            </div>
           </div>
-        </dl>
-      </ng-container>
-      <ng-template #noResults>
-        <div class="space-y-4 rounded-3xl border border-primary-300/40 bg-primary-500/10 p-6 text-sm text-body">
-          <p class="text-base font-semibold text-white">
+
+          <div class="flex flex-wrap gap-2" role="tablist" aria-label="FAQ categories">
+            @for (category of categories; track category) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="isCategoryActive(category)"
+              (click)="setCategory(category)"
+              class="og7-static-chip"
+              [class.is-active]="isCategoryActive(category)"
+              data-og7="faq-category"
+              [attr.data-og7-id]="category"
+            >
+              {{ ('pages.faq.categories.' + category) | translate }}
+            </button>
+            }
+          </div>
+        </section>
+
+        @if (filtered.length) {
+        <section data-og7="faq-accordion" class="space-y-4">
+          @for (entry of filtered; track entry.key) { @let expanded = isItemExpanded(entry.key);
+
+          <article
+            [attr.id]="'faq-' + entry.key"
+            data-og7="faq-item"
+            [attr.data-og7-id]="entry.key"
+            class="og7-static-section og7-static-fade-in rounded-3xl p-5"
+          >
+            <h2>
+              <button
+                type="button"
+                class="flex w-full items-start justify-between gap-4 text-left"
+                (click)="toggleItem(entry.key)"
+                [attr.aria-expanded]="expanded"
+                [attr.aria-controls]="'faq-panel-' + entry.key"
+              >
+                <span class="text-lg font-semibold leading-snug text-title sm:text-xl">
+                  @for (part of highlightParts(entry.question); track $index) { @if (part.matched) {
+                  <mark class="rounded bg-[color:var(--og7-color-primary-soft)] px-0.5 text-primary"
+                    >{{ part.text }}</mark
+                  >
+                  } @else {
+                  <span>{{ part.text }}</span>
+                  } }
+                </span>
+                <span
+                  aria-hidden="true"
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--og7-color-border)] text-base font-semibold text-subtle"
+                >
+                  {{ expanded ? '-' : '+' }}
+                </span>
+              </button>
+            </h2>
+
+            @if (expanded) {
+            <div [id]="'faq-panel-' + entry.key" class="mt-4 space-y-4 text-sm text-body">
+              <div class="space-y-3">
+                @for (answer of entry.answers; track $index) {
+                <p class="leading-relaxed">
+                  @for (part of highlightParts(answer); track $index) { @if (part.matched) {
+                  <mark class="rounded bg-[color:var(--og7-color-primary-soft)] px-0.5 text-primary"
+                    >{{ part.text }}</mark
+                  >
+                  } @else {
+                  <span>{{ part.text }}</span>
+                  } }
+                </p>
+                }
+              </div>
+
+              @if (entry.bullets.length) {
+              <ul class="space-y-2 pl-5">
+                @for (bullet of entry.bullets; track $index) {
+                <li class="list-disc leading-relaxed">
+                  @for (part of highlightParts(bullet); track $index) { @if (part.matched) {
+                  <mark class="rounded bg-[color:var(--og7-color-primary-soft)] px-0.5 text-primary"
+                    >{{ part.text }}</mark
+                  >
+                  } @else {
+                  <span>{{ part.text }}</span>
+                  } }
+                </li>
+                }
+              </ul>
+              }
+
+              <div
+                data-og7="faq-feedback"
+                [attr.data-og7-id]="entry.key"
+                class="og7-static-card og7-static-card--muted space-y-3 rounded-2xl px-4 py-3"
+              >
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <p class="text-xs font-semibold uppercase tracking-[0.2em] text-subtle">
+                    {{ 'pages.faq.feedback.prompt' | translate }}
+                  </p>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="og7-static-chip"
+                      [class.is-active]="feedback(entry.key) === 'yes'"
+                      (click)="setFeedback(entry.key, 'yes')"
+                    >
+                      {{ 'pages.faq.feedback.yes' | translate }}
+                    </button>
+                    <button
+                      type="button"
+                      class="og7-static-chip"
+                      [class.is-active]="feedback(entry.key) === 'no'"
+                      (click)="setFeedback(entry.key, 'no')"
+                    >
+                      {{ 'pages.faq.feedback.no' | translate }}
+                    </button>
+                  </div>
+                </div>
+
+                @if (feedback(entry.key); as vote) {
+                <p class="og7-static-note text-xs">
+                  {{ ('pages.faq.feedback.thanks.' + vote) | translate }}
+                </p>
+                }
+              </div>
+            </div>
+            }
+          </article>
+          }
+        </section>
+        } @else {
+        <section
+          class="og7-static-card og7-static-card--accent space-y-4 rounded-3xl p-6 text-sm"
+          data-og7="faq-no-results"
+        >
+          <p class="text-base font-semibold text-title">
             {{ 'pages.faq.search.noResults.title' | translate }}
           </p>
-          <p class="leading-relaxed">
+          <p class="leading-relaxed text-body">
             {{ 'pages.faq.search.noResults.description' | translate }}
           </p>
-          <a
-            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-primary-200 hover:bg-primary-50/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-300"
-            [href]="'mailto:' + supportEmail"
-          >
-            {{ 'pages.faq.search.noResults.button' | translate }}
-          </a>
-        </div>
-      </ng-template>
-    </article>
-    <aside class="space-y-6">
-      <div class="surface-soft space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-base font-semibold text-white">{{ 'pages.faq.quickNav.title' | translate }}</h2>
-        <p class="text-sm text-muted">{{ 'pages.faq.quickNav.description' | translate }}</p>
-        @if (filtered.length) {
+          <div class="flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="og7-static-action-secondary rounded-xl px-4 py-2 text-sm"
+              (click)="clearQuery()"
+            >
+              {{ 'pages.faq.search.noResults.clear' | translate }}
+            </button>
+            <a
+              class="og7-static-action-secondary inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm"
+              [href]="'mailto:' + supportEmail"
+            >
+              {{ 'pages.faq.search.noResults.button' | translate }}
+            </a>
+          </div>
+        </section>
+        }
+      </article>
+
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <section data-og7="faq-quick-nav" class="og7-static-card space-y-4 rounded-3xl p-5">
+          <h2 class="text-base font-semibold text-title">
+            {{ 'pages.faq.quickNav.title' | translate }}
+          </h2>
+          <p class="text-sm text-subtle">{{ 'pages.faq.quickNav.description' | translate }}</p>
+
+          @if (filtered.length) {
           <nav>
             <ul class="space-y-2 text-sm">
-              <li *ngFor="let item of filtered">
+              @for (entry of filtered; track entry.key) {
+              <li>
                 <a
-                  class="flex items-center justify-between gap-4 rounded-2xl border border-transparent px-3 py-2 text-left text-body transition hover:border-primary-200 hover:bg-primary-50/20 hover:text-white"
-                  [href]="'#faq-' + item"
+                  class="og7-static-nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2"
+                  [href]="'#faq-' + entry.key"
                 >
-                  <span>{{ 'pages.faq.items.' + item + '.question' | translate }}</span>
-                  <span aria-hidden="true" class="text-xs text-muted">→</span>
+                  <span class="line-clamp-2">{{ entry.question }}</span>
+                  <span aria-hidden="true" class="text-xs text-subtle">-&gt;</span>
                 </a>
               </li>
+              }
             </ul>
           </nav>
-        } @else {
-          <p class="text-sm text-muted">{{ 'pages.faq.search.noResults.description' | translate }}</p>
-        }
-      </div>
-      <div class="surface-strong space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-base font-semibold text-white">{{ 'pages.faq.contact.title' | translate }}</h2>
-        <p class="text-sm leading-relaxed text-body">{{ 'pages.faq.contact.description' | translate }}</p>
-        <div class="space-y-3 text-sm">
+          } @else {
+          <p class="text-sm text-subtle">
+            {{ 'pages.faq.search.noResults.description' | translate }}
+          </p>
+          }
+        </section>
+
+        <section
+          id="auth-support"
+          data-og7="faq-contact"
+          class="og7-static-card og7-static-card--muted space-y-4 rounded-3xl p-5"
+        >
+          <h2 class="text-base font-semibold text-title">
+            {{ 'pages.faq.contact.title' | translate }}
+          </h2>
+          <p class="text-sm leading-relaxed text-subtle">
+            {{ 'pages.faq.contact.description' | translate }}
+          </p>
+
+          <div class="space-y-3 text-sm">
+            <a
+              class="og7-static-nav-link flex items-start justify-between gap-3 rounded-2xl border border-[color:var(--og7-color-border)] bg-surface p-4"
+              [href]="'mailto:' + supportEmail"
+            >
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-wide text-subtle">
+                  {{ 'pages.faq.contact.emailLabel' | translate }}
+                </span>
+                <span class="mt-1 block text-base font-semibold text-title"
+                  >{{ supportEmail }}</span
+                >
+              </span>
+              <span class="text-xs text-subtle">{{ 'pages.faq.contact.sla' | translate }}</span>
+            </a>
+
+            <a
+              class="og7-static-nav-link flex items-start justify-between gap-3 rounded-2xl border border-[color:var(--og7-color-border)] bg-surface p-4"
+              [href]="'tel:' + supportPhoneHref"
+            >
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-wide text-subtle">
+                  {{ 'pages.faq.contact.phoneLabel' | translate }}
+                </span>
+                <span class="mt-1 block text-base font-semibold text-title"
+                  >{{ supportPhone }}</span
+                >
+              </span>
+              <span class="text-xs text-subtle">{{ 'pages.faq.contact.hours' | translate }}</span>
+            </a>
+          </div>
+
           <a
-            class="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-primary-200 hover:bg-primary-50/20"
+            class="og7-static-action-primary inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm"
             [href]="'mailto:' + supportEmail"
+            data-og7="faq-contact-cta"
           >
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-wide text-primary-200">
-                {{ 'pages.faq.contact.emailLabel' | translate }}
-              </span>
-              <span class="mt-1 block text-base font-semibold text-white">{{ supportEmail }}</span>
-            </span>
-            <span class="text-xs text-muted">{{ 'pages.faq.contact.sla' | translate }}</span>
+            {{ 'pages.faq.cta.button' | translate }}
           </a>
-          <a
-            class="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-primary-200 hover:bg-primary-50/20"
-            [href]="'tel:' + supportPhoneHref"
-          >
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-wide text-primary-200">
-                {{ 'pages.faq.contact.phoneLabel' | translate }}
-              </span>
-              <span class="mt-1 block text-base font-semibold text-white">{{ supportPhone }}</span>
-            </span>
-            <span class="text-xs text-muted">{{ 'pages.faq.contact.hours' | translate }}</span>
-          </a>
-        </div>
-      </div>
-    </aside>
+        </section>
+      </aside>
+    </div>
   </div>
 </section>

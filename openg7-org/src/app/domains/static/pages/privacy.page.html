@@ -1,139 +1,194 @@
 <section
   data-og7="static-page"
   data-og7-page="privacy"
-  class="og7-page og7-page--static space-y-12"
+  class="og7-page og7-page--static relative isolate overflow-hidden"
 >
-  <header
-    class="grid gap-8 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur lg:grid-cols-[minmax(0,1fr)_320px]"
-  >
-    <div class="space-y-6">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-200">
-        {{ 'pages.privacy.kicker' | translate }}
-      </p>
-      <h1 class="og7-page__title text-balance text-4xl font-semibold md:text-5xl">
-        {{ 'pages.privacy.title' | translate }}
-      </h1>
-      <p class="og7-page__intro text-lg text-subtle md:text-xl">
-        {{ 'pages.privacy.intro' | translate }}
-      </p>
-      <p class="text-body text-base leading-relaxed">
-        {{ 'pages.privacy.hero.supporting' | translate }}
-      </p>
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <a
-          class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-          [href]="'mailto:' + contactEmail()"
-        >
-          {{ 'pages.privacy.hero.ctaLabel' | translate }}
-        </a>
-        <p class="text-sm text-muted sm:ml-4 sm:text-left">
-          {{ 'pages.privacy.hero.ctaDescription' | translate }}
+  <div aria-hidden="true" class="og7-static-backdrop">
+    <div class="og7-static-backdrop__aurora"></div>
+    <div class="og7-static-backdrop__stars"></div>
+    <div class="og7-static-backdrop__veil"></div>
+  </div>
+
+  <div class="relative z-10 og7-static-shell og7-static-flow">
+    <header class="og7-static-hero grid gap-8 p-8 backdrop-blur lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div class="space-y-6">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-tertiary">
+          {{ 'pages.privacy.kicker' | translate }}
         </p>
-      </div>
-    </div>
-    <div class="space-y-4 rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-      <div class="space-y-1">
-        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-200">
-          {{ 'pages.privacy.hero.badge' | translate }}
+        <h1 class="og7-page__title text-title text-balance text-4xl font-semibold md:text-5xl">
+          {{ 'pages.privacy.title' | translate }}
+        </h1>
+        <p class="og7-page__intro text-lg text-subtle md:text-xl">
+          {{ 'pages.privacy.intro' | translate }}
         </p>
-        <p class="text-xs text-muted">{{ 'pages.privacy.hero.updated' | translate }}</p>
-      </div>
-      <ul class="space-y-4">
-        <li
-          *ngFor="let item of highlights()"
-          class="space-y-2 rounded-2xl border border-white/5 bg-white/[0.04] p-4 shadow-sm"
-        >
-          <h3 class="text-sm font-semibold text-white">{{ item.title }}</h3>
-          <p class="text-sm leading-relaxed text-body">{{ item.description }}</p>
-        </li>
-      </ul>
-    </div>
-  </header>
-  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
-    <article class="og7-page__content space-y-8">
-      <section
-        *ngFor="let section of sections; let index = index; trackBy: trackBySection"
-        [attr.id]="sectionAnchor(section)"
-        class="space-y-4 rounded-3xl border border-white/10 bg-white/[0.04] p-8 shadow-sm backdrop-blur"
-      >
-        <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-          <span
-            aria-hidden="true"
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-lg font-semibold text-white shadow-lg"
-            [ngClass]="section.accent"
+        <p class="text-body text-base leading-relaxed">
+          {{ 'pages.privacy.hero.supporting' | translate }}
+        </p>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <a
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            [href]="'mailto:' + contactEmail()"
           >
-            {{ index + 1 }}
-          </span>
-          <div class="space-y-2">
-            <h2 class="scroll-mt-28 text-2xl font-semibold text-white">
-              {{ 'pages.privacy.sections.' + section.key + '.title' | translate }}
-            </h2>
-            <p class="text-sm text-muted">
-              {{ 'pages.privacy.hero.updated' | translate }}
-            </p>
-          </div>
-        </header>
-        <div class="space-y-4 text-body">
-          <p *ngFor="let paragraph of paragraphs(section.key)" class="leading-relaxed">
-            {{ paragraph }}
+            {{ 'pages.privacy.hero.ctaLabel' | translate }}
+          </a>
+          <p class="text-sm text-subtle sm:ml-4 sm:text-left">
+            {{ 'pages.privacy.hero.ctaDescription' | translate }}
           </p>
-          <ul *ngIf="bullets(section.key).length" class="list-disc space-y-2 pl-6">
-            <li *ngFor="let item of bullets(section.key)" class="leading-relaxed">{{ item }}</li>
-          </ul>
         </div>
-      </section>
-    </article>
-    <aside class="space-y-6">
-      <div class="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-base font-semibold text-white">{{ 'pages.privacy.quickNav.title' | translate }}</h2>
-        <p class="text-sm text-muted">{{ 'pages.privacy.quickNav.description' | translate }}</p>
-        <nav>
-          <ul class="space-y-2 text-sm">
-            <li *ngFor="let section of sections; trackBy: trackBySection">
-              <a
-                class="flex items-center justify-between gap-3 rounded-2xl border border-transparent px-3 py-2 text-left text-body transition hover:border-primary-200 hover:bg-primary-50/20 hover:text-white"
-                [href]="'#' + sectionAnchor(section)"
-              >
-                <span>{{ 'pages.privacy.sections.' + section.key + '.title' | translate }}</span>
-                <span aria-hidden="true" class="text-xs text-muted">→</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
       </div>
-      <div class="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-6">
-        <div class="space-y-2">
-          <h2 class="text-base font-semibold text-white">{{ 'pages.privacy.summaryCard.title' | translate }}</h2>
-          <p class="text-sm text-muted">{{ 'pages.privacy.summaryCard.description' | translate }}</p>
+      <div class="og7-static-card og7-static-card--muted space-y-4 p-6">
+        <div class="space-y-1">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-tertiary">
+            {{ 'pages.privacy.hero.badge' | translate }}
+          </p>
+          <p class="text-xs text-subtle">{{ 'pages.privacy.hero.updated' | translate }}</p>
         </div>
         <ul class="space-y-4">
           <li
-            *ngFor="let item of summaryItems(); let isLast = last"
-            class="space-y-1 border-l border-white/10 pl-4 pb-4"
-            [class.pb-0]="isLast"
+            *ngFor="let item of highlights()"
+            class="og7-static-card og7-static-fade-in space-y-2 rounded-2xl p-4"
           >
-            <p class="text-sm font-semibold text-white">{{ item.label }}</p>
+            <h3 class="text-sm font-semibold text-title">{{ item.title }}</h3>
             <p class="text-sm leading-relaxed text-body">{{ item.description }}</p>
           </li>
         </ul>
       </div>
-      <div class="space-y-4 rounded-3xl border border-white/10 bg-slate-950/70 p-6">
-        <h2 class="text-base font-semibold text-white">{{ 'pages.privacy.contactCard.title' | translate }}</h2>
-        <p class="text-sm leading-relaxed text-body">{{ 'pages.privacy.contactCard.description' | translate }}</p>
-        <a
-          class="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-left transition hover:border-primary-200 hover:bg-primary-50/20"
-          [href]="'mailto:' + contactEmail()"
+    </header>
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <article class="og7-page__content space-y-8">
+        <section
+          *ngFor="let section of sections; let index = index; trackBy: trackBySection"
+          [attr.id]="sectionAnchor(section)"
+          [ngClass]="isSectionActive(section) ? 'border-primary shadow-md' : ''"
+          class="og7-static-section space-y-4 rounded-3xl p-8 backdrop-blur"
         >
-          <span>
-            <span class="block text-xs font-semibold uppercase tracking-wide text-primary-200">
-              {{ 'pages.privacy.contactEmailLabel' | translate }}
+          <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+            <span
+              aria-hidden="true"
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-lg font-semibold text-title shadow-lg"
+              [ngClass]="section.accent"
+            >
+              {{ index + 1 }}
             </span>
-            <span class="mt-1 block text-base font-semibold text-white">{{ contactEmail() }}</span>
-          </span>
-          <span aria-hidden="true" class="text-xl text-primary-200">✉️</span>
-        </a>
-        <p class="text-xs text-muted">{{ 'pages.privacy.contactCard.meta' | translate }}</p>
-      </div>
-    </aside>
+            <div class="space-y-2 sm:flex-1">
+              <div class="flex items-start justify-between gap-4">
+                <h2 class="scroll-mt-28 text-2xl font-semibold text-title">
+                  {{ 'pages.privacy.sections.' + section.key + '.title' | translate }}
+                </h2>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-xl border border-[color:var(--og7-color-border)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-subtle transition hover:border-primary hover:text-title md:hidden"
+                  [attr.aria-controls]="sectionAnchor(section) + '-content'"
+                  [attr.aria-expanded]="isSectionExpanded(section)"
+                  (click)="toggleSection(section)"
+                >
+                  {{ (isSectionExpanded(section) ? 'pages.privacy.controls.collapse' :
+                  'pages.privacy.controls.expand' ) | translate }}
+                </button>
+              </div>
+            </div>
+          </header>
+          <div
+            [attr.id]="sectionAnchor(section) + '-content'"
+            class="space-y-4 text-body"
+            [class.hidden]="mobileView() && !isSectionExpanded(section)"
+          >
+            <p *ngFor="let paragraph of paragraphs(section.key)" class="leading-relaxed">
+              {{ paragraph }}
+            </p>
+            <ul *ngIf="bullets(section.key).length" class="list-disc space-y-2 pl-6">
+              <li *ngFor="let item of bullets(section.key)" class="leading-relaxed">{{ item }}</li>
+            </ul>
+          </div>
+        </section>
+      </article>
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <div class="og7-static-card space-y-4 rounded-3xl p-6">
+          <h2 class="text-base font-semibold text-title">
+            {{ 'pages.privacy.quickNav.title' | translate }}
+          </h2>
+          <p class="text-sm text-subtle">{{ 'pages.privacy.quickNav.description' | translate }}</p>
+          <nav>
+            <ul class="space-y-2 text-sm">
+              <li *ngFor="let section of sections; trackBy: trackBySection">
+                <a
+                  class="og7-static-nav-link flex items-center justify-between gap-3 rounded-2xl border px-3 py-2 text-left transition"
+                  [ngClass]="
+                  isSectionActive(section)
+                    ? 'is-active border-primary bg-[color:var(--og7-color-primary-soft)] text-title'
+                    : 'border-transparent text-body hover:border-primary hover:bg-[color:var(--og7-color-primary-soft)] hover:text-title'
+                "
+                  [href]="'#' + sectionAnchor(section)"
+                  [attr.aria-current]="isSectionActive(section) ? 'true' : null"
+                  (click)="setActiveSection(section)"
+                >
+                  <span>{{ 'pages.privacy.sections.' + section.key + '.title' | translate }}</span>
+                  <span
+                    aria-hidden="true"
+                    class="text-xs"
+                    [ngClass]="isSectionActive(section) ? 'text-primary' : 'text-subtle'"
+                  >
+                    ->
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="og7-static-card space-y-5 rounded-3xl p-6">
+          <div class="space-y-2">
+            <h2 class="text-base font-semibold text-title">
+              {{ 'pages.privacy.summaryCard.title' | translate }}
+            </h2>
+            <p class="text-sm text-subtle">
+              {{ 'pages.privacy.summaryCard.description' | translate }}
+            </p>
+          </div>
+          <ul class="space-y-4">
+            <li
+              *ngFor="let item of summaryItems(); let isLast = last"
+              class="space-y-1 border-l border-[color:var(--og7-color-border)] pl-4 pb-4"
+              [class.pb-0]="isLast"
+            >
+              <p class="text-sm font-semibold text-title">{{ item.label }}</p>
+              <p class="text-sm leading-relaxed text-body">{{ item.description }}</p>
+            </li>
+          </ul>
+        </div>
+        <div class="og7-static-card og7-static-card--muted space-y-4 rounded-3xl p-6">
+          <h2 class="text-base font-semibold text-title">
+            {{ 'pages.privacy.contactCard.title' | translate }}
+          </h2>
+          <p class="text-sm leading-relaxed text-body">
+            {{ 'pages.privacy.contactCard.description' | translate }}
+          </p>
+          <a
+            class="flex items-center justify-between gap-4 rounded-2xl border border-[color:var(--og7-color-border)] bg-surface px-4 py-3 text-left transition hover:border-primary hover:bg-[color:var(--og7-color-primary-soft)]"
+            [href]="'mailto:' + contactEmail()"
+          >
+            <span>
+              <span class="block text-xs font-semibold uppercase tracking-wide text-tertiary">
+                {{ 'pages.privacy.contactEmailLabel' | translate }}
+              </span>
+              <span class="mt-1 block text-base font-semibold text-title"
+                >{{ contactEmail() }}</span
+              >
+            </span>
+            <svg
+              aria-hidden="true"
+              class="h-5 w-5 shrink-0 text-tertiary"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M4 6h16v12H4z" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="m4 8 8 6 8-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+          <p class="text-xs text-subtle">{{ 'pages.privacy.contactCard.meta' | translate }}</p>
+        </div>
+      </aside>
+    </div>
   </div>
 </section>
