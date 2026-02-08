@@ -17,6 +17,7 @@ import { map } from 'rxjs';
 import { FEATURE_FLAGS } from './core/config/environment.tokens';
 import { GlobalShortcutsService } from './core/shortcuts/global-shortcuts.service';
 import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.component';
+import { NgxStarrySkyComponent } from '@omnedia/ngx-starry-sky';
 
 
 
@@ -37,6 +38,7 @@ import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.
     TranslateModule,
     CtrlKDirective,
     NgxGalaxyComponent,
+    NgxStarrySkyComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -53,6 +55,30 @@ export class AppComponent {
   private readonly globalShortcuts = inject(GlobalShortcutsService);
   private readonly featureFlags = inject(FEATURE_FLAGS);
 
+   readonly starrySkyColor = 'transparent';
+  readonly starsBackgroundConfig = {
+
+    starDensity: 0.0002,
+    maxStars: 2000,
+    twinkleProbability: 0.15,
+
+    milkyWayIntensity: 0.8,
+    milkyWayWidth: 0.45,
+    milkyWayAngle: -8,
+    nebulaIntensity: 0.55,
+    colorVariance: 0.35,
+    twinkleStrength: 0.25,    
+  };
+  readonly shootingStarsConfig = {
+    minSpeed: 15,
+    maxSpeed: 32,
+    minDelay: 1100,
+    maxDelay: 5200,
+    starColor: '#F6FF0E',
+    trailColor: '#7dd3fc',
+    starWidth: 12,
+    starHeight: 1,
+  };
   readonly componentLabComponent = signal<Type<unknown> | null>(null);
   readonly isBrowser = isPlatformBrowser(this.platformId);
 

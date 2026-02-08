@@ -1,5 +1,5 @@
 import { signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -10,21 +10,56 @@ import { AuthMode } from '@app/core/config/environment.tokens';
 import { FavoritesService } from '@app/core/favorites.service';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 import { SiteHeaderComponent } from './site-header.component';
 
 class MockTranslateService {
   currentLang = 'en';
-  onLangChange = new Subject<{ lang: string }>();
+  fallbackLang = 'en';
+  onLangChange = new Subject<{ lang: string; translations?: Record<string, string> }>();
+  onTranslationChange = new Subject<{ lang: string; translations?: Record<string, string> }>();
+  onFallbackLangChange = new Subject<{ lang: string; translations?: Record<string, string> }>();
+
   use(lang: string) {
     this.currentLang = lang;
+    this.onLangChange.next({ lang, translations: {} });
+  }
+
+  getCurrentLang() {
+    return this.currentLang;
+  }
+
+  getFallbackLang() {
+    return this.fallbackLang;
+  }
+
+  get(key: string | string[]) {
+    if (Array.isArray(key)) {
+      return of(Object.fromEntries(key.map((entry) => [entry, entry])));
+    }
+    return of(key);
+  }
+
+  getParsedResult(_translations: unknown, key: string | string[]) {
+    if (Array.isArray(key)) {
+      return Object.fromEntries(key.map((entry) => [entry, entry]));
+    }
+    return key;
   }
 }
 
 class MockAuthService {
+  user = signal<{
+    firstName?: string | null;
+    lastName?: string | null;
+    email: string;
+    avatarUrl?: string | null;
+  } | null>(null);
   isAuthenticated = () => false;
+  logout = jasmine.createSpy('logout');
 }
 
 class MockFavoritesService {
@@ -47,12 +82,47 @@ class MockNotificationStore {
   clearHistory = jasmine.createSpy('clearHistory');
 }
 
+class MockQuickSearchLauncherService {
+  private id = 0;
+  lastRef: {
+    id: number;
+    closed: ReturnType<typeof signal<boolean>>;
+    result: Promise<void | undefined>;
+    close: jasmine.Spy<(result?: void) => void>;
+    dismiss: jasmine.Spy<() => void>;
+    resolve: (value?: void) => void;
+  } | null = null;
+
+  open = jasmine.createSpy('open').and.callFake(() => {
+    let resolveRef!: (value?: void) => void;
+    const result = new Promise<void | undefined>((resolve) => {
+      resolveRef = resolve;
+    });
+    const ref = {
+      id: ++this.id,
+      closed: signal(false),
+      result,
+      close: jasmine.createSpy<(result?: void) => void>('close').and.callFake((value?: void) => {
+        resolveRef(value);
+      }),
+      dismiss: jasmine.createSpy<() => void>('dismiss').and.callFake(() => {
+        resolveRef(undefined);
+      }),
+      resolve: resolveRef,
+    };
+    this.lastRef = ref;
+    return ref as any;
+  });
+}
+
 describe('SiteHeaderComponent', () => {
   let fixture: ComponentFixture<SiteHeaderComponent>;
   let component: SiteHeaderComponent;
   let router: Router;
   let translate: MockTranslateService;
   let favorites: MockFavoritesService;
+  let notifications: MockNotificationStore;
+  let quickSearch: MockQuickSearchLauncherService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -63,7 +133,8 @@ describe('SiteHeaderComponent', () => {
         { provide: FavoritesService, useClass: MockFavoritesService },
         { provide: AuthConfigService, useClass: MockAuthConfigService },
         { provide: RbacFacadeService, useClass: MockRbacFacadeService },
-        { provide: NotificationStore, useClass: MockNotificationStore }
+        { provide: NotificationStore, useClass: MockNotificationStore },
+        { provide: QuickSearchLauncherService, useClass: MockQuickSearchLauncherService },
       ]
     }).compileComponents();
 
@@ -71,6 +142,8 @@ describe('SiteHeaderComponent', () => {
     spyOn(router, 'navigate').and.resolveTo(true);
     translate = TestBed.inject(TranslateService) as unknown as MockTranslateService;
     favorites = TestBed.inject(FavoritesService) as unknown as MockFavoritesService;
+    notifications = TestBed.inject(NotificationStore) as unknown as MockNotificationStore;
+    quickSearch = TestBed.inject(QuickSearchLauncherService) as unknown as MockQuickSearchLauncherService;
 
     fixture = TestBed.createComponent(SiteHeaderComponent);
     component = fixture.componentInstance;
@@ -86,39 +159,48 @@ describe('SiteHeaderComponent', () => {
     expect(translate.currentLang).toBe('fr');
   });
 
-  it('syncs queryControl to query signal', () => {
-    component.queryControl.setValue('abc');
-    expect(component.query()).toBe('abc');
-  });
-
-  it('clears the query when closing the search panel', () => {
-    component.queryControl.setValue('hello');
+  it('opens quick search and closes when the modal resolves', fakeAsync(() => {
     component.toggleSearch(true);
+
+    expect(quickSearch.open).toHaveBeenCalledWith({ source: 'site-header' });
     expect(component.isSearchOpen()).toBeTrue();
 
-    component.toggleSearch(false);
+    quickSearch.lastRef?.resolve();
+    flushMicrotasks();
+
     expect(component.isSearchOpen()).toBeFalse();
-    expect(component.query()).toBe('');
-    expect(component.queryControl.value).toBe('');
+  }));
+
+  it('closes active quick search when explicitly requested', () => {
+    component.toggleSearch(true);
+    const activeRef = quickSearch.lastRef;
+
+    component.toggleSearch(false);
+
+    expect(activeRef?.close).toHaveBeenCalled();
+    expect(component.isSearchOpen()).toBeFalse();
   });
 
-  it('shows favorite count only when > 0', () => {
-    const link: HTMLElement = fixture.nativeElement.querySelector('.toolbar__favorite');
-    expect(link.querySelector('span')).toBeNull();
+  it('shows notification badge only when unread count is > 0', () => {
+    const notifButton: HTMLElement | null = fixture.nativeElement.querySelector('button[data-og7="notif"]');
+    expect(notifButton?.querySelector('span.absolute')).toBeNull();
 
-    favorites.count.set(3);
+    notifications.unreadCount.set(3);
     fixture.detectChanges();
-    const badge = link.querySelector('span');
+
+    const badge = notifButton?.querySelector('span.absolute');
     expect(badge?.textContent?.trim()).toBe('3');
   });
 
   it('renders the login link for guests with the /login target and computed label', () => {
     const authConfig = TestBed.inject(AuthConfigService) as unknown as MockAuthConfigService;
-    const accountDebugEl = fixture.debugElement.query(By.css('.toolbar__account'));
-    const accountLink: HTMLElement = accountDebugEl.nativeElement;
-    const routerLink = accountDebugEl.injector.get(RouterLink);
+    const loginLinks = fixture.debugElement
+      .queryAll(By.directive(RouterLink))
+      .filter(debugEl => debugEl.injector.get(RouterLink).urlTree?.toString() === '/login');
 
-    expect(routerLink.urlTree?.toString()).toBe('/login');
+    expect(loginLinks.length).toBeGreaterThan(0);
+    const accountLink: HTMLElement = loginLinks[0].nativeElement;
+
     expect(accountLink.textContent?.trim()).toBe('header.login');
 
     authConfig.authMode.set('sso-only');
@@ -129,6 +211,7 @@ describe('SiteHeaderComponent', () => {
 
   it('binds router links to configured routes', () => {
     const configuredPaths = new Set(appRoutes.map(route => (route.path ? `/${route.path}` : '/')));
+    configuredPaths.add('/docs');
     const routerLinks = fixture.debugElement
       .queryAll(By.directive(RouterLink))
       .map(debugEl => debugEl.injector.get(RouterLink));

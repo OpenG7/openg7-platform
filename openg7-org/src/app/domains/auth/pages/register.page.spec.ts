@@ -35,7 +35,7 @@ describe('RegisterPage', () => {
     }).compileComponents();
 
     router = TestBed.inject(Router);
-    navigateSpy = spyOn(router, 'navigate').and.resolveTo(true);
+    navigateSpy = spyOn(router, 'navigateByUrl').and.resolveTo(true);
 
     fixture = TestBed.createComponent(RegisterPage);
     component = fixture.componentInstance;
@@ -43,23 +43,23 @@ describe('RegisterPage', () => {
   });
 
   it('submits valid registration, resets the form and navigates to profile', () => {
-    const payload = { email: 'new@example.com', password: 'secret' };
+    const payload = { email: 'new@example.com', password: 'Secur3!Pass' };
     auth.register.and.returnValue(
       of({ jwt: 'token', user: { id: '2', email: payload.email, roles: [] } })
     );
 
     const form = (component as any).form;
-    form.setValue(payload);
+    form.setValue({ ...payload, confirmPassword: payload.password });
 
     (component as any).onSubmit();
 
     expect(auth.register).toHaveBeenCalledWith(payload);
-    expect(navigateSpy).toHaveBeenCalledWith(['/profile']);
-    expect(form.getRawValue()).toEqual({ email: '', password: '' });
+    expect(navigateSpy).toHaveBeenCalledWith('/profile');
+    expect(form.getRawValue()).toEqual({ email: '', password: '', confirmPassword: '' });
   });
 
   it('surfaces duplicate email errors returned by Strapi', () => {
-    const payload = { email: 'existing@example.com', password: 'secret' };
+    const payload = { email: 'existing@example.com', password: 'Secur3!Pass' };
     const strapiError = new HttpErrorResponse({
       status: 400,
       error: { error: { message: 'Email or Username are already taken' } },
@@ -67,7 +67,7 @@ describe('RegisterPage', () => {
     auth.register.and.returnValue(throwError(() => strapiError));
 
     const form = (component as any).form;
-    form.setValue(payload);
+    form.setValue({ ...payload, confirmPassword: payload.password });
 
     (component as any).onSubmit();
 

@@ -1,0 +1,9 @@
+/
+features
+pricing
+terms
+privacy
+legal
+credits
+governance
+faq
