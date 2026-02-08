@@ -12,15 +12,12 @@ import { UnderConstructionBannerComponent } from '@app/shared/components/layout/
 import { CtrlKDirective } from '@app/shared/directives/ctrl-k.directive';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxGalaxyComponent } from '@omnedia/ngx-galaxy';
+import { NgxStarrySkyComponent } from '@omnedia/ngx-starry-sky';
 import { map } from 'rxjs';
 
 import { FEATURE_FLAGS } from './core/config/environment.tokens';
 import { GlobalShortcutsService } from './core/shortcuts/global-shortcuts.service';
 import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.component';
-import { NgxStarrySkyComponent } from '@omnedia/ngx-starry-sky';
-
-
-
 @Component({
   selector: 'og7-shell-root',
   standalone: true,

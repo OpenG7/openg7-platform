@@ -120,7 +120,6 @@ describe('SiteHeaderComponent', () => {
   let component: SiteHeaderComponent;
   let router: Router;
   let translate: MockTranslateService;
-  let favorites: MockFavoritesService;
   let notifications: MockNotificationStore;
   let quickSearch: MockQuickSearchLauncherService;
 
@@ -141,7 +140,6 @@ describe('SiteHeaderComponent', () => {
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.resolveTo(true);
     translate = TestBed.inject(TranslateService) as unknown as MockTranslateService;
-    favorites = TestBed.inject(FavoritesService) as unknown as MockFavoritesService;
     notifications = TestBed.inject(NotificationStore) as unknown as MockNotificationStore;
     quickSearch = TestBed.inject(QuickSearchLauncherService) as unknown as MockQuickSearchLauncherService;
 

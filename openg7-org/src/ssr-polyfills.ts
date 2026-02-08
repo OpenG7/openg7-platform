@@ -13,13 +13,22 @@ if (typeof globalWithIO.IntersectionObserver === 'undefined') {
     constructor(
       _callback: IntersectionObserverCallback,
       _options?: IntersectionObserverInit
-    ) {}
+    ) {
+      void _callback;
+      void _options;
+    }
 
-    observe(_target: Element): void {}
+    observe(_target: Element): void {
+      void _target;
+    }
 
-    unobserve(_target: Element): void {}
+    unobserve(_target: Element): void {
+      void _target;
+    }
 
-    disconnect(): void {}
+    disconnect(): void {
+      return;
+    }
 
     takeRecords(): IntersectionObserverEntry[] {
       return [];
