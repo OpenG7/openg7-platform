@@ -1,7 +1,8 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, DestroyRef, Input, computed, effect, inject, signal } from '@angular/core';
+import { NgClass, NgFor, NgIf, isPlatformBrowser } from '@angular/common';
+import { Component, DestroyRef, Input, PLATFORM_ID, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgxStarrySkyComponent } from '@omnedia/ngx-starry-sky';
 import { combineLatest } from 'rxjs';
 
 @Component({
@@ -22,10 +23,10 @@ import { combineLatest } from 'rxjs';
 
       .chip {
         align-items: center;
-        background: rgba(148, 163, 184, 0.22);
-        border: 1px solid rgba(226, 232, 240, 0.24);
+        background: var(--og7-color-surface-muted);
+        border: 1px solid var(--og7-color-border);
         border-radius: 9999px;
-        color: #f8fafc;
+        color: var(--og7-color-body);
         display: inline-flex;
         gap: 0.5rem;
         line-height: 1.6;
@@ -36,13 +37,13 @@ import { combineLatest } from 'rxjs';
 
       .chip:hover,
       .chip:focus-visible {
-        background: rgba(148, 163, 184, 0.36);
-        border-color: rgba(226, 232, 240, 0.45);
+        background: var(--og7-color-card-hover);
+        border-color: var(--og7-color-border);
         transform: translateY(-1px);
       }
 
       .chip:focus-visible {
-        outline: 2px solid rgba(244, 244, 245, 0.6);
+        outline: 2px solid var(--og7-ring-focus);
         outline-offset: 2px;
       }
 
@@ -66,63 +67,136 @@ export class ChipComponent {
 @Component({
   selector: 'og7-credits-page',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, TranslateModule, ChipComponent],
+  imports: [NgFor, NgIf, NgClass, TranslateModule, ChipComponent, NgxStarrySkyComponent],
   templateUrl: './credits.page.html',
   styles: [
     `
       :host {
-        background: radial-gradient(160% 140% at 10% 10%, rgba(56, 189, 248, 0.08), transparent 60%),
-          radial-gradient(140% 120% at 80% 20%, rgba(249, 115, 22, 0.08), transparent 55%),
-          #020617;
-        color: #e2e8f0;
+        background: var(--og7-color-page);
+        color: var(--og7-color-body);
         display: block;
-        font-family: 'Inter', 'Satoshi', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-family: var(--og7-font-family-base);
+      }
+
+      .credits-shell {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .credits-starry-sky {
+        display: block;
+        inset: 0;
+        opacity: 0.45;
+        pointer-events: none;
+        position: absolute;
+        z-index: 1;
+      }
+
+      .credits-content {
+        position: relative;
+        z-index: 2;
       }
 
       .hero-eyebrow {
-        color: rgba(241, 245, 249, 0.88);
+        color: var(--og7-color-subtle);
         letter-spacing: 0.28em;
         text-transform: uppercase;
       }
 
       .hero-title {
-        color: #f8fafc;
-        text-shadow: 0 1px 12px rgba(15, 23, 42, 0.35);
+        color: var(--og7-color-title);
+        text-shadow: 0 1px 12px rgba(15, 23, 42, 0.15);
+        font-family: var(--og7-font-family-display, var(--og7-font-family-base));
+      }
+
+      .hero-copy-surface {
+        background: color-mix(in srgb, var(--og7-color-surface) 84%, transparent);
+        border: 1px solid color-mix(in srgb, var(--og7-color-border) 82%, transparent);
+        box-shadow: var(--og7-shadow-card);
+        backdrop-filter: blur(10px);
       }
 
       .hero-subtitle {
-        color: rgba(226, 232, 240, 0.88);
-        max-width: 46rem;
+        color: var(--og7-color-body);
+        max-width: 38rem;
+      }
+
+      .hero-cta {
+        transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, opacity 180ms ease;
+      }
+
+      .hero-cta:hover,
+      .hero-cta:focus-visible {
+        transform: translateY(-1px);
+      }
+
+      .hero-cta:focus-visible {
+        outline: 2px solid var(--og7-ring-focus);
+        outline-offset: 2px;
+      }
+
+      .hero-cta-primary {
+        background: linear-gradient(135deg, var(--og7-color-primary), var(--og7-color-tertiary));
+      }
+
+      .hero-cta-primary:hover,
+      .hero-cta-primary:focus-visible {
+        box-shadow: 0 14px 24px -18px color-mix(in srgb, var(--og7-color-primary) 70%, transparent);
+      }
+
+      .hero-cta-secondary {
+        background: color-mix(in srgb, var(--og7-color-surface) 88%, transparent);
+        border: 1px solid var(--og7-color-border);
+      }
+
+      .hero-cta-secondary:hover,
+      .hero-cta-secondary:focus-visible {
+        background: var(--og7-color-card-hover);
       }
 
       .surface-soft {
-        background: rgba(15, 23, 42, 0.62);
-        border: 1px solid rgba(148, 163, 184, 0.28);
-        box-shadow: 0 18px 40px -26px rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(18px);
+        background: var(--og7-color-surface);
+        border: 1px solid var(--og7-color-border);
+        box-shadow: var(--og7-shadow-e1);
+      }
+
+      .filters-shell {
+        box-shadow: var(--og7-shadow-e1);
+      }
+
+      .credits-filter-chips {
+        scrollbar-width: thin;
+      }
+
+      .credits-filter-chips::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .credits-filter-chips::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, var(--og7-color-border) 72%, transparent);
+        border-radius: 9999px;
       }
 
       .surface-strong {
-        background: rgba(15, 23, 42, 0.78);
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        box-shadow: 0 22px 48px -24px rgba(15, 23, 42, 0.85);
-        backdrop-filter: blur(22px);
+        background: var(--og7-color-surface-muted);
+        border: 1px solid var(--og7-color-border);
+        box-shadow: var(--og7-shadow-card);
       }
 
       .text-muted {
-        color: rgba(226, 232, 240, 0.82);
+        color: var(--og7-color-subtle);
       }
 
       .text-subtle {
-        color: rgba(203, 213, 225, 0.78);
+        color: var(--og7-color-subtle);
       }
 
       .filter-chip {
         align-items: center;
-        background: rgba(15, 23, 42, 0.65);
-        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: var(--og7-color-surface);
+        border: 1px solid var(--og7-color-border);
         border-radius: 9999px;
-        color: #f8fafc;
+        color: var(--og7-color-body);
         display: inline-flex;
         font-size: 0.875rem;
         font-weight: 600;
@@ -133,57 +207,60 @@ export class ChipComponent {
 
       .filter-chip:hover,
       .filter-chip:focus-visible {
-        background: rgba(148, 163, 184, 0.32);
-        border-color: rgba(226, 232, 240, 0.52);
+        background: var(--og7-color-card-hover);
+        border-color: var(--og7-color-border);
         transform: translateY(-1px);
       }
 
       .filter-chip:focus-visible {
-        outline: 2px solid rgba(244, 244, 245, 0.65);
+        outline: 2px solid var(--og7-ring-focus);
         outline-offset: 2px;
       }
 
       .filter-chip.is-active {
-        background: rgba(148, 163, 184, 0.8);
-        border-color: rgba(226, 232, 240, 0.85);
-        color: #0f172a;
-        text-shadow: 0 0 2px rgba(255, 255, 255, 0.4);
+        background: var(--og7-color-primary-soft);
+        border-color: var(--og7-color-primary);
+        color: var(--og7-color-primary);
+        text-shadow: none;
       }
 
       .glass-input {
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid rgba(148, 163, 184, 0.45);
+        background: var(--og7-color-surface);
+        border: 1px solid var(--og7-color-border);
         border-radius: 0.875rem;
-        color: #f8fafc;
+        color: var(--og7-color-title);
         padding: 0.55rem 1.1rem;
         transition: border-color 150ms ease, box-shadow 150ms ease;
       }
 
       .glass-input::placeholder {
-        color: rgba(203, 213, 225, 0.72);
+        color: var(--og7-color-subtle);
       }
 
       .glass-input:focus-visible {
-        border-color: rgba(244, 244, 245, 0.9);
-        box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
+        border-color: var(--og7-color-primary);
+        box-shadow: 0 0 0 3px var(--og7-ring-focus);
         outline: none;
       }
 
       .contributors-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 15.75rem;
         transition: transform 200ms ease, box-shadow 200ms ease;
       }
 
       .contributors-card:hover,
       .contributors-card:focus-within {
         transform: translateY(-3px);
-        box-shadow: 0 30px 65px -32px rgba(15, 23, 42, 0.88);
+        box-shadow: var(--og7-shadow-card);
       }
 
       .contributors-badge {
-        background: rgba(51, 65, 85, 0.85);
-        border: 1px solid rgba(148, 163, 184, 0.45);
+        background: var(--og7-color-primary-soft);
+        border: 1px solid var(--og7-color-border);
         border-radius: 9999px;
-        color: #f8fafc;
+        color: var(--og7-color-primary);
         font-size: 0.7rem;
         font-weight: 600;
         letter-spacing: 0.04em;
@@ -191,20 +268,53 @@ export class ChipComponent {
       }
 
       .contributors-avatar {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(148, 163, 184, 0.45);
+        background: var(--og7-color-surface-muted);
+        border: 1px solid var(--og7-color-border);
         border-radius: 0.9rem;
         overflow: hidden;
       }
 
       .contributors-initials {
-        color: #f1f5f9;
+        color: var(--og7-color-title);
       }
 
       .community-banner {
-        background: linear-gradient(135deg, rgba(148, 163, 184, 0.32), rgba(226, 232, 240, 0.12));
-        border: 1px solid rgba(148, 163, 184, 0.38);
-        box-shadow: 0 18px 42px -28px rgba(148, 163, 184, 0.65);
+        background: linear-gradient(135deg, var(--og7-color-primary-soft), var(--og7-color-tertiary-soft));
+        border: 1px solid var(--og7-color-border);
+        box-shadow: var(--og7-shadow-e1);
+      }
+
+      .stack-card {
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .stack-card:hover,
+      .stack-card:focus-within {
+        box-shadow: var(--og7-shadow-card);
+        transform: translateY(-2px);
+      }
+
+      .methodology-shell {
+        background: linear-gradient(
+          130deg,
+          color-mix(in srgb, var(--og7-color-surface) 88%, transparent),
+          color-mix(in srgb, var(--og7-color-primary-soft) 58%, transparent)
+        );
+        border: 1px solid var(--og7-color-border);
+        box-shadow: var(--og7-shadow-card);
+      }
+
+      .method-step {
+        background: color-mix(in srgb, var(--og7-color-surface) 92%, transparent);
+        border: 1px solid color-mix(in srgb, var(--og7-color-border) 88%, transparent);
+        min-height: 9.5rem;
+      }
+
+      .method-step-index {
+        color: var(--og7-color-primary);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
       }
 
       .governance-card {
@@ -212,11 +322,43 @@ export class ChipComponent {
       }
 
       .governance-list {
-        color: rgba(226, 232, 240, 0.86);
+        color: var(--og7-color-body);
       }
 
       .governance-list li::marker {
-        color: rgba(226, 232, 240, 0.56);
+        color: var(--og7-color-subtle);
+      }
+
+      .reveal-up {
+        animation: credits-reveal-up 440ms ease both;
+        animation-delay: calc(var(--reveal-order, 1) * 48ms);
+      }
+
+      @keyframes credits-reveal-up {
+        0% {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 767px) {
+        .filters-shell {
+          top: 0.75rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .credits-starry-sky {
+          opacity: 0.18;
+        }
+
+        .reveal-up {
+          animation: none;
+        }
       }
     `,
   ],
@@ -230,11 +372,35 @@ export class ChipComponent {
 export class CreditsPage {
   private readonly i18n = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly baseKey = 'pages.credits';
+
+  readonly isBrowser = isPlatformBrowser(this.platformId);
+  readonly searchFieldId = 'credits-search';
+
+  readonly starrySkyColor = 'transparent';
+  readonly starsBackgroundConfig = {
+    starDensity: 0.0022,
+    allStarsTwinkle: true,
+    twinkleProbability: 0.75,
+    minTwinkleSpeed: 0.4,
+    maxTwinkleSpeed: 0.9,
+  };
+  readonly shootingStarsConfig = {
+    minSpeed: 16,
+    maxSpeed: 32,
+    minDelay: 1500,
+    maxDelay: 5200,
+    starColor: '#ffffff',
+    trailColor: '#7dd3fc',
+    starWidth: 12,
+    starHeight: 1,
+  };
 
   readonly contributors = signal<Contributor[]>([]);
 
   readonly pillars = signal<Pillar[]>([]);
+  readonly methodologySteps = signal<MethodologyStep[]>([]);
 
   readonly provinceFilter = signal<string | null>(null);
   readonly search = signal<string>('');
@@ -261,9 +427,10 @@ export class CreditsPage {
       contributors: this.i18n.stream(`${this.baseKey}.contributors.items`),
       pillars: this.i18n.stream(`${this.baseKey}.pillars.items`),
       governance: this.i18n.stream(`${this.baseKey}.governance.points`),
+      methodology: this.i18n.stream(`${this.baseKey}.methodology.steps`),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ contributors, pillars, governance }) => {
+      .subscribe(({ contributors, pillars, governance, methodology }) => {
         const contributorItems = this.coerceArray<Contributor>(contributors).map(item => ({
           ...item,
           skills: item.skills ?? [],
@@ -278,6 +445,9 @@ export class CreditsPage {
 
         const governancePoints = this.coerceRecord<string>(governance);
         this.governancePoints.set(governancePoints ? Object.values(governancePoints) : []);
+
+        const methodologySteps = this.coerceArray<MethodologyStep>(methodology);
+        this.methodologySteps.set(methodologySteps);
       });
 
     effect(() => {
@@ -292,6 +462,14 @@ export class CreditsPage {
   resetFilters(): void {
     this.provinceFilter.set(null);
     this.search.set('');
+  }
+
+  toggleProvinceFilter(province: string): void {
+    this.provinceFilter.set(this.provinceFilter() === province ? null : province);
+  }
+
+  isProvinceActive(province: string): boolean {
+    return this.provinceFilter() === province;
   }
 
   initials(name: string): string {
@@ -327,4 +505,9 @@ export interface Pillar {
   title: string;
   summary: string;
   tags: string[];
+}
+
+export interface MethodologyStep {
+  title: string;
+  copy: string;
 }

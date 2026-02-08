@@ -6055,6 +6055,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@omnedia/ngx-starry-sky@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@omnedia/ngx-starry-sky@npm:4.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ^21.0.0
+    "@angular/core": ^21.0.0
+  checksum: 10c0/acb45216216ce57b367609b891b9d91e5f865db64f97c9e656146dd4c2425330e1b5dc0ea8a005c8eb8a32ea96962d4ba6e89a694654119c294462a498d9d402
+  languageName: node
+  linkType: hard
+
 "@omnedia/ngx-three-globe@npm:^4.0.1":
   version: 4.0.1
   resolution: "@omnedia/ngx-three-globe@npm:4.0.1"
@@ -6145,6 +6157,7 @@ __metadata:
     "@omnedia/ngx-galaxy": "npm:^4.0.1"
     "@omnedia/ngx-neon-underline": "npm:^4.0.1"
     "@omnedia/ngx-particles": "npm:^4.0.1"
+    "@omnedia/ngx-starry-sky": "npm:^4.0.1"
     "@omnedia/ngx-three-globe": "npm:^4.0.1"
     "@openg7/contracts": "workspace:*"
     "@playwright/test": "npm:^1.55.0"

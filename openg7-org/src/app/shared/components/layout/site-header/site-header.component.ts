@@ -17,8 +17,8 @@ import { AuthConfigService } from '@app/core/auth/auth-config.service';
 import { AuthService } from '@app/core/auth/auth.service';
 import { FavoritesService } from '@app/core/favorites.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
-import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 import type { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
+import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 type LangCode = 'en' | 'fr';

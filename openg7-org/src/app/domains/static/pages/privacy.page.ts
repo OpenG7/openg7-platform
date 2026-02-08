@@ -1,5 +1,5 @@
-import { CommonModule, NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { CommonModule, NgClass, isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, OnDestroy, PLATFORM_ID, inject, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type SectionKey = 'collection' | 'usage' | 'sharing' | 'security' | 'rights' | 'contact';
@@ -31,17 +31,28 @@ interface SummaryItem {
  * @param dependencies Dépendances injectées automatiquement par Angular.
  * @returns PrivacyPage gérée par le framework.
  */
-export class PrivacyPage {
+export class PrivacyPage implements AfterViewInit, OnDestroy {
   private readonly translate = inject(TranslateService);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly browser = isPlatformBrowser(this.platformId);
+  private intersectionObserver: IntersectionObserver | null = null;
 
   protected readonly sections: ReadonlyArray<SectionConfig> = [
-    { key: 'collection', accent: 'from-cyan-500 to-blue-500' },
-    { key: 'usage', accent: 'from-blue-500 to-indigo-500' },
-    { key: 'sharing', accent: 'from-indigo-500 to-purple-500' },
-    { key: 'security', accent: 'from-emerald-500 to-teal-500' },
-    { key: 'rights', accent: 'from-amber-500 to-orange-500' },
-    { key: 'contact', accent: 'from-rose-500 to-pink-500' },
+    { key: 'collection', accent: 'from-tertiary to-primary' },
+    { key: 'usage', accent: 'from-primary to-tertiary' },
+    { key: 'sharing', accent: 'from-primary to-success' },
+    { key: 'security', accent: 'from-success to-tertiary' },
+    { key: 'rights', accent: 'from-warning to-primary' },
+    { key: 'contact', accent: 'from-error to-warning' },
   ];
+  protected readonly activeSection = signal<SectionKey>('collection');
+  protected readonly mobileView = signal(false);
+  protected readonly expandedSections = signal<ReadonlySet<SectionKey>>(
+    new Set(this.sections.map((section) => section.key))
+  );
+
+  private readonly resizeHandler = () => this.updateViewport();
+  private readonly hashHandler = () => this.syncActiveSectionWithHash();
 
   protected paragraphs(section: SectionKey): string[] {
     const key = `pages.privacy.sections.${section}.paragraphs`;
@@ -87,6 +98,140 @@ export class PrivacyPage {
 
   protected sectionAnchor(section: SectionConfig): string {
     return `privacy-${section.key}`;
+  }
+
+  protected isSectionActive(section: SectionConfig): boolean {
+    return this.activeSection() === section.key;
+  }
+
+  protected setActiveSection(section: SectionConfig): void {
+    this.activeSection.set(section.key);
+    if (this.mobileView()) {
+      this.expandedSections.set(new Set([section.key]));
+    }
+  }
+
+  protected isSectionExpanded(section: SectionConfig): boolean {
+    return !this.mobileView() || this.expandedSections().has(section.key);
+  }
+
+  protected toggleSection(section: SectionConfig): void {
+    if (!this.mobileView()) {
+      return;
+    }
+
+    const next = new Set(this.expandedSections());
+    if (next.has(section.key)) {
+      if (next.size === 1) {
+        return;
+      }
+      next.delete(section.key);
+    } else {
+      next.add(section.key);
+    }
+    this.expandedSections.set(next);
+  }
+
+  ngAfterViewInit(): void {
+    if (!this.browser) {
+      return;
+    }
+
+    this.updateViewport();
+    this.syncActiveSectionWithHash();
+    this.startSectionObserver();
+    window.addEventListener('resize', this.resizeHandler, { passive: true });
+    window.addEventListener('hashchange', this.hashHandler);
+  }
+
+  ngOnDestroy(): void {
+    if (!this.browser) {
+      return;
+    }
+
+    window.removeEventListener('resize', this.resizeHandler);
+    window.removeEventListener('hashchange', this.hashHandler);
+    this.intersectionObserver?.disconnect();
+    this.intersectionObserver = null;
+  }
+
+  private startSectionObserver(): void {
+    this.intersectionObserver?.disconnect();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((left, right) => right.intersectionRatio - left.intersectionRatio);
+        if (!visible.length) {
+          return;
+        }
+
+        const sectionKey = this.sectionKeyFromAnchor(visible[0].target.id);
+        if (!sectionKey) {
+          return;
+        }
+        this.activeSection.set(sectionKey);
+      },
+      {
+        threshold: [0.2, 0.5, 0.8],
+        rootMargin: '-20% 0px -50% 0px',
+      }
+    );
+
+    for (const section of this.sections) {
+      const element = document.getElementById(this.sectionAnchor(section));
+      if (element) {
+        observer.observe(element);
+      }
+    }
+
+    this.intersectionObserver = observer;
+  }
+
+  private sectionKeyFromAnchor(anchor: string): SectionKey | null {
+    const section = this.sections.find((entry) => this.sectionAnchor(entry) === anchor);
+    return section?.key ?? null;
+  }
+
+  private syncActiveSectionWithHash(): void {
+    if (!this.browser) {
+      return;
+    }
+
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) {
+      return;
+    }
+
+    const key = this.sectionKeyFromAnchor(hash);
+    if (!key) {
+      return;
+    }
+
+    this.activeSection.set(key);
+    if (this.mobileView()) {
+      this.expandedSections.set(new Set([key]));
+    }
+  }
+
+  private updateViewport(): void {
+    if (!this.browser) {
+      return;
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const wasMobile = this.mobileView();
+    this.mobileView.set(isMobile);
+
+    if (isMobile && !wasMobile) {
+      this.expandedSections.set(new Set([this.activeSection()]));
+      return;
+    }
+
+    if (!isMobile && wasMobile) {
+      this.expandedSections.set(new Set(this.sections.map((section) => section.key)));
+    }
   }
 
   protected trackBySection = (_: number, section: SectionConfig) => section.key;

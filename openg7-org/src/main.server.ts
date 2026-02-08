@@ -1,3 +1,5 @@
+import './ssr-polyfills';
+
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { bootstrapApplication, BootstrapContext } from '@angular/platform-browser';

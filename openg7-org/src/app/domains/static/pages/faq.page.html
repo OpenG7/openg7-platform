@@ -1,53 +1,46 @@
 <section
   data-og7="static-page"
   data-og7-page="faq"
-  class="og7-page og7-page--static space-y-12"
+  class="og7-page og7-page--static relative isolate overflow-hidden py-14 sm:py-20"
 >
-  <header class="grid gap-8 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur md:grid-cols-[minmax(0,1fr)_320px]">
-    <div class="space-y-4">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-200">
-        {{ 'pages.faq.kicker' | translate }}
-      </p>
-      <h1 class="og7-page__title text-balance text-4xl font-semibold md:text-5xl">
-        {{ 'pages.faq.title' | translate }}
-      </h1>
-      <p class="og7-page__intro text-lg text-subtle md:text-xl">
-        {{ 'pages.faq.intro' | translate }}
-      </p>
-    </div>
-    <div class="surface-strong flex h-full flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-      <div class="space-y-2">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-primary-200">
-          {{ 'pages.faq.cta.title' | translate }}
-        </h2>
-        <p class="text-body text-sm leading-relaxed">
-          {{ 'pages.faq.cta.description' | translate }}
+  <div aria-hidden="true" class="og7-static-backdrop">
+    <div class="og7-static-backdrop__aurora"></div>
+    <div class="og7-static-backdrop__stars"></div>
+    <div class="og7-static-backdrop__veil"></div>
+  </div>
+
+  <div class="relative z-10 space-y-8">
+    <span id="sso" class="sr-only"></span>
+
+    <header
+      class="grid gap-8 rounded-3xl border border-white/20 bg-slate-950/35 p-6 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md md:grid-cols-[minmax(0,1fr)_360px] md:p-8"
+    >
+      <div class="space-y-4 text-slate-100">
+        <p class="text-xs font-semibold uppercase tracking-[0.32em] text-sky-300">
+          {{ 'pages.faq.kicker' | translate }}
+        </p>
+        <h1 class="og7-page__title text-balance text-4xl font-semibold md:text-5xl">
+          {{ 'pages.faq.title' | translate }}
+        </h1>
+        <p class="og7-page__intro text-base text-slate-200/90 md:text-lg">
+          {{ 'pages.faq.intro' | translate }}
         </p>
       </div>
-      <div class="space-y-2">
-        <a
-          class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-          [href]="'mailto:' + supportEmail"
-        >
-          {{ 'pages.faq.cta.button' | translate }}
-        </a>
-        <p class="text-xs text-muted">{{ 'pages.faq.cta.responseTime' | translate }}</p>
-      </div>
-    </div>
-  </header>
-  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
-    @let filtered = filteredItems;
-    <article class="og7-page__content space-y-8">
-      <div class="space-y-3 rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur">
-        <label class="block text-xs font-semibold uppercase tracking-[0.3em] text-primary-200" [attr.for]="searchFieldId">
+
+      <div
+        data-og7="faq-search"
+        class="space-y-4 rounded-2xl border border-white/20 bg-slate-950/45 p-5 text-slate-100"
+      >
+        <label class="block text-xs font-semibold uppercase tracking-[0.3em] text-sky-300" [attr.for]="searchFieldId">
           {{ 'pages.faq.search.label' | translate }}
         </label>
+
         <div class="relative">
           <span
             aria-hidden="true"
-            class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm text-muted"
+            class="pointer-events-none absolute inset-y-0 left-4 inline-flex items-center text-xs font-semibold text-slate-300"
           >
-            ⌕
+            FIND
           </span>
           <input
             [id]="searchFieldId"
@@ -55,108 +48,336 @@
             inputmode="search"
             name="faq-search"
             autocomplete="off"
-            [value]="query"
-            (input)="onQueryChange($any($event.target).value)"
-            class="w-full rounded-2xl border border-white/10 bg-slate-950/70 py-2 pl-11 pr-4 text-sm text-white placeholder:text-muted focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400/60"
+            [value]="queryDraft()"
+            (input)="onQueryInput($any($event.target).value)"
+            class="w-full rounded-2xl border border-white/20 bg-slate-900/80 py-2.5 pl-16 pr-24 text-sm text-slate-100 placeholder:text-slate-400 focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-300/40"
             [attr.placeholder]="'pages.faq.search.placeholder' | translate"
-            [attr.aria-describedby]="query.trim().length ? 'faq-search-hint' : null"
+            [attr.aria-describedby]="hasQuery() ? 'faq-search-hint' : null"
           />
+          @if (queryDraft().trim().length) {
+            <button
+              type="button"
+              class="absolute inset-y-1 right-1 inline-flex items-center rounded-xl border border-white/25 px-3 text-xs font-semibold text-slate-100 transition hover:border-sky-300 hover:bg-slate-800"
+              (click)="clearQuery()"
+              data-og7="faq-search-clear"
+            >
+              {{ 'pages.faq.search.clear' | translate }}
+            </button>
+          }
         </div>
-        @if (query.trim().length) {
-          <p id="faq-search-hint" class="text-xs text-muted">
-            {{ 'pages.faq.search.results' | translate: { count: filtered.length } }}
-          </p>
+
+        <p id="faq-search-hint" class="text-xs text-slate-300" data-og7="faq-search-results">
+          {{ 'pages.faq.search.results' | translate: { count: filteredEntries().length } }}
+        </p>
+      </div>
+    </header>
+
+    <section
+      data-og7="faq-top-questions"
+      class="space-y-4 rounded-3xl border border-white/20 bg-slate-950/35 p-6 text-slate-100 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md"
+    >
+      <div class="space-y-1">
+        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-sky-300">
+          {{ 'pages.faq.topQuestions.title' | translate }}
+        </p>
+        <p class="text-sm text-slate-300">
+          {{ 'pages.faq.topQuestions.description' | translate }}
+        </p>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        @for (entry of topEntries(); track entry.key) {
+          <a
+            class="group rounded-2xl border border-white/20 bg-slate-900/65 px-4 py-3 transition hover:border-sky-300 hover:bg-slate-900"
+            [href]="'#faq-' + entry.key"
+            (click)="selectTopQuestion(entry.key)"
+            data-og7="faq-top-question"
+            [attr.data-og7-id]="entry.key"
+          >
+            <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-sky-300">
+              {{ 'pages.faq.topQuestions.badge' | translate }} {{ $index + 1 }}
+            </p>
+            <p class="mt-1 text-sm font-medium text-slate-100 transition group-hover:text-sky-100">
+              {{ entry.question }}
+            </p>
+          </a>
         }
       </div>
-      <ng-container *ngIf="filtered.length; else noResults">
-        <dl class="space-y-6">
-          <div
-            *ngFor="let item of filtered"
-            class="space-y-4 rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-sm backdrop-blur"
-          >
-            <dt [attr.id]="'faq-' + item" class="scroll-mt-28 text-2xl font-semibold text-white">
-              {{ 'pages.faq.items.' + item + '.question' | translate }}
-            </dt>
-            <dd class="space-y-3 text-body">
-              <p *ngFor="let answer of answers(item)" class="leading-relaxed">
-                {{ answer }}
-              </p>
-              <ul *ngIf="bullets(item).length" class="list-disc space-y-2 pl-6">
-                <li *ngFor="let entry of bullets(item)" class="leading-relaxed">{{ entry }}</li>
-              </ul>
-            </dd>
-          </div>
-        </dl>
-      </ng-container>
-      <ng-template #noResults>
-        <div class="space-y-4 rounded-3xl border border-primary-300/40 bg-primary-500/10 p-6 text-sm text-body">
-          <p class="text-base font-semibold text-white">
-            {{ 'pages.faq.search.noResults.title' | translate }}
-          </p>
-          <p class="leading-relaxed">
-            {{ 'pages.faq.search.noResults.description' | translate }}
-          </p>
-          <a
-            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-primary-200 hover:bg-primary-50/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-300"
-            [href]="'mailto:' + supportEmail"
-          >
-            {{ 'pages.faq.search.noResults.button' | translate }}
-          </a>
-        </div>
-      </ng-template>
-    </article>
-    <aside class="space-y-6">
-      <div class="surface-soft space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-base font-semibold text-white">{{ 'pages.faq.quickNav.title' | translate }}</h2>
-        <p class="text-sm text-muted">{{ 'pages.faq.quickNav.description' | translate }}</p>
-        @if (filtered.length) {
-          <nav>
-            <ul class="space-y-2 text-sm">
-              <li *ngFor="let item of filtered">
-                <a
-                  class="flex items-center justify-between gap-4 rounded-2xl border border-transparent px-3 py-2 text-left text-body transition hover:border-primary-200 hover:bg-primary-50/20 hover:text-white"
-                  [href]="'#faq-' + item"
+    </section>
+
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <article class="space-y-5">
+        <section
+          data-og7="faq-categories"
+          class="space-y-4 rounded-3xl border border-white/20 bg-slate-950/35 p-5 text-slate-100 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md"
+        >
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-sky-300">{{ 'pages.faq.quickNav.title' | translate }}</p>
+              <p class="text-xs text-slate-300">{{ 'pages.faq.quickNav.description' | translate }}</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                class="rounded-xl border border-white/20 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition hover:border-sky-300 hover:bg-slate-900"
+                (click)="toggleVisibleItems()"
+                data-og7="faq-toggle-visible"
+              >
+                {{ (allVisibleExpanded() ? 'pages.faq.controls.collapseAll' : 'pages.faq.controls.expandAll') | translate }}
+              </button>
+              @if (hasQuery()) {
+                <button
+                  type="button"
+                  class="rounded-xl border border-white/20 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition hover:border-sky-300 hover:bg-slate-900"
+                  (click)="clearQuery()"
+                  data-og7="faq-clear-search"
                 >
-                  <span>{{ 'pages.faq.items.' + item + '.question' | translate }}</span>
-                  <span aria-hidden="true" class="text-xs text-muted">→</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+                  {{ 'pages.faq.controls.clearSearch' | translate }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2" role="tablist" aria-label="FAQ categories">
+            @for (category of categories; track category) {
+              <button
+                type="button"
+                role="tab"
+                [attr.aria-selected]="isCategoryActive(category)"
+                (click)="setCategory(category)"
+                class="rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition"
+                [ngClass]="
+                  isCategoryActive(category)
+                    ? 'border-sky-300 bg-sky-300/20 text-sky-100'
+                    : 'border-white/20 bg-slate-900/65 text-slate-200 hover:border-sky-300 hover:bg-slate-900'
+                "
+                data-og7="faq-category"
+                [attr.data-og7-id]="category"
+              >
+                {{ ('pages.faq.categories.' + category) | translate }}
+              </button>
+            }
+          </div>
+        </section>
+
+        @let filtered = filteredEntries();
+
+        @if (filtered.length) {
+          <section data-og7="faq-accordion" class="space-y-4">
+            @for (entry of filtered; track entry.key) {
+              @let expanded = isItemExpanded(entry.key);
+
+              <article
+                [attr.id]="'faq-' + entry.key"
+                data-og7="faq-item"
+                [attr.data-og7-id]="entry.key"
+                class="rounded-3xl border border-white/20 bg-slate-950/35 p-5 text-slate-100 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md"
+              >
+                <h2>
+                  <button
+                    type="button"
+                    class="flex w-full items-start justify-between gap-4 text-left"
+                    (click)="toggleItem(entry.key)"
+                    [attr.aria-expanded]="expanded"
+                    [attr.aria-controls]="'faq-panel-' + entry.key"
+                  >
+                    <span class="text-lg font-semibold leading-snug text-slate-100 sm:text-xl">
+                      @for (part of highlightParts(entry.question); track $index) {
+                        @if (part.matched) {
+                          <mark class="rounded bg-sky-300/30 px-0.5 text-sky-100">{{ part.text }}</mark>
+                        } @else {
+                          <span>{{ part.text }}</span>
+                        }
+                      }
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/25 text-base font-semibold"
+                    >
+                      {{ expanded ? '-' : '+' }}
+                    </span>
+                  </button>
+                </h2>
+
+                @if (expanded) {
+                  <div [id]="'faq-panel-' + entry.key" class="mt-4 space-y-4 text-sm text-slate-200">
+                    <div class="space-y-3">
+                      @for (answer of entry.answers; track $index) {
+                        <p class="leading-relaxed">
+                          @for (part of highlightParts(answer); track $index) {
+                            @if (part.matched) {
+                              <mark class="rounded bg-sky-300/30 px-0.5 text-sky-100">{{ part.text }}</mark>
+                            } @else {
+                              <span>{{ part.text }}</span>
+                            }
+                          }
+                        </p>
+                      }
+                    </div>
+
+                    @if (entry.bullets.length) {
+                      <ul class="space-y-2 pl-5">
+                        @for (bullet of entry.bullets; track $index) {
+                          <li class="list-disc leading-relaxed">
+                            @for (part of highlightParts(bullet); track $index) {
+                              @if (part.matched) {
+                                <mark class="rounded bg-sky-300/30 px-0.5 text-sky-100">{{ part.text }}</mark>
+                              } @else {
+                                <span>{{ part.text }}</span>
+                              }
+                            }
+                          </li>
+                        }
+                      </ul>
+                    }
+
+                    <div
+                      data-og7="faq-feedback"
+                      [attr.data-og7-id]="entry.key"
+                      class="space-y-3 rounded-2xl border border-white/20 bg-slate-900/55 px-4 py-3"
+                    >
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+                          {{ 'pages.faq.feedback.prompt' | translate }}
+                        </p>
+                        <div class="flex items-center gap-2">
+                          <button
+                            type="button"
+                            class="rounded-full border px-3 py-1 text-xs font-semibold transition"
+                            [ngClass]="
+                              feedback(entry.key) === 'yes'
+                                ? 'border-sky-300 bg-sky-300/20 text-sky-100'
+                                : 'border-white/20 text-slate-200 hover:border-sky-300 hover:bg-slate-900'
+                            "
+                            (click)="setFeedback(entry.key, 'yes')"
+                          >
+                            {{ 'pages.faq.feedback.yes' | translate }}
+                          </button>
+                          <button
+                            type="button"
+                            class="rounded-full border px-3 py-1 text-xs font-semibold transition"
+                            [ngClass]="
+                              feedback(entry.key) === 'no'
+                                ? 'border-sky-300 bg-sky-300/20 text-sky-100'
+                                : 'border-white/20 text-slate-200 hover:border-sky-300 hover:bg-slate-900'
+                            "
+                            (click)="setFeedback(entry.key, 'no')"
+                          >
+                            {{ 'pages.faq.feedback.no' | translate }}
+                          </button>
+                        </div>
+                      </div>
+
+                      @if (feedback(entry.key); as vote) {
+                        <p class="text-xs text-slate-300">{{ ('pages.faq.feedback.thanks.' + vote) | translate }}</p>
+                      }
+                    </div>
+                  </div>
+                }
+              </article>
+            }
+          </section>
         } @else {
-          <p class="text-sm text-muted">{{ 'pages.faq.search.noResults.description' | translate }}</p>
+          <section
+            class="space-y-4 rounded-3xl border border-sky-300/40 bg-sky-300/10 p-6 text-sm text-slate-100"
+            data-og7="faq-no-results"
+          >
+            <p class="text-base font-semibold">{{ 'pages.faq.search.noResults.title' | translate }}</p>
+            <p class="leading-relaxed text-slate-200">{{ 'pages.faq.search.noResults.description' | translate }}</p>
+            <div class="flex flex-wrap gap-3">
+              <button
+                type="button"
+                class="rounded-xl border border-white/20 bg-slate-900/65 px-4 py-2 text-sm font-semibold transition hover:border-sky-300 hover:bg-slate-900"
+                (click)="clearQuery()"
+              >
+                {{ 'pages.faq.search.noResults.clear' | translate }}
+              </button>
+              <a
+                class="inline-flex items-center justify-center rounded-xl border border-white/20 bg-slate-900/65 px-4 py-2 text-sm font-semibold transition hover:border-sky-300 hover:bg-slate-900"
+                [href]="'mailto:' + supportEmail"
+              >
+                {{ 'pages.faq.search.noResults.button' | translate }}
+              </a>
+            </div>
+          </section>
         }
-      </div>
-      <div class="surface-strong space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-base font-semibold text-white">{{ 'pages.faq.contact.title' | translate }}</h2>
-        <p class="text-sm leading-relaxed text-body">{{ 'pages.faq.contact.description' | translate }}</p>
-        <div class="space-y-3 text-sm">
+      </article>
+
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <section
+          data-og7="faq-quick-nav"
+          class="space-y-4 rounded-3xl border border-white/20 bg-slate-950/35 p-5 text-slate-100 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md"
+        >
+          <h2 class="text-base font-semibold">{{ 'pages.faq.quickNav.title' | translate }}</h2>
+          <p class="text-sm text-slate-300">{{ 'pages.faq.quickNav.description' | translate }}</p>
+
+          @if (filtered.length) {
+            <nav>
+              <ul class="space-y-2 text-sm">
+                @for (entry of filtered; track entry.key) {
+                  <li>
+                    <a
+                      class="flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2 transition hover:border-sky-300 hover:bg-slate-900"
+                      [href]="'#faq-' + entry.key"
+                    >
+                      <span class="line-clamp-2">{{ entry.question }}</span>
+                      <span aria-hidden="true" class="text-xs text-slate-300">-&gt;</span>
+                    </a>
+                  </li>
+                }
+              </ul>
+            </nav>
+          } @else {
+            <p class="text-sm text-slate-300">{{ 'pages.faq.search.noResults.description' | translate }}</p>
+          }
+        </section>
+
+        <section
+          id="auth-support"
+          data-og7="faq-contact"
+          class="space-y-4 rounded-3xl border border-white/20 bg-slate-950/35 p-5 text-slate-100 shadow-[0_24px_80px_-42px_rgba(2,6,23,0.85)] backdrop-blur-md"
+        >
+          <h2 class="text-base font-semibold">{{ 'pages.faq.contact.title' | translate }}</h2>
+          <p class="text-sm leading-relaxed text-slate-300">{{ 'pages.faq.contact.description' | translate }}</p>
+
+          <div class="space-y-3 text-sm">
+            <a
+              class="flex items-start justify-between gap-3 rounded-2xl border border-white/20 bg-slate-900/65 p-4 transition hover:border-sky-300 hover:bg-slate-900"
+              [href]="'mailto:' + supportEmail"
+            >
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300">
+                  {{ 'pages.faq.contact.emailLabel' | translate }}
+                </span>
+                <span class="mt-1 block text-base font-semibold text-slate-100">{{ supportEmail }}</span>
+              </span>
+              <span class="text-xs text-slate-300">{{ 'pages.faq.contact.sla' | translate }}</span>
+            </a>
+
+            <a
+              class="flex items-start justify-between gap-3 rounded-2xl border border-white/20 bg-slate-900/65 p-4 transition hover:border-sky-300 hover:bg-slate-900"
+              [href]="'tel:' + supportPhoneHref"
+            >
+              <span>
+                <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300">
+                  {{ 'pages.faq.contact.phoneLabel' | translate }}
+                </span>
+                <span class="mt-1 block text-base font-semibold text-slate-100">{{ supportPhone }}</span>
+              </span>
+              <span class="text-xs text-slate-300">{{ 'pages.faq.contact.hours' | translate }}</span>
+            </a>
+          </div>
+
           <a
-            class="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-primary-200 hover:bg-primary-50/20"
+            class="inline-flex items-center justify-center rounded-xl border border-sky-300/40 bg-sky-300/15 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:bg-sky-300/25"
             [href]="'mailto:' + supportEmail"
+            data-og7="faq-contact-cta"
           >
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-wide text-primary-200">
-                {{ 'pages.faq.contact.emailLabel' | translate }}
-              </span>
-              <span class="mt-1 block text-base font-semibold text-white">{{ supportEmail }}</span>
-            </span>
-            <span class="text-xs text-muted">{{ 'pages.faq.contact.sla' | translate }}</span>
+            {{ 'pages.faq.cta.button' | translate }}
           </a>
-          <a
-            class="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-primary-200 hover:bg-primary-50/20"
-            [href]="'tel:' + supportPhoneHref"
-          >
-            <span>
-              <span class="block text-xs font-semibold uppercase tracking-wide text-primary-200">
-                {{ 'pages.faq.contact.phoneLabel' | translate }}
-              </span>
-              <span class="mt-1 block text-base font-semibold text-white">{{ supportPhone }}</span>
-            </span>
-            <span class="text-xs text-muted">{{ 'pages.faq.contact.hours' | translate }}</span>
-          </a>
-        </div>
-      </div>
-    </aside>
+        </section>
+      </aside>
+    </div>
   </div>
 </section>
