@@ -340,6 +340,40 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAccountProfileAccountProfile extends Struct.CollectionTypeSchema {
+  collectionName: 'account_profiles';
+  info: {
+    displayName: 'Account Profile';
+    pluralName: 'account-profiles';
+    singularName: 'account-profile';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    avatarUrl: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    firstName: Schema.Attribute.String;
+    jobTitle: Schema.Attribute.String;
+    lastName: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::account-profile.account-profile'> &
+      Schema.Attribute.Private;
+    notificationPreferences: Schema.Attribute.JSON;
+    organization: Schema.Attribute.String;
+    phone: Schema.Attribute.String;
+    provincePreferences: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    sectorPreferences: Schema.Attribute.JSON;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+  };
+}
+
 export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
   collectionName: 'companies';
   info: {
@@ -1107,6 +1141,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::account-profile.account-profile': ApiAccountProfileAccountProfile;
       'api::company.company': ApiCompanyCompany;
       'api::exchange.exchange': ApiExchangeExchange;
       'api::homepage.homepage': ApiHomepageHomepage;

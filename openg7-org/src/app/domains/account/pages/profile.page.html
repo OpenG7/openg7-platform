@@ -28,7 +28,12 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-200">
             @if (avatarPreview(); as avatarUrl) {
-              <img [src]="avatarUrl" [alt]="'auth.profile.avatar.alt' | translate" class="h-full w-full object-cover" />
+              <img
+                [src]="avatarUrl"
+                [alt]="'auth.profile.avatar.alt' | translate"
+                class="h-full w-full object-cover"
+                (error)="onAvatarPreviewError()"
+              />
             } @else {
               @if (profile(); as current) {
                 <span class="text-lg font-semibold uppercase text-slate-500">
@@ -49,6 +54,11 @@
               placeholder="{{ 'auth.profile.avatar.placeholder' | translate }}"
               autocomplete="url"
             />
+            @if (form.controls.avatarUrl.touched && form.controls.avatarUrl.invalid) {
+              <p class="mt-1 text-xs text-error" data-og7="user-profile-avatar-error">
+                {{ 'validation.url' | translate }}
+              </p>
+            }
           </div>
         </div>
       </section>
@@ -117,6 +127,11 @@
               formControlName="phone"
               autocomplete="tel"
             />
+            @if (form.controls.phone.touched && form.controls.phone.invalid) {
+              <p class="text-xs text-error" data-og7="user-profile-phone-error">
+                {{ 'validation.caPhone' | translate }}
+              </p>
+            }
           </div>
           <div class="flex flex-col gap-1">
             <label class="text-sm font-medium text-slate-700" for="profile-email">
@@ -149,6 +164,11 @@
               formControlName="sectorPreferences"
               placeholder="energy, manufacturing"
             />
+            @if (form.controls.sectorPreferences.touched && form.controls.sectorPreferences.invalid) {
+              <p class="text-xs text-error" data-og7="user-profile-sector-preferences-error">
+                {{ 'auth.profile.validation.list' | translate }}
+              </p>
+            }
           </div>
           <div class="flex flex-col gap-1">
             <label class="text-sm font-medium text-slate-700" for="profile-provinces">
@@ -161,6 +181,11 @@
               formControlName="provincePreferences"
               placeholder="qc, on"
             />
+            @if (form.controls.provincePreferences.touched && form.controls.provincePreferences.invalid) {
+              <p class="text-xs text-error" data-og7="user-profile-province-preferences-error">
+                {{ 'auth.profile.validation.list' | translate }}
+              </p>
+            }
           </div>
         </div>
         <div
@@ -196,9 +221,17 @@
               class="rounded border border-slate-300 px-3 py-2 text-sm"
               formControlName="notificationWebhook"
               placeholder="https://cms.example.com/api/notifications/email"
-              [disabled]="!form.controls.emailNotifications.value"
               autocomplete="url"
             />
+            @if (form.controls.notificationWebhook.touched && form.controls.notificationWebhook.invalid) {
+              <p class="text-xs text-error" data-og7="user-profile-notification-webhook-error">
+                @if (form.controls.notificationWebhook.hasError('invalidHttpsUrl')) {
+                  {{ 'auth.profile.validation.httpsUrl' | translate }}
+                } @else {
+                  {{ 'validation.url' | translate }}
+                }
+              </p>
+            }
             <p class="text-xs text-slate-500">
               {{ 'auth.profile.preferences.email.webhookHelp' | translate }}
             </p>
@@ -206,18 +239,33 @@
         </div>
       </section>
 
-      <div class="flex justify-end gap-3">
-        <button
-          type="submit"
-          class="inline-flex items-center rounded bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-          [disabled]="saving()"
-        >
-          @if (saving()) {
-            {{ 'auth.profile.saving' | translate }}
-          } @else {
-            {{ 'auth.profile.save' | translate }}
-          }
-        </button>
+      <div class="flex flex-col items-end gap-3">
+        @if (hasUnsavedChanges()) {
+          <p class="text-xs text-amber-700" data-og7="user-profile-unsaved-changes">
+            {{ 'auth.profile.unsavedChanges' | translate }}
+          </p>
+        }
+        <div class="flex justify-end gap-3">
+          <button
+            type="button"
+            class="inline-flex items-center rounded border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50"
+            (click)="resetPendingChanges()"
+            [disabled]="saving() || !form.dirty"
+          >
+            {{ 'auth.profile.discard' | translate }}
+          </button>
+          <button
+            type="submit"
+            class="inline-flex items-center rounded bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            [disabled]="!canSave()"
+          >
+            @if (saving()) {
+              {{ 'auth.profile.saving' | translate }}
+            } @else {
+              {{ 'auth.profile.save' | translate }}
+            }
+          </button>
+        </div>
       </div>
     </form>
   }

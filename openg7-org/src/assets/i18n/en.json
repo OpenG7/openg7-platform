@@ -159,9 +159,12 @@
       "subtitle": "Review your contact details and preferences shared with partners.",
       "loading": "Loading your profile…",
       "save": "Save changes",
+      "discard": "Discard changes",
       "saving": "Saving…",
+      "unsavedChanges": "You have unsaved changes.",
       "success": "Your profile has been updated.",
       "error": "We could not update your profile. Please try again.",
+      "unsavedChangesConfirm": "You have unsaved changes. Leave this page anyway?",
       "avatar": {
         "label": "Profile picture URL",
         "placeholder": "https://example.com/avatar.jpg",
@@ -186,6 +189,10 @@
           "webhookLabel": "Custom webhook URL (optional)",
           "webhookHelp": "Leave empty to use the default Strapi webhook or provide a secure HTTPS endpoint managed by your team."
         }
+      },
+      "validation": {
+        "list": "Use a comma-separated list with up to 20 short entries.",
+        "httpsUrl": "Please enter a valid HTTPS URL."
       }
     },
     "login": {
@@ -202,7 +209,13 @@
       "helpLink": "Need help?",
       "ssoOnlyHelperTitle": "Continue with your company account",
       "ssoOnlyHelperBody": "Click the button above to open your provider. Once the authentication completes, you will be redirected back here automatically.",
-      "ssoOnlyHelperCta": "Read the SSO guide"
+      "ssoOnlyHelperCta": "Read the SSO guide",
+      "activationEmailCta": "Resend activation email",
+      "activationEmailSending": "Sending activation email…",
+      "activationEmailSent": "If the account is eligible for activation, a confirmation email has been sent.",
+      "activationEmailError": "Unable to send the activation email right now.",
+      "activationAlreadyConfirmed": "This account is already confirmed. Contact your administrator if access is still blocked.",
+      "activationUnavailable": "Activation email delivery is unavailable in this environment."
     },
     "loginSubtitle": "Access your secure workspace to coordinate partnerships and exchanges.",
     "signup": "Create an account",
@@ -328,6 +341,7 @@
       "confirmPasswordRequired": "Password confirmation is required.",
       "passwordMismatch": "Passwords do not match.",
       "invalidCredentials": "Incorrect credentials. Double-check your email and password.",
+      "emailNotConfirmed": "Your email is not confirmed yet. Resend the activation email.",
       "accountDisabled": "Your account is inactive. Please reach out to your administrator to reactivate it.",
       "accountLocked": "Too many attempts. Your account is temporarily locked.",
       "passwordExpired": "Your password has expired. Reset it to continue.",

@@ -67,18 +67,64 @@ export async function upsertByUID(uid: UID, data: Record<string, any>, options: 
   return strapi.entityService.create(normalizeContentTypeUID(uid), { data });
 }
 
-export async function ensureRole(name: string) {
-  const roleService = strapi.service('plugin::users-permissions.role');
-  let role = await roleService.findOne({ where: { name } });
-  if (!role) {
-    role = await roleService.create({ name, type: name.toLowerCase() });
-  }
-  return role;
+function normalizeRoleType(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, '-');
 }
 
-export async function setRolePermissions(roleId: number, permissions: Record<string, Record<string, boolean>>) {
-  const roleService = strapi.service('plugin::users-permissions.role');
-  await roleService.updateRolePermissions(roleId, permissions);
+export async function ensureRole(name: string) {
+  const roleType = normalizeRoleType(name);
+  const roleQuery = strapi.db.query('plugin::users-permissions.role');
+  const roles = await roleQuery.findMany();
+  const existingRole = roles.find((role: any) => role.name === name || role.type === roleType);
+
+  if (existingRole) {
+    return existingRole;
+  }
+
+  return roleQuery.create({
+    data: {
+      name,
+      type: roleType,
+    },
+  });
+}
+
+export async function setRolePermissions(
+  roleId: number | string,
+  permissions: Record<string, Record<string, boolean>>
+) {
+  const permissionQuery = strapi.db.query('plugin::users-permissions.permission');
+  const managedActionPrefixes = Object.keys(permissions).map((uid) => `${uid}.`);
+
+  const currentPermissions = await permissionQuery.findMany({
+    where: { role: roleId },
+  });
+
+  for (const permission of currentPermissions) {
+    if (!managedActionPrefixes.some((prefix) => permission.action?.startsWith(prefix))) {
+      continue;
+    }
+
+    await permissionQuery.delete({ where: { id: permission.id } });
+  }
+
+  const enabledActions = new Set<string>();
+  for (const [uid, actionMap] of Object.entries(permissions)) {
+    for (const [action, enabled] of Object.entries(actionMap)) {
+      if (enabled) {
+        enabledActions.add(`${uid}.${action}`);
+      }
+    }
+  }
+
+  for (const action of enabledActions) {
+    await permissionQuery.create({
+      data: {
+        action,
+        role: roleId,
+      },
+    });
+  }
 }
 
 export async function ensureLocale(code: 'fr' | 'en') {

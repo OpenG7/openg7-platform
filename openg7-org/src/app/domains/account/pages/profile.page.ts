@@ -1,12 +1,83 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '@app/core/auth/auth.service';
 import { AuthUser, UpdateProfilePayload } from '@app/core/auth/auth.types';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
+
+function optionalUrlValidator(options: { httpsOnly?: boolean } = {}): ValidatorFn {
+  return (control: AbstractControl<string | null>): ValidationErrors | null => {
+    const raw = control.value;
+    if (typeof raw !== 'string' || raw.trim().length === 0) {
+      return null;
+    }
+
+    try {
+      const parsed = new URL(raw.trim());
+      if (!['http:', 'https:'].includes(parsed.protocol)) {
+        return { invalidUrl: true };
+      }
+      if (options.httpsOnly && parsed.protocol !== 'https:') {
+        return { invalidHttpsUrl: true };
+      }
+      return null;
+    } catch {
+      return { invalidUrl: true };
+    }
+  };
+}
+
+function optionalPhoneValidator(): ValidatorFn {
+  return (control: AbstractControl<string | null>): ValidationErrors | null => {
+    const raw = control.value;
+    if (typeof raw !== 'string' || raw.trim().length === 0) {
+      return null;
+    }
+
+    return /^[+()0-9.\-\s]{7,24}$/.test(raw.trim()) ? null : { invalidPhone: true };
+  };
+}
+
+function csvListValidator(maxItems: number, maxItemLength: number): ValidatorFn {
+  return (control: AbstractControl<string | null>): ValidationErrors | null => {
+    const raw = control.value;
+    if (typeof raw !== 'string' || raw.trim().length === 0) {
+      return null;
+    }
+
+    const entries = raw
+      .split(',')
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0);
+
+    if (entries.length > maxItems) {
+      return { listTooLong: true };
+    }
+
+    if (entries.some((entry) => entry.length > maxItemLength)) {
+      return { listItemTooLong: true };
+    }
+
+    return null;
+  };
+}
 
 @Component({
   standalone: true,
@@ -32,28 +103,38 @@ export class ProfilePage {
   protected readonly saving = signal(false);
   protected readonly avatarPreview = signal<string | null>(null);
   protected readonly profile = signal<AuthUser | null>(null);
+  protected readonly canSave = computed(() => {
+    return !this.loading() && !this.saving() && this.form.dirty && this.form.valid;
+  });
+  protected readonly hasUnsavedChanges = computed(() => this.form.dirty && !this.saving());
 
   protected readonly form = this.fb.group({
-    firstName: this.fb.nonNullable.control(''),
-    lastName: this.fb.nonNullable.control(''),
-    jobTitle: this.fb.nonNullable.control(''),
-    organization: this.fb.nonNullable.control(''),
-    phone: this.fb.nonNullable.control(''),
+    firstName: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
+    lastName: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
+    jobTitle: this.fb.nonNullable.control('', [Validators.maxLength(120)]),
+    organization: this.fb.nonNullable.control('', [Validators.maxLength(120)]),
+    phone: this.fb.nonNullable.control('', [optionalPhoneValidator()]),
     email: this.fb.control(
       { value: '', disabled: true },
       { nonNullable: true, validators: [Validators.required, Validators.email] }
     ),
-    avatarUrl: this.fb.nonNullable.control(''),
-    sectorPreferences: this.fb.nonNullable.control(''),
-    provincePreferences: this.fb.nonNullable.control(''),
+    avatarUrl: this.fb.nonNullable.control('', [optionalUrlValidator()]),
+    sectorPreferences: this.fb.nonNullable.control('', [csvListValidator(20, 40)]),
+    provincePreferences: this.fb.nonNullable.control('', [csvListValidator(20, 20)]),
     emailNotifications: this.fb.nonNullable.control(false),
-    notificationWebhook: this.fb.nonNullable.control(''),
+    notificationWebhook: this.fb.nonNullable.control('', [optionalUrlValidator({ httpsOnly: true })]),
   });
 
   constructor() {
+    this.syncWebhookAvailability(this.form.controls.emailNotifications.value, false);
+
     this.form.controls.avatarUrl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.avatarPreview.set(this.normalizeString(value)));
+
+    this.form.controls.emailNotifications.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((enabled) => this.syncWebhookAvailability(Boolean(enabled), true));
 
     this.auth
       .getProfile()
@@ -138,6 +219,22 @@ export class ProfilePage {
       });
   }
 
+  protected resetPendingChanges(): void {
+    const profile = this.profile();
+    if (!profile || this.saving()) {
+      return;
+    }
+    this.applyProfile(profile);
+  }
+
+  public hasPendingChanges(): boolean {
+    return this.form.dirty && !this.saving();
+  }
+
+  protected onAvatarPreviewError(): void {
+    this.avatarPreview.set(null);
+  }
+
   private applyProfile(profile: AuthUser): void {
     this.profile.set(profile);
 
@@ -158,10 +255,27 @@ export class ProfilePage {
       { emitEvent: false }
     );
 
+    this.avatarPreview.set(this.normalizeString(profile.avatarUrl));
+    this.syncWebhookAvailability(profile.notificationPreferences?.emailOptIn ?? false, true);
     this.form.markAsPristine();
     this.form.markAsUntouched();
-    this.avatarPreview.set(this.normalizeString(profile.avatarUrl));
     this.notifications.updatePreferences(this.buildNotificationPreferences(profile));
+  }
+
+  private syncWebhookAvailability(enabled: boolean, clearWhenDisabled: boolean): void {
+    const webhookControl = this.form.controls.notificationWebhook;
+
+    if (!enabled) {
+      if (clearWhenDisabled) {
+        webhookControl.setValue('', { emitEvent: false });
+      }
+      webhookControl.disable({ emitEvent: false });
+      webhookControl.updateValueAndValidity({ emitEvent: false });
+      return;
+    }
+
+    webhookControl.enable({ emitEvent: false });
+    webhookControl.updateValueAndValidity({ emitEvent: false });
   }
 
   private buildNotificationPreferences(profile: AuthUser) {
@@ -181,10 +295,13 @@ export class ProfilePage {
   }
 
   private parseList(value: string): string[] {
-    return value
-      .split(',')
-      .map((item) => item.trim())
-      .filter((item) => item.length > 0);
+    const unique = new Set(
+      value
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+    );
+    return Array.from(unique);
   }
 
   private normalizeString(value: string | null | undefined): string | null {

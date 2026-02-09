@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { STRAPI_ROUTES, strapiUserById } from '../api/strapi.routes';
+import { STRAPI_ROUTES } from '../api/strapi.routes';
 import { API_URL } from '../config/environment.tokens';
 import { HttpClientService } from '../http/http-client.service';
 import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
@@ -79,11 +79,7 @@ describe('AuthService', () => {
     const user = { id: '1', email: 'a@a.com', roles: [] };
     req.flush({ jwt: 'abc.def.ghi', user });
     await flushAsync();
-    const raw = sessionStorage.getItem('auth_token');
-    if (raw) {
-      expect(raw).not.toBe('abc.def.ghi');
-    }
-    await expectAsync(storage.getToken()).toBeResolvedTo('abc.def.ghi');
+    expect(service.token()).toBe('abc.def.ghi');
     expect(service.user()).toEqual(user);
     expect(service.isAuthenticated()).toBeTrue();
     expect(rbac.setContext).toHaveBeenCalledWith({ role: 'visitor', isPremium: false });
@@ -100,7 +96,7 @@ describe('AuthService', () => {
 
   it('getProfile updates user state', () => {
     service.getProfile().subscribe();
-    const req = http.expectOne(STRAPI_ROUTES.users.me);
+    const req = http.expectOne(STRAPI_ROUTES.users.meProfile);
     const user = { id: '1', email: 'b@b.com', roles: ['user'] };
     req.flush(user);
     expect(service.user()).toEqual(user);
@@ -114,11 +110,9 @@ describe('AuthService', () => {
       sectorPreferences: ['energy'],
     };
 
-    (service as any).userSig.set({ id: '1', email: 'jane@example.com', roles: ['user'] });
-
     service.updateProfile(payload).subscribe();
 
-    const req = http.expectOne(strapiUserById('1'));
+    const req = http.expectOne(STRAPI_ROUTES.users.meProfile);
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(payload);
 
@@ -152,7 +146,7 @@ describe('AuthService', () => {
     service.completeOidcLogin(response);
     await flushAsync();
 
-    await expectAsync(storage.getToken()).toBeResolvedTo(response.jwt);
+    expect(service.token()).toBe(response.jwt);
     expect(service.user()).toEqual(response.user);
     expect(service.isAuthenticated()).toBeTrue();
     expect(rbac.setContext).toHaveBeenCalledWith({ role: 'visitor', isPremium: false });
@@ -172,6 +166,23 @@ describe('AuthService', () => {
       jasmine.objectContaining({ source: 'auth' })
     );
     expect(notifications.error).not.toHaveBeenCalled();
+  });
+
+  it('sendEmailConfirmation posts payload and returns acknowledgment', () => {
+    const payload = { email: 'pending@example.com' };
+    let response: { email: string; sent: boolean } | undefined;
+
+    service.sendEmailConfirmation(payload).subscribe((value) => {
+      response = value;
+    });
+
+    const req = http.expectOne(STRAPI_ROUTES.auth.sendEmailConfirmation);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(payload);
+
+    req.flush({ email: payload.email, sent: true });
+
+    expect(response).toEqual({ email: payload.email, sent: true });
   });
 
   it('requestPasswordReset emits error message and triggers error toast', (done) => {

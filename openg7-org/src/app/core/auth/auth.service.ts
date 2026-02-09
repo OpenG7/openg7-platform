@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 
-import { STRAPI_ROUTES, strapiUserById } from '../api/strapi.routes';
+import { STRAPI_ROUTES } from '../api/strapi.routes';
 import { HttpClientService } from '../http/http-client.service';
 import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
 import { RbacFacadeService } from '../security/rbac.facade';
@@ -118,6 +118,21 @@ export class AuthService {
   }
 
   /**
+   * Contexte : Called by login screens when users request a fresh account activation email.
+   * Raison d’être : Delegates to Strapi users-permissions confirmation flow.
+   * @param payload Object containing the email address to target.
+   * @returns Observable emitting the API acknowledgement.
+   */
+  sendEmailConfirmation(payload: {
+    email: string;
+  }): Observable<{ email: string; sent: boolean }> {
+    return this.http.post<{ email: string; sent: boolean }>(
+      STRAPI_ROUTES.auth.sendEmailConfirmation,
+      payload
+    );
+  }
+
+  /**
    * Contexte : Invoked when a user chooses an external identity provider to sign in.
    * Raison d’être : Delegates to the OIDC service to start the PKCE redirect flow.
    * @param provider Identifier of the OIDC provider to use.
@@ -158,7 +173,7 @@ export class AuthService {
    * @returns Observable emitting the latest profile payload.
    */
   getProfile(): Observable<ProfileResponse> {
-    return this.http.get<ProfileResponse>(STRAPI_ROUTES.users.me).pipe(
+    return this.http.get<ProfileResponse>(STRAPI_ROUTES.users.meProfile).pipe(
       tap((user) => {
         this.userSig.set(user);
         this.syncRbac(user);
@@ -176,11 +191,7 @@ export class AuthService {
    * @returns Observable emitting the updated profile.
    */
   updateProfile(payload: UpdateProfilePayload): Observable<ProfileResponse> {
-    const userId = this.userSig()?.id;
-    if (!userId) {
-      return throwError(() => new Error('auth.errors.userNotLoaded'));
-    }
-    return this.http.put<ProfileResponse>(strapiUserById(userId), payload).pipe(
+    return this.http.put<ProfileResponse>(STRAPI_ROUTES.users.meProfile, payload).pipe(
       tap((user) => {
         this.userSig.set(user);
         this.syncRbac(user);
@@ -268,7 +279,10 @@ export class AuthService {
 
   private async restoreToken(): Promise<void> {
     const token = await this.tokenStorage.getToken();
-    this.tokenSig.set(token);
+    // Avoid clobbering a fresh login token if restore resolves later.
+    if (this.tokenSig() === null) {
+      this.tokenSig.set(token);
+    }
   }
 
   private handleError(error: unknown, fallbackKey: string): Observable<never> {

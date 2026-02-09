@@ -54,7 +54,12 @@ export class LoginPage implements AfterViewInit, OnInit {
   protected readonly apiError = signal<string | null>(null);
   protected readonly authMode = this.authConfig.authMode;
   protected readonly passwordVisible = signal(false);
+  protected readonly sendingActivationEmail = signal(false);
   protected readonly redirectTarget = signal('/profile');
+  protected readonly canSendActivationEmail = computed(() => {
+    const error = this.apiError();
+    return error === 'auth.errors.accountDisabled' || error === 'auth.errors.emailNotConfirmed';
+  });
 
   protected readonly loginSubtitleKey = computed(() => {
     const mode = this.authMode();
@@ -141,31 +146,69 @@ export class LoginPage implements AfterViewInit, OnInit {
       });
   }
 
+  protected onSendActivationEmail(): void {
+    if (this.loading() || this.sendingActivationEmail()) {
+      return;
+    }
+
+    const email = this.form.controls.email.value.trim();
+    if (!email) {
+      this.form.controls.email.markAsTouched();
+      this.notifications.error(this.translate.instant('auth.errors.emailRequired'), {
+        source: 'auth',
+        metadata: { action: 'send-email-confirmation' },
+      });
+      return;
+    }
+
+    if (this.form.controls.email.invalid) {
+      this.form.controls.email.markAsTouched();
+      this.notifications.error(this.translate.instant('auth.errors.emailInvalid'), {
+        source: 'auth',
+        metadata: { action: 'send-email-confirmation' },
+      });
+      return;
+    }
+
+    this.sendingActivationEmail.set(true);
+    this.auth
+      .sendEmailConfirmation({ email })
+      .pipe(finalize(() => this.sendingActivationEmail.set(false)))
+      .subscribe({
+        next: () => {
+          this.notifications.success(this.translate.instant('auth.login.activationEmailSent'), {
+            source: 'auth',
+            metadata: { action: 'send-email-confirmation' },
+          });
+        },
+        error: (error) => {
+          this.notifications.error(this.resolveActivationEmailError(error), {
+            source: 'auth',
+            context: error,
+            metadata: { action: 'send-email-confirmation' },
+          });
+        },
+      });
+  }
+
   private resolveErrorMessage(error: unknown): { message: string; code: string | null; status: number | null } {
     const fallback = 'auth.errors.api';
     if (error instanceof HttpErrorResponse) {
       const payload = error.error;
       const normalized = this.normalizeApiError(payload);
       const explicitCode = this.resolveErrorCode(error.status, normalized?.code ?? null);
+      const payloadMessage = this.extractErrorMessage(payload);
 
       if (explicitCode) {
         return { message: explicitCode, code: explicitCode, status: error.status ?? null };
       }
 
-      if (typeof payload === 'string' && payload.trim()) {
-        return { message: payload, code: null, status: error.status ?? null };
-      }
-      if (payload && typeof payload === 'object') {
-        const candidate = (payload as { message?: unknown }).message;
-        if (typeof candidate === 'string' && candidate.trim()) {
-          return { message: candidate, code: null, status: error.status ?? null };
+      if (payloadMessage) {
+        const mappedCode = this.resolveErrorCode(error.status, payloadMessage);
+        if (mappedCode) {
+          return { message: mappedCode, code: mappedCode, status: error.status ?? null };
         }
-        if (Array.isArray(candidate)) {
-          const first = candidate.find((item) => typeof item === 'string' && item.trim());
-          if (typeof first === 'string') {
-            return { message: first, code: null, status: error.status ?? null };
-          }
-        }
+        return { message: payloadMessage, code: null, status: error.status ?? null };
       }
       if (typeof error.message === 'string' && error.message.trim()) {
         return { message: error.message, code: null, status: error.status ?? null };
@@ -226,11 +269,14 @@ export class LoginPage implements AfterViewInit, OnInit {
   private resolveErrorCode(status: number | null | undefined, candidate: string | null | undefined): string | null {
     const normalized = candidate?.toLowerCase();
     if (normalized) {
+      if (normalized.includes('not confirmed') || normalized.includes('email is not confirmed')) {
+        return 'auth.errors.emailNotConfirmed';
+      }
+      if (normalized.includes('blocked') || normalized.includes('inactive') || normalized.includes('disabled')) {
+        return 'auth.errors.accountDisabled';
+      }
       if (normalized.includes('locked') || normalized.includes('suspended')) {
         return 'auth.errors.accountLocked';
-      }
-      if (normalized.includes('inactive') || normalized.includes('disabled')) {
-        return 'auth.errors.accountDisabled';
       }
       if (normalized.includes('expired')) {
         return 'auth.errors.passwordExpired';
@@ -257,6 +303,92 @@ export class LoginPage implements AfterViewInit, OnInit {
       default:
         return null;
     }
+  }
+
+  private resolveActivationEmailError(error: unknown): string {
+    const fallback = this.translate.instant('auth.login.activationEmailError');
+
+    if (error instanceof HttpErrorResponse) {
+      const payloadMessage =
+        this.extractErrorMessage(error.error) ??
+        this.extractErrorMessage(error.message) ??
+        this.extractErrorMessage(error.statusText);
+
+      if (payloadMessage) {
+        return this.mapActivationEmailError(payloadMessage) ?? payloadMessage;
+      }
+    }
+
+    if (typeof error === 'string') {
+      const trimmed = error.trim();
+      if (trimmed) {
+        return this.mapActivationEmailError(trimmed) ?? trimmed;
+      }
+    }
+
+    return fallback;
+  }
+
+  private mapActivationEmailError(message: string): string | null {
+    const normalized = message.trim().toLowerCase();
+    if (!normalized) {
+      return null;
+    }
+
+    if (normalized.includes('already confirmed')) {
+      return this.translate.instant('auth.login.activationAlreadyConfirmed');
+    }
+
+    if (normalized.includes('blocked')) {
+      return this.translate.instant('auth.errors.accountDisabled');
+    }
+
+    if (normalized.includes('email confirmation') && normalized.includes('disabled')) {
+      return this.translate.instant('auth.login.activationUnavailable');
+    }
+
+    if (normalized.includes('too many') || normalized.includes('rate')) {
+      return this.translate.instant('auth.errors.tooManyAttempts');
+    }
+
+    return null;
+  }
+
+  private extractErrorMessage(payload: unknown): string | null {
+    if (!payload) {
+      return null;
+    }
+
+    if (typeof payload === 'string') {
+      const trimmed = payload.trim();
+      return trimmed.length > 0 ? trimmed : null;
+    }
+
+    if (Array.isArray(payload)) {
+      for (const entry of payload) {
+        const nested = this.extractErrorMessage(entry);
+        if (nested) {
+          return nested;
+        }
+      }
+      return null;
+    }
+
+    if (typeof payload === 'object') {
+      const record = payload as Record<string, unknown>;
+      const candidateKeys = ['message', 'error', 'errors', 'detail', 'details', 'data'];
+      for (const key of candidateKeys) {
+        if (record[key] === undefined) {
+          continue;
+        }
+        const nested = this.extractErrorMessage(record[key]);
+        if (nested) {
+          return nested;
+        }
+      }
+    }
+
+    return null;
   }
 }
 

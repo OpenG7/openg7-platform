@@ -3,16 +3,39 @@ import { AuthService } from '@app/core/auth/auth.service';
 import { AuthUser } from '@app/core/auth/auth.types';
 import { NotificationStore, NotificationStoreApi } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { ProfilePage } from './profile.page';
 
 class TranslateStub {
+  readonly onTranslationChange = new Subject<void>();
+  readonly onLangChange = new Subject<void>();
+  readonly onFallbackLangChange = new Subject<void>();
+  readonly onDefaultLangChange = new Subject<void>();
+  readonly currentLang = 'en';
+  readonly fallbackLang = 'en';
+
+  getCurrentLang(): string {
+    return this.currentLang;
+  }
+
+  getFallbackLang(): string {
+    return this.fallbackLang;
+  }
+
   instant(key: string): string {
     return key;
   }
 
-  get(key: string) {
+  get(key: string): Observable<string> {
+    return of(key);
+  }
+
+  getStreamOnTranslationChange(key: string): Observable<string> {
+    return of(key);
+  }
+
+  stream(key: string): Observable<string> {
     return of(key);
   }
 }
@@ -136,5 +159,25 @@ describe('ProfilePage', () => {
       'auth.profile.error',
       jasmine.objectContaining({ source: 'auth' })
     );
+  });
+
+  it('clears and disables webhook when email notifications are turned off', () => {
+    const form = (component as any).form;
+    form.controls.notificationWebhook.setValue('https://hooks.example.com/new');
+
+    form.controls.emailNotifications.setValue(false);
+
+    expect(form.controls.notificationWebhook.disabled).toBeTrue();
+    expect(form.controls.notificationWebhook.value).toBe('');
+  });
+
+  it('does not submit when form validation fails', () => {
+    const form = (component as any).form;
+    form.controls.phone.setValue('invalid phone');
+
+    (component as any).onSubmit();
+
+    expect(auth.updateProfile).not.toHaveBeenCalled();
+    expect(form.controls.phone.invalid).toBeTrue();
   });
 });

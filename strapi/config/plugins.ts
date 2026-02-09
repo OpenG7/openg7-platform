@@ -24,17 +24,19 @@ export default ({ env }: ConfigContext) => {
       config: {
         provider: '@strapi/provider-upload-aws-s3',
         providerOptions: {
-          accessKeyId: env('UPLOAD_S3_ACCESS_KEY_ID'),
-          secretAccessKey: env('UPLOAD_S3_SECRET_ACCESS_KEY'),
-          region: env('UPLOAD_S3_REGION'),
-          endpoint: endpoint || undefined,
           baseUrl: baseUrl || undefined,
-          params: {
-            Bucket: env('UPLOAD_S3_BUCKET'),
-            Prefix: prefix || undefined,
-            ACL: acl || undefined,
+          s3Options: {
+            accessKeyId: env('UPLOAD_S3_ACCESS_KEY_ID'),
+            secretAccessKey: env('UPLOAD_S3_SECRET_ACCESS_KEY'),
+            region: env('UPLOAD_S3_REGION'),
+            endpoint: endpoint || undefined,
+            params: {
+              Bucket: env('UPLOAD_S3_BUCKET'),
+              Prefix: prefix || undefined,
+              ACL: acl || undefined,
+            },
+            s3ForcePathStyle: env.bool('UPLOAD_S3_FORCE_PATH_STYLE', false),
           },
-          s3ForcePathStyle: env.bool('UPLOAD_S3_FORCE_PATH_STYLE', false),
         },
         actionOptions: {
           upload: {},
