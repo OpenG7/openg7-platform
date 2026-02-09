@@ -1,5 +1,5 @@
 const DEV_ENVIRONMENTS = new Set(['development', 'dev', 'integration', 'test']);
-const DEFAULT_ADMIN_EMAIL = 'admin@openg7.org';
+const DEFAULT_ADMIN_EMAIL = 'contact@openg7.org';
 const DEFAULT_ADMIN_PASSWORD = 'change-me';
 const DEFAULT_ADMIN_FIRSTNAME = 'Admin';
 const DEFAULT_ADMIN_LASTNAME = 'User';

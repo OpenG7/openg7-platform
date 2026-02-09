@@ -14,7 +14,7 @@ yarn dev:cms   # Strapi sur http://localhost:1337
 yarn dev:web   # Front Angular sur http://localhost:4200
 ```
 - Copiez les `.env.example` dans `strapi/` et `openg7-org/`, puis renseignez les valeurs requises (tokens API, comptes admin, flags).
-- En local (`development`), la seed crée un admin par défaut (`admin@openg7.org` / `change-me`) si aucun compte n'existe. Vous pouvez surcharger avec `STRAPI_ADMIN_EMAIL`/`STRAPI_ADMIN_PASSWORD`.
+- En local (`development`), la seed crée un admin par défaut (`contact@openg7.org` / `change-me`) si aucun compte n'existe. Vous pouvez surcharger avec `STRAPI_ADMIN_EMAIL`/`STRAPI_ADMIN_PASSWORD`.
 
 ## 3. Déroulé suggéré
 1. Forkez le dépôt et créez une branche dédiée (`feature/<slug>` ou `fix/<slug>`).
