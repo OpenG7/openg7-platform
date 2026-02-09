@@ -3,16 +3,39 @@ import { AuthService } from '@app/core/auth/auth.service';
 import { AuthUser } from '@app/core/auth/auth.types';
 import { NotificationStore, NotificationStoreApi } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { ProfilePage } from './profile.page';
 
 class TranslateStub {
+  readonly onTranslationChange = new Subject<void>();
+  readonly onLangChange = new Subject<void>();
+  readonly onFallbackLangChange = new Subject<void>();
+  readonly onDefaultLangChange = new Subject<void>();
+  readonly currentLang = 'en';
+  readonly fallbackLang = 'en';
+
+  getCurrentLang(): string {
+    return this.currentLang;
+  }
+
+  getFallbackLang(): string {
+    return this.fallbackLang;
+  }
+
   instant(key: string): string {
     return key;
   }
 
-  get(key: string) {
+  get(key: string): Observable<string> {
+    return of(key);
+  }
+
+  getStreamOnTranslationChange(key: string): Observable<string> {
+    return of(key);
+  }
+
+  stream(key: string): Observable<string> {
     return of(key);
   }
 }
@@ -39,7 +62,13 @@ describe('ProfilePage', () => {
   };
 
   beforeEach(async () => {
-    auth = jasmine.createSpyObj<AuthService>('AuthService', ['getProfile', 'updateProfile']);
+    auth = jasmine.createSpyObj<AuthService>('AuthService', [
+      'getProfile',
+      'updateProfile',
+      'changePassword',
+      'requestEmailChange',
+      'sendEmailConfirmation',
+    ]);
     notifications = jasmine.createSpyObj<NotificationStoreApi>('NotificationStore', [
       'success',
       'error',
@@ -48,6 +77,11 @@ describe('ProfilePage', () => {
 
     auth.getProfile.and.returnValue(of(profile));
     auth.updateProfile.and.returnValue(of(profile));
+    auth.changePassword.and.returnValue(of({ jwt: 'next.jwt.token', user: profile }));
+    auth.requestEmailChange.and.returnValue(
+      of({ email: 'new@example.com', sent: true, accountStatus: 'emailNotConfirmed' })
+    );
+    auth.sendEmailConfirmation.and.returnValue(of({ email: profile.email, sent: true }));
 
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
@@ -134,6 +168,78 @@ describe('ProfilePage', () => {
 
     expect(notifications.error).toHaveBeenCalledWith(
       'auth.profile.error',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('clears and disables webhook when email notifications are turned off', () => {
+    const form = (component as any).form;
+    form.controls.notificationWebhook.setValue('https://hooks.example.com/new');
+
+    form.controls.emailNotifications.setValue(false);
+
+    expect(form.controls.notificationWebhook.disabled).toBeTrue();
+    expect(form.controls.notificationWebhook.value).toBe('');
+  });
+
+  it('does not submit when form validation fails', () => {
+    const form = (component as any).form;
+    form.controls.phone.setValue('invalid phone');
+
+    (component as any).onSubmit();
+
+    expect(auth.updateProfile).not.toHaveBeenCalled();
+    expect(form.controls.phone.invalid).toBeTrue();
+  });
+
+  it('changes password when the security form is valid', () => {
+    const form = (component as any).passwordForm;
+    form.controls.currentPassword.setValue('OldSecret123!');
+    form.controls.password.setValue('NewSecret123!');
+    form.controls.passwordConfirmation.setValue('NewSecret123!');
+
+    (component as any).onChangePassword();
+
+    expect(auth.changePassword).toHaveBeenCalledWith({
+      currentPassword: 'OldSecret123!',
+      password: 'NewSecret123!',
+      passwordConfirmation: 'NewSecret123!',
+    });
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.profile.security.password.success',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('requests email change when the security form is valid', () => {
+    const form = (component as any).emailChangeForm;
+    form.controls.currentPassword.setValue('CurrentSecret123!');
+    form.controls.email.setValue('new@example.com');
+
+    (component as any).onRequestEmailChange();
+
+    expect(auth.requestEmailChange).toHaveBeenCalledWith({
+      currentPassword: 'CurrentSecret123!',
+      email: 'new@example.com',
+    });
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.profile.security.emailChange.success',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('resends activation email when account is unconfirmed', () => {
+    (component as any).profile.set({
+      ...profile,
+      confirmed: false,
+      accountStatus: 'emailNotConfirmed',
+    });
+
+    (component as any).onSendActivationEmail();
+
+    expect(auth.sendEmailConfirmation).toHaveBeenCalledWith({ email: profile.email });
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.login.activationEmailSent',
       jasmine.objectContaining({ source: 'auth' })
     );
   });

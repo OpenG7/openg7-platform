@@ -156,6 +156,7 @@ export default [
   'strapi::logger',
   'strapi::query',
   'strapi::body',
+  'global::activation-email-cooldown',
   {
     name: 'strapi::session',
     config: {

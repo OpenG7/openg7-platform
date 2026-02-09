@@ -4,10 +4,10 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 /**
- * Contexte : Injecté via Angular DI par les autres briques du dossier « core/security ».
- * Raison d’être : Centralise la logique métier et les appels nécessaires autour de « Crypto ».
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns CryptoService gérée par le framework.
+ * Contexte : InjectÃ© via Angular DI par les autres briques du dossier Â« core/security Â».
+ * Raison dâ€™Ãªtre : Centralise la logique mÃ©tier et les appels nÃ©cessaires autour de Â« Crypto Â».
+ * @param dependencies DÃ©pendances injectÃ©es automatiquement par Angular.
+ * @returns CryptoService gÃ©rÃ©e par le framework.
  */
 export class CryptoService {
   private readonly subtle = globalThis.crypto?.subtle ?? null;
@@ -17,7 +17,7 @@ export class CryptoService {
 
   /**
    * Contexte : Checked by token storage before attempting to use browser crypto APIs.
-   * Raison d’être : Quickly detects whether the environment can perform AES-GCM operations with persisted keys.
+   * Raison dâ€™Ãªtre : Quickly detects whether the environment can perform AES-GCM operations with persisted keys.
    * @returns True when SubtleCrypto and secure randomness are available.
    */
   get isSupported(): boolean {
@@ -27,7 +27,7 @@ export class CryptoService {
 
   /**
    * Contexte : Used during PKCE and OIDC flows to hash verifiers before sending them to the identity provider.
-   * Raison d’être : Provides a promise-based helper that wraps SubtleCrypto.digest with encoding safeguards.
+   * Raison dâ€™Ãªtre : Provides a promise-based helper that wraps SubtleCrypto.digest with encoding safeguards.
    * @param message Arbitrary string to hash using SHA-256.
    * @returns Promise resolving with the digest bytes.
    */
@@ -41,7 +41,7 @@ export class CryptoService {
 
   /**
    * Contexte : Invoked by the token storage when persisting sensitive tokens client-side.
-   * Raison d’être : Encrypts the token payload with AES-GCM before writing to sessionStorage.
+   * Raison dâ€™Ãªtre : Encrypts the token payload with AES-GCM before writing to browser storage.
    * @param value Plain text value to encrypt.
    * @returns Promise resolving with a base64-encoded cipher string.
    */
@@ -65,8 +65,8 @@ export class CryptoService {
   }
 
   /**
-   * Contexte : Called during app bootstrap when restoring encrypted tokens from sessionStorage.
-   * Raison d’être : Decrypts AES-GCM payloads produced by {@link encrypt} to retrieve the original token.
+   * Contexte : Called during app bootstrap when restoring encrypted tokens from browser storage.
+   * Raison dâ€™Ãªtre : Decrypts AES-GCM payloads produced by {@link encrypt} to retrieve the original token.
    * @param payload Base64-encoded cipher containing IV and ciphertext.
    * @returns Promise resolving with the decrypted plain text.
    */
@@ -87,12 +87,13 @@ export class CryptoService {
 
   /**
    * Contexte : Executed on logout flows to avoid leaking encryption material across sessions.
-   * Raison d’être : Removes the persisted AES key and resets the in-memory cache so a fresh key is generated later.
+   * Raison dâ€™Ãªtre : Removes persisted AES keys and resets the in-memory cache so a fresh key is generated later.
    * @returns void
    */
   clearSessionKey(): void {
-    const storage = this.getSessionStorage();
-    storage?.removeItem(this.keyStorageKey);
+    for (const storage of this.getStorages()) {
+      storage.removeItem(this.keyStorageKey);
+    }
     this.keyPromise = null;
   }
 
@@ -108,21 +109,32 @@ export class CryptoService {
   }
 
   private async loadOrCreateKey(): Promise<CryptoKey | null> {
-    const storage = this.getSessionStorage();
     if (!this.subtle) {
       return null;
     }
+    const storages = this.getStorages();
 
-    if (storage) {
+    for (let index = 0; index < storages.length; index += 1) {
+      const storage = storages[index];
       const stored = storage.getItem(this.keyStorageKey);
-      if (stored) {
-        try {
-          const raw = this.fromBase64(stored);
-          const rawBuffer = this.toArrayBuffer(raw);
-          return await this.subtle.importKey('raw', rawBuffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
-        } catch {
-          storage.removeItem(this.keyStorageKey);
+      if (!stored) {
+        continue;
+      }
+      try {
+        const raw = this.fromBase64(stored);
+        const rawBuffer = this.toArrayBuffer(raw);
+        const key = await this.subtle.importKey('raw', rawBuffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
+        if (index > 0 && storages.length > 0) {
+          try {
+            storages[0].setItem(this.keyStorageKey, stored);
+            storage.removeItem(this.keyStorageKey);
+          } catch {
+            // Ignore migration failures and keep using imported key.
+          }
         }
+        return key;
+      } catch {
+        storage.removeItem(this.keyStorageKey);
       }
     }
 
@@ -131,8 +143,8 @@ export class CryptoService {
       const material = crypto.getRandomValues(new Uint8Array(32));
       const materialBuffer = this.toArrayBuffer(material);
       const key = await this.subtle.importKey('raw', materialBuffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
-      if (storage) {
-        storage.setItem(this.keyStorageKey, this.toBase64(material));
+      if (storages.length > 0) {
+        storages[0].setItem(this.keyStorageKey, this.toBase64(material));
       }
       material.fill(0);
       return key;
@@ -141,11 +153,26 @@ export class CryptoService {
     }
   }
 
-  private getSessionStorage(): Storage | null {
+  private getStorages(): Storage[] {
+    const local = this.tryGetStorage('localStorage');
+    const session = this.tryGetStorage('sessionStorage');
+    if (local && session && local !== session) {
+      return [local, session];
+    }
+    if (local) {
+      return [local];
+    }
+    if (session) {
+      return [session];
+    }
+    return [];
+  }
+
+  private tryGetStorage(kind: 'localStorage' | 'sessionStorage'): Storage | null {
     const candidate =
       typeof window !== 'undefined'
-        ? window.sessionStorage
-        : (globalThis as { sessionStorage?: Storage }).sessionStorage;
+        ? window[kind]
+        : (globalThis as { localStorage?: Storage; sessionStorage?: Storage })[kind];
     if (!candidate) {
       return null;
     }

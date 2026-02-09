@@ -1,9 +1,14 @@
 import { ensureLocale, findId, upsertByUID } from '../utils/seed-helpers';
 
+interface LocalizedText {
+  en: string;
+  fr: string;
+}
+
 interface CompanySeed {
   slug: string;
-  name: { en: string; fr: string };
-  description: { en: string; fr: string };
+  name: LocalizedText;
+  description: LocalizedText;
   website: string;
   country: 'CA' | 'US' | 'FR' | 'UK' | 'JP' | 'DE' | 'IT';
   provinceSlug: string;
@@ -12,17 +17,17 @@ interface CompanySeed {
   verificationStatus: 'unverified' | 'pending' | 'verified' | 'suspended';
   capacities: Record<string, any>;
   trustScore: number;
-  verificationSources: any[];
-  trustHistory: any[];
+  verificationSources: Record<string, any>[];
+  trustHistory: Record<string, any>[];
 }
 
 const companySeeds: CompanySeed[] = [
   {
     slug: 'north-river-energy',
-    name: { en: 'North River Energy', fr: 'Énergie North River' },
+    name: { en: 'North River Energy', fr: 'Energie North River' },
     description: {
       en: 'Independent producer specialising in renewable hydroelectric power for Western Canada.',
-      fr: 'Producteur indépendant spécialisé dans l’hydroélectricité renouvelable pour l’Ouest canadien.',
+      fr: "Producteur independant specialise dans l'hydroelectricite renouvelable pour l'Ouest canadien.",
     },
     website: 'https://northriver.example.com',
     country: 'CA',
@@ -58,10 +63,10 @@ const companySeeds: CompanySeed[] = [
   },
   {
     slug: 'prairie-agri-cooperative',
-    name: { en: 'Prairie Agri Cooperative', fr: 'Coopérative Agro Prairie' },
+    name: { en: 'Prairie Agri Cooperative', fr: 'Cooperative Agro Prairie' },
     description: {
       en: 'Cooperative network exporting grain and pulses across central provinces.',
-      fr: 'Réseau coopératif exportant des céréales et légumineuses à travers les provinces centrales.',
+      fr: 'Reseau cooperatif exportant des cereales et legumineuses a travers les provinces centrales.',
     },
     website: 'https://prairieagri.example.com',
     country: 'CA',
@@ -96,10 +101,10 @@ const companySeeds: CompanySeed[] = [
   },
   {
     slug: 'atlantic-marine-systems',
-    name: { en: 'Atlantic Marine Systems', fr: 'Systèmes Marins Atlantique' },
+    name: { en: 'Atlantic Marine Systems', fr: 'Systemes Marins Atlantique' },
     description: {
       en: 'Engineering firm supporting maintenance and retrofits for coastal shipping fleets.',
-      fr: 'Entreprise d’ingénierie soutenant la maintenance et la modernisation des flottes maritimes côtières.',
+      fr: "Entreprise d'ingenierie soutenant la maintenance et la modernisation des flottes maritimes cotieres.",
     },
     website: 'https://atlanticmarine.example.com',
     country: 'CA',
@@ -138,39 +143,37 @@ export default async () => {
   await ensureLocale('fr');
   await ensureLocale('en');
 
-  const provinceIds = new Map<string, number | string>();
-  const sectorIds = new Map<string, number | string>();
+  const taxonomyIds = new Map<string, number | string>();
 
   const ensureTaxonomyPresence = async (
-    cache: Map<string, number | string>,
     uid: 'api::province.province' | 'api::sector.sector',
     slug: string,
     taxonomyLabel: 'province' | 'sector',
     companySlug: string
   ) => {
-    if (!cache.has(slug)) {
+    const cacheKey = `${uid}:${slug}`;
+
+    if (!taxonomyIds.has(cacheKey)) {
       const id = await findId(uid, { slug });
       if (!id) {
         const message = `Cannot seed company "${companySlug}" because ${taxonomyLabel} with slug "${slug}" is missing.`;
         strapi.log?.error?.(message);
         throw new Error(message);
       }
-      cache.set(slug, id);
+      taxonomyIds.set(cacheKey, id);
     }
 
-    return cache.get(slug)!;
+    return taxonomyIds.get(cacheKey)!;
   };
 
   for (const seed of companySeeds) {
     const provinceId = await ensureTaxonomyPresence(
-      provinceIds,
       'api::province.province',
       seed.provinceSlug,
       'province',
       seed.slug
     );
     const sectorId = await ensureTaxonomyPresence(
-      sectorIds,
       'api::sector.sector',
       seed.sectorSlug,
       'sector',
@@ -181,8 +184,8 @@ export default async () => {
       'api::company.company',
       {
         slug: seed.slug,
-        name: seed.name,
-        description: seed.description,
+        name: seed.name.en,
+        description: seed.description.en,
         website: seed.website,
         country: seed.country,
         province: provinceId,
@@ -193,6 +196,12 @@ export default async () => {
         verificationSources: seed.verificationSources,
         trustHistory: seed.trustHistory,
         trustScore: seed.trustScore,
+        locale: 'en',
+      },
+      {
+        unique: {
+          slug: seed.slug,
+        },
       }
     );
   }

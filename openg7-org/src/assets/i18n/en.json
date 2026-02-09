@@ -159,9 +159,12 @@
       "subtitle": "Review your contact details and preferences shared with partners.",
       "loading": "Loading your profile…",
       "save": "Save changes",
+      "discard": "Discard changes",
       "saving": "Saving…",
+      "unsavedChanges": "You have unsaved changes.",
       "success": "Your profile has been updated.",
       "error": "We could not update your profile. Please try again.",
+      "unsavedChangesConfirm": "You have unsaved changes. Leave this page anyway?",
       "avatar": {
         "label": "Profile picture URL",
         "placeholder": "https://example.com/avatar.jpg",
@@ -186,6 +189,45 @@
           "webhookLabel": "Custom webhook URL (optional)",
           "webhookHelp": "Leave empty to use the default Strapi webhook or provide a secure HTTPS endpoint managed by your team."
         }
+      },
+      "validation": {
+        "list": "Use a comma-separated list with up to 20 short entries.",
+        "httpsUrl": "Please enter a valid HTTPS URL."
+      },
+      "security": {
+        "title": "Account security",
+        "subtitle": "Manage your account status, password and email confirmation settings.",
+        "status": {
+          "active": "Account active",
+          "emailNotConfirmed": "Email confirmation pending",
+          "disabled": "Account inactive"
+        },
+        "activation": {
+          "cta": "Resend activation email"
+        },
+        "password": {
+          "title": "Change password",
+          "current": "Current password",
+          "next": "New password",
+          "confirm": "Confirm new password",
+          "submit": "Update password",
+          "loading": "Updating password...",
+          "success": "Your password has been updated.",
+          "error": "We could not update your password. Please try again.",
+          "weak": "Use uppercase, lowercase, a number and a symbol.",
+          "sameAsCurrent": "Your new password must be different from the current password."
+        },
+        "emailChange": {
+          "title": "Change email address",
+          "help": "Enter your current password to request an email change confirmation link.",
+          "nextEmail": "New email address",
+          "currentPassword": "Current password",
+          "submit": "Request email change",
+          "loading": "Requesting email change...",
+          "success": "A confirmation email has been sent to your new address.",
+          "error": "We could not start the email change flow. Please try again.",
+          "sameAsCurrent": "Use an email address different from your current one."
+        }
       }
     },
     "login": {
@@ -202,7 +244,13 @@
       "helpLink": "Need help?",
       "ssoOnlyHelperTitle": "Continue with your company account",
       "ssoOnlyHelperBody": "Click the button above to open your provider. Once the authentication completes, you will be redirected back here automatically.",
-      "ssoOnlyHelperCta": "Read the SSO guide"
+      "ssoOnlyHelperCta": "Read the SSO guide",
+      "activationEmailCta": "Resend activation email",
+      "activationEmailSending": "Sending activation email…",
+      "activationEmailSent": "If the account is eligible for activation, a confirmation email has been sent.",
+      "activationEmailError": "Unable to send the activation email right now.",
+      "activationAlreadyConfirmed": "This account is already confirmed. Contact your administrator if access is still blocked.",
+      "activationUnavailable": "Activation email delivery is unavailable in this environment."
     },
     "loginSubtitle": "Access your secure workspace to coordinate partnerships and exchanges.",
     "signup": "Create an account",
@@ -245,6 +293,7 @@
       "submit": "Create account",
       "loading": "Creating your account…",
       "success": "Your account is ready.",
+      "confirmationPending": "Your account was created. Check your email to activate it before signing in.",
       "hero": {
         "tagline": "Secure onboarding",
         "title": "Create your OpenG7 account",
@@ -328,6 +377,7 @@
       "confirmPasswordRequired": "Password confirmation is required.",
       "passwordMismatch": "Passwords do not match.",
       "invalidCredentials": "Incorrect credentials. Double-check your email and password.",
+      "emailNotConfirmed": "Your email is not confirmed yet. Resend the activation email.",
       "accountDisabled": "Your account is inactive. Please reach out to your administrator to reactivate it.",
       "accountLocked": "Too many attempts. Your account is temporarily locked.",
       "passwordExpired": "Your password has expired. Reset it to continue.",

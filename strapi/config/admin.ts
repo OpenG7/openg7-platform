@@ -11,6 +11,12 @@ interface ConfigContext {
   env: Env;
 }
 
+interface AdminConfigWithSecrets extends Core.Config.Admin {
+  secrets: {
+    encryptionKey: string;
+  };
+}
+
 export default ({ env }: ConfigContext) => ({
   /**
    * Secret pour l'authentification de l'admin (Strapi en a déjà généré un dans .env: JWT_SECRET)
@@ -34,4 +40,11 @@ export default ({ env }: ConfigContext) => ({
       salt: env('TRANSFER_TOKEN_SALT', 'change-me-transfer-token-salt'),
     },
   },
-}) satisfies Core.Config.Admin;
+
+  /**
+   * Utilise par le service d'encryption admin (tokens/champs sensibles internes).
+   */
+  secrets: {
+    encryptionKey: env('ADMIN_ENCRYPTION_KEY', 'change-me-admin-encryption-key'),
+  },
+}) satisfies AdminConfigWithSecrets;

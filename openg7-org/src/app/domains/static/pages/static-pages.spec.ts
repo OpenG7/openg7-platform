@@ -131,7 +131,7 @@ describe('Static informational pages', () => {
     expect(filterButtons).toContain('Reset');
 
     const communityCta = element.querySelector('[data-og7="credits-community-cta"]');
-    expect(communityCta?.getAttribute('href')).toBe('/inscription');
+    expect(communityCta?.getAttribute('href')).toBe('/register');
   });
 
   it('presents the Governance page with commitments and board members', () => {

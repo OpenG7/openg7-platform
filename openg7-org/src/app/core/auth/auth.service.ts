@@ -7,9 +7,9 @@ import { AuthActions, UserActions } from '@app/state';
 import { AppState } from '@app/state/app.state';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Observable, catchError, firstValueFrom, tap, throwError } from 'rxjs';
 
-import { STRAPI_ROUTES, strapiUserById } from '../api/strapi.routes';
+import { STRAPI_ROUTES } from '../api/strapi.routes';
 import { HttpClientService } from '../http/http-client.service';
 import { NotificationStore, NotificationStoreApi } from '../observability/notification.store';
 import { RbacFacadeService } from '../security/rbac.facade';
@@ -19,10 +19,14 @@ import { TokenStorageService } from '../security/token-storage.service';
 import {
   AuthResponse,
   AuthUser,
+  AuthUserPayload,
+  ChangePasswordPayload,
+  EmailChangePayload,
+  EmailChangeResponse,
   LoginResponse,
-  RegisterResponse,
-  ProfileResponse,
   JwtPayload,
+  ProfileResponse,
+  RegisterResponse,
   UpdateProfilePayload,
 } from './auth.types';
 import { OidcProvider, OidcService } from './oidc.service';
@@ -36,6 +40,8 @@ import { OidcProvider, OidcService } from './oidc.service';
  * @returns AuthService gérée par le framework.
  */
 export class AuthService {
+  private readonly restoreSessionPromise: Promise<void>;
+  private readonly userCacheKey = 'auth_user_cache_v1';
   private tokenSig = signal<string | null>(null);
   readonly token = this.tokenSig.asReadonly();
   readonly token$ = toObservable(this.token);
@@ -44,7 +50,7 @@ export class AuthService {
   readonly user = this.userSig.asReadonly();
   readonly user$ = toObservable(this.user);
 
-  readonly isAuthenticated = computed(() => Boolean(this.tokenSig()));
+  readonly isAuthenticated = computed(() => Boolean(this.tokenSig() && this.userSig()));
   readonly isAuthenticated$ = toObservable(this.isAuthenticated);
 
   readonly isPremium = computed(() => Boolean(this.userSig()?.premiumActive));
@@ -84,8 +90,17 @@ export class AuthService {
     private rbac: RbacFacadeService,
     private store: Store<AppState>
   ) {
-    void this.restoreToken();
+    this.restoreSessionPromise = this.restoreSession().catch(() => undefined);
     this.syncRbac(this.userSig());
+  }
+
+  /**
+   * Contexte : Called by guards during bootstrap navigation.
+   * Raison d’être : Ensures persisted token restoration has completed before evaluating route access.
+   * @returns Promise resolved once initial token restoration has finished.
+   */
+  async ensureSessionRestored(): Promise<void> {
+    await this.restoreSessionPromise;
   }
 
   /**
@@ -95,7 +110,12 @@ export class AuthService {
    * @returns Observable emitting the login response payload.
    */
   login(credentials: { email: string; password: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(STRAPI_ROUTES.auth.login, credentials).pipe(
+    const payload = {
+      identifier: credentials.email.trim(),
+      password: credentials.password,
+    };
+
+    return this.http.post<LoginResponse>(STRAPI_ROUTES.auth.login, payload).pipe(
       tap((res) => this.persistAuth(res))
     );
   }
@@ -113,8 +133,49 @@ export class AuthService {
     };
 
     return this.http.post<RegisterResponse>(STRAPI_ROUTES.auth.register, payload).pipe(
-      tap((res) => this.persistAuth(res))
+      tap((res) => {
+        if (this.hasSessionPayload(res)) {
+          this.persistAuth(res);
+        }
+      })
     );
+  }
+
+  /**
+   * Contexte : Called by login screens when users request a fresh account activation email.
+   * Raison d’être : Delegates to Strapi users-permissions confirmation flow.
+   * @param payload Object containing the email address to target.
+   * @returns Observable emitting the API acknowledgement.
+   */
+  sendEmailConfirmation(payload: {
+    email: string;
+  }): Observable<{ email: string; sent: boolean }> {
+    return this.http.post<{ email: string; sent: boolean }>(
+      STRAPI_ROUTES.auth.sendEmailConfirmation,
+      payload
+    );
+  }
+
+  /**
+   * Contexte : Triggered by authenticated account pages when a user wants to update their password.
+   * Raison d’être : Delegates to Strapi change-password endpoint and refreshes local auth state if a new token is issued.
+   * @param payload Current and new password payload.
+   * @returns Observable emitting the updated auth payload.
+   */
+  changePassword(payload: ChangePasswordPayload): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(STRAPI_ROUTES.auth.changePassword, payload).pipe(
+      tap((response) => this.persistAuth(response))
+    );
+  }
+
+  /**
+   * Contexte : Called by profile security settings when the user requests an email change.
+   * Raison d’être : Starts the email-change confirmation flow on the backend.
+   * @param payload Current password and next email address.
+   * @returns Observable with backend acknowledgement.
+   */
+  requestEmailChange(payload: EmailChangePayload): Observable<EmailChangeResponse> {
+    return this.http.post<EmailChangeResponse>(STRAPI_ROUTES.users.meProfileEmailChange, payload);
   }
 
   /**
@@ -144,12 +205,7 @@ export class AuthService {
    * @returns void
    */
   logout(): void {
-    void this.tokenStorage.clear();
-    this.tokenSig.set(null);
-    this.userSig.set(null);
-    this.syncRbac(null);
-    this.store.dispatch(AuthActions.sessionCleared());
-    this.store.dispatch(UserActions.profileCleared());
+    void this.clearSession();
   }
 
   /**
@@ -158,14 +214,8 @@ export class AuthService {
    * @returns Observable emitting the latest profile payload.
    */
   getProfile(): Observable<ProfileResponse> {
-    return this.http.get<ProfileResponse>(STRAPI_ROUTES.users.me).pipe(
-      tap((user) => {
-        this.userSig.set(user);
-        this.syncRbac(user);
-        this.store.dispatch(
-          UserActions.profileHydrated({ profile: user, permissions: user.roles ?? [] })
-        );
-      })
+    return this.http.get<ProfileResponse>(STRAPI_ROUTES.users.meProfile).pipe(
+      tap((user) => this.hydrateUserProfile(user))
     );
   }
 
@@ -176,18 +226,8 @@ export class AuthService {
    * @returns Observable emitting the updated profile.
    */
   updateProfile(payload: UpdateProfilePayload): Observable<ProfileResponse> {
-    const userId = this.userSig()?.id;
-    if (!userId) {
-      return throwError(() => new Error('auth.errors.userNotLoaded'));
-    }
-    return this.http.put<ProfileResponse>(strapiUserById(userId), payload).pipe(
-      tap((user) => {
-        this.userSig.set(user);
-        this.syncRbac(user);
-        this.store.dispatch(
-          UserActions.profileHydrated({ profile: user, permissions: user.roles ?? [] })
-        );
-      })
+    return this.http.put<ProfileResponse>(STRAPI_ROUTES.users.meProfile, payload).pipe(
+      tap((user) => this.hydrateUserProfile(user))
     );
   }
 
@@ -248,27 +288,247 @@ export class AuthService {
     if (roles.includes('admin')) {
       return 'admin';
     }
-    if (roles.includes('editor')) {
+    if (roles.includes('editor') || roles.includes('pro')) {
       return 'editor';
     }
     return 'visitor';
   }
 
   private persistAuth(res: AuthResponse): void {
-    void this.tokenStorage.setToken(res.jwt);
-    this.tokenSig.set(res.jwt);
-    this.userSig.set(res.user);
-    this.syncRbac(res.user);
+    const token = typeof res.jwt === 'string' ? res.jwt.trim() : '';
+    if (!token) {
+      return;
+    }
+
+    void this.tokenStorage.setToken(token);
+    this.tokenSig.set(token);
+    const user = this.normalizeUser(res.user);
+    this.userSig.set(user);
+    this.persistUserCache(user);
+    this.syncRbac(user);
     const jwtExp = this.jwt()?.exp ?? null;
-    this.store.dispatch(AuthActions.sessionHydrated({ user: res.user, jwtExp }));
+    this.store.dispatch(AuthActions.sessionHydrated({ user, jwtExp }));
     this.store.dispatch(
-      UserActions.profileHydrated({ profile: res.user, permissions: res.user.roles ?? [] })
+      UserActions.profileHydrated({ profile: user, permissions: user.roles ?? [] })
     );
   }
 
-  private async restoreToken(): Promise<void> {
+  private async restoreSession(): Promise<void> {
     const token = await this.tokenStorage.getToken();
-    this.tokenSig.set(token);
+    // Avoid clobbering a fresh login token if restore resolves later.
+    if (this.tokenSig() === null) {
+      this.tokenSig.set(token);
+    }
+
+    if (!token) {
+      this.clearUserCache();
+      return;
+    }
+
+    if (this.userSig() === null) {
+      const cachedUser = this.readCachedUser();
+      if (cachedUser) {
+        this.hydrateUserProfile(cachedUser);
+      }
+    }
+
+    try {
+      const profile = await firstValueFrom(
+        this.http.get<ProfileResponse>(STRAPI_ROUTES.users.meProfile)
+      );
+
+      // Ignore stale restore cycles when a newer session already took over.
+      if (this.tokenSig() !== token) {
+        return;
+      }
+
+      this.hydrateUserProfile(profile);
+    } catch (error) {
+      if (this.tokenSig() === token && this.shouldClearSessionForRestoreError(error)) {
+        await this.clearSession();
+      }
+    }
+  }
+
+  private hydrateUserProfile(rawUser: AuthUser | AuthUserPayload): void {
+    const user = this.normalizeUser(rawUser);
+    this.userSig.set(user);
+    this.persistUserCache(user);
+    this.syncRbac(user);
+    const jwtExp = this.jwt()?.exp ?? null;
+    if (this.tokenSig()) {
+      this.store.dispatch(AuthActions.sessionHydrated({ user, jwtExp }));
+    }
+    this.store.dispatch(
+      UserActions.profileHydrated({ profile: user, permissions: user.roles ?? [] })
+    );
+  }
+
+  private normalizeUser(rawUser: AuthUser | AuthUserPayload | null | undefined): AuthUser {
+    const record =
+      rawUser && typeof rawUser === 'object'
+        ? (rawUser as Record<string, unknown>)
+        : {};
+
+    const normalizedId =
+      typeof record['id'] === 'string' || typeof record['id'] === 'number'
+        ? String(record['id'])
+        : '';
+    const normalizedEmail =
+      typeof record['email'] === 'string' && record['email'].trim().length > 0
+        ? record['email'].trim().toLowerCase()
+        : '';
+
+    return {
+      ...(record as Partial<AuthUser>),
+      id: normalizedId,
+      email: normalizedEmail,
+      roles: this.extractRoles(record),
+    };
+  }
+
+  private extractRoles(record: Record<string, unknown>): string[] {
+    const roles = new Set<string>();
+
+    const pushRole = (value: unknown) => {
+      const normalized = this.normalizeRole(value);
+      if (normalized) {
+        roles.add(normalized);
+      }
+    };
+
+    if (Array.isArray(record['roles'])) {
+      for (const role of record['roles']) {
+        pushRole(role);
+      }
+    } else if (record['roles'] != null) {
+      pushRole(record['roles']);
+    }
+
+    const role = record['role'];
+    if (typeof role === 'string') {
+      pushRole(role);
+    } else if (role && typeof role === 'object') {
+      const roleRecord = role as Record<string, unknown>;
+      pushRole(roleRecord['type']);
+      pushRole(roleRecord['name']);
+    }
+
+    return Array.from(roles);
+  }
+
+  private normalizeRole(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+    const normalized = value.trim().toLowerCase();
+    return normalized.length > 0 ? normalized : null;
+  }
+
+  private hasSessionPayload(payload: RegisterResponse | AuthResponse): payload is AuthResponse {
+    return (
+      typeof (payload as { jwt?: unknown }).jwt === 'string' &&
+      (payload as { jwt: string }).jwt.trim().length > 0
+    );
+  }
+
+  private async clearSession(): Promise<void> {
+    await this.tokenStorage.clear();
+    this.tokenSig.set(null);
+    this.userSig.set(null);
+    this.clearUserCache();
+    this.syncRbac(null);
+    this.store.dispatch(AuthActions.sessionCleared());
+    this.store.dispatch(UserActions.profileCleared());
+  }
+
+  private shouldClearSessionForRestoreError(error: unknown): boolean {
+    if (error instanceof HttpErrorResponse) {
+      return error.status === 401 || error.status === 403;
+    }
+    return false;
+  }
+
+  private readCachedUser(): AuthUser | null {
+    const storages = this.getCacheStorages();
+    for (let index = 0; index < storages.length; index += 1) {
+      const storage = storages[index];
+      const raw = storage.getItem(this.userCacheKey);
+      if (!raw) {
+        continue;
+      }
+      try {
+        const parsed = JSON.parse(raw) as AuthUserPayload;
+        const user = this.normalizeUser(parsed);
+        if (!user.id || !user.email) {
+          storage.removeItem(this.userCacheKey);
+          continue;
+        }
+        if (index > 0 && storages.length > 0) {
+          try {
+            storages[0].setItem(this.userCacheKey, JSON.stringify(user));
+            storage.removeItem(this.userCacheKey);
+          } catch {
+            // Ignore migration failures and continue with the cached value.
+          }
+        }
+        return user;
+      } catch {
+        storage.removeItem(this.userCacheKey);
+      }
+    }
+    return null;
+  }
+
+  private persistUserCache(user: AuthUser): void {
+    for (const storage of this.getCacheStorages()) {
+      try {
+        storage.setItem(this.userCacheKey, JSON.stringify(user));
+        return;
+      } catch {
+        // Try the next available storage backend.
+      }
+    }
+  }
+
+  private clearUserCache(): void {
+    for (const storage of this.getCacheStorages()) {
+      try {
+        storage.removeItem(this.userCacheKey);
+      } catch {
+        // Ignore clear failures.
+      }
+    }
+  }
+
+  private getCacheStorages(): Storage[] {
+    const local = this.getSafeStorage('localStorage');
+    const session = this.getSafeStorage('sessionStorage');
+    if (local && session && local !== session) {
+      return [local, session];
+    }
+    if (local) {
+      return [local];
+    }
+    if (session) {
+      return [session];
+    }
+    return [];
+  }
+
+  private getSafeStorage(kind: 'localStorage' | 'sessionStorage'): Storage | null {
+    const candidate =
+      typeof window !== 'undefined'
+        ? window[kind]
+        : (globalThis as { localStorage?: Storage; sessionStorage?: Storage })[kind];
+    if (!candidate) {
+      return null;
+    }
+    try {
+      return candidate;
+    } catch {
+      return null;
+    }
   }
 
   private handleError(error: unknown, fallbackKey: string): Observable<never> {

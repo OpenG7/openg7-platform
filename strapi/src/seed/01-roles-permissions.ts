@@ -28,6 +28,11 @@ export default async () => {
 
   const authenticatedExtra: PermissionMap = {
     'api::company.company': { update: true },
+    'api::account-profile.account-profile': {
+      me: true,
+      updateMe: true,
+      requestEmailChange: true,
+    },
   };
 
   const proExtra: PermissionMap = {

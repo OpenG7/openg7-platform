@@ -1,11 +1,13 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from '@app/core/auth/auth.service';
 import { LoginResponse } from '@app/core/auth/auth.types';
+import { AUTH_MODE } from '@app/core/config/environment.tokens';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { LoginPage } from './login.page';
 
@@ -20,22 +22,36 @@ describe('LoginPage', () => {
   let component: LoginPage;
   let auth: jasmine.SpyObj<AuthService>;
   let router: Router;
-  let navigateSpy: jasmine.Spy;
+  let navigateByUrlSpy: jasmine.Spy;
+  let notifications: MockNotificationStore;
+  const translateStub = {
+    instant: (key: string) => key,
+    get: (key: string) => of(key),
+    stream: (key: string) => of(key),
+    getCurrentLang: () => 'en',
+    getFallbackLang: () => 'en',
+    onLangChange: new Subject<unknown>(),
+    onTranslationChange: new Subject<unknown>(),
+    onFallbackLangChange: new Subject<unknown>(),
+    onDefaultLangChange: new Subject<unknown>(),
+  };
 
   beforeEach(async () => {
-    auth = jasmine.createSpyObj<AuthService>('AuthService', ['login']);
+    auth = jasmine.createSpyObj<AuthService>('AuthService', ['login', 'sendEmailConfirmation']);
 
     await TestBed.configureTestingModule({
       imports: [LoginPage, RouterTestingModule],
       providers: [
         { provide: AuthService, useValue: auth },
+        { provide: AUTH_MODE, useValue: 'hybrid' },
         { provide: NotificationStore, useClass: MockNotificationStore },
-        { provide: TranslateService, useValue: { instant: (key: string) => key } },
+        { provide: TranslateService, useValue: translateStub },
       ],
     }).compileComponents();
 
     router = TestBed.inject(Router);
-    navigateSpy = spyOn(router, 'navigate').and.resolveTo(true);
+    notifications = TestBed.inject(NotificationStore) as unknown as MockNotificationStore;
+    navigateByUrlSpy = spyOn(router, 'navigateByUrl').and.resolveTo(true);
 
     fixture = TestBed.createComponent(LoginPage);
     component = fixture.componentInstance;
@@ -54,7 +70,7 @@ describe('LoginPage', () => {
     (component as any).onSubmit();
 
     expect(auth.login).toHaveBeenCalledWith(credentials);
-    expect(navigateSpy).toHaveBeenCalledWith(['/profile']);
+    expect(navigateByUrlSpy).toHaveBeenCalledWith('/profile');
   });
 
   it('disables the form while submission is in progress', () => {
@@ -80,5 +96,95 @@ describe('LoginPage', () => {
 
     expect(form.disabled).withContext('form should be re-enabled after completion').toBeFalse();
     expect((component as any).loading()).toBeFalse();
+  });
+
+  it('sends activation email when account is disabled', () => {
+    const email = 'inactive@example.com';
+    auth.sendEmailConfirmation.and.returnValue(of({ email, sent: true }));
+
+    const form = (component as any).form;
+    form.setValue({ email, password: 'secret' });
+    (component as any).apiError.set('auth.errors.accountDisabled');
+
+    (component as any).onSendActivationEmail();
+
+    expect(auth.sendEmailConfirmation).toHaveBeenCalledWith({ email });
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.login.activationEmailSent',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('rejects activation email when email field is invalid', () => {
+    const form = (component as any).form;
+    form.setValue({ email: 'invalid-email', password: 'secret' });
+    (component as any).apiError.set('auth.errors.accountDisabled');
+
+    (component as any).onSendActivationEmail();
+
+    expect(auth.sendEmailConfirmation).not.toHaveBeenCalled();
+    expect(notifications.error).toHaveBeenCalledWith(
+      'auth.errors.emailInvalid',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('maps generic 403 payload with invalid credential message to invalidCredentials', () => {
+    const credentials = { email: 'user@example.com', password: 'wrong-password' };
+    auth.login.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 403,
+            statusText: 'Forbidden',
+            error: {
+              error: {
+                name: 'ForbiddenError',
+                message: 'Invalid identifier or password',
+              },
+            },
+          })
+      )
+    );
+
+    const form = (component as any).form;
+    form.setValue(credentials);
+
+    (component as any).onSubmit();
+
+    expect((component as any).apiError()).toBe('auth.errors.invalidCredentials');
+    expect(notifications.error).toHaveBeenCalledWith(
+      'auth.errors.invalidCredentials',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('maps generic forbidden errors to api fallback instead of accountDisabled', () => {
+    const credentials = { email: 'user@example.com', password: 'wrong-password' };
+    auth.login.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 403,
+            statusText: 'Forbidden',
+            error: {
+              error: {
+                name: 'ForbiddenError',
+              },
+            },
+          })
+      )
+    );
+
+    const form = (component as any).form;
+    form.setValue(credentials);
+
+    (component as any).onSubmit();
+
+    expect((component as any).apiError()).toBe('auth.errors.api');
+    expect(notifications.error).toHaveBeenCalledWith(
+      'auth.errors.api',
+      jasmine.objectContaining({ source: 'auth' })
+    );
   });
 });

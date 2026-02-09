@@ -492,7 +492,7 @@ S’assurer de l’idempotence (upsert par clé), de la sécurité en prod (gate
 Définir `STRAPI_ADMIN_EMAIL/PASSWORD`, `STRAPI_SEED_ADMIN_ALLOWED`, `STRAPI_API_READONLY_TOKEN`. Ne jamais semer des secrets en prod par défaut.
 
 ```
-STRAPI_ADMIN_EMAIL=admin@openg7.org
+STRAPI_ADMIN_EMAIL=contact@openg7.org
 STRAPI_ADMIN_PASSWORD=<strong-password>
 STRAPI_SEED_ADMIN_ALLOWED=true
 STRAPI_API_READONLY_TOKEN=<generated-token>

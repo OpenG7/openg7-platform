@@ -21,6 +21,7 @@ const seeds: SeedDefinition[] = [
   { name: '10-company-permissions', run: require('./10-company-permissions').default },
   { name: '11-statistic-insights', run: require('./11-statistic-insights').default },
   { name: '12-company-countries', run: require('./12-company-countries').default },
+  { name: '13-auth-settings', run: require('./13-auth-settings').default },
 ];
 
 export default async function runSeeds() {

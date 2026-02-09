@@ -159,9 +159,12 @@
       "subtitle": "Vérifiez vos coordonnées et préférences partagées avec les partenaires.",
       "loading": "Chargement du profil…",
       "save": "Enregistrer",
+      "discard": "Annuler les modifications",
       "saving": "Enregistrement…",
+      "unsavedChanges": "Vous avez des modifications non enregistrees.",
       "success": "Votre profil a été mis à jour.",
       "error": "La mise à jour du profil a échoué. Veuillez réessayer.",
+      "unsavedChangesConfirm": "Vous avez des modifications non enregistrees. Quitter cette page quand meme ?",
       "avatar": {
         "label": "URL de la photo de profil",
         "placeholder": "https://exemple.com/avatar.jpg",
@@ -186,6 +189,45 @@
           "webhookLabel": "URL de webhook personnalisée (optionnel)",
           "webhookHelp": "Laisser vide pour utiliser le webhook Strapi par défaut ou indiquer une URL HTTPS gérée par votre équipe."
         }
+      },
+      "validation": {
+        "list": "Utilisez une liste separee par des virgules, avec au plus 20 entrees courtes.",
+        "httpsUrl": "Veuillez saisir une URL HTTPS valide."
+      },
+      "security": {
+        "title": "Securite du compte",
+        "subtitle": "Gerez le statut du compte, le mot de passe et la confirmation du courriel.",
+        "status": {
+          "active": "Compte actif",
+          "emailNotConfirmed": "Confirmation du courriel en attente",
+          "disabled": "Compte inactif"
+        },
+        "activation": {
+          "cta": "Renvoyer le courriel d'activation"
+        },
+        "password": {
+          "title": "Changer le mot de passe",
+          "current": "Mot de passe actuel",
+          "next": "Nouveau mot de passe",
+          "confirm": "Confirmer le nouveau mot de passe",
+          "submit": "Mettre a jour le mot de passe",
+          "loading": "Mise a jour du mot de passe...",
+          "success": "Votre mot de passe a ete mis a jour.",
+          "error": "Impossible de mettre a jour le mot de passe. Veuillez reessayer.",
+          "weak": "Utilisez une majuscule, une minuscule, un chiffre et un symbole.",
+          "sameAsCurrent": "Le nouveau mot de passe doit etre different du mot de passe actuel."
+        },
+        "emailChange": {
+          "title": "Changer l'adresse courriel",
+          "help": "Saisissez votre mot de passe actuel pour demander un lien de confirmation.",
+          "nextEmail": "Nouvelle adresse courriel",
+          "currentPassword": "Mot de passe actuel",
+          "submit": "Demander le changement de courriel",
+          "loading": "Demande de changement en cours...",
+          "success": "Un courriel de confirmation a ete envoye a votre nouvelle adresse.",
+          "error": "Impossible de demarrer le changement de courriel. Veuillez reessayer.",
+          "sameAsCurrent": "Utilisez une adresse courriel differente de l'adresse actuelle."
+        }
       }
     },
     "login": {
@@ -202,7 +244,13 @@
       "helpLink": "Besoin d’aide ?",
       "ssoOnlyHelperTitle": "Connexion via votre compte d’entreprise",
       "ssoOnlyHelperBody": "Cliquez sur le bouton ci-dessus pour être redirigé vers votre fournisseur. Une fois l’authentification terminée, vous serez automatiquement reconnecté ici.",
-      "ssoOnlyHelperCta": "Consulter le guide SSO"
+      "ssoOnlyHelperCta": "Consulter le guide SSO",
+      "activationEmailCta": "Renvoyer le courriel d’activation",
+      "activationEmailSending": "Envoi du courriel d’activation…",
+      "activationEmailSent": "Si le compte peut être activé, un courriel d’activation vient d’être envoyé.",
+      "activationEmailError": "Impossible d’envoyer le courriel d’activation pour le moment.",
+      "activationAlreadyConfirmed": "Ce compte est déjà confirmé. Contactez votre administrateur si l’accès reste bloqué.",
+      "activationUnavailable": "L’envoi de courriel d’activation est indisponible sur cet environnement."
     },
     "loginSubtitle": "Connectez-vous pour accéder à votre espace sécurisé et piloter vos échanges.",
     "signup": "Créer un compte",
@@ -245,6 +293,7 @@
       "submit": "Créer un compte",
       "loading": "Création du compte…",
       "success": "Votre compte est prêt.",
+      "confirmationPending": "Votre compte a été créé. Vérifiez votre courriel pour l’activer avant de vous connecter.",
       "hero": {
         "tagline": "Procédure d'accès sécurisée",
         "title": "Créez votre compte OpenG7",
@@ -328,6 +377,7 @@
       "confirmPasswordRequired": "La confirmation du mot de passe est requise.",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "invalidCredentials": "Identifiants invalides. Vérifiez votre courriel et votre mot de passe.",
+      "emailNotConfirmed": "Votre courriel n’est pas encore confirmé. Renvoyez le courriel d’activation.",
       "accountDisabled": "Votre compte est inactif. Contactez votre administrateur pour le réactiver.",
       "accountLocked": "Trop de tentatives. Votre compte est temporairement verrouillé.",
       "passwordExpired": "Votre mot de passe a expiré. Réinitialisez-le pour continuer.",
