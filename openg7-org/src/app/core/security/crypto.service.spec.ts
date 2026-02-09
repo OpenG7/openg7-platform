@@ -11,14 +11,16 @@ describe('CryptoService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [CryptoService]
+      providers: [CryptoService],
     });
     service = TestBed.inject(CryptoService);
+    localStorage.clear();
     sessionStorage.clear();
   });
 
   afterEach(() => {
     service.clearSessionKey();
+    localStorage.clear();
     sessionStorage.clear();
   });
 
@@ -35,7 +37,7 @@ describe('CryptoService', () => {
     expect(plain).toBe('sensitive');
   });
 
-  it('re-uses the same key within the session', async () => {
+  it('re-uses the same persisted key in local storage', async () => {
     if (!service.isSupported) {
       pending('SubtleCrypto not available in this environment');
       return;
@@ -43,11 +45,33 @@ describe('CryptoService', () => {
 
     const first = await service.encrypt('one');
     await delay();
-    const storedKey = sessionStorage.getItem('auth_crypto_key');
+    const storedKey = localStorage.getItem('auth_crypto_key');
     expect(storedKey).toBeTruthy();
+
     service.clearSessionKey();
-    sessionStorage.setItem('auth_crypto_key', storedKey!);
+    localStorage.setItem('auth_crypto_key', storedKey as string);
+
     const decrypted = await service.decrypt(first);
     expect(decrypted).toBe('one');
+  });
+
+  it('migrates legacy keys from session storage to local storage', async () => {
+    if (!service.isSupported) {
+      pending('SubtleCrypto not available in this environment');
+      return;
+    }
+
+    const cipher = await service.encrypt('legacy');
+    const storedKey = localStorage.getItem('auth_crypto_key');
+    expect(storedKey).toBeTruthy();
+
+    service.clearSessionKey();
+    localStorage.removeItem('auth_crypto_key');
+    sessionStorage.setItem('auth_crypto_key', storedKey as string);
+
+    const decrypted = await service.decrypt(cipher);
+    expect(decrypted).toBe('legacy');
+    expect(localStorage.getItem('auth_crypto_key')).toBeTruthy();
+    expect(sessionStorage.getItem('auth_crypto_key')).toBeNull();
   });
 });

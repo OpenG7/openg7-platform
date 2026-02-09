@@ -1,7 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { throwError } from 'rxjs';
 
 import { STRAPI_ROUTES } from '../api/strapi.routes';
 import { API_URL } from '../config/environment.tokens';
@@ -18,6 +20,18 @@ function flushAsync(): Promise<void> {
   return new Promise((resolve) => queueMicrotask(resolve));
 }
 
+function createJwt(expSeconds: number): string {
+  const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  const payload = btoa(JSON.stringify({ exp: expSeconds }))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  return `${header}.${payload}.signature`;
+}
+
 describe('AuthService', () => {
   let service: AuthService;
   let http: HttpTestingController;
@@ -29,6 +43,7 @@ describe('AuthService', () => {
   let store: jasmine.SpyObj<Store>;
 
   beforeEach(() => {
+    localStorage.clear();
     sessionStorage.clear();
     oidc = jasmine.createSpyObj<OidcService>('OidcService', ['startSignIn']);
     notifications = jasmine.createSpyObj<NotificationStoreApi>('NotificationStore', [
@@ -66,6 +81,7 @@ describe('AuthService', () => {
   afterEach(async () => {
     http.verify();
     await storage.clear();
+    localStorage.clear();
     sessionStorage.clear();
     oidc.startSignIn.calls.reset();
     notifications.success.calls.reset();
@@ -139,6 +155,84 @@ describe('AuthService', () => {
     await expectAsync(storage.getToken()).toBeResolvedTo(null);
     expect(service.user()).toBeNull();
     expect(service.isAuthenticated()).toBeFalse();
+  });
+
+  it('restores cached user state when profile refresh fails with a non-auth error', async () => {
+    if (!crypto.subtle) {
+      pending('SubtleCrypto not available in this environment');
+      return;
+    }
+
+    const token = createJwt(Math.floor(Date.now() / 1000) + 3600);
+    const cachedUser = { id: '77', email: 'cached@example.com', roles: ['user'] };
+    await storage.setToken(token);
+    await expectAsync(storage.getToken()).toBeResolvedTo(token);
+    localStorage.setItem('auth_user_cache_v1', JSON.stringify(cachedUser));
+
+    const restoreHttp = jasmine.createSpyObj<HttpClientService>('HttpClientService', ['get']);
+    restoreHttp.get.and.returnValue(
+      throwError(() =>
+        new HttpErrorResponse({ status: 500, statusText: 'Server Error', error: 'upstream failure' })
+      )
+    );
+
+    const freshService = TestBed.runInInjectionContext(() =>
+      new AuthService(
+        restoreHttp,
+        storage,
+        oidc,
+        notifications,
+        translate as unknown as TranslateService,
+        rbac,
+        store as unknown as Store<any>
+      )
+    );
+
+    await freshService.ensureSessionRestored();
+
+    expect(freshService.token()).toBe(token);
+    expect(freshService.user()).toEqual(cachedUser);
+    expect(freshService.isAuthenticated()).toBeTrue();
+    await expectAsync(storage.getToken()).toBeResolvedTo(token);
+  });
+
+  it('clears the restored session when profile refresh returns 401', async () => {
+    if (!crypto.subtle) {
+      pending('SubtleCrypto not available in this environment');
+      return;
+    }
+
+    const token = createJwt(Math.floor(Date.now() / 1000) + 3600);
+    const cachedUser = { id: '88', email: 'expired@example.com', roles: ['user'] };
+    await storage.setToken(token);
+    await expectAsync(storage.getToken()).toBeResolvedTo(token);
+    localStorage.setItem('auth_user_cache_v1', JSON.stringify(cachedUser));
+
+    const restoreHttp = jasmine.createSpyObj<HttpClientService>('HttpClientService', ['get']);
+    restoreHttp.get.and.returnValue(
+      throwError(() =>
+        new HttpErrorResponse({ status: 401, statusText: 'Unauthorized', error: 'unauthorized' })
+      )
+    );
+
+    const freshService = TestBed.runInInjectionContext(() =>
+      new AuthService(
+        restoreHttp,
+        storage,
+        oidc,
+        notifications,
+        translate as unknown as TranslateService,
+        rbac,
+        store as unknown as Store<any>
+      )
+    );
+
+    await freshService.ensureSessionRestored();
+
+    expect(freshService.token()).toBeNull();
+    expect(freshService.user()).toBeNull();
+    expect(freshService.isAuthenticated()).toBeFalse();
+    await expectAsync(storage.getToken()).toBeResolvedTo(null);
   });
 
   it('getProfile updates user state', () => {

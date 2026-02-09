@@ -58,6 +58,8 @@ openg7-cms/.env.*
 strapi-legacy/yarn.lock
 strapi/yarn.lock
 strapi/.strapi-updater.json
+# Local Strapi SQLite database (dev only)
+strapi/data/db.sqlite
 
 # --- Générique build & tests -----------------------------------------------
 **/dist/

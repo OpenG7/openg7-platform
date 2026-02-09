@@ -41,6 +41,7 @@ import { OidcProvider, OidcService } from './oidc.service';
  */
 export class AuthService {
   private readonly restoreSessionPromise: Promise<void>;
+  private readonly userCacheKey = 'auth_user_cache_v1';
   private tokenSig = signal<string | null>(null);
   readonly token = this.tokenSig.asReadonly();
   readonly token$ = toObservable(this.token);
@@ -303,6 +304,7 @@ export class AuthService {
     this.tokenSig.set(token);
     const user = this.normalizeUser(res.user);
     this.userSig.set(user);
+    this.persistUserCache(user);
     this.syncRbac(user);
     const jwtExp = this.jwt()?.exp ?? null;
     this.store.dispatch(AuthActions.sessionHydrated({ user, jwtExp }));
@@ -319,7 +321,15 @@ export class AuthService {
     }
 
     if (!token) {
+      this.clearUserCache();
       return;
+    }
+
+    if (this.userSig() === null) {
+      const cachedUser = this.readCachedUser();
+      if (cachedUser) {
+        this.hydrateUserProfile(cachedUser);
+      }
     }
 
     try {
@@ -333,8 +343,8 @@ export class AuthService {
       }
 
       this.hydrateUserProfile(profile);
-    } catch {
-      if (this.tokenSig() === token) {
+    } catch (error) {
+      if (this.tokenSig() === token && this.shouldClearSessionForRestoreError(error)) {
         await this.clearSession();
       }
     }
@@ -343,6 +353,7 @@ export class AuthService {
   private hydrateUserProfile(rawUser: AuthUser | AuthUserPayload): void {
     const user = this.normalizeUser(rawUser);
     this.userSig.set(user);
+    this.persistUserCache(user);
     this.syncRbac(user);
     const jwtExp = this.jwt()?.exp ?? null;
     if (this.tokenSig()) {
@@ -425,9 +436,99 @@ export class AuthService {
     await this.tokenStorage.clear();
     this.tokenSig.set(null);
     this.userSig.set(null);
+    this.clearUserCache();
     this.syncRbac(null);
     this.store.dispatch(AuthActions.sessionCleared());
     this.store.dispatch(UserActions.profileCleared());
+  }
+
+  private shouldClearSessionForRestoreError(error: unknown): boolean {
+    if (error instanceof HttpErrorResponse) {
+      return error.status === 401 || error.status === 403;
+    }
+    return false;
+  }
+
+  private readCachedUser(): AuthUser | null {
+    const storages = this.getCacheStorages();
+    for (let index = 0; index < storages.length; index += 1) {
+      const storage = storages[index];
+      const raw = storage.getItem(this.userCacheKey);
+      if (!raw) {
+        continue;
+      }
+      try {
+        const parsed = JSON.parse(raw) as AuthUserPayload;
+        const user = this.normalizeUser(parsed);
+        if (!user.id || !user.email) {
+          storage.removeItem(this.userCacheKey);
+          continue;
+        }
+        if (index > 0 && storages.length > 0) {
+          try {
+            storages[0].setItem(this.userCacheKey, JSON.stringify(user));
+            storage.removeItem(this.userCacheKey);
+          } catch {
+            // Ignore migration failures and continue with the cached value.
+          }
+        }
+        return user;
+      } catch {
+        storage.removeItem(this.userCacheKey);
+      }
+    }
+    return null;
+  }
+
+  private persistUserCache(user: AuthUser): void {
+    for (const storage of this.getCacheStorages()) {
+      try {
+        storage.setItem(this.userCacheKey, JSON.stringify(user));
+        return;
+      } catch {
+        // Try the next available storage backend.
+      }
+    }
+  }
+
+  private clearUserCache(): void {
+    for (const storage of this.getCacheStorages()) {
+      try {
+        storage.removeItem(this.userCacheKey);
+      } catch {
+        // Ignore clear failures.
+      }
+    }
+  }
+
+  private getCacheStorages(): Storage[] {
+    const local = this.getSafeStorage('localStorage');
+    const session = this.getSafeStorage('sessionStorage');
+    if (local && session && local !== session) {
+      return [local, session];
+    }
+    if (local) {
+      return [local];
+    }
+    if (session) {
+      return [session];
+    }
+    return [];
+  }
+
+  private getSafeStorage(kind: 'localStorage' | 'sessionStorage'): Storage | null {
+    const candidate =
+      typeof window !== 'undefined'
+        ? window[kind]
+        : (globalThis as { localStorage?: Storage; sessionStorage?: Storage })[kind];
+    if (!candidate) {
+      return null;
+    }
+    try {
+      return candidate;
+    } catch {
+      return null;
+    }
   }
 
   private handleError(error: unknown, fallbackKey: string): Observable<never> {
