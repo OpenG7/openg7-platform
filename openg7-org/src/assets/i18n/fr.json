@@ -193,6 +193,41 @@
       "validation": {
         "list": "Utilisez une liste separee par des virgules, avec au plus 20 entrees courtes.",
         "httpsUrl": "Veuillez saisir une URL HTTPS valide."
+      },
+      "security": {
+        "title": "Securite du compte",
+        "subtitle": "Gerez le statut du compte, le mot de passe et la confirmation du courriel.",
+        "status": {
+          "active": "Compte actif",
+          "emailNotConfirmed": "Confirmation du courriel en attente",
+          "disabled": "Compte inactif"
+        },
+        "activation": {
+          "cta": "Renvoyer le courriel d'activation"
+        },
+        "password": {
+          "title": "Changer le mot de passe",
+          "current": "Mot de passe actuel",
+          "next": "Nouveau mot de passe",
+          "confirm": "Confirmer le nouveau mot de passe",
+          "submit": "Mettre a jour le mot de passe",
+          "loading": "Mise a jour du mot de passe...",
+          "success": "Votre mot de passe a ete mis a jour.",
+          "error": "Impossible de mettre a jour le mot de passe. Veuillez reessayer.",
+          "weak": "Utilisez une majuscule, une minuscule, un chiffre et un symbole.",
+          "sameAsCurrent": "Le nouveau mot de passe doit etre different du mot de passe actuel."
+        },
+        "emailChange": {
+          "title": "Changer l'adresse courriel",
+          "help": "Saisissez votre mot de passe actuel pour demander un lien de confirmation.",
+          "nextEmail": "Nouvelle adresse courriel",
+          "currentPassword": "Mot de passe actuel",
+          "submit": "Demander le changement de courriel",
+          "loading": "Demande de changement en cours...",
+          "success": "Un courriel de confirmation a ete envoye a votre nouvelle adresse.",
+          "error": "Impossible de demarrer le changement de courriel. Veuillez reessayer.",
+          "sameAsCurrent": "Utilisez une adresse courriel differente de l'adresse actuelle."
+        }
       }
     },
     "login": {
@@ -258,6 +293,7 @@
       "submit": "Créer un compte",
       "loading": "Création du compte…",
       "success": "Votre compte est prêt.",
+      "confirmationPending": "Votre compte a été créé. Vérifiez votre courriel pour l’activer avant de vous connecter.",
       "hero": {
         "tagline": "Procédure d'accès sécurisée",
         "title": "Créez votre compte OpenG7",

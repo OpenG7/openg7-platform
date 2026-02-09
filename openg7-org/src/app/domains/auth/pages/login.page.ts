@@ -58,7 +58,7 @@ export class LoginPage implements AfterViewInit, OnInit {
   protected readonly redirectTarget = signal('/profile');
   protected readonly canSendActivationEmail = computed(() => {
     const error = this.apiError();
-    return error === 'auth.errors.accountDisabled' || error === 'auth.errors.emailNotConfirmed';
+    return error === 'auth.errors.emailNotConfirmed';
   });
 
   protected readonly loginSubtitleKey = computed(() => {
@@ -196,7 +196,9 @@ export class LoginPage implements AfterViewInit, OnInit {
     if (error instanceof HttpErrorResponse) {
       const payload = error.error;
       const normalized = this.normalizeApiError(payload);
-      const explicitCode = this.resolveErrorCode(error.status, normalized?.code ?? null);
+      const explicitCode = this.resolveErrorCode(error.status, normalized?.code ?? null, {
+        useStatusFallback: false,
+      });
       const payloadMessage = this.extractErrorMessage(payload);
 
       if (explicitCode) {
@@ -204,12 +206,20 @@ export class LoginPage implements AfterViewInit, OnInit {
       }
 
       if (payloadMessage) {
-        const mappedCode = this.resolveErrorCode(error.status, payloadMessage);
+        const mappedCode = this.resolveErrorCode(error.status, payloadMessage, {
+          useStatusFallback: false,
+        });
         if (mappedCode) {
           return { message: mappedCode, code: mappedCode, status: error.status ?? null };
         }
         return { message: payloadMessage, code: null, status: error.status ?? null };
       }
+
+      const fallbackCode = this.resolveErrorCode(error.status, null, { useStatusFallback: true });
+      if (fallbackCode) {
+        return { message: fallbackCode, code: fallbackCode, status: error.status ?? null };
+      }
+
       if (typeof error.message === 'string' && error.message.trim()) {
         return { message: error.message, code: null, status: error.status ?? null };
       }
@@ -266,7 +276,12 @@ export class LoginPage implements AfterViewInit, OnInit {
     return null;
   }
 
-  private resolveErrorCode(status: number | null | undefined, candidate: string | null | undefined): string | null {
+  private resolveErrorCode(
+    status: number | null | undefined,
+    candidate: string | null | undefined,
+    options?: { useStatusFallback?: boolean }
+  ): string | null {
+    const useStatusFallback = options?.useStatusFallback ?? true;
     const normalized = candidate?.toLowerCase();
     if (normalized) {
       if (normalized.includes('not confirmed') || normalized.includes('email is not confirmed')) {
@@ -284,16 +299,29 @@ export class LoginPage implements AfterViewInit, OnInit {
       if (normalized.includes('attempt') || normalized.includes('rate')) {
         return 'auth.errors.tooManyAttempts';
       }
-      if (normalized.includes('credential') || normalized.includes('invalid_login')) {
+      if (
+        normalized.includes('credential') ||
+        normalized.includes('invalid_login') ||
+        normalized.includes('invalid identifier') ||
+        normalized.includes('identifier or password')
+      ) {
         return 'auth.errors.invalidCredentials';
       }
+
+      if (!useStatusFallback) {
+        return null;
+      }
+    }
+
+    if (!useStatusFallback) {
+      return null;
     }
 
     switch (status) {
       case 401:
         return 'auth.errors.invalidCredentials';
       case 403:
-        return 'auth.errors.accountDisabled';
+        return 'auth.errors.api';
       case 423:
         return 'auth.errors.accountLocked';
       case 429:

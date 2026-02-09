@@ -121,17 +121,30 @@ export class RegisterPage implements OnInit {
       .register(payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('auth.register.success'), {
+        next: (response) => {
+          const hasSession =
+            typeof (response as { jwt?: unknown }).jwt === 'string' &&
+            (response as { jwt: string }).jwt.trim().length > 0;
+          const successKey = hasSession
+            ? 'auth.register.success'
+            : 'auth.register.confirmationPending';
+
+          this.notifications.success(this.translate.instant(successKey), {
             source: 'auth',
-            metadata: { action: 'register' },
+            metadata: { action: 'register', sessionIssued: hasSession },
           });
           this.form.reset({ email: '', password: '', confirmPassword: '' });
           this.passwordStrengthScore.set(0);
           this.passwordVisible.set(false);
           this.confirmPasswordVisible.set(false);
-          const destination = this.authRedirect.consumeRedirectUrl('/profile');
-          void this.router.navigateByUrl(destination);
+
+          if (hasSession) {
+            const destination = this.authRedirect.consumeRedirectUrl('/profile');
+            void this.router.navigateByUrl(destination);
+            return;
+          }
+
+          void this.router.navigateByUrl('/login');
         },
         error: (error) => {
           const message = this.resolveErrorMessage(error);

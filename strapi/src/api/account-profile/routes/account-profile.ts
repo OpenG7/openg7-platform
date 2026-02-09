@@ -12,5 +12,11 @@ export default {
       handler: 'account-profile.updateMe',
       config: {},
     },
+    {
+      method: 'POST',
+      path: '/users/me/profile/email-change',
+      handler: 'account-profile.requestEmailChange',
+      config: {},
+    },
   ],
 };

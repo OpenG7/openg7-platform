@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from '@app/core/auth/auth.service';
+import { AUTH_MODE } from '@app/core/config/environment.tokens';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
@@ -21,6 +22,17 @@ describe('RegisterPage', () => {
   let auth: jasmine.SpyObj<AuthService>;
   let router: Router;
   let navigateSpy: jasmine.Spy;
+  const translateStub = {
+    instant: (key: string) => key,
+    get: (key: string) => of(key),
+    stream: (key: string) => of(key),
+    getCurrentLang: () => 'en',
+    getFallbackLang: () => 'en',
+    onLangChange: of({}),
+    onTranslationChange: of({}),
+    onFallbackLangChange: of({}),
+    onDefaultLangChange: of({}),
+  };
 
   beforeEach(async () => {
     auth = jasmine.createSpyObj<AuthService>('AuthService', ['register']);
@@ -29,8 +41,9 @@ describe('RegisterPage', () => {
       imports: [RegisterPage, RouterTestingModule],
       providers: [
         { provide: AuthService, useValue: auth },
+        { provide: AUTH_MODE, useValue: 'hybrid' },
         { provide: NotificationStore, useClass: MockNotificationStore },
-        { provide: TranslateService, useValue: { instant: (key: string) => key } },
+        { provide: TranslateService, useValue: translateStub },
       ],
     }).compileComponents();
 
@@ -56,6 +69,21 @@ describe('RegisterPage', () => {
     expect(auth.register).toHaveBeenCalledWith(payload);
     expect(navigateSpy).toHaveBeenCalledWith('/profile');
     expect(form.getRawValue()).toEqual({ email: '', password: '', confirmPassword: '' });
+  });
+
+  it('redirects to login when registration succeeds without JWT (email confirmation flow)', () => {
+    const payload = { email: 'pending@example.com', password: 'Secur3!Pass' };
+    auth.register.and.returnValue(
+      of({ user: { id: '2', email: payload.email, role: { type: 'authenticated' } } })
+    );
+
+    const form = (component as any).form;
+    form.setValue({ ...payload, confirmPassword: payload.password });
+
+    (component as any).onSubmit();
+
+    expect(auth.register).toHaveBeenCalledWith(payload);
+    expect(navigateSpy).toHaveBeenCalledWith('/login');
   });
 
   it('surfaces duplicate email errors returned by Strapi', () => {

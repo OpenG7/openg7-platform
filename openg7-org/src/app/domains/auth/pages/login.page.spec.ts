@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -6,7 +7,7 @@ import { LoginResponse } from '@app/core/auth/auth.types';
 import { AUTH_MODE } from '@app/core/config/environment.tokens';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { LoginPage } from './login.page';
 
@@ -124,6 +125,65 @@ describe('LoginPage', () => {
     expect(auth.sendEmailConfirmation).not.toHaveBeenCalled();
     expect(notifications.error).toHaveBeenCalledWith(
       'auth.errors.emailInvalid',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('maps generic 403 payload with invalid credential message to invalidCredentials', () => {
+    const credentials = { email: 'user@example.com', password: 'wrong-password' };
+    auth.login.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 403,
+            statusText: 'Forbidden',
+            error: {
+              error: {
+                name: 'ForbiddenError',
+                message: 'Invalid identifier or password',
+              },
+            },
+          })
+      )
+    );
+
+    const form = (component as any).form;
+    form.setValue(credentials);
+
+    (component as any).onSubmit();
+
+    expect((component as any).apiError()).toBe('auth.errors.invalidCredentials');
+    expect(notifications.error).toHaveBeenCalledWith(
+      'auth.errors.invalidCredentials',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('maps generic forbidden errors to api fallback instead of accountDisabled', () => {
+    const credentials = { email: 'user@example.com', password: 'wrong-password' };
+    auth.login.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 403,
+            statusText: 'Forbidden',
+            error: {
+              error: {
+                name: 'ForbiddenError',
+              },
+            },
+          })
+      )
+    );
+
+    const form = (component as any).form;
+    form.setValue(credentials);
+
+    (component as any).onSubmit();
+
+    expect((component as any).apiError()).toBe('auth.errors.api');
+    expect(notifications.error).toHaveBeenCalledWith(
+      'auth.errors.api',
       jasmine.objectContaining({ source: 'auth' })
     );
   });

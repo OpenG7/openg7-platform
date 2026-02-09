@@ -34,8 +34,19 @@ The seed process expects several environment variables to be defined before runn
 | `STRAPI_SESSION_DRIVER` | Defaults to `redis`. Set to `memory` locally if you do not run Redis. |
 | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `REDIS_DB` | Connection parameters for the shared Redis instance powering sessions and rate limiting. |
 | `RATE_LIMIT_ENABLED`, `RATE_LIMIT_INTERVAL_MS`, `RATE_LIMIT_MAX` | Control the Redis-backed throttling middleware. |
+| `ACTIVATION_EMAIL_COOLDOWN_ENABLED`, `ACTIVATION_EMAIL_COOLDOWN_MS`, `ACTIVATION_EMAIL_COOLDOWN_PREFIX`, `ACTIVATION_EMAIL_COOLDOWN_USE_REDIS` | Server-side cooldown for `POST /api/auth/send-email-confirmation` (default: 120s). |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_REQUIRE_TLS`, `SMTP_USERNAME`, `SMTP_PASSWORD` | SMTP transport used by the Strapi email plugin (HostPapa for `notify@openg7.org`). |
+| `SMTP_DEFAULT_FROM_NAME` | Display name used by users-permissions email templates when defaults are seeded. |
+| `SMTP_DEFAULT_FROM`, `SMTP_DEFAULT_REPLY_TO` | Default sender and reply-to headers used by transactional emails. |
 
 Ensure these variables are exported in your shell (or defined in a `.env` file that Strapi loads) before running the development commands above.
+
+## SMTP (HostPapa)
+
+- The Strapi email plugin is configured with `@strapi/provider-email-nodemailer` and defaults to the sender `notify@openg7.org`.
+- HostPapa usually supports `mail.papamail.net` over port `465` (SSL) or port `587` (STARTTLS). If your DNS exposes a domain endpoint, use `mail.openg7.org` instead.
+- If `SMTP_PASSWORD` contains `#` (or spaces/special characters), wrap it in quotes in `.env` (example: `SMTP_PASSWORD="abc#123"`), otherwise dotenv may truncate the value.
+- For account confirmation and password-reset flows, also verify sender values in the Strapi admin panel under email templates.
 
 ## Database strategy for multi-instance deployments
 

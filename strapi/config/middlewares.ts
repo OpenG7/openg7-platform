@@ -34,6 +34,7 @@ export default [
   'strapi::logger',
   'strapi::query',
   'strapi::body',
+  'global::activation-email-cooldown',
 
   // ✅ Session SANS config custom → Strapi utilise son store par défaut
   'strapi::session',

@@ -29,6 +29,7 @@ describe('AuthService', () => {
   let store: jasmine.SpyObj<Store>;
 
   beforeEach(() => {
+    sessionStorage.clear();
     oidc = jasmine.createSpyObj<OidcService>('OidcService', ['startSignIn']);
     notifications = jasmine.createSpyObj<NotificationStoreApi>('NotificationStore', [
       'success',
@@ -76,6 +77,7 @@ describe('AuthService', () => {
   it('login stores token and updates state', async () => {
     service.login({ email: 'a@a.com', password: '1234' }).subscribe();
     const req = http.expectOne(STRAPI_ROUTES.auth.login);
+    expect(req.request.body).toEqual({ identifier: 'a@a.com', password: '1234' });
     const user = { id: '1', email: 'a@a.com', roles: [] };
     req.flush({ jwt: 'abc.def.ghi', user });
     await flushAsync();
@@ -83,6 +85,51 @@ describe('AuthService', () => {
     expect(service.user()).toEqual(user);
     expect(service.isAuthenticated()).toBeTrue();
     expect(rbac.setContext).toHaveBeenCalledWith({ role: 'visitor', isPremium: false });
+  });
+
+  it('normalizes role metadata from Strapi login payload', async () => {
+    service.login({ email: 'pro@example.com', password: '1234' }).subscribe();
+
+    const req = http.expectOne(STRAPI_ROUTES.auth.login);
+    req.flush({
+      jwt: 'abc.def.ghi',
+      user: {
+        id: 9,
+        email: 'pro@example.com',
+        role: { type: 'pro', name: 'Pro' },
+      },
+    });
+
+    await flushAsync();
+
+    expect(service.user()).toEqual(
+      jasmine.objectContaining({
+        id: '9',
+        email: 'pro@example.com',
+        roles: ['pro'],
+      })
+    );
+    expect(rbac.setContext).toHaveBeenCalledWith({ role: 'editor', isPremium: false });
+  });
+
+  it('register does not persist a session when JWT is absent', async () => {
+    service.register({ email: 'pending@example.com', password: 'secret' }).subscribe();
+
+    const req = http.expectOne(STRAPI_ROUTES.auth.register);
+    expect(req.request.method).toBe('POST');
+    req.flush({
+      user: {
+        id: 3,
+        email: 'pending@example.com',
+        role: { type: 'authenticated', name: 'Authenticated' },
+      },
+    });
+
+    await flushAsync();
+
+    expect(service.token()).toBeNull();
+    expect(service.user()).toBeNull();
+    expect(service.isAuthenticated()).toBeFalse();
   });
 
   it('logout clears token and user', async () => {
@@ -183,6 +230,54 @@ describe('AuthService', () => {
     req.flush({ email: payload.email, sent: true });
 
     expect(response).toEqual({ email: payload.email, sent: true });
+  });
+
+  it('changePassword posts payload and refreshes auth state', () => {
+    const payload = {
+      currentPassword: 'OldSecret123!',
+      password: 'NewSecret456!',
+      passwordConfirmation: 'NewSecret456!',
+    };
+
+    service.changePassword(payload).subscribe();
+
+    const req = http.expectOne(STRAPI_ROUTES.auth.changePassword);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(payload);
+
+    const response = {
+      jwt: 'rotated.jwt.token',
+      user: { id: '2', email: 'secure@example.com', roles: ['user'] },
+    };
+
+    req.flush(response);
+
+    expect(service.token()).toBe(response.jwt);
+    expect(service.user()).toEqual(response.user);
+    expect(service.isAuthenticated()).toBeTrue();
+  });
+
+  it('requestEmailChange posts payload and returns backend acknowledgment', () => {
+    const payload = { currentPassword: 'Current123!', email: 'next@example.com' };
+    let response:
+      | { email: string; sent: boolean; accountStatus: 'active' | 'emailNotConfirmed' | 'disabled' }
+      | undefined;
+
+    service.requestEmailChange(payload).subscribe((value) => {
+      response = value;
+    });
+
+    const req = http.expectOne(STRAPI_ROUTES.users.meProfileEmailChange);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(payload);
+
+    req.flush({ email: payload.email, sent: true, accountStatus: 'emailNotConfirmed' });
+
+    expect(response).toEqual({
+      email: payload.email,
+      sent: true,
+      accountStatus: 'emailNotConfirmed',
+    });
   });
 
   it('requestPasswordReset emits error message and triggers error toast', (done) => {

@@ -2,6 +2,8 @@ import type { Core } from '@strapi/strapi';
 
 const ACCOUNT_PROFILE_UID = 'api::account-profile.account-profile' as any;
 
+type AccountStatus = 'active' | 'emailNotConfirmed' | 'disabled';
+
 type NotificationPreferences = {
   emailOptIn: boolean;
   webhookUrl: string | null;
@@ -19,6 +21,11 @@ type SanitizedProfileInput = {
   notificationPreferences: NotificationPreferences;
 };
 
+type EmailChangeInput = {
+  currentPassword: string;
+  email: string;
+};
+
 type UserRole = {
   type?: string;
   name?: string;
@@ -26,10 +33,19 @@ type UserRole = {
 
 type AuthenticatedUser = {
   id: number | string;
-  email?: string;
-  username?: string;
+};
+
+type UsersPermissionsUser = {
+  id: number | string;
+  email?: string | null;
+  username?: string | null;
+  password?: string | null;
+  confirmed?: boolean | null;
+  blocked?: boolean | null;
   role?: UserRole | null;
 };
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function normalizeString(value: unknown): string | null {
   if (typeof value !== 'string') {
@@ -37,6 +53,14 @@ function normalizeString(value: unknown): string | null {
   }
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+}
+
+function normalizeEmail(value: unknown): string | null {
+  const normalized = normalizeString(value);
+  if (!normalized) {
+    return null;
+  }
+  return normalized.toLowerCase();
 }
 
 function normalizeStringList(value: unknown, maxItems: number, maxLength: number): string[] {
@@ -77,7 +101,7 @@ function isValidUrl(value: string, options: { httpsOnly?: boolean } = {}): boole
   }
 }
 
-function validateLength(value: string | null, label: string, max: number) {
+function validateLength(value: string | null, label: string, max: number): void {
   if (!value) {
     return;
   }
@@ -86,7 +110,7 @@ function validateLength(value: string | null, label: string, max: number) {
   }
 }
 
-function validatePhone(value: string | null) {
+function validatePhone(value: string | null): void {
   if (!value) {
     return;
   }
@@ -95,7 +119,11 @@ function validatePhone(value: string | null) {
   }
 }
 
-function validateUrl(value: string | null, label: string, options: { httpsOnly?: boolean } = {}) {
+function validateUrl(
+  value: string | null,
+  label: string,
+  options: { httpsOnly?: boolean } = {}
+): void {
   if (!value) {
     return;
   }
@@ -145,7 +173,28 @@ function sanitizePayload(payload: unknown): SanitizedProfileInput {
   return sanitized;
 }
 
-function mapRoles(user: AuthenticatedUser): string[] {
+function sanitizeEmailChangePayload(payload: unknown): EmailChangeInput {
+  const record = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
+  const currentPassword = normalizeString(record.currentPassword);
+  const email = normalizeEmail(record.email);
+
+  if (!currentPassword) {
+    throw new Error('currentPassword is required.');
+  }
+  if (!email) {
+    throw new Error('email is required.');
+  }
+  if (email.length > 254 || !EMAIL_PATTERN.test(email)) {
+    throw new Error('email must be a valid email address.');
+  }
+
+  return {
+    currentPassword,
+    email,
+  };
+}
+
+function mapRoles(user: UsersPermissionsUser): string[] {
   const role = user.role;
   if (!role) {
     return [];
@@ -160,6 +209,16 @@ function mapRoles(user: AuthenticatedUser): string[] {
   }
 
   return Array.from(roles);
+}
+
+function resolveAccountStatus(user: UsersPermissionsUser): AccountStatus {
+  if (user.blocked === true) {
+    return 'disabled';
+  }
+  if (user.confirmed !== true) {
+    return 'emailNotConfirmed';
+  }
+  return 'active';
 }
 
 async function findProfileByUser(strapi: Core.Strapi, userId: number | string) {
@@ -179,7 +238,19 @@ async function findProfileByUser(strapi: Core.Strapi, userId: number | string) {
   return existing ?? null;
 }
 
-function mapResponse(user: AuthenticatedUser, profile: Record<string, unknown> | null) {
+async function fetchUserById(
+  strapi: Core.Strapi,
+  userId: number | string
+): Promise<UsersPermissionsUser | null> {
+  const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+    where: { id: userId },
+    populate: ['role'],
+  });
+
+  return (user as UsersPermissionsUser | null) ?? null;
+}
+
+function mapResponse(user: UsersPermissionsUser, profile: Record<string, unknown> | null) {
   const source = profile ?? {};
   const notificationPreferencesRaw =
     source.notificationPreferences && typeof source.notificationPreferences === 'object'
@@ -188,8 +259,11 @@ function mapResponse(user: AuthenticatedUser, profile: Record<string, unknown> |
 
   return {
     id: String(user.id),
-    email: user.email ?? null,
+    email: user.email ?? '',
     roles: mapRoles(user),
+    confirmed: user.confirmed === true,
+    blocked: user.blocked === true,
+    accountStatus: resolveAccountStatus(user),
     firstName: typeof source.firstName === 'string' ? source.firstName : null,
     lastName: typeof source.lastName === 'string' ? source.lastName : null,
     jobTitle: typeof source.jobTitle === 'string' ? source.jobTitle : null,
@@ -219,8 +293,13 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return ctx.unauthorized();
     }
 
+    const user = await fetchUserById(strapi, currentUser.id);
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
     const profile = await findProfileByUser(strapi, currentUser.id);
-    ctx.body = mapResponse(currentUser, profile as Record<string, unknown> | null);
+    ctx.body = mapResponse(user, profile as Record<string, unknown> | null);
   },
 
   async updateMe(ctx) {
@@ -242,9 +321,95 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         ? await strapi.entityService.update(ACCOUNT_PROFILE_UID, existing.id, { data: data as any })
         : await strapi.entityService.create(ACCOUNT_PROFILE_UID, { data: data as any });
 
-      ctx.body = mapResponse(currentUser, profile as Record<string, unknown>);
+      const user = await fetchUserById(strapi, currentUser.id);
+      if (!user) {
+        return ctx.unauthorized();
+      }
+
+      ctx.body = mapResponse(user, profile as Record<string, unknown>);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Invalid profile payload.';
+      return ctx.badRequest(message);
+    }
+  },
+
+  async requestEmailChange(ctx) {
+    const currentUser = ctx.state.user as AuthenticatedUser | undefined;
+    if (!currentUser?.id) {
+      return ctx.unauthorized();
+    }
+
+    try {
+      const payload = sanitizeEmailChangePayload(ctx.request.body);
+      const user = await fetchUserById(strapi, currentUser.id);
+      if (!user) {
+        return ctx.unauthorized();
+      }
+
+      if (typeof user.password !== 'string' || user.password.length === 0) {
+        return ctx.badRequest('Unable to update email for this account.');
+      }
+
+      const userService = strapi.plugin('users-permissions').service('user') as any;
+      const validPassword = await userService.validatePassword(payload.currentPassword, user.password);
+      if (!validPassword) {
+        return ctx.badRequest('The provided current password is invalid.');
+      }
+
+      if (user.blocked === true) {
+        return ctx.badRequest('Your account has been blocked by an administrator');
+      }
+
+      const currentEmail = normalizeEmail(user.email) ?? '';
+      if (payload.email === currentEmail) {
+        if (user.confirmed !== true) {
+          await userService.sendConfirmationEmail(user);
+        }
+
+        return ctx.send({
+          email: user.email ?? payload.email,
+          sent: user.confirmed !== true,
+          accountStatus: resolveAccountStatus(user),
+        });
+      }
+
+      const conflictingUserCount = await strapi.db.query('plugin::users-permissions.user').count({
+        where: {
+          id: { $ne: user.id },
+          $or: [{ email: payload.email }, { username: payload.email }],
+        },
+      });
+
+      if (conflictingUserCount > 0) {
+        return ctx.badRequest('Email is already in use.');
+      }
+
+      const shouldSyncUsername =
+        typeof user.username === 'string' &&
+        user.username.trim().length > 0 &&
+        normalizeEmail(user.username) === currentEmail;
+
+      const updatePayload: Record<string, unknown> = {
+        email: payload.email,
+        confirmed: false,
+        confirmationToken: null,
+      };
+
+      if (shouldSyncUsername) {
+        updatePayload.username = payload.email;
+      }
+
+      const nextUser = await userService.edit(user.id, updatePayload);
+
+      await userService.sendConfirmationEmail(nextUser);
+
+      return ctx.send({
+        email: payload.email,
+        sent: true,
+        accountStatus: 'emailNotConfirmed',
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unable to request email change.';
       return ctx.badRequest(message);
     }
   },

@@ -193,6 +193,41 @@
       "validation": {
         "list": "Use a comma-separated list with up to 20 short entries.",
         "httpsUrl": "Please enter a valid HTTPS URL."
+      },
+      "security": {
+        "title": "Account security",
+        "subtitle": "Manage your account status, password and email confirmation settings.",
+        "status": {
+          "active": "Account active",
+          "emailNotConfirmed": "Email confirmation pending",
+          "disabled": "Account inactive"
+        },
+        "activation": {
+          "cta": "Resend activation email"
+        },
+        "password": {
+          "title": "Change password",
+          "current": "Current password",
+          "next": "New password",
+          "confirm": "Confirm new password",
+          "submit": "Update password",
+          "loading": "Updating password...",
+          "success": "Your password has been updated.",
+          "error": "We could not update your password. Please try again.",
+          "weak": "Use uppercase, lowercase, a number and a symbol.",
+          "sameAsCurrent": "Your new password must be different from the current password."
+        },
+        "emailChange": {
+          "title": "Change email address",
+          "help": "Enter your current password to request an email change confirmation link.",
+          "nextEmail": "New email address",
+          "currentPassword": "Current password",
+          "submit": "Request email change",
+          "loading": "Requesting email change...",
+          "success": "A confirmation email has been sent to your new address.",
+          "error": "We could not start the email change flow. Please try again.",
+          "sameAsCurrent": "Use an email address different from your current one."
+        }
       }
     },
     "login": {
@@ -258,6 +293,7 @@
       "submit": "Create account",
       "loading": "Creating your account…",
       "success": "Your account is ready.",
+      "confirmationPending": "Your account was created. Check your email to activate it before signing in.",
       "hero": {
         "tagline": "Secure onboarding",
         "title": "Create your OpenG7 account",

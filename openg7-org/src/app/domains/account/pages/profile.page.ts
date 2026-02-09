@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -17,7 +18,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '@app/core/auth/auth.service';
-import { AuthUser, UpdateProfilePayload } from '@app/core/auth/auth.types';
+import {
+  AccountStatus,
+  AuthUser,
+  ChangePasswordPayload,
+  EmailChangePayload,
+  UpdateProfilePayload,
+} from '@app/core/auth/auth.types';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
@@ -79,6 +86,33 @@ function csvListValidator(maxItems: number, maxItemLength: number): ValidatorFn 
   };
 }
 
+function strongPasswordValidator(): ValidatorFn {
+  return (control: AbstractControl<string | null>): ValidationErrors | null => {
+    const raw = control.value;
+    if (typeof raw !== 'string' || raw.length === 0) {
+      return null;
+    }
+
+    const hasUppercase = /[A-Z]/.test(raw);
+    const hasLowercase = /[a-z]/.test(raw);
+    const hasDigit = /[0-9]/.test(raw);
+    const hasSymbol = /[^A-Za-z0-9]/.test(raw);
+
+    return hasUppercase && hasLowercase && hasDigit && hasSymbol ? null : { weakPassword: true };
+  };
+}
+
+function matchingPasswordsValidator(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password')?.value;
+  const passwordConfirmation = group.get('passwordConfirmation')?.value;
+
+  if (typeof password !== 'string' || typeof passwordConfirmation !== 'string') {
+    return null;
+  }
+
+  return password === passwordConfirmation ? null : { passwordMismatch: true };
+}
+
 @Component({
   standalone: true,
   selector: 'og7-profile-page',
@@ -87,10 +121,10 @@ function csvListValidator(maxItems: number, maxItemLength: number): ValidatorFn 
   templateUrl: './profile.page.html',
 })
 /**
- * Contexte : Chargée par le routeur Angular pour afficher la page « Profile » du dossier « domains/account/pages ».
- * Raison d’être : Lie le template standalone et les dépendances de cette page pour la rendre navigable.
- * @param dependencies Dépendances injectées automatiquement par Angular.
- * @returns ProfilePage gérée par le framework.
+ * Contexte : Chargee par le routeur Angular pour afficher la page "Profile" du dossier "domains/account/pages".
+ * Raison d'etre : Lie le template standalone et les dependances de cette page pour la rendre navigable.
+ * @param dependencies Dependances injectees automatiquement par Angular.
+ * @returns ProfilePage geree par le framework.
  */
 export class ProfilePage {
   private readonly fb = inject(FormBuilder);
@@ -101,12 +135,59 @@ export class ProfilePage {
 
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
+  protected readonly changingPassword = signal(false);
+  protected readonly requestingEmailChange = signal(false);
+  protected readonly sendingActivationEmail = signal(false);
   protected readonly avatarPreview = signal<string | null>(null);
   protected readonly profile = signal<AuthUser | null>(null);
+  protected readonly accountStatus = computed<AccountStatus>(() => {
+    const status = this.profile()?.accountStatus;
+    return status ?? 'active';
+  });
+  protected readonly accountStatusKey = computed(() => {
+    switch (this.accountStatus()) {
+      case 'disabled':
+        return 'auth.profile.security.status.disabled';
+      case 'emailNotConfirmed':
+        return 'auth.profile.security.status.emailNotConfirmed';
+      default:
+        return 'auth.profile.security.status.active';
+    }
+  });
+  protected readonly canResendActivation = computed(() => {
+    const current = this.profile();
+    return (
+      !!current?.email &&
+      this.accountStatus() === 'emailNotConfirmed' &&
+      !this.loading() &&
+      !this.sendingActivationEmail()
+    );
+  });
   protected readonly canSave = computed(() => {
     return !this.loading() && !this.saving() && this.form.dirty && this.form.valid;
   });
-  protected readonly hasUnsavedChanges = computed(() => this.form.dirty && !this.saving());
+  protected readonly canChangePassword = computed(() => {
+    return (
+      !this.loading() &&
+      !this.changingPassword() &&
+      this.passwordForm.dirty &&
+      this.passwordForm.valid
+    );
+  });
+  protected readonly canRequestEmailChange = computed(() => {
+    return (
+      !this.loading() &&
+      !this.requestingEmailChange() &&
+      this.emailChangeForm.dirty &&
+      this.emailChangeForm.valid
+    );
+  });
+  protected readonly hasUnsavedChanges = computed(() => {
+    const hasDirtyForm = this.form.dirty || this.passwordForm.dirty || this.emailChangeForm.dirty;
+    const isBusy =
+      this.saving() || this.changingPassword() || this.requestingEmailChange() || this.loading();
+    return hasDirtyForm && !isBusy;
+  });
 
   protected readonly form = this.fb.group({
     firstName: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
@@ -125,6 +206,20 @@ export class ProfilePage {
     notificationWebhook: this.fb.nonNullable.control('', [optionalUrlValidator({ httpsOnly: true })]),
   });
 
+  protected readonly passwordForm = this.fb.nonNullable.group(
+    {
+      currentPassword: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(10), strongPasswordValidator()]],
+      passwordConfirmation: ['', [Validators.required]],
+    },
+    { validators: [matchingPasswordsValidator] }
+  );
+
+  protected readonly emailChangeForm = this.fb.nonNullable.group({
+    currentPassword: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+  });
+
   constructor() {
     this.syncWebhookAvailability(this.form.controls.emailNotifications.value, false);
 
@@ -136,24 +231,7 @@ export class ProfilePage {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((enabled) => this.syncWebhookAvailability(Boolean(enabled), true));
 
-    this.auth
-      .getProfile()
-      .pipe(
-        finalize(() => this.loading.set(false)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe({
-        next: (profile) => this.applyProfile(profile),
-        error: (error) => {
-          const message = this.translate.instant('auth.profile.error');
-          this.notifications.error(message, {
-            source: 'auth',
-            context: error,
-            metadata: { action: 'profile-load' },
-            deliver: { email: true },
-          });
-        },
-      });
+    this.fetchProfile(() => this.loading.set(false));
   }
 
   protected buildInitials(user: AuthUser): string {
@@ -219,20 +297,188 @@ export class ProfilePage {
       });
   }
 
+  protected onChangePassword(): void {
+    if (this.changingPassword()) {
+      return;
+    }
+
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const raw = this.passwordForm.getRawValue();
+    if (raw.currentPassword === raw.password) {
+      this.passwordForm.controls.password.setErrors({ sameAsCurrent: true });
+      this.passwordForm.controls.password.markAsTouched();
+      return;
+    }
+
+    const payload: ChangePasswordPayload = {
+      currentPassword: raw.currentPassword,
+      password: raw.password,
+      passwordConfirmation: raw.passwordConfirmation,
+    };
+
+    this.changingPassword.set(true);
+    this.auth
+      .changePassword(payload)
+      .pipe(
+        finalize(() => this.changingPassword.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: () => {
+          this.resetPasswordForm();
+          this.notifications.success(this.translate.instant('auth.profile.security.password.success'), {
+            source: 'auth',
+            metadata: { action: 'change-password' },
+          });
+        },
+        error: (error) => {
+          this.notifications.error(
+            this.resolveErrorMessage(error, 'auth.profile.security.password.error'),
+            {
+              source: 'auth',
+              context: error,
+              metadata: { action: 'change-password' },
+              deliver: { email: true },
+            }
+          );
+        },
+      });
+  }
+
+  protected onRequestEmailChange(): void {
+    if (this.requestingEmailChange()) {
+      return;
+    }
+
+    if (this.emailChangeForm.invalid) {
+      this.emailChangeForm.markAllAsTouched();
+      return;
+    }
+
+    const currentEmail = this.profile()?.email?.toLowerCase() ?? null;
+    const raw = this.emailChangeForm.getRawValue();
+    const nextEmail = raw.email.trim().toLowerCase();
+
+    if (currentEmail === nextEmail) {
+      this.emailChangeForm.controls.email.setErrors({ sameAsCurrent: true });
+      this.emailChangeForm.controls.email.markAsTouched();
+      return;
+    }
+
+    const payload: EmailChangePayload = {
+      currentPassword: raw.currentPassword,
+      email: nextEmail,
+    };
+
+    this.requestingEmailChange.set(true);
+    this.auth
+      .requestEmailChange(payload)
+      .pipe(
+        finalize(() => this.requestingEmailChange.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: () => {
+          this.resetEmailChangeForm();
+          this.notifications.success(this.translate.instant('auth.profile.security.emailChange.success'), {
+            source: 'auth',
+            metadata: { action: 'email-change-request' },
+          });
+          this.refreshProfile();
+        },
+        error: (error) => {
+          this.notifications.error(
+            this.resolveErrorMessage(error, 'auth.profile.security.emailChange.error'),
+            {
+              source: 'auth',
+              context: error,
+              metadata: { action: 'email-change-request' },
+              deliver: { email: true },
+            }
+          );
+        },
+      });
+  }
+
+  protected onSendActivationEmail(): void {
+    if (!this.canResendActivation()) {
+      return;
+    }
+
+    const email = this.profile()?.email?.trim();
+    if (!email) {
+      return;
+    }
+
+    this.sendingActivationEmail.set(true);
+    this.auth
+      .sendEmailConfirmation({ email })
+      .pipe(
+        finalize(() => this.sendingActivationEmail.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: () => {
+          this.notifications.success(this.translate.instant('auth.login.activationEmailSent'), {
+            source: 'auth',
+            metadata: { action: 'profile-send-email-confirmation' },
+          });
+        },
+        error: (error) => {
+          this.notifications.error(this.resolveActivationEmailError(error), {
+            source: 'auth',
+            context: error,
+            metadata: { action: 'profile-send-email-confirmation' },
+          });
+        },
+      });
+  }
+
   protected resetPendingChanges(): void {
     const profile = this.profile();
     if (!profile || this.saving()) {
       return;
     }
     this.applyProfile(profile);
+    this.resetPasswordForm();
+    this.resetEmailChangeForm();
   }
 
   public hasPendingChanges(): boolean {
-    return this.form.dirty && !this.saving();
+    return this.hasUnsavedChanges();
   }
 
   protected onAvatarPreviewError(): void {
     this.avatarPreview.set(null);
+  }
+
+  private fetchProfile(onFinalize?: () => void): void {
+    this.auth
+      .getProfile()
+      .pipe(
+        finalize(() => onFinalize?.()),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (profile) => this.applyProfile(profile),
+        error: (error) => {
+          const message = this.translate.instant('auth.profile.error');
+          this.notifications.error(message, {
+            source: 'auth',
+            context: error,
+            metadata: { action: 'profile-load' },
+            deliver: { email: true },
+          });
+        },
+      });
+  }
+
+  private refreshProfile(): void {
+    this.fetchProfile();
   }
 
   private applyProfile(profile: AuthUser): void {
@@ -311,4 +557,85 @@ export class ProfilePage {
     const trimmed = value.trim();
     return trimmed.length ? trimmed : null;
   }
+
+  private resetPasswordForm(): void {
+    this.passwordForm.reset({
+      currentPassword: '',
+      password: '',
+      passwordConfirmation: '',
+    });
+    this.passwordForm.markAsPristine();
+    this.passwordForm.markAsUntouched();
+  }
+
+  private resetEmailChangeForm(): void {
+    this.emailChangeForm.reset({
+      currentPassword: '',
+      email: '',
+    });
+    this.emailChangeForm.markAsPristine();
+    this.emailChangeForm.markAsUntouched();
+  }
+
+  private resolveActivationEmailError(error: unknown): string {
+    const extracted = this.extractErrorMessage(error);
+    if (!extracted) {
+      return this.translate.instant('auth.login.activationEmailError');
+    }
+
+    const normalized = extracted.toLowerCase();
+    if (normalized.includes('already confirmed')) {
+      return this.translate.instant('auth.login.activationAlreadyConfirmed');
+    }
+    if (normalized.includes('blocked') || normalized.includes('inactive') || normalized.includes('disabled')) {
+      return this.translate.instant('auth.errors.accountDisabled');
+    }
+    if (normalized.includes('too many') || normalized.includes('rate')) {
+      return this.translate.instant('auth.errors.tooManyAttempts');
+    }
+    if (normalized.includes('email confirmation') && normalized.includes('disabled')) {
+      return this.translate.instant('auth.login.activationUnavailable');
+    }
+
+    return extracted;
+  }
+
+  private resolveErrorMessage(error: unknown, fallbackKey: string): string {
+    return this.extractErrorMessage(error) ?? this.translate.instant(fallbackKey);
+  }
+
+  private extractErrorMessage(error: unknown): string | null {
+    if (error instanceof HttpErrorResponse) {
+      const payload = error.error;
+      if (typeof payload === 'string' && payload.trim().length > 0) {
+        return payload.trim();
+      }
+      if (payload && typeof payload === 'object') {
+        const candidate = (payload as { message?: unknown }).message;
+        if (typeof candidate === 'string' && candidate.trim().length > 0) {
+          return candidate.trim();
+        }
+      }
+      if (typeof error.message === 'string' && error.message.trim().length > 0) {
+        return error.message.trim();
+      }
+      if (typeof error.statusText === 'string' && error.statusText.trim().length > 0) {
+        return error.statusText.trim();
+      }
+    }
+
+    if (typeof error === 'string' && error.trim().length > 0) {
+      return error.trim();
+    }
+
+    if (error && typeof error === 'object') {
+      const candidate = (error as { message?: unknown }).message;
+      if (typeof candidate === 'string' && candidate.trim().length > 0) {
+        return candidate.trim();
+      }
+    }
+
+    return null;
+  }
 }
+
