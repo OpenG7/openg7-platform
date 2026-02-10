@@ -460,6 +460,7 @@
     },
     "profile": {
       "matches": "My matches",
+      "savedSearches": "Saved searches",
       "account": "My profile",
       "logout": "Sign out",
       "menuLabel": "Open profile menu"
@@ -499,7 +500,12 @@
       "placeholder": "Search across OpenG7",
       "actions": {
         "close": "Close quick search",
-        "retry": "Try again"
+        "retry": "Try again",
+        "save": "Save search",
+        "saveLoading": "Saving...",
+        "saveSuccess": "Search saved.",
+        "saveError": "Unable to save this search.",
+        "saveAuthRequired": "Sign in to save your searches."
       },
       "results": {
         "ariaLabel": "Quick search results",
@@ -1708,6 +1714,48 @@
       "title": "My favorites",
       "description": "Here are the items you have saved for quick access.",
       "empty": "Save companies or opportunities to find them here later."
+    },
+    "savedSearches": {
+      "title": "Saved searches",
+      "subtitle": "Store your recurring filters and enable notifications to stay up to date.",
+      "loading": "Loading your saved searches...",
+      "empty": "No saved search yet. Create one to reuse your favorite filters.",
+      "form": {
+        "title": "Create a saved search",
+        "subtitle": "Save a name, query, and notification cadence.",
+        "name": "Search name",
+        "query": "Keyword query",
+        "queryPlaceholder": "energy import qc",
+        "scope": "Scope",
+        "frequency": "Notification frequency",
+        "notifyEnabled": "Enable notifications",
+        "submit": "Save search",
+        "saving": "Saving..."
+      },
+      "list": {
+        "title": "My saved searches",
+        "noQuery": "No keyword query",
+        "delete": "Delete"
+      },
+      "scope": {
+        "all": "All",
+        "companies": "Companies",
+        "partners": "Partners",
+        "feed": "Feed",
+        "map": "Map",
+        "opportunities": "Opportunities"
+      },
+      "frequency": {
+        "realtime": "Real-time",
+        "daily": "Daily",
+        "weekly": "Weekly"
+      },
+      "errors": {
+        "load": "Unable to load saved searches. Please try again.",
+        "create": "Unable to create this saved search. Please try again.",
+        "update": "Unable to update this saved search. Please try again.",
+        "delete": "Unable to delete this saved search. Please try again."
+      }
     },
     "terms": {
       "kicker": "LEGAL FRAMEWORK",

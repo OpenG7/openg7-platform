@@ -17,13 +17,15 @@ import { PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
+import { AuthService } from '@app/core/auth/auth.service';
 import { SearchContext, RecentSearch, SearchItem, SearchResult, SearchSection } from '@app/core/models/search';
 import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { SavedSearchesApiService } from '@app/core/services/saved-searches-api.service';
 import { OG7_MODAL_DATA, OG7_MODAL_REF } from '@app/core/ui/modal/og7-modal.tokens';
 import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { fromEvent } from 'rxjs';
+import { finalize, fromEvent } from 'rxjs';
 
 import { SearchHistoryStore } from '../search-history.store';
 import { handleQuickSearchKeydown } from '../search-keyboard.manager';
@@ -44,6 +46,7 @@ interface FlatResult {
 
 const NAVIGATION_KEYS = new Set(['ArrowDown', 'ArrowUp', 'Tab']);
 const HANDLED_KEYS = new Set([...NAVIGATION_KEYS, 'Enter', 'Escape']);
+type SaveSearchStatus = 'idle' | 'success' | 'error' | 'authRequired';
 
 @Component({
   selector: 'og7-quick-search-modal',
@@ -75,6 +78,8 @@ export class QuickSearchModalComponent implements AfterViewInit {
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly rbac = inject(RbacFacadeService);
+  private readonly auth = inject(AuthService);
+  private readonly savedSearchesApi = inject(SavedSearchesApiService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
   private readonly destroyRef = inject(DestroyRef);
@@ -87,10 +92,11 @@ export class QuickSearchModalComponent implements AfterViewInit {
   readonly query = signal(this.data.initialQuery ?? '');
   readonly loading = signal(false);
   readonly errored = signal(false);
+  readonly savePending = signal(false);
+  readonly saveStatus = signal<SaveSearchStatus>('idle');
   readonly sections = signal<SearchSection[]>([]);
   readonly activeIndex = signal(0);
   private lastTyped = this.query();
-  private readonly refreshTrigger = signal(0);
   private readonly composing = signal(false);
 
   private readonly langSig = signal(this.translate.currentLang || this.translate.defaultLang || 'en');
@@ -103,6 +109,23 @@ export class QuickSearchModalComponent implements AfterViewInit {
     sectorId: this.data.context?.sectorId ?? null,
     isPremium: this.rbac.isPremium(),
   }));
+  readonly isAuthenticated = this.auth.isAuthenticated;
+  readonly canSaveCurrentQuery = computed(() => {
+    return this.query().trim().length > 0 && !this.savePending();
+  });
+  readonly saveStatusMessageKey = computed<string | null>(() => {
+    const status = this.saveStatus();
+    switch (status) {
+      case 'success':
+        return 'search.quick.actions.saveSuccess';
+      case 'error':
+        return 'search.quick.actions.saveError';
+      case 'authRequired':
+        return 'search.quick.actions.saveAuthRequired';
+      default:
+        return null;
+    }
+  });
 
   readonly historyEntries = this.history.entries;
 
@@ -120,6 +143,9 @@ export class QuickSearchModalComponent implements AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.query.set(value);
+        if (this.saveStatus() !== 'idle') {
+          this.saveStatus.set('idle');
+        }
         if (this.activeIndex() !== 0) {
           this.activeIndex.set(0);
         }
@@ -146,18 +172,8 @@ export class QuickSearchModalComponent implements AfterViewInit {
 
     effect(() => {
       const query = this.query();
-      this.refreshTrigger();
       const context = this.context();
-      this.loading.set(true);
-      this.errored.set(false);
-      const startedAt = this.now();
-      this.searchService
-        .search$(query, context)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (result) => this.onResult(result, startedAt),
-          error: () => this.onError(),
-        });
+      this.runSearch(query, context);
     });
 
     this.analytics.emit('search_opened', {
@@ -255,7 +271,7 @@ export class QuickSearchModalComponent implements AfterViewInit {
   }
 
   retry(): void {
-    this.refreshTrigger.update((value) => value + 1);
+    this.runSearch(this.query(), this.context());
   }
 
   focusInput(): void {
@@ -298,6 +314,61 @@ export class QuickSearchModalComponent implements AfterViewInit {
 
   close(): void {
     this.modalRef.close();
+  }
+
+  saveCurrentQuery(): void {
+    const query = this.query().trim();
+    if (!query || this.savePending()) {
+      return;
+    }
+
+    if (!this.auth.isAuthenticated()) {
+      this.saveStatus.set('authRequired');
+      this.analytics.emit('search_save_denied', {
+        reason: 'unauthenticated',
+        query,
+      });
+      return;
+    }
+
+    const normalizedName = query.length > 120 ? `${query.slice(0, 117)}...` : query;
+    const context = this.context();
+    const filters: Record<string, unknown> = { query };
+    if (context.sectorId) {
+      filters['sectorId'] = context.sectorId;
+    }
+
+    this.savePending.set(true);
+    this.saveStatus.set('idle');
+
+    this.savedSearchesApi
+      .createMine({
+        name: normalizedName,
+        scope: context.sectorId ? 'map' : 'all',
+        filters,
+        notifyEnabled: false,
+        frequency: 'daily',
+      })
+      .pipe(
+        finalize(() => this.savePending.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (savedSearch) => {
+          this.saveStatus.set('success');
+          this.analytics.emit('search_saved', {
+            query,
+            savedSearchId: savedSearch.id,
+            scope: savedSearch.scope,
+          });
+        },
+        error: () => {
+          this.saveStatus.set('error');
+          this.analytics.emit('search_save_failed', {
+            query,
+          });
+        },
+      });
   }
 
   onCloseClick(event: Event): void {
@@ -371,6 +442,19 @@ export class QuickSearchModalComponent implements AfterViewInit {
   private onError(): void {
     this.loading.set(false);
     this.errored.set(true);
+  }
+
+  private runSearch(query: string, context: SearchContext): void {
+    this.loading.set(true);
+    this.errored.set(false);
+    const startedAt = this.now();
+    this.searchService
+      .search$(query, context)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => this.onResult(result, startedAt),
+        error: () => this.onError(),
+      });
   }
 
   private emitSelection(item: SearchItem): void {

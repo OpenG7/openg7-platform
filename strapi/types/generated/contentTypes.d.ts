@@ -638,6 +638,42 @@ export interface ApiProvinceProvince extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSavedSearchSavedSearch extends Struct.CollectionTypeSchema {
+  collectionName: 'saved_searches';
+  info: {
+    displayName: 'Saved Search';
+    pluralName: 'saved-searches';
+    singularName: 'saved-search';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    filters: Schema.Attribute.JSON;
+    frequency: Schema.Attribute.Enumeration<['realtime', 'daily', 'weekly']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'daily'>;
+    lastRunAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::saved-search.saved-search'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    notifyEnabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    publishedAt: Schema.Attribute.DateTime;
+    scope: Schema.Attribute.Enumeration<
+      ['all', 'companies', 'partners', 'feed', 'map', 'opportunities']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'all'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'> &
+      Schema.Attribute.Required;
+  };
+}
+
 export interface ApiSectorSector extends Struct.CollectionTypeSchema {
   collectionName: 'sectors';
   info: {
@@ -710,6 +746,33 @@ export interface ApiStatisticInsightStatisticInsight extends Struct.CollectionTy
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     value: Schema.Attribute.Decimal;
+  };
+}
+
+export interface ApiUserFavoriteUserFavorite extends Struct.CollectionTypeSchema {
+  collectionName: 'user_favorites';
+  info: {
+    displayName: 'User Favorite';
+    pluralName: 'user-favorites';
+    singularName: 'user-favorite';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    entityId: Schema.Attribute.String & Schema.Attribute.Required;
+    entityType: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::user-favorite.user-favorite'> &
+      Schema.Attribute.Private;
+    metadata: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'> &
+      Schema.Attribute.Required;
   };
 }
 
@@ -1146,8 +1209,10 @@ declare module '@strapi/strapi' {
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::national-project.national-project': ApiNationalProjectNationalProject;
       'api::province.province': ApiProvinceProvince;
+      'api::saved-search.saved-search': ApiSavedSearchSavedSearch;
       'api::sector.sector': ApiSectorSector;
       'api::statistic-insight.statistic-insight': ApiStatisticInsightStatisticInsight;
+      'api::user-favorite.user-favorite': ApiUserFavoriteUserFavorite;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

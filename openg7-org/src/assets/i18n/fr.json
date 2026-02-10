@@ -460,6 +460,7 @@
     },
     "profile": {
       "matches": "Mes opportunités",
+      "savedSearches": "Recherches sauvegardées",
       "account": "Mon profil",
       "logout": "Se déconnecter",
       "menuLabel": "Ouvrir le menu du profil"
@@ -1602,6 +1603,48 @@
       "title": "Mes favoris",
       "description": "Voici la liste des éléments que vous avez ajoutés en favoris.",
       "empty": "Enregistrez des entreprises ou des opportunités pour les retrouver ici."
+    },
+    "savedSearches": {
+      "title": "Recherches sauvegardées",
+      "subtitle": "Enregistrez vos filtres récurrents et activez des notifications selon votre cadence.",
+      "loading": "Chargement de vos recherches sauvegardées...",
+      "empty": "Aucune recherche sauvegardée pour le moment. Créez-en une pour réutiliser vos filtres.",
+      "form": {
+        "title": "Créer une recherche sauvegardée",
+        "subtitle": "Enregistrez un nom, une requête et une fréquence de notification.",
+        "name": "Nom de la recherche",
+        "query": "Requête par mot-clé",
+        "queryPlaceholder": "energie import qc",
+        "scope": "Portée",
+        "frequency": "Fréquence des notifications",
+        "notifyEnabled": "Activer les notifications",
+        "submit": "Enregistrer la recherche",
+        "saving": "Enregistrement..."
+      },
+      "list": {
+        "title": "Mes recherches sauvegardées",
+        "noQuery": "Aucun mot-clé",
+        "delete": "Supprimer"
+      },
+      "scope": {
+        "all": "Tout",
+        "companies": "Entreprises",
+        "partners": "Partenaires",
+        "feed": "Fil",
+        "map": "Carte",
+        "opportunities": "Opportunités"
+      },
+      "frequency": {
+        "realtime": "Temps réel",
+        "daily": "Quotidienne",
+        "weekly": "Hebdomadaire"
+      },
+      "errors": {
+        "load": "Impossible de charger les recherches sauvegardées. Veuillez réessayer.",
+        "create": "Impossible de créer cette recherche sauvegardée. Veuillez réessayer.",
+        "update": "Impossible de mettre à jour cette recherche sauvegardée. Veuillez réessayer.",
+        "delete": "Impossible de supprimer cette recherche sauvegardée. Veuillez réessayer."
+      }
     },
     "statistics": {
       "hero": {
@@ -2837,7 +2880,12 @@
       "placeholder": "Rechercher dans OpenG7",
       "actions": {
         "close": "Fermer la recherche",
-        "retry": "Réessayer"
+        "retry": "Réessayer",
+        "save": "Sauvegarder",
+        "saveLoading": "Sauvegarde...",
+        "saveSuccess": "Recherche sauvegardée.",
+        "saveError": "Impossible de sauvegarder cette recherche.",
+        "saveAuthRequired": "Connectez-vous pour sauvegarder vos recherches."
       },
       "results": {
         "ariaLabel": "Résultats de la recherche rapide",

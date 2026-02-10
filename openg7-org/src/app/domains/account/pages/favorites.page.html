@@ -1,14 +1,19 @@
 <section class="og7-page og7-page--favorites">
   <div class="og7-page__inner">
     <h1 class="og7-page__title">{{ 'pages.favorites.title' | translate }}</h1>
-    <ng-container *ngIf="hasFavorites(); else empty">
-      <p class="og7-page__description">{{ 'pages.favorites.description' | translate }}</p>
-      <ul class="og7-page__list">
-        <li class="og7-page__list-item" *ngFor="let item of favoritesList()">{{ item }}</li>
-      </ul>
+    <ng-container *ngIf="loading(); else ready">
+      <p class="og7-page__description">{{ 'auth.profile.loading' | translate }}</p>
     </ng-container>
-    <ng-template #empty>
-      <p class="og7-page__description">{{ 'pages.favorites.empty' | translate }}</p>
+    <ng-template #ready>
+      <ng-container *ngIf="hasFavorites(); else empty">
+        <p class="og7-page__description">{{ 'pages.favorites.description' | translate }}</p>
+        <ul class="og7-page__list">
+          <li class="og7-page__list-item" *ngFor="let item of favoritesList()">{{ item }}</li>
+        </ul>
+      </ng-container>
+      <ng-template #empty>
+        <p class="og7-page__description">{{ 'pages.favorites.empty' | translate }}</p>
+      </ng-template>
     </ng-template>
   </div>
 </section>
