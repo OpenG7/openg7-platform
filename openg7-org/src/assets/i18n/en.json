@@ -191,6 +191,34 @@
         "title": "Collaboration preferences",
         "sectors": "Preferred sectors (comma-separated)",
         "provinces": "Preferred provinces or territories (comma-separated)",
+        "alerts": {
+          "title": "Alert delivery and noise controls",
+          "description": "Choose channels, filtering rules, and your quiet window for proactive alerts.",
+          "channels": {
+            "inApp": "In-app",
+            "email": "Email",
+            "webhook": "Webhook"
+          },
+          "frequency": {
+            "label": "Delivery cadence",
+            "instant": "Instant",
+            "dailyDigest": "Daily digest"
+          },
+          "filters": {
+            "severityLabel": "Severity",
+            "severityRequired": "Select at least one severity.",
+            "sourceLabel": "Source",
+            "sourceRequired": "Select at least one source."
+          },
+          "quietHours": {
+            "title": "Quiet hours",
+            "start": "Start",
+            "end": "End",
+            "timezone": "Timezone",
+            "required": "Start time, end time, and timezone are required when quiet hours are enabled.",
+            "invalidTimezone": "Enter a valid IANA timezone (for example, America/Toronto)."
+          }
+        },
         "email": {
           "title": "Email notifications",
           "description": "Send high-priority alerts to your inbox via the backend webhook.",

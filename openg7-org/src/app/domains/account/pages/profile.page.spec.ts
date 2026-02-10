@@ -60,7 +60,26 @@ describe('ProfilePage', () => {
     avatarUrl: 'https://cdn.example.com/avatar.png',
     sectorPreferences: ['energy', 'agri'],
     provincePreferences: ['qc'],
-    notificationPreferences: { emailOptIn: true, webhookUrl: 'https://hooks.example.com/og7' },
+    notificationPreferences: {
+      emailOptIn: true,
+      webhookUrl: 'https://hooks.example.com/og7',
+      channels: {
+        inApp: true,
+        email: true,
+        webhook: true,
+      },
+      filters: {
+        severities: ['warning', 'critical'],
+        sources: ['saved-search'],
+      },
+      frequency: 'daily-digest',
+      quietHours: {
+        enabled: true,
+        start: '22:00',
+        end: '06:00',
+        timezone: 'America/Toronto',
+      },
+    },
   };
 
   beforeEach(async () => {
@@ -111,10 +130,22 @@ describe('ProfilePage', () => {
     expect(form.controls.jobTitle.value).toBe(profile.jobTitle);
     expect(form.controls.sectorPreferences.value).toBe('energy, agri');
     expect(form.controls.provincePreferences.value).toBe('qc');
+    expect(form.controls.alertChannelInApp.value).toBeTrue();
     expect(form.controls.emailNotifications.value).toBeTrue();
+    expect(form.controls.webhookNotifications.value).toBeTrue();
     expect(form.controls.notificationWebhook.value).toBe(
       'https://hooks.example.com/og7'
     );
+    expect(form.controls.alertFrequency.value).toBe('daily-digest');
+    expect(form.controls.alertSeverityWarning.value).toBeTrue();
+    expect(form.controls.alertSeverityCritical.value).toBeTrue();
+    expect(form.controls.alertSeverityInfo.value).toBeFalse();
+    expect(form.controls.alertSourceSavedSearch.value).toBeTrue();
+    expect(form.controls.alertSourceSystem.value).toBeFalse();
+    expect(form.controls.quietHoursEnabled.value).toBeTrue();
+    expect(form.controls.quietHoursStart.value).toBe('22:00');
+    expect(form.controls.quietHoursEnd.value).toBe('06:00');
+    expect(form.controls.quietHoursTimezone.value).toBe('America/Toronto');
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('[data-og7="user-profile-email"]')?.textContent).toContain(
@@ -139,8 +170,21 @@ describe('ProfilePage', () => {
     form.controls.sectorPreferences.setValue('energy, mining');
     form.controls.provincePreferences.setValue('qc, on');
     form.controls.avatarUrl.setValue(updated.avatarUrl ?? '');
+    form.controls.alertChannelInApp.setValue(true);
     form.controls.emailNotifications.setValue(false);
-    form.controls.notificationWebhook.setValue('');
+    form.controls.webhookNotifications.setValue(true);
+    form.controls.notificationWebhook.setValue('https://hooks.example.com/new');
+    form.controls.alertFrequency.setValue('instant');
+    form.controls.alertSeverityInfo.setValue(true);
+    form.controls.alertSeveritySuccess.setValue(false);
+    form.controls.alertSeverityWarning.setValue(true);
+    form.controls.alertSeverityCritical.setValue(false);
+    form.controls.alertSourceSavedSearch.setValue(true);
+    form.controls.alertSourceSystem.setValue(false);
+    form.controls.quietHoursEnabled.setValue(true);
+    form.controls.quietHoursStart.setValue('21:30');
+    form.controls.quietHoursEnd.setValue('06:30');
+    form.controls.quietHoursTimezone.setValue('America/Montreal');
 
     (component as any).onSubmit();
 
@@ -153,7 +197,26 @@ describe('ProfilePage', () => {
       avatarUrl: updated.avatarUrl,
       sectorPreferences: ['energy', 'mining'],
       provincePreferences: ['qc', 'on'],
-      notificationPreferences: { emailOptIn: false, webhookUrl: null },
+      notificationPreferences: {
+        channels: {
+          inApp: true,
+          email: false,
+          webhook: true,
+        },
+        filters: {
+          severities: ['info', 'warning'],
+          sources: ['saved-search'],
+        },
+        frequency: 'instant',
+        quietHours: {
+          enabled: true,
+          start: '21:30',
+          end: '06:30',
+          timezone: 'America/Montreal',
+        },
+        emailOptIn: false,
+        webhookUrl: 'https://hooks.example.com/new',
+      },
     });
 
     expect(notifications.success).toHaveBeenCalledWith(
@@ -177,14 +240,26 @@ describe('ProfilePage', () => {
     );
   });
 
-  it('clears and disables webhook when email notifications are turned off', () => {
+  it('clears and disables webhook when webhook notifications are turned off', () => {
     const form = (component as any).form;
     form.controls.notificationWebhook.setValue('https://hooks.example.com/new');
 
-    form.controls.emailNotifications.setValue(false);
+    form.controls.webhookNotifications.setValue(false);
 
     expect(form.controls.notificationWebhook.disabled).toBeTrue();
     expect(form.controls.notificationWebhook.value).toBe('');
+  });
+
+  it('does not submit when no severity is selected', () => {
+    const form = (component as any).form;
+    form.controls.alertSeverityInfo.setValue(false);
+    form.controls.alertSeveritySuccess.setValue(false);
+    form.controls.alertSeverityWarning.setValue(false);
+    form.controls.alertSeverityCritical.setValue(false);
+
+    (component as any).onSubmit();
+
+    expect(auth.updateProfile).not.toHaveBeenCalled();
   });
 
   it('does not submit when form validation fails', () => {

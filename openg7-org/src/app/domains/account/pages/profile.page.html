@@ -282,50 +282,219 @@
             class="mt-4 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-cyan-50/60 p-4"
             data-og7="user-profile-notifications"
           >
-            <label class="flex items-start gap-3" for="profile-email-notifications">
-              <input
-                id="profile-email-notifications"
-                type="checkbox"
-                class="mt-1 h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300"
-                formControlName="emailNotifications"
-              />
-              <span class="space-y-1">
-                <span class="block text-sm font-semibold text-slate-900">
-                  {{ 'auth.profile.preferences.email.title' | translate }}
-                </span>
-                <span class="block text-sm text-slate-600">
-                  {{ 'auth.profile.preferences.email.description' | translate }}
-                </span>
-              </span>
-            </label>
+            <div class="space-y-1">
+              <h3 class="text-sm font-semibold text-slate-900">
+                {{ 'auth.profile.preferences.alerts.title' | translate }}
+              </h3>
+              <p class="text-sm text-slate-600">
+                {{ 'auth.profile.preferences.alerts.description' | translate }}
+              </p>
+            </div>
 
-            <div class="flex flex-col gap-1">
-              <label
-                class="text-xs font-medium uppercase tracking-wide text-slate-500"
-                for="profile-notification-webhook"
-              >
-                {{ 'auth.profile.preferences.email.webhookLabel' | translate }}
+            <div class="grid gap-3 sm:grid-cols-3" data-og7="user-profile-alert-channels">
+              <label class="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2">
+                <input
+                  id="profile-alert-channel-inapp"
+                  type="checkbox"
+                  class="mt-1 h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300"
+                  formControlName="alertChannelInApp"
+                  data-og7-id="alert-channel-inapp"
+                />
+                <span class="text-sm text-slate-700">
+                  {{ 'auth.profile.preferences.alerts.channels.inApp' | translate }}
+                </span>
               </label>
-              <input
-                id="profile-notification-webhook"
-                type="url"
-                class="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
-                formControlName="notificationWebhook"
-                placeholder="https://cms.example.com/api/notifications/email"
-                autocomplete="url"
-              />
-              @if (form.controls.notificationWebhook.touched && form.controls.notificationWebhook.invalid) {
-                <p class="text-xs text-error" data-og7="user-profile-notification-webhook-error">
-                  @if (form.controls.notificationWebhook.hasError('invalidHttpsUrl')) {
-                    {{ 'auth.profile.validation.httpsUrl' | translate }}
-                  } @else {
-                    {{ 'validation.url' | translate }}
-                  }
+
+              <label class="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2">
+                <input
+                  id="profile-email-notifications"
+                  type="checkbox"
+                  class="mt-1 h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300"
+                  formControlName="emailNotifications"
+                  data-og7-id="alert-channel-email"
+                />
+                <span class="text-sm text-slate-700">
+                  {{ 'auth.profile.preferences.alerts.channels.email' | translate }}
+                </span>
+              </label>
+
+              <label class="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2">
+                <input
+                  id="profile-webhook-notifications"
+                  type="checkbox"
+                  class="mt-1 h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300"
+                  formControlName="webhookNotifications"
+                  data-og7-id="alert-channel-webhook"
+                />
+                <span class="text-sm text-slate-700">
+                  {{ 'auth.profile.preferences.alerts.channels.webhook' | translate }}
+                </span>
+              </label>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium uppercase tracking-wide text-slate-500" for="profile-alert-frequency">
+                  {{ 'auth.profile.preferences.alerts.frequency.label' | translate }}
+                </label>
+                <select
+                  id="profile-alert-frequency"
+                  class="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                  formControlName="alertFrequency"
+                  data-og7-id="alerts-frequency"
+                >
+                  <option value="instant">
+                    {{ 'auth.profile.preferences.alerts.frequency.instant' | translate }}
+                  </option>
+                  <option value="daily-digest">
+                    {{ 'auth.profile.preferences.alerts.frequency.dailyDigest' | translate }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label
+                  class="text-xs font-medium uppercase tracking-wide text-slate-500"
+                  for="profile-notification-webhook"
+                >
+                  {{ 'auth.profile.preferences.email.webhookLabel' | translate }}
+                </label>
+                <input
+                  id="profile-notification-webhook"
+                  type="url"
+                  class="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                  formControlName="notificationWebhook"
+                  placeholder="https://cms.example.com/api/notifications/email"
+                  autocomplete="url"
+                  data-og7-id="alerts-webhook-url"
+                />
+                @if (form.controls.notificationWebhook.touched && form.controls.notificationWebhook.invalid) {
+                  <p class="text-xs text-error" data-og7="user-profile-notification-webhook-error">
+                    @if (form.controls.notificationWebhook.hasError('invalidHttpsUrl')) {
+                      {{ 'auth.profile.validation.httpsUrl' | translate }}
+                    } @else {
+                      {{ 'validation.url' | translate }}
+                    }
+                  </p>
+                }
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-500">
+              {{ 'auth.profile.preferences.email.webhookHelp' | translate }}
+            </p>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div class="space-y-2 rounded-xl border border-slate-200 bg-white/80 p-3" data-og7-id="alerts-severity-filters">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {{ 'auth.profile.preferences.alerts.filters.severityLabel' | translate }}
+                </p>
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" class="h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300" formControlName="alertSeverityInfo" />
+                  {{ 'pages.alerts.severity.info' | translate }}
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" class="h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300" formControlName="alertSeveritySuccess" />
+                  {{ 'pages.alerts.severity.success' | translate }}
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" class="h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300" formControlName="alertSeverityWarning" />
+                  {{ 'pages.alerts.severity.warning' | translate }}
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" class="h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300" formControlName="alertSeverityCritical" />
+                  {{ 'pages.alerts.severity.critical' | translate }}
+                </label>
+                @if (alertSeveritySelectionError()) {
+                  <p class="text-xs text-error" data-og7-id="alerts-severity-error">
+                    {{ 'auth.profile.preferences.alerts.filters.severityRequired' | translate }}
+                  </p>
+                }
+              </div>
+
+              <div class="space-y-2 rounded-xl border border-slate-200 bg-white/80 p-3" data-og7-id="alerts-source-filters">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {{ 'auth.profile.preferences.alerts.filters.sourceLabel' | translate }}
+                </p>
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" class="h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300" formControlName="alertSourceSavedSearch" />
+                  {{ 'pages.alerts.sources.savedSearch' | translate }}
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" class="h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300" formControlName="alertSourceSystem" />
+                  {{ 'pages.alerts.sources.system' | translate }}
+                </label>
+                @if (alertSourceSelectionError()) {
+                  <p class="text-xs text-error" data-og7-id="alerts-source-error">
+                    {{ 'auth.profile.preferences.alerts.filters.sourceRequired' | translate }}
+                  </p>
+                }
+              </div>
+            </div>
+
+            <div class="space-y-3 rounded-xl border border-slate-200 bg-white/80 p-3" data-og7-id="alerts-quiet-hours">
+              <label class="flex items-center gap-2 text-sm font-semibold text-slate-900" for="profile-quiet-hours-enabled">
+                <input
+                  id="profile-quiet-hours-enabled"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-400 text-sky-600 focus:ring-sky-300"
+                  formControlName="quietHoursEnabled"
+                  data-og7-id="alerts-quiet-hours-enabled"
+                />
+                {{ 'auth.profile.preferences.alerts.quietHours.title' | translate }}
+              </label>
+
+              <div class="grid gap-3 sm:grid-cols-3">
+                <div class="flex flex-col gap-1">
+                  <label class="text-xs font-medium uppercase tracking-wide text-slate-500" for="profile-quiet-hours-start">
+                    {{ 'auth.profile.preferences.alerts.quietHours.start' | translate }}
+                  </label>
+                  <input
+                    id="profile-quiet-hours-start"
+                    type="time"
+                    class="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                    formControlName="quietHoursStart"
+                    data-og7-id="alerts-quiet-hours-start"
+                  />
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <label class="text-xs font-medium uppercase tracking-wide text-slate-500" for="profile-quiet-hours-end">
+                    {{ 'auth.profile.preferences.alerts.quietHours.end' | translate }}
+                  </label>
+                  <input
+                    id="profile-quiet-hours-end"
+                    type="time"
+                    class="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                    formControlName="quietHoursEnd"
+                    data-og7-id="alerts-quiet-hours-end"
+                  />
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <label class="text-xs font-medium uppercase tracking-wide text-slate-500" for="profile-quiet-hours-timezone">
+                    {{ 'auth.profile.preferences.alerts.quietHours.timezone' | translate }}
+                  </label>
+                  <input
+                    id="profile-quiet-hours-timezone"
+                    type="text"
+                    class="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                    formControlName="quietHoursTimezone"
+                    placeholder="America/Toronto"
+                    data-og7-id="alerts-quiet-hours-timezone"
+                  />
+                </div>
+              </div>
+
+              @if (quietHoursConfigurationError()) {
+                <p class="text-xs text-error" data-og7-id="alerts-quiet-hours-error">
+                  {{ 'auth.profile.preferences.alerts.quietHours.required' | translate }}
+                </p>
+              } @else if (form.controls.quietHoursTimezone.touched && form.controls.quietHoursTimezone.hasError('invalidTimezone')) {
+                <p class="text-xs text-error" data-og7-id="alerts-quiet-hours-timezone-error">
+                  {{ 'auth.profile.preferences.alerts.quietHours.invalidTimezone' | translate }}
                 </p>
               }
-              <p class="text-xs text-slate-500">
-                {{ 'auth.profile.preferences.email.webhookHelp' | translate }}
-              </p>
             </div>
           </div>
         </section>

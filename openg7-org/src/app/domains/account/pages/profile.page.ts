@@ -20,6 +20,9 @@ import {
 import { AuthService } from '@app/core/auth/auth.service';
 import {
   AccountStatus,
+  AlertFrequencyPreference,
+  AlertSeverityPreference,
+  AlertSourcePreference,
   AuthUser,
   ChangePasswordPayload,
   EmailChangePayload,
@@ -35,6 +38,17 @@ import { finalize } from 'rxjs';
 interface UploadedAssetResponse {
   url?: string | null;
 }
+
+const ALERT_SEVERITY_OPTIONS: readonly AlertSeverityPreference[] = [
+  'info',
+  'success',
+  'warning',
+  'critical',
+];
+const ALERT_SOURCE_OPTIONS: readonly AlertSourcePreference[] = ['saved-search', 'system'];
+const ALERT_FREQUENCY_DEFAULT: AlertFrequencyPreference = 'instant';
+const QUIET_HOURS_TIMEZONE_FALLBACK = 'UTC';
+const QUIET_HOURS_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 function optionalUrlValidator(options: { httpsOnly?: boolean } = {}): ValidatorFn {
   return (control: AbstractControl<string | null>): ValidationErrors | null => {
@@ -66,6 +80,27 @@ function optionalPhoneValidator(): ValidatorFn {
     }
 
     return /^[+()0-9.\-\s]{7,24}$/.test(raw.trim()) ? null : { invalidPhone: true };
+  };
+}
+
+function optionalTimezoneValidator(): ValidatorFn {
+  return (control: AbstractControl<string | null>): ValidationErrors | null => {
+    const raw = control.value;
+    if (typeof raw !== 'string' || raw.trim().length === 0) {
+      return null;
+    }
+
+    const normalized = raw.trim();
+    if (normalized.length > 80) {
+      return { invalidTimezone: true };
+    }
+
+    try {
+      new Intl.DateTimeFormat('en-US', { timeZone: normalized }).format(new Date());
+      return null;
+    } catch {
+      return { invalidTimezone: true };
+    }
   };
 }
 
@@ -151,6 +186,9 @@ export class ProfilePage {
   protected readonly uploadingAvatar = signal(false);
   protected readonly avatarUploadError = signal<string | null>(null);
   protected readonly avatarPreview = signal<string | null>(null);
+  protected readonly alertSeveritySelectionError = signal(false);
+  protected readonly alertSourceSelectionError = signal(false);
+  protected readonly quietHoursConfigurationError = signal(false);
   protected readonly profile = signal<AuthUser | null>(null);
   protected readonly accountStatus = computed<AccountStatus>(() => {
     const status = this.profile()?.accountStatus;
@@ -214,8 +252,21 @@ export class ProfilePage {
     avatarUrl: this.fb.nonNullable.control('', [optionalUrlValidator()]),
     sectorPreferences: this.fb.nonNullable.control('', [csvListValidator(20, 40)]),
     provincePreferences: this.fb.nonNullable.control('', [csvListValidator(20, 20)]),
+    alertChannelInApp: this.fb.nonNullable.control(true),
     emailNotifications: this.fb.nonNullable.control(false),
+    webhookNotifications: this.fb.nonNullable.control(false),
     notificationWebhook: this.fb.nonNullable.control('', [optionalUrlValidator({ httpsOnly: true })]),
+    alertFrequency: this.fb.nonNullable.control<AlertFrequencyPreference>(ALERT_FREQUENCY_DEFAULT),
+    alertSeverityInfo: this.fb.nonNullable.control(true),
+    alertSeveritySuccess: this.fb.nonNullable.control(true),
+    alertSeverityWarning: this.fb.nonNullable.control(true),
+    alertSeverityCritical: this.fb.nonNullable.control(true),
+    alertSourceSavedSearch: this.fb.nonNullable.control(true),
+    alertSourceSystem: this.fb.nonNullable.control(true),
+    quietHoursEnabled: this.fb.nonNullable.control(false),
+    quietHoursStart: this.fb.nonNullable.control(''),
+    quietHoursEnd: this.fb.nonNullable.control(''),
+    quietHoursTimezone: this.fb.nonNullable.control('', [optionalTimezoneValidator()]),
   });
 
   protected readonly passwordForm = this.fb.nonNullable.group(
@@ -233,15 +284,50 @@ export class ProfilePage {
   });
 
   constructor() {
-    this.syncWebhookAvailability(this.form.controls.emailNotifications.value, false);
+    this.syncWebhookAvailability(this.form.controls.webhookNotifications.value, false);
+    this.syncQuietHoursAvailability(this.form.controls.quietHoursEnabled.value, false);
 
     this.form.controls.avatarUrl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.avatarPreview.set(this.normalizeString(value)));
 
-    this.form.controls.emailNotifications.valueChanges
+    this.form.controls.webhookNotifications.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((enabled) => this.syncWebhookAvailability(Boolean(enabled), true));
+
+    this.form.controls.quietHoursEnabled.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((enabled) => this.syncQuietHoursAvailability(Boolean(enabled), true));
+
+    this.form.controls.alertSeverityInfo.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.alertSeveritySelectionError.set(false));
+    this.form.controls.alertSeveritySuccess.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.alertSeveritySelectionError.set(false));
+    this.form.controls.alertSeverityWarning.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.alertSeveritySelectionError.set(false));
+    this.form.controls.alertSeverityCritical.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.alertSeveritySelectionError.set(false));
+
+    this.form.controls.alertSourceSavedSearch.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.alertSourceSelectionError.set(false));
+    this.form.controls.alertSourceSystem.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.alertSourceSelectionError.set(false));
+
+    this.form.controls.quietHoursStart.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.quietHoursConfigurationError.set(false));
+    this.form.controls.quietHoursEnd.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.quietHoursConfigurationError.set(false));
+    this.form.controls.quietHoursTimezone.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.quietHoursConfigurationError.set(false));
 
     this.fetchProfile(() => this.loading.set(false));
   }
@@ -260,12 +346,27 @@ export class ProfilePage {
       return;
     }
 
-    if (this.form.invalid) {
+    const raw = this.form.getRawValue();
+    const selectedSeverities = this.extractSelectedSeverities(raw);
+    const selectedSources = this.extractSelectedSources(raw);
+    const quietHoursEnabled = Boolean(raw.quietHoursEnabled);
+    const quietHoursStart = this.normalizeQuietHour(raw.quietHoursStart);
+    const quietHoursEnd = this.normalizeQuietHour(raw.quietHoursEnd);
+    const quietHoursTimezone = this.normalizeString(raw.quietHoursTimezone);
+
+    const hasSeveritySelection = selectedSeverities.length > 0;
+    const hasSourceSelection = selectedSources.length > 0;
+    const hasQuietHoursConfiguration =
+      !quietHoursEnabled || (Boolean(quietHoursStart) && Boolean(quietHoursEnd) && Boolean(quietHoursTimezone));
+
+    this.alertSeveritySelectionError.set(!hasSeveritySelection);
+    this.alertSourceSelectionError.set(!hasSourceSelection);
+    this.quietHoursConfigurationError.set(!hasQuietHoursConfiguration);
+
+    if (this.form.invalid || !hasSeveritySelection || !hasSourceSelection || !hasQuietHoursConfiguration) {
       this.form.markAllAsTouched();
       return;
     }
-
-    const raw = this.form.getRawValue();
 
     const payload: UpdateProfilePayload = {
       firstName: this.normalizeString(raw.firstName),
@@ -277,8 +378,26 @@ export class ProfilePage {
       sectorPreferences: this.parseList(raw.sectorPreferences),
       provincePreferences: this.parseList(raw.provincePreferences),
       notificationPreferences: {
+        channels: {
+          inApp: Boolean(raw.alertChannelInApp),
+          email: Boolean(raw.emailNotifications),
+          webhook: Boolean(raw.webhookNotifications),
+        },
+        filters: {
+          severities: selectedSeverities,
+          sources: selectedSources,
+        },
+        frequency: raw.alertFrequency,
+        quietHours: {
+          enabled: quietHoursEnabled,
+          start: quietHoursEnabled ? quietHoursStart : null,
+          end: quietHoursEnabled ? quietHoursEnd : null,
+          timezone: quietHoursEnabled ? quietHoursTimezone : null,
+        },
         emailOptIn: Boolean(raw.emailNotifications),
-        webhookUrl: this.normalizeString(raw.notificationWebhook),
+        webhookUrl: Boolean(raw.webhookNotifications)
+          ? this.normalizeString(raw.notificationWebhook)
+          : null,
       },
     };
 
@@ -572,6 +691,7 @@ export class ProfilePage {
 
   private applyProfile(profile: AuthUser): void {
     this.profile.set(profile);
+    const preferences = this.resolveNotificationPreferences(profile);
 
     this.form.patchValue(
       {
@@ -584,14 +704,31 @@ export class ProfilePage {
         avatarUrl: profile.avatarUrl ?? '',
         sectorPreferences: this.joinList(profile.sectorPreferences),
         provincePreferences: this.joinList(profile.provincePreferences),
-        emailNotifications: profile.notificationPreferences?.emailOptIn ?? false,
-        notificationWebhook: profile.notificationPreferences?.webhookUrl ?? '',
+        alertChannelInApp: preferences.channels.inApp,
+        emailNotifications: preferences.channels.email,
+        webhookNotifications: preferences.channels.webhook,
+        notificationWebhook: preferences.webhookUrl ?? '',
+        alertFrequency: preferences.frequency,
+        alertSeverityInfo: preferences.filters.severities.includes('info'),
+        alertSeveritySuccess: preferences.filters.severities.includes('success'),
+        alertSeverityWarning: preferences.filters.severities.includes('warning'),
+        alertSeverityCritical: preferences.filters.severities.includes('critical'),
+        alertSourceSavedSearch: preferences.filters.sources.includes('saved-search'),
+        alertSourceSystem: preferences.filters.sources.includes('system'),
+        quietHoursEnabled: preferences.quietHours.enabled,
+        quietHoursStart: preferences.quietHours.start ?? '',
+        quietHoursEnd: preferences.quietHours.end ?? '',
+        quietHoursTimezone: preferences.quietHours.timezone ?? '',
       },
       { emitEvent: false }
     );
 
     this.avatarPreview.set(this.normalizeString(profile.avatarUrl));
-    this.syncWebhookAvailability(profile.notificationPreferences?.emailOptIn ?? false, true);
+    this.alertSeveritySelectionError.set(false);
+    this.alertSourceSelectionError.set(false);
+    this.quietHoursConfigurationError.set(false);
+    this.syncWebhookAvailability(preferences.channels.webhook, true);
+    this.syncQuietHoursAvailability(preferences.quietHours.enabled, true);
     this.form.markAsPristine();
     this.form.markAsUntouched();
     this.notifications.updatePreferences(this.buildNotificationPreferences(profile));
@@ -613,13 +750,157 @@ export class ProfilePage {
     webhookControl.updateValueAndValidity({ emitEvent: false });
   }
 
+  private syncQuietHoursAvailability(enabled: boolean, clearWhenDisabled: boolean): void {
+    const startControl = this.form.controls.quietHoursStart;
+    const endControl = this.form.controls.quietHoursEnd;
+    const timezoneControl = this.form.controls.quietHoursTimezone;
+
+    if (!enabled) {
+      if (clearWhenDisabled) {
+        startControl.setValue('', { emitEvent: false });
+        endControl.setValue('', { emitEvent: false });
+        timezoneControl.setValue('', { emitEvent: false });
+      }
+      startControl.disable({ emitEvent: false });
+      endControl.disable({ emitEvent: false });
+      timezoneControl.disable({ emitEvent: false });
+      startControl.updateValueAndValidity({ emitEvent: false });
+      endControl.updateValueAndValidity({ emitEvent: false });
+      timezoneControl.updateValueAndValidity({ emitEvent: false });
+      return;
+    }
+
+    startControl.enable({ emitEvent: false });
+    endControl.enable({ emitEvent: false });
+    timezoneControl.enable({ emitEvent: false });
+
+    if (!this.normalizeString(timezoneControl.value)) {
+      timezoneControl.setValue(this.detectBrowserTimezone(), { emitEvent: false });
+    }
+
+    startControl.updateValueAndValidity({ emitEvent: false });
+    endControl.updateValueAndValidity({ emitEvent: false });
+    timezoneControl.updateValueAndValidity({ emitEvent: false });
+  }
+
   private buildNotificationPreferences(profile: AuthUser) {
-    const prefs = profile.notificationPreferences ?? null;
+    const prefs = this.resolveNotificationPreferences(profile);
     return {
       emailAddress: profile.email,
-      emailOptIn: Boolean(prefs?.emailOptIn),
-      webhookUrl: prefs?.webhookUrl ?? null,
+      emailOptIn: prefs.channels.email,
+      webhookUrl: prefs.channels.webhook ? prefs.webhookUrl : null,
     };
+  }
+
+  private extractSelectedSeverities(raw: {
+    alertSeverityInfo: boolean;
+    alertSeveritySuccess: boolean;
+    alertSeverityWarning: boolean;
+    alertSeverityCritical: boolean;
+  }): AlertSeverityPreference[] {
+    const selected: AlertSeverityPreference[] = [];
+    if (raw.alertSeverityInfo) {
+      selected.push('info');
+    }
+    if (raw.alertSeveritySuccess) {
+      selected.push('success');
+    }
+    if (raw.alertSeverityWarning) {
+      selected.push('warning');
+    }
+    if (raw.alertSeverityCritical) {
+      selected.push('critical');
+    }
+    return selected;
+  }
+
+  private extractSelectedSources(raw: {
+    alertSourceSavedSearch: boolean;
+    alertSourceSystem: boolean;
+  }): AlertSourcePreference[] {
+    const selected: AlertSourcePreference[] = [];
+    if (raw.alertSourceSavedSearch) {
+      selected.push('saved-search');
+    }
+    if (raw.alertSourceSystem) {
+      selected.push('system');
+    }
+    return selected;
+  }
+
+  private normalizeQuietHour(value: string): string | null {
+    const normalized = this.normalizeString(value);
+    if (!normalized) {
+      return null;
+    }
+    return QUIET_HOURS_PATTERN.test(normalized) ? normalized : null;
+  }
+
+  private resolveNotificationPreferences(profile: AuthUser): {
+    channels: { inApp: boolean; email: boolean; webhook: boolean };
+    filters: { severities: AlertSeverityPreference[]; sources: AlertSourcePreference[] };
+    frequency: AlertFrequencyPreference;
+    quietHours: { enabled: boolean; start: string | null; end: string | null; timezone: string | null };
+    webhookUrl: string | null;
+  } {
+    const prefs = profile.notificationPreferences ?? null;
+    const channels = prefs?.channels ?? null;
+    const email = typeof channels?.email === 'boolean' ? channels.email : Boolean(prefs?.emailOptIn);
+    const webhookUrl = this.normalizeString(prefs?.webhookUrl);
+    const webhook = typeof channels?.webhook === 'boolean' ? channels.webhook : Boolean(webhookUrl);
+    const inApp = typeof channels?.inApp === 'boolean' ? channels.inApp : true;
+
+    const severitiesRaw = Array.isArray(prefs?.filters?.severities)
+      ? prefs?.filters?.severities
+      : [];
+    const severities = ALERT_SEVERITY_OPTIONS.filter((entry) =>
+      severitiesRaw.includes(entry)
+    );
+    const normalizedSeverities =
+      severities.length > 0 ? severities : [...ALERT_SEVERITY_OPTIONS];
+
+    const sourcesRaw = Array.isArray(prefs?.filters?.sources) ? prefs?.filters?.sources : [];
+    const sources = ALERT_SOURCE_OPTIONS.filter((entry) => sourcesRaw.includes(entry));
+    const normalizedSources = sources.length > 0 ? sources : [...ALERT_SOURCE_OPTIONS];
+
+    const frequency: AlertFrequencyPreference =
+      prefs?.frequency === 'daily-digest' ? 'daily-digest' : ALERT_FREQUENCY_DEFAULT;
+
+    const quietHoursEnabled = Boolean(prefs?.quietHours?.enabled);
+    const quietHoursStart = this.normalizeQuietHour(prefs?.quietHours?.start ?? '');
+    const quietHoursEnd = this.normalizeQuietHour(prefs?.quietHours?.end ?? '');
+    const quietHoursTimezone = this.normalizeString(prefs?.quietHours?.timezone);
+
+    return {
+      channels: {
+        inApp,
+        email,
+        webhook,
+      },
+      filters: {
+        severities: normalizedSeverities,
+        sources: normalizedSources,
+      },
+      frequency,
+      quietHours: {
+        enabled: quietHoursEnabled,
+        start: quietHoursEnabled ? quietHoursStart : null,
+        end: quietHoursEnabled ? quietHoursEnd : null,
+        timezone: quietHoursEnabled ? quietHoursTimezone ?? this.detectBrowserTimezone() : null,
+      },
+      webhookUrl,
+    };
+  }
+
+  private detectBrowserTimezone(): string {
+    try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      return typeof timezone === 'string' && timezone.trim().length > 0
+        ? timezone
+        : QUIET_HOURS_TIMEZONE_FALLBACK;
+    } catch {
+      return QUIET_HOURS_TIMEZONE_FALLBACK;
+    }
   }
 
   private joinList(values?: readonly string[] | null): string {

@@ -191,6 +191,34 @@
         "title": "Préférences de collaboration",
         "sectors": "Secteurs privilégiés (séparés par des virgules)",
         "provinces": "Provinces ou territoires privilégiés (séparés par des virgules)",
+        "alerts": {
+          "title": "Diffusion des alertes et controle du bruit",
+          "description": "Choisissez les canaux, les filtres et votre plage de silence pour les alertes proactives.",
+          "channels": {
+            "inApp": "In-app",
+            "email": "Courriel",
+            "webhook": "Webhook"
+          },
+          "frequency": {
+            "label": "Frequence d'envoi",
+            "instant": "Instantanee",
+            "dailyDigest": "Digest quotidien"
+          },
+          "filters": {
+            "severityLabel": "Severite",
+            "severityRequired": "Selectionnez au moins un niveau de severite.",
+            "sourceLabel": "Source",
+            "sourceRequired": "Selectionnez au moins une source."
+          },
+          "quietHours": {
+            "title": "Heures de silence",
+            "start": "Debut",
+            "end": "Fin",
+            "timezone": "Fuseau horaire",
+            "required": "Debut, fin et fuseau horaire sont requis quand les heures de silence sont actives.",
+            "invalidTimezone": "Saisissez un fuseau IANA valide (ex.: America/Toronto)."
+          }
+        },
         "email": {
           "title": "Notifications par courriel",
           "description": "Recevoir les alertes prioritaires via le webhook backend.",
