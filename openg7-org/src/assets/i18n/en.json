@@ -168,7 +168,15 @@
       "avatar": {
         "label": "Profile picture URL",
         "placeholder": "https://example.com/avatar.jpg",
-        "alt": "Profile picture preview"
+        "alt": "Profile picture preview",
+        "uploadCta": "Upload from device",
+        "uploading": "Uploading...",
+        "uploadHint": "Accepted formats: image files up to 5 MB.",
+        "uploadSuccess": "Your profile picture has been uploaded.",
+        "uploadError": "Unable to upload the profile picture. Please try again.",
+        "uploadMalformed": "The upload response did not contain a valid image URL.",
+        "uploadInvalidType": "Please select a valid image file.",
+        "uploadTooLarge": "The selected image exceeds the 5 MB limit."
       },
       "contact": {
         "title": "Contact details",

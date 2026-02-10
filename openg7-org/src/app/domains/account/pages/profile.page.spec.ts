@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthService } from '@app/core/auth/auth.service';
 import { AuthUser } from '@app/core/auth/auth.types';
+import { HttpClientService } from '@app/core/http/http-client.service';
 import { NotificationStore, NotificationStoreApi } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, of, throwError } from 'rxjs';
@@ -44,6 +45,7 @@ describe('ProfilePage', () => {
   let fixture: ComponentFixture<ProfilePage>;
   let component: ProfilePage;
   let auth: jasmine.SpyObj<AuthService>;
+  let http: jasmine.SpyObj<HttpClientService>;
   let notifications: jasmine.SpyObj<NotificationStoreApi>;
 
   const profile: AuthUser = {
@@ -69,6 +71,7 @@ describe('ProfilePage', () => {
       'requestEmailChange',
       'sendEmailConfirmation',
     ]);
+    http = jasmine.createSpyObj<HttpClientService>('HttpClientService', ['post']);
     notifications = jasmine.createSpyObj<NotificationStoreApi>('NotificationStore', [
       'success',
       'error',
@@ -82,11 +85,13 @@ describe('ProfilePage', () => {
       of({ email: 'new@example.com', sent: true, accountStatus: 'emailNotConfirmed' })
     );
     auth.sendEmailConfirmation.and.returnValue(of({ email: profile.email, sent: true }));
+    http.post.and.returnValue(of([{ url: '/uploads/avatar.png' }]));
 
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
       providers: [
         { provide: AuthService, useValue: auth },
+        { provide: HttpClientService, useValue: http },
         { provide: NotificationStore, useValue: notifications },
         { provide: TranslateService, useClass: TranslateStub },
       ],
@@ -240,6 +245,40 @@ describe('ProfilePage', () => {
     expect(auth.sendEmailConfirmation).toHaveBeenCalledWith({ email: profile.email });
     expect(notifications.success).toHaveBeenCalledWith(
       'auth.login.activationEmailSent',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('uploads a profile picture file and updates avatarUrl', () => {
+    const file = new File(['avatar'], 'avatar.png', { type: 'image/png' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    const input = document.createElement('input');
+    Object.defineProperty(input, 'files', { value: dataTransfer.files });
+
+    (component as any).onAvatarFileSelected({ target: input } as unknown as Event);
+
+    expect(http.post).toHaveBeenCalledWith('/api/upload', jasmine.any(FormData));
+    const form = (component as any).form;
+    expect(form.controls.avatarUrl.value).toContain('/uploads/avatar.png');
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.profile.avatar.uploadSuccess',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('rejects non-image avatar files before upload', () => {
+    const file = new File(['not-image'], 'avatar.txt', { type: 'text/plain' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    const input = document.createElement('input');
+    Object.defineProperty(input, 'files', { value: dataTransfer.files });
+
+    (component as any).onAvatarFileSelected({ target: input } as unknown as Event);
+
+    expect(http.post).not.toHaveBeenCalled();
+    expect(notifications.error).toHaveBeenCalledWith(
+      'auth.profile.avatar.uploadInvalidType',
       jasmine.objectContaining({ source: 'auth' })
     );
   });

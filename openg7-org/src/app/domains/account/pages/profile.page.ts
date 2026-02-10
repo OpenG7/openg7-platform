@@ -25,9 +25,16 @@ import {
   EmailChangePayload,
   UpdateProfilePayload,
 } from '@app/core/auth/auth.types';
+import { STRAPI_ROUTES } from '@app/core/api/strapi.routes';
+import { API_URL } from '@app/core/config/environment.tokens';
+import { HttpClientService } from '@app/core/http/http-client.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
+
+interface UploadedAssetResponse {
+  url?: string | null;
+}
 
 function optionalUrlValidator(options: { httpsOnly?: boolean } = {}): ValidatorFn {
   return (control: AbstractControl<string | null>): ValidationErrors | null => {
@@ -127,8 +134,11 @@ function matchingPasswordsValidator(group: AbstractControl): ValidationErrors | 
  * @returns ProfilePage geree par le framework.
  */
 export class ProfilePage {
+  private readonly maxAvatarFileSizeBytes = 5 * 1024 * 1024;
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly http = inject(HttpClientService);
+  private readonly apiUrl = inject(API_URL, { optional: true });
   private readonly notifications = injectNotificationStore();
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
@@ -138,6 +148,8 @@ export class ProfilePage {
   protected readonly changingPassword = signal(false);
   protected readonly requestingEmailChange = signal(false);
   protected readonly sendingActivationEmail = signal(false);
+  protected readonly uploadingAvatar = signal(false);
+  protected readonly avatarUploadError = signal<string | null>(null);
   protected readonly avatarPreview = signal<string | null>(null);
   protected readonly profile = signal<AuthUser | null>(null);
   protected readonly accountStatus = computed<AccountStatus>(() => {
@@ -456,6 +468,83 @@ export class ProfilePage {
     this.avatarPreview.set(null);
   }
 
+  protected onAvatarFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.item(0);
+    if (!file || this.uploadingAvatar()) {
+      if (input) {
+        input.value = '';
+      }
+      return;
+    }
+
+    this.avatarUploadError.set(null);
+    const validationError = this.validateAvatarFile(file);
+    if (validationError) {
+      this.avatarUploadError.set(validationError);
+      this.notifications.error(this.translate.instant(validationError), {
+        source: 'auth',
+        metadata: { action: 'profile-avatar-upload-validation' },
+      });
+      if (input) {
+        input.value = '';
+      }
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append('files', file, file.name);
+
+    this.uploadingAvatar.set(true);
+    this.http
+      .post<UploadedAssetResponse[]>(STRAPI_ROUTES.upload.files, payload)
+      .pipe(
+        finalize(() => {
+          this.uploadingAvatar.set(false);
+          if (input) {
+            input.value = '';
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (files) => {
+          const uploaded = Array.isArray(files) && files.length > 0 ? files[0] : null;
+          const normalizedUrl = this.resolveUploadedAvatarUrl(uploaded?.url ?? null);
+          if (!normalizedUrl) {
+            this.avatarUploadError.set('auth.profile.avatar.uploadMalformed');
+            this.notifications.error(this.translate.instant('auth.profile.avatar.uploadMalformed'), {
+              source: 'auth',
+              metadata: { action: 'profile-avatar-upload-response' },
+            });
+            return;
+          }
+
+          this.form.controls.avatarUrl.setValue(normalizedUrl);
+          this.form.controls.avatarUrl.markAsDirty();
+          this.form.controls.avatarUrl.markAsTouched();
+          this.form.controls.avatarUrl.updateValueAndValidity();
+          this.avatarPreview.set(normalizedUrl);
+          this.avatarUploadError.set(null);
+
+          this.notifications.success(this.translate.instant('auth.profile.avatar.uploadSuccess'), {
+            source: 'auth',
+            metadata: { action: 'profile-avatar-upload' },
+          });
+        },
+        error: (error) => {
+          const fallbackKey = 'auth.profile.avatar.uploadError';
+          this.avatarUploadError.set(fallbackKey);
+          this.notifications.error(this.resolveErrorMessage(error, fallbackKey), {
+            source: 'auth',
+            context: error,
+            metadata: { action: 'profile-avatar-upload' },
+            deliver: { email: true },
+          });
+        },
+      });
+  }
+
   private fetchProfile(onFinalize?: () => void): void {
     this.auth
       .getProfile()
@@ -604,6 +693,57 @@ export class ProfilePage {
     return this.extractErrorMessage(error) ?? this.translate.instant(fallbackKey);
   }
 
+  private validateAvatarFile(file: File): string | null {
+    if (!file.type.startsWith('image/')) {
+      return 'auth.profile.avatar.uploadInvalidType';
+    }
+
+    if (file.size > this.maxAvatarFileSizeBytes) {
+      return 'auth.profile.avatar.uploadTooLarge';
+    }
+
+    return null;
+  }
+
+  private resolveUploadedAvatarUrl(candidate: string | null | undefined): string | null {
+    const normalized = this.normalizeString(candidate);
+    if (!normalized) {
+      return null;
+    }
+
+    if (/^https?:\/\//i.test(normalized)) {
+      return normalized;
+    }
+
+    try {
+      const base = this.resolveUploadBaseUrl();
+      return new URL(normalized, base).toString();
+    } catch {
+      return null;
+    }
+  }
+
+  private resolveUploadBaseUrl(): string {
+    const fallbackOrigin =
+      typeof window !== 'undefined' && typeof window.location?.origin === 'string'
+        ? window.location.origin
+        : 'http://localhost';
+    const rawApiUrl = typeof this.apiUrl === 'string' ? this.apiUrl.trim() : '';
+    if (!rawApiUrl) {
+      return fallbackOrigin;
+    }
+
+    const apiUrl = new URL(rawApiUrl, fallbackOrigin);
+    const cleanedPath = apiUrl.pathname.replace(/\/+$/, '');
+    apiUrl.pathname = cleanedPath.endsWith('/api')
+      ? cleanedPath.slice(0, -4) || '/'
+      : cleanedPath || '/';
+    apiUrl.search = '';
+    apiUrl.hash = '';
+
+    return apiUrl.toString();
+  }
+
   private extractErrorMessage(error: unknown): string | null {
     if (error instanceof HttpErrorResponse) {
       const payload = error.error;
@@ -638,4 +778,3 @@ export class ProfilePage {
     return null;
   }
 }
-

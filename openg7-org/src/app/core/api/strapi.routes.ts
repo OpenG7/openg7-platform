@@ -13,6 +13,9 @@ export const STRAPI_ROUTES = {
     meProfile: '/api/users/me/profile',
     meProfileEmailChange: '/api/users/me/profile/email-change',
   },
+  upload: {
+    files: '/api/upload',
+  },
 } as const;
 
 export const strapiUserById = (id: string | number): string => {

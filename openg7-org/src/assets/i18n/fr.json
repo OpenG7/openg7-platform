@@ -168,7 +168,15 @@
       "avatar": {
         "label": "URL de la photo de profil",
         "placeholder": "https://exemple.com/avatar.jpg",
-        "alt": "Aperçu de la photo de profil"
+        "alt": "Aperçu de la photo de profil",
+        "uploadCta": "Televerser depuis mon appareil",
+        "uploading": "Televersement...",
+        "uploadHint": "Formats acceptes : images jusqu'a 5 Mo.",
+        "uploadSuccess": "Votre photo de profil a ete televersee.",
+        "uploadError": "Impossible de televerser la photo de profil. Veuillez reessayer.",
+        "uploadMalformed": "La reponse du serveur ne contient pas d'URL d'image valide.",
+        "uploadInvalidType": "Veuillez selectionner un fichier image valide.",
+        "uploadTooLarge": "L'image selectionnee depasse la limite de 5 Mo."
       },
       "contact": {
         "title": "Coordonnées",

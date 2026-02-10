@@ -12,47 +12,64 @@ function parsePositiveInteger(value: unknown, fallback: number): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+const DEFAULT_UPLOAD_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+const DEFAULT_UPLOAD_SIGNED_URL_EXPIRES_SECONDS = 15 * 60;
+
 export default ({ env }: ConfigContext) => {
   const uploadProvider = (env('UPLOAD_PROVIDER', 'aws-s3') as string).toLowerCase();
   const uploadBaseUrl = env('UPLOAD_S3_BASE_URL');
   const uploadEndpoint = env('UPLOAD_S3_ENDPOINT');
   const uploadPrefix = env('UPLOAD_S3_PREFIX');
-  const uploadAcl = env('UPLOAD_S3_ACL');
+  const uploadAcl = env('UPLOAD_S3_ACL', 'public-read');
+  const uploadMaxFileSizeBytes = parsePositiveInteger(
+    env('UPLOAD_MAX_FILE_SIZE_BYTES', DEFAULT_UPLOAD_MAX_FILE_SIZE_BYTES),
+    DEFAULT_UPLOAD_MAX_FILE_SIZE_BYTES
+  );
+  const uploadSignedUrlExpiresSeconds = parsePositiveInteger(
+    env('UPLOAD_S3_SIGNED_URL_EXPIRES', DEFAULT_UPLOAD_SIGNED_URL_EXPIRES_SECONDS),
+    DEFAULT_UPLOAD_SIGNED_URL_EXPIRES_SECONDS
+  );
 
   const smtpPort = parsePositiveInteger(env('SMTP_PORT', 465), 465);
   const smtpSecureDefault = smtpPort === 465;
   const smtpRequireTlsDefault = smtpPort === 587;
 
-  return {
+  const uploadConfig = {
+    sizeLimit: uploadMaxFileSizeBytes,
+    actionOptions: {
+      upload: {},
+      uploadStream: {},
+      delete: {},
+    },
     ...(uploadProvider === 'aws-s3'
       ? {
-          upload: {
-            config: {
-              provider: '@strapi/provider-upload-aws-s3',
-              providerOptions: {
-                baseUrl: uploadBaseUrl || undefined,
-                s3Options: {
-                  accessKeyId: env('UPLOAD_S3_ACCESS_KEY_ID'),
-                  secretAccessKey: env('UPLOAD_S3_SECRET_ACCESS_KEY'),
-                  region: env('UPLOAD_S3_REGION'),
-                  endpoint: uploadEndpoint || undefined,
-                  params: {
-                    Bucket: env('UPLOAD_S3_BUCKET'),
-                    Prefix: uploadPrefix || undefined,
-                    ACL: uploadAcl || undefined,
-                  },
-                  s3ForcePathStyle: env.bool('UPLOAD_S3_FORCE_PATH_STYLE', false),
-                },
+          provider: '@strapi/provider-upload-aws-s3',
+          providerOptions: {
+            baseUrl: uploadBaseUrl || undefined,
+            s3Options: {
+              accessKeyId: env('UPLOAD_S3_ACCESS_KEY_ID'),
+              secretAccessKey: env('UPLOAD_S3_SECRET_ACCESS_KEY'),
+              region: env('UPLOAD_S3_REGION'),
+              endpoint: uploadEndpoint || undefined,
+              params: {
+                Bucket: env('UPLOAD_S3_BUCKET'),
+                Prefix: uploadPrefix || undefined,
+                ACL: uploadAcl || undefined,
+                signedUrlExpires: uploadSignedUrlExpiresSeconds,
               },
-              actionOptions: {
-                upload: {},
-                uploadStream: {},
-                delete: {},
-              },
+              s3ForcePathStyle: env.bool('UPLOAD_S3_FORCE_PATH_STYLE', false),
             },
           },
         }
-      : {}),
+      : {
+          provider: uploadProvider,
+        }),
+  };
+
+  return {
+    upload: {
+      config: uploadConfig,
+    },
     email: {
       config: {
         provider: 'nodemailer',
