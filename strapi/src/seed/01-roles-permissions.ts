@@ -5,6 +5,7 @@ type PermissionMap = Record<string, Record<string, boolean>>;
 const baseReadPermissions: PermissionMap = {
   'api::company.company': { find: true, findOne: true },
   'api::exchange.exchange': { find: true, findOne: true },
+  'api::feed.feed': { highlights: true },
   'api::homepage.homepage': { find: true },
   'api::national-project.national-project': { find: true, findOne: true },
   'api::province.province': { find: true, findOne: true },
@@ -27,9 +28,23 @@ export default async () => {
   await setRolePermissions(publicRole.id, baseReadPermissions);
 
   const authenticatedExtra: PermissionMap = {
+    'api::connection.connection': {
+      create: true,
+      history: true,
+      findOne: true,
+      updateStatus: true,
+    },
     'api::company.company': { update: true },
+    'api::feed.feed': {
+      index: true,
+      create: true,
+      stream: true,
+    },
     'api::account-profile.account-profile': {
       me: true,
+      exportMe: true,
+      sessionsMe: true,
+      logoutOtherSessions: true,
       updateMe: true,
       requestEmailChange: true,
     },

@@ -1,10 +1,20 @@
 import type { Core } from '@strapi/strapi';
+
+import {
+  extractSessionTokenClaims,
+  getSessionSnapshot,
+  issueSessionJwt,
+  rotateSessionsAndCreateCurrent,
+} from '../../../utils/auth-sessions';
 import {
   readWebhookSecurityConfig,
   validateWebhookUrl,
 } from '../../../utils/webhook-url';
 
 const ACCOUNT_PROFILE_UID = 'api::account-profile.account-profile' as any;
+const USER_FAVORITE_UID = 'api::user-favorite.user-favorite' as any;
+const SAVED_SEARCH_UID = 'api::saved-search.saved-search' as any;
+const USER_ALERT_UID = 'api::user-alert.user-alert' as any;
 
 type AccountStatus = 'active' | 'emailNotConfirmed' | 'disabled';
 
@@ -18,34 +28,34 @@ type AlertSeverity = (typeof ALERT_SEVERITIES)[number];
 type AlertSource = (typeof ALERT_SOURCES)[number];
 type AlertFrequency = (typeof ALERT_FREQUENCIES)[number];
 
-type NotificationChannels = {
+interface NotificationChannels {
   inApp: boolean;
   email: boolean;
   webhook: boolean;
-};
+}
 
-type NotificationFilters = {
+interface NotificationFilters {
   severities: AlertSeverity[];
   sources: AlertSource[];
-};
+}
 
-type NotificationQuietHours = {
+interface NotificationQuietHours {
   enabled: boolean;
   start: string | null;
   end: string | null;
   timezone: string | null;
-};
+}
 
-type NotificationPreferences = {
+interface NotificationPreferences {
   emailOptIn: boolean;
   webhookUrl: string | null;
   channels: NotificationChannels;
   filters: NotificationFilters;
   frequency: AlertFrequency;
   quietHours: NotificationQuietHours;
-};
+}
 
-type SanitizedProfileInput = {
+interface SanitizedProfileInput {
   firstName: string | null;
   lastName: string | null;
   jobTitle: string | null;
@@ -55,23 +65,23 @@ type SanitizedProfileInput = {
   sectorPreferences: string[];
   provincePreferences: string[];
   notificationPreferences: NotificationPreferences;
-};
+}
 
-type EmailChangeInput = {
+interface EmailChangeInput {
   currentPassword: string;
   email: string;
-};
+}
 
-type UserRole = {
+interface UserRole {
   type?: string;
   name?: string;
-};
+}
 
-type AuthenticatedUser = {
+interface AuthenticatedUser {
   id: number | string;
-};
+}
 
-type UsersPermissionsUser = {
+interface UsersPermissionsUser {
   id: number | string;
   email?: string | null;
   username?: string | null;
@@ -79,7 +89,41 @@ type UsersPermissionsUser = {
   confirmed?: boolean | null;
   blocked?: boolean | null;
   role?: UserRole | null;
-};
+}
+
+interface FavoriteEntity {
+  id: number | string;
+  entityType?: unknown;
+  entityId?: unknown;
+  metadata?: unknown;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+}
+
+interface SavedSearchEntity {
+  id: number | string;
+  name?: unknown;
+  scope?: unknown;
+  filters?: unknown;
+  notifyEnabled?: unknown;
+  frequency?: unknown;
+  lastRunAt?: unknown;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+}
+
+interface UserAlertEntity {
+  id: number | string;
+  title?: unknown;
+  message?: unknown;
+  severity?: unknown;
+  sourceType?: unknown;
+  sourceId?: unknown;
+  metadata?: unknown;
+  readAt?: unknown;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+}
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -459,6 +503,68 @@ function mapResponse(user: UsersPermissionsUser, profile: Record<string, unknown
   };
 }
 
+function normalizeFindManyResult<T>(value: T | T[] | null | undefined): T[] {
+  if (!value) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+  return [value];
+}
+
+function sanitizeObject(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+  return value as Record<string, unknown>;
+}
+
+function mapFavoriteForExport(entry: FavoriteEntity) {
+  return {
+    id: String(entry.id),
+    entityType: typeof entry.entityType === 'string' ? entry.entityType : null,
+    entityId: typeof entry.entityId === 'string' ? entry.entityId : null,
+    metadata: sanitizeObject(entry.metadata),
+    createdAt: typeof entry.createdAt === 'string' ? entry.createdAt : null,
+    updatedAt: typeof entry.updatedAt === 'string' ? entry.updatedAt : null,
+  };
+}
+
+function mapSavedSearchForExport(entry: SavedSearchEntity) {
+  return {
+    id: String(entry.id),
+    name: typeof entry.name === 'string' ? entry.name : null,
+    scope: typeof entry.scope === 'string' ? entry.scope : null,
+    filters: sanitizeObject(entry.filters) ?? {},
+    notifyEnabled: Boolean(entry.notifyEnabled),
+    frequency: typeof entry.frequency === 'string' ? entry.frequency : null,
+    lastRunAt: typeof entry.lastRunAt === 'string' ? entry.lastRunAt : null,
+    createdAt: typeof entry.createdAt === 'string' ? entry.createdAt : null,
+    updatedAt: typeof entry.updatedAt === 'string' ? entry.updatedAt : null,
+  };
+}
+
+function mapAlertForExport(entry: UserAlertEntity) {
+  return {
+    id: String(entry.id),
+    title: typeof entry.title === 'string' ? entry.title : null,
+    message: typeof entry.message === 'string' ? entry.message : null,
+    severity: typeof entry.severity === 'string' ? entry.severity : null,
+    sourceType: typeof entry.sourceType === 'string' ? entry.sourceType : null,
+    sourceId: typeof entry.sourceId === 'string' ? entry.sourceId : null,
+    metadata: sanitizeObject(entry.metadata),
+    readAt: typeof entry.readAt === 'string' ? entry.readAt : null,
+    createdAt: typeof entry.createdAt === 'string' ? entry.createdAt : null,
+    updatedAt: typeof entry.updatedAt === 'string' ? entry.updatedAt : null,
+  };
+}
+
+function buildExportFilename(date = new Date()): string {
+  const safe = date.toISOString().replace(/[:.]/g, '-');
+  return `openg7-account-export-${safe}.json`;
+}
+
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async me(ctx) {
     const currentUser = ctx.state.user as AuthenticatedUser | undefined;
@@ -473,6 +579,115 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     const profile = await findProfileByUser(strapi, currentUser.id);
     ctx.body = mapResponse(user, profile as Record<string, unknown> | null);
+  },
+
+  async exportMe(ctx) {
+    const currentUser = ctx.state.user as AuthenticatedUser | undefined;
+    if (!currentUser?.id) {
+      return ctx.unauthorized();
+    }
+
+    const user = await fetchUserById(strapi, currentUser.id);
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
+    const profile = await findProfileByUser(strapi, currentUser.id);
+    const favoritesRaw = await strapi.entityService.findMany(USER_FAVORITE_UID, {
+      filters: {
+        user: {
+          id: currentUser.id,
+        },
+      },
+      sort: ['createdAt:desc'],
+      limit: 1000,
+    });
+    const savedSearchesRaw = await strapi.entityService.findMany(SAVED_SEARCH_UID, {
+      filters: {
+        user: {
+          id: currentUser.id,
+        },
+      },
+      sort: ['updatedAt:desc'],
+      limit: 1000,
+    });
+    const alertsRaw = await strapi.entityService.findMany(USER_ALERT_UID, {
+      filters: {
+        user: {
+          id: currentUser.id,
+        },
+      },
+      sort: ['createdAt:desc'],
+      limit: 1000,
+    });
+
+    const exportedAt = new Date().toISOString();
+    const payload = {
+      exportedAt,
+      formatVersion: 1,
+      account: mapResponse(user, profile as Record<string, unknown> | null),
+      favorites: normalizeFindManyResult(favoritesRaw).map((entry) =>
+        mapFavoriteForExport(entry as FavoriteEntity)
+      ),
+      savedSearches: normalizeFindManyResult(savedSearchesRaw).map((entry) =>
+        mapSavedSearchForExport(entry as SavedSearchEntity)
+      ),
+      alerts: normalizeFindManyResult(alertsRaw).map((entry) =>
+        mapAlertForExport(entry as UserAlertEntity)
+      ),
+    };
+
+    ctx.set('Content-Type', 'application/json; charset=utf-8');
+    ctx.set('Content-Disposition', `attachment; filename="${buildExportFilename()}"`);
+    ctx.body = payload;
+  },
+
+  async sessionsMe(ctx) {
+    const currentUser = ctx.state.user as AuthenticatedUser | undefined;
+    if (!currentUser?.id) {
+      return ctx.unauthorized();
+    }
+
+    const claims = await extractSessionTokenClaims(strapi, ctx as Record<string, unknown>);
+    const snapshot = await getSessionSnapshot(strapi, currentUser.id, claims);
+
+    ctx.body = snapshot;
+  },
+
+  async logoutOtherSessions(ctx) {
+    const currentUser = ctx.state.user as AuthenticatedUser | undefined;
+    if (!currentUser?.id) {
+      return ctx.unauthorized();
+    }
+
+    const { session, revokedCount } = await rotateSessionsAndCreateCurrent(
+      strapi,
+      currentUser.id,
+      ctx as Record<string, unknown>
+    );
+    const jwt = issueSessionJwt(strapi, currentUser.id, session);
+
+    const user = await fetchUserById(strapi, currentUser.id);
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
+    const profile = await findProfileByUser(strapi, currentUser.id);
+    const claims = {
+      id: currentUser.id,
+      sid: session.id,
+      sv: session.version,
+      iat: null,
+    };
+    const snapshot = await getSessionSnapshot(strapi, currentUser.id, claims);
+
+    ctx.body = {
+      jwt,
+      user: mapResponse(user, profile as Record<string, unknown> | null),
+      sessionsRevoked: revokedCount,
+      sessionVersion: snapshot.version,
+      sessions: snapshot.sessions,
+    };
   },
 
   async updateMe(ctx) {

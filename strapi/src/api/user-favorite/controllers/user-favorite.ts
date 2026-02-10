@@ -2,24 +2,24 @@ import type { Core } from '@strapi/strapi';
 
 const USER_FAVORITE_UID = 'api::user-favorite.user-favorite' as any;
 
-type AuthenticatedUser = {
+interface AuthenticatedUser {
   id: number | string;
-};
+}
 
-type FavoriteEntity = {
+interface FavoriteEntity {
   id: number | string;
   entityType?: unknown;
   entityId?: unknown;
   metadata?: unknown;
   createdAt?: unknown;
   updatedAt?: unknown;
-};
+}
 
-type FavoritePayload = {
+interface FavoritePayload {
   entityType: string;
   entityId: string;
   metadata: Record<string, unknown> | null;
-};
+}
 
 function normalizeString(value: unknown): string | null {
   if (typeof value !== 'string') {

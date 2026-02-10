@@ -6,7 +6,7 @@ This document describes how the official Strapi workspace (`@openg7/strapi`) fit
 
 | Workspace | Location | Strapi generation | Purpose | Owner(s) |
 |-----------|----------|-------------------|---------|----------|
-| `strapi` | `/strapi` | v5 | Central CMS for companies, exchanges, homepage blocks, feature flags and API tokens. Seeds power the public demo content consumed by the Angular app. | Data Platform squad |
+| `strapi` | `/strapi` | v5 | Central CMS for companies, exchanges, homepage blocks, feature flags, API tokens, and runtime social/realtime endpoints. Seeds power the public demo content consumed by the Angular app. | Data Platform squad |
 
 ## Day-to-day usage
 
@@ -22,6 +22,6 @@ This document describes how the official Strapi workspace (`@openg7/strapi`) fit
 
 ## Next steps
 
-- Extend the automated smoke tests to cover critical Strapi endpoints before every release.
+- Extend the automated smoke tests to cover critical Strapi endpoints before every release (`/api/feed/highlights`, `/api/corridors/realtime`, `/api/connections` included).
 - Document migrations (content-type updates, breaking API changes) under `docs/strapi/` so the Angular team can align their GraphQL/REST clients.
 - Keep the `strapi` workspace lean: delete obsolete components promptly and remove leftover references to the legacy CMS when you find them in scripts or documentation.

@@ -387,10 +387,14 @@ export class StatisticsService {
     const stateKey = makeStateKey<StatisticsPayload>(cacheKey);
     if (this.transferState.hasKey(stateKey)) {
       const payload = this.transferState.get(stateKey, this.emptyPayload(resolvedFilters));
+      const hydratedPayload: StatisticsPayload = {
+        ...payload,
+        isFallback: payload.isFallback ?? false,
+      };
       if (this.isBrowser) {
         this.transferState.remove(stateKey);
       }
-      const stream$ = of(payload);
+      const stream$ = of(hydratedPayload);
       this.cache.set(cacheKey, stream$);
       return stream$;
     }
@@ -467,6 +471,7 @@ export class StatisticsService {
         province: metaFilters.province ?? filters.province ?? null,
         country: this.ensureCountry(metaFilters.country ?? filters.country),
       },
+      isFallback: false,
     };
   }
 
@@ -521,6 +526,7 @@ export class StatisticsService {
       availableProvinces: [],
       availableCountries: [] as CountryCode[],
       filters,
+      isFallback: false,
     };
   }
 
@@ -578,6 +584,7 @@ export class StatisticsService {
       availableProvinces,
       availableCountries,
       filters,
+      isFallback: true,
     };
   }
 

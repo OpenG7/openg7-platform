@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { Route, Router, UrlSegment, UrlTree } from '@angular/router';
 
-import { authGuard, isAllowedSig, reasonSig } from './auth.guard';
 import { AuthRedirectService } from './auth-redirect.service';
+import { authGuard, isAllowedSig, reasonSig } from './auth.guard';
 import { AuthService } from './auth.service';
 
-type AuthServiceStub = {
+interface AuthServiceStub {
   ensureSessionRestored: jasmine.Spy<() => Promise<void>>;
   isAuthenticated: jasmine.Spy<() => boolean>;
-};
+}
 
 describe('authGuard', () => {
   let router: jasmine.SpyObj<Router>;

@@ -9,3 +9,13 @@
 [data-og7='statistics-filter-bar'] button {
   transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
 }
+
+[data-og7='statistics-filter-bar'] select {
+  color: #0f172a;
+}
+
+[data-og7='statistics-filter-bar'] button:focus-visible,
+[data-og7='statistics-filter-bar'] select:focus-visible,
+[data-og7='statistics-action']:focus-visible {
+  outline-offset: 2px;
+}

@@ -17,6 +17,7 @@ import { Role } from '../security/rbac.policy';
 import { TokenStorageService } from '../security/token-storage.service';
 
 import {
+  ActiveSessionsResponse,
   AuthResponse,
   AuthUser,
   AuthUserPayload,
@@ -24,6 +25,7 @@ import {
   EmailChangePayload,
   EmailChangeResponse,
   LoginResponse,
+  LogoutOtherSessionsResponse,
   JwtPayload,
   ProfileResponse,
   RegisterResponse,
@@ -42,6 +44,7 @@ import { OidcProvider, OidcService } from './oidc.service';
 export class AuthService {
   private readonly restoreSessionPromise: Promise<void>;
   private readonly userCacheKey = 'auth_user_cache_v1';
+  private unauthorizedSessionHandlingInFlight = false;
   private tokenSig = signal<string | null>(null);
   readonly token = this.tokenSig.asReadonly();
   readonly token$ = toObservable(this.token);
@@ -179,6 +182,35 @@ export class AuthService {
   }
 
   /**
+   * Contexte : Triggered from account settings when the user requests a data portability export.
+   * Raison d’être : Retrieves the backend-generated account export payload as a downloadable JSON blob.
+   * @returns Observable emitting the export file payload.
+   */
+  exportProfileData(): Observable<Blob> {
+    return this.http.get(STRAPI_ROUTES.users.meProfileExport, { responseType: 'blob' });
+  }
+
+  /**
+   * Contexte : Used by account security settings to display active and revoked device sessions.
+   * Raison d’être : Retrieves the server-side session snapshot tied to the authenticated user.
+   * @returns Observable emitting the current session registry view.
+   */
+  getActiveSessions(): Observable<ActiveSessionsResponse> {
+    return this.http.get<ActiveSessionsResponse>(STRAPI_ROUTES.users.meProfileSessions);
+  }
+
+  /**
+   * Contexte : Triggered by profile security actions to disconnect all other devices.
+   * Raison d’être : Rotates session version server-side, issues a fresh JWT for the current client and persists it locally.
+   * @returns Observable emitting the updated auth/session payload.
+   */
+  logoutOtherSessions(): Observable<LogoutOtherSessionsResponse> {
+    return this.http
+      .post<LogoutOtherSessionsResponse>(STRAPI_ROUTES.users.meProfileLogoutOthers, {})
+      .pipe(tap((response) => this.persistAuth(response)));
+  }
+
+  /**
    * Contexte : Invoked when a user chooses an external identity provider to sign in.
    * Raison d’être : Delegates to the OIDC service to start the PKCE redirect flow.
    * @param provider Identifier of the OIDC provider to use.
@@ -206,6 +238,24 @@ export class AuthService {
    */
   logout(): void {
     void this.clearSession();
+  }
+
+  /**
+   * Contexte : Invoked by HTTP infrastructure when an authenticated request receives 401.
+   * Raison d'etre : Clears local auth state exactly once for a burst of unauthorized responses.
+   * @returns True when a local session was present and has been invalidated.
+   */
+  handleUnauthorizedSession(): boolean {
+    const hasLocalSession = Boolean(this.tokenSig() || this.userSig());
+    if (!hasLocalSession || this.unauthorizedSessionHandlingInFlight) {
+      return false;
+    }
+
+    this.unauthorizedSessionHandlingInFlight = true;
+    void this.clearSession().finally(() => {
+      this.unauthorizedSessionHandlingInFlight = false;
+    });
+    return true;
   }
 
   /**

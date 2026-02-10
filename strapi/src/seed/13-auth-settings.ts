@@ -1,13 +1,13 @@
-type UsersPermissionsAdvancedSettings = {
+interface UsersPermissionsAdvancedSettings {
   allow_register?: boolean;
   default_role?: string;
   email_confirmation?: boolean;
   email_confirmation_redirection?: string | null;
   email_reset_password?: string | null;
   unique_email?: boolean;
-};
+}
 
-type EmailTemplateOptions = {
+interface EmailTemplateOptions {
   from?: {
     name?: string;
     email?: string;
@@ -15,18 +15,18 @@ type EmailTemplateOptions = {
   response_email?: string | null;
   object?: string;
   message?: string;
-};
+}
 
-type UsersPermissionsEmailTemplate = {
+interface UsersPermissionsEmailTemplate {
   display?: string;
   icon?: string;
   options?: EmailTemplateOptions;
-};
+}
 
-type UsersPermissionsEmailSettings = {
+interface UsersPermissionsEmailSettings {
   email_confirmation?: UsersPermissionsEmailTemplate;
   reset_password?: UsersPermissionsEmailTemplate;
-};
+}
 
 function normalizeEnv(value: string | undefined): string | null {
   const trimmed = value?.trim();

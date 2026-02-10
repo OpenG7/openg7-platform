@@ -4,11 +4,11 @@ const SAVED_SEARCH_UID = 'api::saved-search.saved-search' as any;
 const ALLOWED_SCOPES = new Set(['all', 'companies', 'partners', 'feed', 'map', 'opportunities']);
 const ALLOWED_FREQUENCIES = new Set(['realtime', 'daily', 'weekly']);
 
-type AuthenticatedUser = {
+interface AuthenticatedUser {
   id: number | string;
-};
+}
 
-type SavedSearchEntity = {
+interface SavedSearchEntity {
   id: number | string;
   name?: unknown;
   scope?: unknown;
@@ -18,15 +18,15 @@ type SavedSearchEntity = {
   lastRunAt?: unknown;
   createdAt?: unknown;
   updatedAt?: unknown;
-};
+}
 
-type SavedSearchCreatePayload = {
+interface SavedSearchCreatePayload {
   name: string;
   scope: string;
   filters: Record<string, unknown>;
   notifyEnabled: boolean;
   frequency: string;
-};
+}
 
 type SavedSearchUpdatePayload = Partial<SavedSearchCreatePayload> & {
   lastRunAt?: string | null;

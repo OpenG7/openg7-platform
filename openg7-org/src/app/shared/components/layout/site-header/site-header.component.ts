@@ -17,19 +17,19 @@ import { AuthConfigService } from '@app/core/auth/auth-config.service';
 import { AuthService } from '@app/core/auth/auth.service';
 import { FavoritesService } from '@app/core/favorites.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
-import { UserAlertsService } from '@app/core/user-alerts.service';
 import type { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
+import { UserAlertsService } from '@app/core/user-alerts.service';
 import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 type LangCode = 'en' | 'fr';
-type HeaderNotificationItem = {
+interface HeaderNotificationItem {
   id: string;
   title: string | null;
   message: string;
   read: boolean;
   severity: 'info' | 'success' | 'warning' | 'critical' | 'error';
-};
+}
 
 @Component({
   selector: 'og7-site-header',

@@ -59,6 +59,11 @@ export const selectStatisticsLoading = createSelector(
   (state) => state.loading
 );
 
+export const selectStatisticsIsFallback = createSelector(
+  selectStatisticsState,
+  (state) => state.isFallback
+);
+
 export const selectStatisticsError = createSelector(
   selectStatisticsState,
   (state) => state.error

@@ -128,4 +128,41 @@ export interface EmailChangeResponse {
   accountStatus: AccountStatus;
 }
 
+export interface AccountExportRecord {
+  id: string;
+  [key: string]: unknown;
+}
+
+export interface AccountExportPayload {
+  exportedAt: string;
+  formatVersion: number;
+  account: AuthUser;
+  favorites: AccountExportRecord[];
+  savedSearches: AccountExportRecord[];
+  alerts: AccountExportRecord[];
+}
+
+export interface ActiveSessionRecord {
+  id: string;
+  version: number;
+  createdAt: string;
+  lastSeenAt: string;
+  status: 'active' | 'revoked';
+  current: boolean;
+  revokedAt: string | null;
+  userAgent: string | null;
+  ipAddress: string | null;
+}
+
+export interface ActiveSessionsResponse {
+  version: number;
+  sessions: ActiveSessionRecord[];
+}
+
+export interface LogoutOtherSessionsResponse extends AuthResponse {
+  sessionsRevoked: number;
+  sessionVersion: number;
+  sessions: ActiveSessionRecord[];
+}
+
 export type AccountStatus = 'active' | 'emailNotConfirmed' | 'disabled';

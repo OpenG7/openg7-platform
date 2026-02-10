@@ -7,6 +7,7 @@ import {
   selectStatisticsAvailablePeriods,
   selectStatisticsAvailableProvinces,
   selectStatisticsFilters,
+  selectStatisticsIsFallback,
   selectStatisticsHasSummaries,
   selectStatisticsHeroSnapshot,
   selectStatisticsInsights,
@@ -63,6 +64,7 @@ describe('Statistics selectors', () => {
     availablePeriods: ['2024-Q1', '2024-Q2'],
     availableProvinces: ['CA-ON', 'CA-QC'],
     availableCountries: ['CA' as CountryCode],
+    isFallback: false,
     loading: false,
     error: null,
   };
@@ -94,6 +96,10 @@ describe('Statistics selectors', () => {
   it('selectStatisticsHasSummaries returns true when summaries exist', () => {
     expect(selectStatisticsHasSummaries.projector([summaryA, summaryB])).toBe(true);
     expect(selectStatisticsHasSummaries.projector([])).toBe(false);
+  });
+
+  it('selectStatisticsIsFallback returns fallback flag', () => {
+    expect(selectStatisticsIsFallback.projector(state)).toBe(false);
   });
 
   it('selectStatisticsHeroSnapshot computes fallback when snapshot missing', () => {

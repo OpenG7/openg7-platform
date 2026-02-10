@@ -93,6 +93,8 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Conformité & i18n / Auth | [data-og7="auth-register"] | RegisterPage | openg7-org/src/app/domains/auth/pages/register.page.html | ok | Présent sur la page d’inscription. |
 | Conformité & i18n / Auth | [data-og7="access-denied"] | AccessDeniedPage | openg7-org/src/app/domains/auth/pages/access-denied.page.html | ok | Présent sur la page d’accès refusé. |
 | Conformité & i18n / Auth | [data-og7="user-profile"] | ProfilePage | openg7-org/src/app/domains/account/pages/profile.page.html | ok | Présent sur la page profil. |
+| Conformité & i18n / Auth | [data-og7="user-profile-export-data"] | ProfilePage | openg7-org/src/app/domains/account/pages/profile.page.html | ok | Carte d'export des données du compte (JSON). |
+| Conformité & i18n / Auth | [data-og7="user-profile-sessions"] | ProfilePage | openg7-org/src/app/domains/account/pages/profile.page.html | ok | Carte des sessions connectées et action “déconnecter les autres appareils”. |
 | Conformité & i18n / Auth | [data-og7="user-alerts"] | AlertsPage | openg7-org/src/app/domains/account/pages/alerts.page.html | ok | Inbox des alertes utilisateur connecte. |
 | Hero & marketing | [data-og7="hero"] | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section/hero-section.component.ts | ok | Selector actuel du composant. |
 | Hero & marketing | [data-og7="hero-copy"] | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy/hero-copy.component.ts | ok |  |

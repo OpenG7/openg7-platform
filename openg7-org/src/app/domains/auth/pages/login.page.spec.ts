@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from '@app/core/auth/auth.service';
 import { LoginResponse } from '@app/core/auth/auth.types';
@@ -24,6 +24,7 @@ describe('LoginPage', () => {
   let router: Router;
   let navigateByUrlSpy: jasmine.Spy;
   let notifications: MockNotificationStore;
+  let activatedRouteMock: { snapshot: { queryParamMap: ReturnType<typeof convertToParamMap> } };
   const translateStub = {
     instant: (key: string) => key,
     get: (key: string) => of(key),
@@ -38,11 +39,17 @@ describe('LoginPage', () => {
 
   beforeEach(async () => {
     auth = jasmine.createSpyObj<AuthService>('AuthService', ['login', 'sendEmailConfirmation']);
+    activatedRouteMock = {
+      snapshot: {
+        queryParamMap: convertToParamMap({}),
+      },
+    };
 
     await TestBed.configureTestingModule({
       imports: [LoginPage, RouterTestingModule],
       providers: [
         { provide: AuthService, useValue: auth },
+        { provide: ActivatedRoute, useValue: activatedRouteMock },
         { provide: AUTH_MODE, useValue: 'hybrid' },
         { provide: NotificationStore, useClass: MockNotificationStore },
         { provide: TranslateService, useValue: translateStub },
@@ -56,6 +63,20 @@ describe('LoginPage', () => {
     fixture = TestBed.createComponent(LoginPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  it('shows an inline message when redirected after session expiration', () => {
+    activatedRouteMock.snapshot.queryParamMap = convertToParamMap({ reason: 'session-expired' });
+
+    const sessionExpiredFixture = TestBed.createComponent(LoginPage);
+    sessionExpiredFixture.detectChanges();
+    const sessionExpiredComponent = sessionExpiredFixture.componentInstance as any;
+
+    expect(sessionExpiredComponent.loginNotice()).toBe('auth.sessionExpired');
+    const notice = sessionExpiredFixture.nativeElement.querySelector(
+      '[data-og7="auth-login-notice"]'
+    ) as HTMLElement | null;
+    expect(notice?.textContent ?? '').toContain('auth.sessionExpired');
   });
 
   it('submits valid credentials via AuthService then navigates to profile', () => {

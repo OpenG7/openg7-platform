@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+
 import {
   readWebhookSecurityConfig,
   validateWebhookUrl,
@@ -24,7 +25,7 @@ const WEBHOOK_TIMEOUT_MS = (() => {
 type AlertSeverity = 'info' | 'success' | 'warning' | 'critical';
 type AlertSource = 'saved-search' | 'system';
 
-type NotificationPreferences = {
+interface NotificationPreferences {
   emailOptIn: boolean;
   webhookUrl: string | null;
   channels: {
@@ -43,13 +44,13 @@ type NotificationPreferences = {
     end: string | null;
     timezone: string | null;
   };
-};
+}
 
-type AuthenticatedUser = {
+interface AuthenticatedUser {
   id: number | string;
-};
+}
 
-type UserAlertEntity = {
+interface UserAlertEntity {
   id: number | string;
   title?: unknown;
   message?: unknown;
@@ -60,24 +61,24 @@ type UserAlertEntity = {
   readAt?: unknown;
   createdAt?: unknown;
   updatedAt?: unknown;
-};
+}
 
-type SavedSearchEntity = {
+interface SavedSearchEntity {
   id: number | string;
   name?: unknown;
   scope?: unknown;
   filters?: unknown;
   frequency?: unknown;
-};
+}
 
-type CreateUserAlertPayload = {
+interface CreateUserAlertPayload {
   title: string;
   message: string;
   severity: string;
   sourceType: string | null;
   sourceId: string | null;
   metadata: Record<string, unknown> | null;
-};
+}
 
 function normalizeString(value: unknown): string | null {
   if (typeof value !== 'string') {

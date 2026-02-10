@@ -125,6 +125,17 @@
           </div>
         }
 
+        @if (loginNotice(); as notice) {
+          <div
+            class="rounded-xl border border-sky-200/80 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-100"
+            data-og7="auth-login-notice"
+            role="status"
+            aria-live="polite"
+          >
+            {{ notice | translate }}
+          </div>
+        }
+
         <div
           class="min-h-[3rem] rounded-xl border border-transparent bg-transparent px-4 py-3 text-sm text-error empty:hidden"
           aria-live="assertive"

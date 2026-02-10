@@ -1,15 +1,15 @@
 import './setup';
 import { expect, test } from '@playwright/test';
 
-type SavedSearchSeed = {
+interface SavedSearchSeed {
   id: string;
   name: string;
   scope: 'all' | 'companies' | 'partners' | 'feed' | 'map' | 'opportunities';
   frequency: 'realtime' | 'daily' | 'weekly';
   query: string;
-};
+}
 
-type AlertRecord = {
+interface AlertRecord {
   id: string;
   title: string;
   message: string;
@@ -21,7 +21,7 @@ type AlertRecord = {
   readAt: string | null;
   createdAt: string;
   updatedAt: string;
-};
+}
 
 test.describe('Alerts page', () => {
   test('generates alerts, marks all as read, then clears read alerts', async ({ page }) => {

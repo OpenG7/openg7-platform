@@ -2,6 +2,27 @@
 
 This document imagines the dedicated pricing experience for the OpenG7 platform. It outlines the target layout, data dependencies, interactions, and analytics hooks so the design and development teams can converge on the same mental model before building the Angular views and Strapi content types.
 
+## 0. Implementation snapshot (2026-02-10)
+
+The current implementation in `src/app/domains/marketing/pages/pricing.page.ts` and `src/app/domains/marketing/pages/pricing.page.html` now includes:
+
+- Auth-aware plan state:
+  - current plan badge and ring
+  - recommended next plan badge and emphasis
+- Mobile-first matrix rendering:
+  - stacked cards on mobile (`data-og7="pricing-matrix-mobile"`)
+  - desktop table kept for large screens (`data-og7="pricing-matrix-desktop"`)
+- Sticky conversion bar:
+  - fixed bottom CTA module (`data-og7="pricing-sticky-cta"`)
+  - billing cycle quick toggle (`data-og7="pricing-sticky-cycle"`)
+- Additional testing hooks:
+  - `data-og7-plan` and `data-og7-plan-state` on each plan card
+- New i18n labels:
+  - `pages.pricing.planCards.currentLabel`
+  - `pages.pricing.planCards.recommendedLabel`
+
+The rest of this document remains the target blueprint and can be delivered incrementally.
+
 ## 1. Page goals
 
 - Help visitors understand the value ladder between the **Explorer (free)**, **Analyst (paid)**, and **Enterprise (custom)** plans.

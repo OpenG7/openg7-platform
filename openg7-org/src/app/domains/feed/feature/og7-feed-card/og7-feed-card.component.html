@@ -42,7 +42,7 @@
 
   <footer class="feed-card__footer">
     <div class="feed-card__source">
-      {{ 'feed.source' | translate }}: {{ item().source?.label || ('feed.sourceUnknown' | translate) }}
+      {{ 'feed.source' | translate }}: {{ item().source.label || ('feed.sourceUnknown' | translate) }}
     </div>
     <div class="feed-card__actions">
       <button type="button" class="feed-card__action" (click)="handleOpen()">

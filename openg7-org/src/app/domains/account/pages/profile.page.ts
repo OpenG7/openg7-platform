@@ -1,5 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,8 +17,10 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { STRAPI_ROUTES } from '@app/core/api/strapi.routes';
 import { AuthService } from '@app/core/auth/auth.service';
 import {
+  ActiveSessionRecord,
   AccountStatus,
   AlertFrequencyPreference,
   AlertSeverityPreference,
@@ -28,7 +30,6 @@ import {
   EmailChangePayload,
   UpdateProfilePayload,
 } from '@app/core/auth/auth.types';
-import { STRAPI_ROUTES } from '@app/core/api/strapi.routes';
 import { API_URL } from '@app/core/config/environment.tokens';
 import { HttpClientService } from '@app/core/http/http-client.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
@@ -183,6 +184,9 @@ export class ProfilePage {
   protected readonly changingPassword = signal(false);
   protected readonly requestingEmailChange = signal(false);
   protected readonly sendingActivationEmail = signal(false);
+  protected readonly exportingData = signal(false);
+  protected readonly loadingSessions = signal(false);
+  protected readonly loggingOutOtherSessions = signal(false);
   protected readonly uploadingAvatar = signal(false);
   protected readonly avatarUploadError = signal<string | null>(null);
   protected readonly avatarPreview = signal<string | null>(null);
@@ -190,6 +194,10 @@ export class ProfilePage {
   protected readonly alertSourceSelectionError = signal(false);
   protected readonly quietHoursConfigurationError = signal(false);
   protected readonly profile = signal<AuthUser | null>(null);
+  protected readonly sessions = signal<ActiveSessionRecord[]>([]);
+  protected readonly hasOtherActiveSessions = computed(() =>
+    this.sessions().some((session) => !session.current && session.status === 'active')
+  );
   protected readonly accountStatus = computed<AccountStatus>(() => {
     const status = this.profile()?.accountStatus;
     return status ?? 'active';
@@ -207,7 +215,7 @@ export class ProfilePage {
   protected readonly canResendActivation = computed(() => {
     const current = this.profile();
     return (
-      !!current?.email &&
+      Boolean(current?.email) &&
       this.accountStatus() === 'emailNotConfirmed' &&
       !this.loading() &&
       !this.sendingActivationEmail()
@@ -330,6 +338,7 @@ export class ProfilePage {
       .subscribe(() => this.quietHoursConfigurationError.set(false));
 
     this.fetchProfile(() => this.loading.set(false));
+    this.fetchSessions({ notifyOnError: false });
   }
 
   protected buildInitials(user: AuthUser): string {
@@ -569,6 +578,108 @@ export class ProfilePage {
       });
   }
 
+  protected onExportProfileData(): void {
+    if (this.loading() || this.exportingData()) {
+      return;
+    }
+
+    this.exportingData.set(true);
+    this.auth
+      .exportProfileData()
+      .pipe(
+        finalize(() => this.exportingData.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (blob) => {
+          if (!(blob instanceof Blob) || blob.size === 0) {
+            this.notifications.error(
+              this.translate.instant('auth.profile.security.exportData.error'),
+              {
+                source: 'auth',
+                metadata: { action: 'profile-export-data' },
+              }
+            );
+            return;
+          }
+
+          this.downloadProfileExport(blob);
+          this.notifications.success(
+            this.translate.instant('auth.profile.security.exportData.success'),
+            {
+              source: 'auth',
+              metadata: { action: 'profile-export-data' },
+            }
+          );
+        },
+        error: (error) => {
+          this.notifications.error(
+            this.resolveErrorMessage(error, 'auth.profile.security.exportData.error'),
+            {
+              source: 'auth',
+              context: error,
+              metadata: { action: 'profile-export-data' },
+              deliver: { email: true },
+            }
+          );
+        },
+      });
+  }
+
+  protected onRefreshSessions(): void {
+    if (this.loadingSessions() || this.loggingOutOtherSessions()) {
+      return;
+    }
+
+    this.fetchSessions({ notifyOnError: true });
+  }
+
+  protected onLogoutOtherSessions(): void {
+    if (this.loading() || this.loggingOutOtherSessions()) {
+      return;
+    }
+
+    this.loggingOutOtherSessions.set(true);
+    this.auth
+      .logoutOtherSessions()
+      .pipe(
+        finalize(() => this.loggingOutOtherSessions.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (response) => {
+          const revokedCount =
+            typeof response.sessionsRevoked === 'number' && Number.isFinite(response.sessionsRevoked)
+              ? response.sessionsRevoked
+              : 0;
+          this.sessions.set(Array.isArray(response.sessions) ? response.sessions : []);
+          this.notifications.success(
+            this.translate.instant('auth.profile.security.sessions.logoutOthersSuccess', {
+              count: revokedCount,
+            }),
+            {
+              source: 'auth',
+              metadata: { action: 'profile-logout-other-sessions', revokedCount },
+            }
+          );
+          if (!Array.isArray(response.sessions)) {
+            this.fetchSessions({ notifyOnError: false });
+          }
+        },
+        error: (error) => {
+          this.notifications.error(
+            this.resolveErrorMessage(error, 'auth.profile.security.sessions.logoutOthersError'),
+            {
+              source: 'auth',
+              context: error,
+              metadata: { action: 'profile-logout-other-sessions' },
+              deliver: { email: true },
+            }
+          );
+        },
+      });
+  }
+
   protected resetPendingChanges(): void {
     const profile = this.profile();
     if (!profile || this.saving()) {
@@ -660,6 +771,35 @@ export class ProfilePage {
             metadata: { action: 'profile-avatar-upload' },
             deliver: { email: true },
           });
+        },
+      });
+  }
+
+  private fetchSessions(options: { notifyOnError: boolean }): void {
+    this.loadingSessions.set(true);
+    this.auth
+      .getActiveSessions()
+      .pipe(
+        finalize(() => this.loadingSessions.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (snapshot) => {
+          this.sessions.set(Array.isArray(snapshot.sessions) ? snapshot.sessions : []);
+        },
+        error: (error) => {
+          this.sessions.set([]);
+          if (!options.notifyOnError) {
+            return;
+          }
+          this.notifications.error(
+            this.resolveErrorMessage(error, 'auth.profile.security.sessions.error'),
+            {
+              source: 'auth',
+              context: error,
+              metadata: { action: 'profile-session-refresh' },
+            }
+          );
         },
       });
   }
@@ -984,6 +1124,30 @@ export class ProfilePage {
     }
 
     return null;
+  }
+
+  private downloadProfileExport(blob: Blob): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    const objectUrl = window.URL.createObjectURL(blob);
+    const filename = this.buildExportFilename();
+    const anchor = document.createElement('a');
+
+    anchor.href = objectUrl;
+    anchor.download = filename;
+    anchor.rel = 'noopener';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+
+    window.URL.revokeObjectURL(objectUrl);
+  }
+
+  private buildExportFilename(date = new Date()): string {
+    const safe = date.toISOString().replace(/[:.]/g, '-');
+    return `openg7-account-export-${safe}.json`;
   }
 
   private resolveUploadedAvatarUrl(candidate: string | null | undefined): string | null {

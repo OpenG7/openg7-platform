@@ -9,9 +9,12 @@ import {
   selectStatisticsAvailableCountries,
   selectStatisticsAvailablePeriods,
   selectStatisticsAvailableProvinces,
+  selectStatisticsError,
   selectStatisticsFilters,
   selectStatisticsHeroSnapshot,
   selectStatisticsInsights,
+  selectStatisticsIsFallback,
+  selectStatisticsLoading,
   selectStatisticsSummaries,
 } from '@app/store/statistics/statistics.selectors';
 import { Store } from '@ngrx/store';
@@ -33,6 +36,9 @@ import { TranslateModule } from '@ngx-translate/core';
  */
 export class StatisticsPage {
   private readonly store = inject(Store);
+  readonly loadingSig = toSignal(this.store.select(selectStatisticsLoading), { initialValue: false });
+  readonly errorSig = toSignal(this.store.select(selectStatisticsError), { initialValue: null as string | null });
+  readonly isFallbackSig = toSignal(this.store.select(selectStatisticsIsFallback), { initialValue: false });
 
   readonly filtersSig = toSignal(this.store.select(selectStatisticsFilters), {
     initialValue: { scope: 'interprovincial', intrant: 'all', period: null, province: null, country: null },
@@ -42,6 +48,7 @@ export class StatisticsPage {
   readonly snapshotSig = toSignal(this.store.select(selectStatisticsHeroSnapshot), { initialValue: null });
   protected readonly guidanceAsideId = 'statistics-guidance-heading';
   protected readonly alertAsideId = 'statistics-alert-heading';
+  readonly loadingSkeletons = Array.from({ length: 6 }, (_, index) => index);
   readonly intrantFilters = [
     { id: 'all' as StatisticsIntrant, label: 'pages.statistics.filters.all' },
     { id: 'energy' as StatisticsIntrant, label: 'pages.statistics.filters.energy' },
@@ -127,6 +134,15 @@ export class StatisticsPage {
     return this.countriesSig();
   }
 
+  retryLoad() {
+    this.store.dispatch(StatisticsActions.loadStatistics({ filters: this.filtersSig() }));
+  }
+
+  resetFilters() {
+    this.store.dispatch(StatisticsActions.resetFilters());
+  }
+
   trackSummary = (_: number, summary: { id: number }) => summary.id;
   trackInsight = (_: number, insight: { id: number }) => insight.id;
+  trackLoadingSkeleton = (_: number, item: number) => item;
 }

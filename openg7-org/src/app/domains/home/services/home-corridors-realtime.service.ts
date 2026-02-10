@@ -4,7 +4,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { FEATURE_FLAGS } from '@app/core/config/environment.tokens';
 import { HttpClientService } from '@app/core/http/http-client.service';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 export type CorridorsRealtimeStatusLevel = 'ok' | 'warning' | 'critical' | 'info';
 
@@ -55,12 +55,18 @@ export class HomeCorridorsRealtimeService {
       }
       return this.assetHttp
         .get<CorridorsRealtimeSnapshot>('assets/mocks/corridors-realtime.mock.json')
-        .pipe(map((payload) => this.normalizeSnapshot(payload)));
+        .pipe(
+          map((payload) => this.normalizeSnapshot(payload)),
+          catchError(() => of(this.emptySnapshot()))
+        );
     }
 
     return this.http
       .get<CorridorsRealtimeSnapshot>('/api/corridors/realtime')
-      .pipe(map((payload) => this.normalizeSnapshot(payload)));
+      .pipe(
+        map((payload) => this.normalizeSnapshot(payload)),
+        catchError(() => of(this.emptySnapshot()))
+      );
   }
 
   private normalizeSnapshot(payload: CorridorsRealtimeSnapshot | null | undefined): CorridorsRealtimeSnapshot {

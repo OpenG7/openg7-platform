@@ -43,6 +43,12 @@
               "src/styles.scss",
               "src/material-theme.scss"
             ],
+            "allowedCommonJsDependencies": [
+              "dijkstrajs",
+              "frame-ticker",
+              "pngjs",
+              "qrcode"
+            ],
             "scripts": [],
             "server": "src/main.server.ts",
             "prerender": {

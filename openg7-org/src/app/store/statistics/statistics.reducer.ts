@@ -17,24 +17,28 @@ export interface StatisticsState {
   readonly availablePeriods: readonly string[];
   readonly availableProvinces: readonly string[];
   readonly availableCountries: readonly CountryCode[];
+  readonly isFallback: boolean;
   readonly loading: boolean;
   readonly error: string | null;
 }
 
+const defaultFilters: StatisticsFilters = {
+  scope: 'interprovincial',
+  intrant: 'all',
+  period: null,
+  province: null,
+  country: null,
+};
+
 const initialState: StatisticsState = {
-  filters: {
-    scope: 'interprovincial',
-    intrant: 'all',
-    period: null,
-    province: null,
-    country: null,
-  },
+  filters: defaultFilters,
   summaries: [],
   insights: [],
   snapshot: null,
   availablePeriods: [],
   availableProvinces: [],
   availableCountries: [] as CountryCode[],
+  isFallback: false,
   loading: false,
   error: null,
 };
@@ -43,6 +47,14 @@ export const statisticsReducer = createReducer(
   initialState,
   on(StatisticsActions.initialize, (state) => ({
     ...state,
+    isFallback: false,
+    loading: true,
+    error: null,
+  })),
+  on(StatisticsActions.resetFilters, (state) => ({
+    ...state,
+    filters: defaultFilters,
+    isFallback: false,
     loading: true,
     error: null,
   })),
@@ -55,6 +67,7 @@ export const statisticsReducer = createReducer(
       province: null,
       country: null,
     },
+    isFallback: false,
     loading: true,
     error: null,
   })),
@@ -67,6 +80,7 @@ export const statisticsReducer = createReducer(
       province: null,
       country: null,
     },
+    isFallback: false,
     loading: true,
     error: null,
   })),
@@ -76,6 +90,7 @@ export const statisticsReducer = createReducer(
       ...state.filters,
       period,
     },
+    isFallback: false,
     loading: true,
     error: null,
   })),
@@ -85,6 +100,7 @@ export const statisticsReducer = createReducer(
       ...state.filters,
       province,
     },
+    isFallback: false,
     loading: true,
     error: null,
   })),
@@ -94,12 +110,14 @@ export const statisticsReducer = createReducer(
       ...state.filters,
       country,
     },
+    isFallback: false,
     loading: true,
     error: null,
   })),
   on(StatisticsActions.loadStatistics, (state, { filters }) => ({
     ...state,
     filters,
+    isFallback: false,
     loading: true,
     error: null,
   })),
@@ -112,11 +130,13 @@ export const statisticsReducer = createReducer(
     availableProvinces: payload.availableProvinces,
     availableCountries: payload.availableCountries,
     filters: payload.filters,
+    isFallback: payload.isFallback,
     loading: false,
     error: null,
   })),
   on(StatisticsActions.loadStatisticsFailure, (state, { error }) => ({
     ...state,
+    isFallback: false,
     loading: false,
     error,
   }))

@@ -3,12 +3,12 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { HeroCopyComponent } from '../hero-copy/hero-copy.component';
 import { HeroCtasComponent } from '../hero-ctas/hero-ctas.component';
-import { HeroStatsComponent, StatMetric } from '../hero-stats/hero-stats.component';
+import { StatMetric } from '../hero-stats/hero-stats.component';
 
 @Component({
   selector: 'og7-hero-section',
   standalone: true,
-  imports: [HeroCopyComponent, HeroCtasComponent, HeroStatsComponent, TranslateModule],
+  imports: [HeroCopyComponent, HeroCtasComponent, TranslateModule],
   templateUrl: './hero-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

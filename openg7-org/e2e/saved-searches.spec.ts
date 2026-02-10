@@ -1,7 +1,7 @@
 import './setup';
 import { expect, test } from '@playwright/test';
 
-type SavedSearchRecord = {
+interface SavedSearchRecord {
   id: string;
   name: string;
   scope: 'all' | 'companies' | 'partners' | 'feed' | 'map' | 'opportunities';
@@ -11,7 +11,7 @@ type SavedSearchRecord = {
   lastRunAt: string | null;
   createdAt: string;
   updatedAt: string;
-};
+}
 
 test.describe('Saved searches page', () => {
   test('creates then deletes a saved search', async ({ page }) => {

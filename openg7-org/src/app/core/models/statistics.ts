@@ -53,4 +53,5 @@ export interface StatisticsPayload {
   readonly availableProvinces: readonly string[];
   readonly availableCountries: readonly CountryCode[];
   readonly filters: StatisticsFilters;
+  readonly isFallback: boolean;
 }
