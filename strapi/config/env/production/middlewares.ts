@@ -4,6 +4,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://127.0.0.1:4200',
   'http://127.0.0.1:4000',
 ];
+const DEFAULT_UPLOAD_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
 function sanitizeOrigin(candidate?: string | null): string | null {
   if (!candidate) {
@@ -24,10 +25,10 @@ function sanitizeOrigin(candidate?: string | null): string | null {
   }
 }
 
-function parseOrigins(raw: string | undefined): string[] {
+function parseOrigins(raw: string | undefined, defaults: string[] = []): string[] {
   const origins = new Set<string>();
 
-  for (const origin of DEFAULT_ALLOWED_ORIGINS) {
+  for (const origin of defaults) {
     const sanitized = sanitizeOrigin(origin);
     if (sanitized) {
       origins.add(sanitized);
@@ -69,12 +70,6 @@ function parseBoolean(raw: string | undefined, fallback: boolean): boolean {
   return fallback;
 }
 
-const allowedOrigins = parseOrigins(process.env.CORS_ALLOWED_ORIGINS);
-const allowCredentials = parseBoolean(process.env.CORS_ALLOW_CREDENTIALS, true);
-const sessionDriver = (process.env.STRAPI_SESSION_DRIVER || 'redis').toLowerCase();
-const enableRateLimit =
-  sessionDriver === 'redis' && parseBoolean(process.env.RATE_LIMIT_ENABLED, true);
-
 function parseInteger(raw: string | undefined, fallback: number): number {
   if (typeof raw !== 'string') {
     return fallback;
@@ -87,6 +82,33 @@ function parseInteger(raw: string | undefined, fallback: number): number {
 
   return parsed;
 }
+
+function parsePositiveInteger(raw: string | undefined, fallback: number): number {
+  const parsed = parseInteger(raw, fallback);
+  return parsed > 0 ? parsed : fallback;
+}
+
+function collectUploadAssetOrigins(): string[] {
+  const configuredOrigins = parseOrigins(process.env.UPLOAD_ASSET_ORIGINS);
+  const derivedOrigins = [process.env.UPLOAD_S3_BASE_URL, process.env.UPLOAD_S3_ENDPOINT]
+    .map((candidate) => sanitizeOrigin(candidate))
+    .filter((candidate): candidate is string => Boolean(candidate));
+
+  return Array.from(new Set([...configuredOrigins, ...derivedOrigins]));
+}
+
+const allowedOrigins = parseOrigins(process.env.CORS_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS);
+const allowCredentials = parseBoolean(process.env.CORS_ALLOW_CREDENTIALS, true);
+const uploadAssetOrigins = collectUploadAssetOrigins();
+const uploadMaxFileSizeBytes = parsePositiveInteger(
+  process.env.UPLOAD_MAX_FILE_SIZE_BYTES,
+  DEFAULT_UPLOAD_MAX_FILE_SIZE_BYTES
+);
+const uploadBodyLimit = `${Math.max(2, Math.ceil(uploadMaxFileSizeBytes / (1024 * 1024)) + 1)}mb`;
+
+const sessionDriver = (process.env.STRAPI_SESSION_DRIVER || 'redis').toLowerCase();
+const enableRateLimit =
+  sessionDriver === 'redis' && parseBoolean(process.env.RATE_LIMIT_ENABLED, true);
 
 function buildRedisProviderOptions() {
   const options: Record<string, unknown> = {
@@ -134,7 +156,20 @@ export default [
       slowRequestThresholdMs: parseInteger(process.env.STRAPI_SLOW_REQUEST_THRESHOLD_MS, 1_500),
     },
   },
-  'strapi::security',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', ...uploadAssetOrigins],
+          'media-src': ["'self'", 'data:', 'blob:', ...uploadAssetOrigins],
+          upgradeInsecureRequests: null,
+        },
+      },
+    },
+  },
   {
     name: 'strapi::cors',
     config: {
@@ -155,7 +190,20 @@ export default [
   'strapi::poweredBy',
   'strapi::logger',
   'strapi::query',
-  'strapi::body',
+  {
+    name: 'strapi::body',
+    config: {
+      multipart: true,
+      formLimit: uploadBodyLimit,
+      jsonLimit: '1mb',
+      textLimit: '1mb',
+      formidable: {
+        maxFileSize: uploadMaxFileSizeBytes,
+        multiples: true,
+      },
+    },
+  },
+  'global::upload-safety',
   'global::activation-email-cooldown',
   {
     name: 'strapi::session',

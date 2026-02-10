@@ -154,6 +154,17 @@ export const routes: Routes = [
     canMatch: [authGuard],
   },
   {
+    path: 'saved-searches',
+    loadComponent: () =>
+      import('./domains/account/pages/saved-searches.page').then(m => m.SavedSearchesPage),
+    canMatch: [authGuard],
+  },
+  {
+    path: 'alerts',
+    loadComponent: () => import('./domains/account/pages/alerts.page').then(m => m.AlertsPage),
+    canMatch: [authGuard],
+  },
+  {
     path: 'profile',
     loadComponent: () => import('./domains/account/pages/profile.page').then(m => m.ProfilePage),
     canMatch: [authGuard],

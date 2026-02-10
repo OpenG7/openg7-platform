@@ -18,6 +18,11 @@ import { TranslateModule } from '@ngx-translate/core';
 export class FavoritesPage {
   private readonly favorites = inject(FavoritesService);
 
+  readonly loading = this.favorites.loading;
   readonly favoritesList = computed(() => this.favorites.list());
   readonly hasFavorites = computed(() => this.favoritesList().length > 0);
+
+  constructor() {
+    this.favorites.refresh();
+  }
 }

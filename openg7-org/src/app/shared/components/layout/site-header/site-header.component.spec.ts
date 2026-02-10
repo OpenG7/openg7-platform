@@ -10,6 +10,7 @@ import { AuthMode } from '@app/core/config/environment.tokens';
 import { FavoritesService } from '@app/core/favorites.service';
 import { NotificationStore } from '@app/core/observability/notification.store';
 import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { UserAlertsService } from '@app/core/user-alerts.service';
 import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, of } from 'rxjs';
@@ -52,13 +53,14 @@ class MockTranslateService {
 }
 
 class MockAuthService {
+  isAuthenticatedSig = signal(false);
   user = signal<{
     firstName?: string | null;
     lastName?: string | null;
     email: string;
     avatarUrl?: string | null;
   } | null>(null);
-  isAuthenticated = () => false;
+  isAuthenticated = () => this.isAuthenticatedSig();
   logout = jasmine.createSpy('logout');
 }
 
@@ -115,12 +117,29 @@ class MockQuickSearchLauncherService {
   });
 }
 
+class MockUserAlertsService {
+  entries = signal<
+    Array<{
+      id: string;
+      title: string;
+      message: string;
+      severity: 'info' | 'success' | 'warning' | 'critical';
+      isRead: boolean;
+    }>
+  >([]);
+  unreadCount = signal(0);
+  refresh = jasmine.createSpy('refresh');
+  markRead = jasmine.createSpy('markRead');
+}
+
 describe('SiteHeaderComponent', () => {
   let fixture: ComponentFixture<SiteHeaderComponent>;
   let component: SiteHeaderComponent;
   let router: Router;
+  let auth: MockAuthService;
   let translate: MockTranslateService;
   let notifications: MockNotificationStore;
+  let userAlerts: MockUserAlertsService;
   let quickSearch: MockQuickSearchLauncherService;
 
   beforeEach(async () => {
@@ -133,14 +152,17 @@ describe('SiteHeaderComponent', () => {
         { provide: AuthConfigService, useClass: MockAuthConfigService },
         { provide: RbacFacadeService, useClass: MockRbacFacadeService },
         { provide: NotificationStore, useClass: MockNotificationStore },
+        { provide: UserAlertsService, useClass: MockUserAlertsService },
         { provide: QuickSearchLauncherService, useClass: MockQuickSearchLauncherService },
       ]
     }).compileComponents();
 
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.resolveTo(true);
+    auth = TestBed.inject(AuthService) as unknown as MockAuthService;
     translate = TestBed.inject(TranslateService) as unknown as MockTranslateService;
     notifications = TestBed.inject(NotificationStore) as unknown as MockNotificationStore;
+    userAlerts = TestBed.inject(UserAlertsService) as unknown as MockUserAlertsService;
     quickSearch = TestBed.inject(QuickSearchLauncherService) as unknown as MockQuickSearchLauncherService;
 
     fixture = TestBed.createComponent(SiteHeaderComponent);
@@ -188,6 +210,62 @@ describe('SiteHeaderComponent', () => {
 
     const badge = notifButton?.querySelector('span.absolute');
     expect(badge?.textContent?.trim()).toBe('3');
+  });
+
+  it('uses persisted user alerts count when authenticated', () => {
+    auth.isAuthenticatedSig.set(true);
+    notifications.unreadCount.set(7);
+    userAlerts.unreadCount.set(2);
+
+    fixture.detectChanges();
+
+    const notifButton: HTMLElement | null = fixture.nativeElement.querySelector('button[data-og7="notif"]');
+    const badge = notifButton?.querySelector('span.absolute');
+    expect(badge?.textContent?.trim()).toBe('2');
+  });
+
+  it('refreshes user alerts when notification panel opens for authenticated users', () => {
+    auth.isAuthenticatedSig.set(true);
+    fixture.detectChanges();
+    userAlerts.refresh.calls.reset();
+    notifications.markAllRead.calls.reset();
+
+    component.toggleNotif();
+
+    expect(userAlerts.refresh).toHaveBeenCalled();
+    expect(notifications.markAllRead).not.toHaveBeenCalled();
+  });
+
+  it('marks in-memory notifications as read when notification panel opens for guests', () => {
+    auth.isAuthenticatedSig.set(false);
+    fixture.detectChanges();
+    notifications.markAllRead.calls.reset();
+
+    component.toggleNotif();
+
+    expect(notifications.markAllRead).toHaveBeenCalled();
+  });
+
+  it('renders persisted alerts inside the mobile menu notification panel', () => {
+    auth.isAuthenticatedSig.set(true);
+    userAlerts.entries.set([
+      {
+        id: 'alert-1',
+        title: 'Saved search update',
+        message: 'New activity detected in map.',
+        severity: 'info',
+        isRead: false,
+      },
+    ]);
+    userAlerts.unreadCount.set(1);
+
+    component.toggleMobileMenu();
+    component.toggleNotif();
+    fixture.detectChanges();
+
+    const mobileAlertItem = fixture.nativeElement.querySelector('[data-og7-id="header-alert-item-mobile"]');
+    expect(mobileAlertItem?.textContent).toContain('Saved search update');
+    expect(mobileAlertItem?.textContent).toContain('New activity detected in map.');
   });
 
   it('renders the login link for guests with the /login target and computed label', () => {

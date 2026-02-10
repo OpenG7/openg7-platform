@@ -33,6 +33,26 @@ export default async () => {
       updateMe: true,
       requestEmailChange: true,
     },
+    'api::user-favorite.user-favorite': {
+      me: true,
+      createMe: true,
+      deleteMe: true,
+    },
+    'api::saved-search.saved-search': {
+      me: true,
+      createMe: true,
+      updateMe: true,
+      deleteMe: true,
+    },
+    'api::user-alert.user-alert': {
+      me: true,
+      createMe: true,
+      generateFromSavedSearches: true,
+      markReadMe: true,
+      markAllReadMe: true,
+      deleteReadMe: true,
+      deleteMe: true,
+    },
   };
 
   const proExtra: PermissionMap = {

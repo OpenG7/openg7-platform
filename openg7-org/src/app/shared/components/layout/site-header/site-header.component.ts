@@ -17,11 +17,19 @@ import { AuthConfigService } from '@app/core/auth/auth-config.service';
 import { AuthService } from '@app/core/auth/auth.service';
 import { FavoritesService } from '@app/core/favorites.service';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { UserAlertsService } from '@app/core/user-alerts.service';
 import type { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
 import { QuickSearchLauncherService } from '@app/domains/search/feature/quick-search-modal/quick-search-launcher.service';
 import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 type LangCode = 'en' | 'fr';
+type HeaderNotificationItem = {
+  id: string;
+  title: string | null;
+  message: string;
+  read: boolean;
+  severity: 'info' | 'success' | 'warning' | 'critical' | 'error';
+};
 
 @Component({
   selector: 'og7-site-header',
@@ -47,6 +55,7 @@ export class SiteHeaderComponent {
   private readonly favorites = inject(FavoritesService);
   private readonly authConfig = inject(AuthConfigService);
   private readonly notifications = injectNotificationStore();
+  private readonly userAlerts = inject(UserAlertsService);
   private readonly quickSearchLauncher = inject(QuickSearchLauncherService);
   private activeQuickSearchRef: Og7ModalRef<void> | null = null;
 
@@ -89,10 +98,35 @@ export class SiteHeaderComponent {
 
   readonly matchesCountSig = this.favorites.count;
 
-  readonly unreadCount = this.notifications.unreadCount;
+  readonly unreadCount = computed(() =>
+    this.isAuthSig() ? this.userAlerts.unreadCount() : this.notifications.unreadCount()
+  );
   readonly hasUnread = computed(() => this.unreadCount() > 0);
-  readonly notificationEntries = computed(() => this.notifications.entries().slice(0, 5));
+  readonly notificationEntries = computed<ReadonlyArray<HeaderNotificationItem>>(() => {
+    if (this.isAuthSig()) {
+      return this.userAlerts
+        .entries()
+        .slice(0, 5)
+        .map((entry) => ({
+          id: entry.id,
+          title: entry.title || null,
+          message: entry.message,
+          read: entry.isRead,
+          severity: entry.severity,
+        }));
+    }
 
+    return this.notifications
+      .entries()
+      .slice(0, 5)
+      .map((entry) => ({
+        id: entry.id,
+        title: entry.title ?? null,
+        message: entry.message,
+        read: entry.read,
+        severity: entry.type,
+      }));
+  });
 
   constructor() {
     const langSub = this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
@@ -103,6 +137,12 @@ export class SiteHeaderComponent {
     effect(() => {
       const lang = this.currentLang();
       this.translate.use(lang);
+    });
+
+    effect(() => {
+      if (this.isAuthSig()) {
+        this.userAlerts.refresh();
+      }
     });
   }
 
@@ -136,7 +176,11 @@ export class SiteHeaderComponent {
   }
 
   toggleMobileMenu() {
-    this.isMobileMenuOpen.update((value) => !value);
+    const next = !this.isMobileMenuOpen();
+    this.isMobileMenuOpen.set(next);
+    if (!next) {
+      this.isNotifOpen.set(false);
+    }
   }
 
   toggleLang() {
@@ -149,7 +193,13 @@ export class SiteHeaderComponent {
 
   toggleNotif() {
     this.isNotifOpen.update((value) => !value);
-    if (this.isNotifOpen()) {
+    if (!this.isNotifOpen()) {
+      return;
+    }
+
+    if (this.isAuthSig()) {
+      this.userAlerts.refresh();
+    } else {
       this.notifications.markAllRead();
     }
   }
@@ -160,6 +210,7 @@ export class SiteHeaderComponent {
 
   closeMobileMenu() {
     this.isMobileMenuOpen.set(false);
+    this.isNotifOpen.set(false);
   }
 
   logout() {
@@ -169,6 +220,14 @@ export class SiteHeaderComponent {
   }
 
   trackNotification = (_: number, item: { id: string }) => item.id;
+
+  markNotificationAsRead(notificationId: string): void {
+    if (!this.isAuthSig()) {
+      return;
+    }
+
+    this.userAlerts.markRead(notificationId, true);
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {

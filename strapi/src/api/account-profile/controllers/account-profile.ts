@@ -1,12 +1,48 @@
 import type { Core } from '@strapi/strapi';
+import {
+  readWebhookSecurityConfig,
+  validateWebhookUrl,
+} from '../../../utils/webhook-url';
 
 const ACCOUNT_PROFILE_UID = 'api::account-profile.account-profile' as any;
 
 type AccountStatus = 'active' | 'emailNotConfirmed' | 'disabled';
 
+const ALERT_SEVERITIES = ['info', 'success', 'warning', 'critical'] as const;
+const ALERT_SOURCES = ['saved-search', 'system'] as const;
+const ALERT_FREQUENCIES = ['instant', 'daily-digest'] as const;
+const TIME_WINDOW_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const WEBHOOK_SECURITY_CONFIG = readWebhookSecurityConfig();
+
+type AlertSeverity = (typeof ALERT_SEVERITIES)[number];
+type AlertSource = (typeof ALERT_SOURCES)[number];
+type AlertFrequency = (typeof ALERT_FREQUENCIES)[number];
+
+type NotificationChannels = {
+  inApp: boolean;
+  email: boolean;
+  webhook: boolean;
+};
+
+type NotificationFilters = {
+  severities: AlertSeverity[];
+  sources: AlertSource[];
+};
+
+type NotificationQuietHours = {
+  enabled: boolean;
+  start: string | null;
+  end: string | null;
+  timezone: string | null;
+};
+
 type NotificationPreferences = {
   emailOptIn: boolean;
   webhookUrl: string | null;
+  channels: NotificationChannels;
+  filters: NotificationFilters;
+  frequency: AlertFrequency;
+  quietHours: NotificationQuietHours;
 };
 
 type SanitizedProfileInput = {
@@ -86,6 +122,65 @@ function normalizeStringList(value: unknown, maxItems: number, maxLength: number
   return Array.from(unique);
 }
 
+function normalizeBoolean(value: unknown, fallback: boolean): boolean {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'number') {
+    return value !== 0;
+  }
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (['true', '1', 'yes', 'on'].includes(normalized)) {
+      return true;
+    }
+    if (['false', '0', 'no', 'off'].includes(normalized)) {
+      return false;
+    }
+  }
+  return fallback;
+}
+
+function normalizeAllowedList<T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+  fallback: readonly T[]
+): T[] {
+  if (!Array.isArray(value)) {
+    return [...fallback];
+  }
+
+  const allowedSet = new Set<string>(allowed);
+  const entries = new Set<T>();
+
+  for (const entry of value) {
+    const normalized = normalizeString(entry)?.toLowerCase();
+    if (!normalized || !allowedSet.has(normalized)) {
+      continue;
+    }
+    entries.add(normalized as T);
+  }
+
+  return entries.size > 0 ? Array.from(entries) : [...fallback];
+}
+
+function normalizeTime(value: unknown): string | null {
+  const normalized = normalizeString(value);
+  if (!normalized) {
+    return null;
+  }
+  return TIME_WINDOW_PATTERN.test(normalized) ? normalized : null;
+}
+
+function isValidTimezone(value: string): boolean {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: value }).format(new Date());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function isValidUrl(value: string, options: { httpsOnly?: boolean } = {}): boolean {
   try {
     const url = new URL(value);
@@ -135,18 +230,107 @@ function validateUrl(
   }
 }
 
-function sanitizeNotificationPreferences(value: unknown): NotificationPreferences {
+function normalizeNotificationPreferences(value: unknown): NotificationPreferences {
   const record = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
-  const emailOptIn = Boolean(record.emailOptIn);
+  const channelsRaw =
+    record.channels && typeof record.channels === 'object'
+      ? (record.channels as Record<string, unknown>)
+      : {};
+  const filtersRaw =
+    record.filters && typeof record.filters === 'object'
+      ? (record.filters as Record<string, unknown>)
+      : {};
+  const quietHoursRaw =
+    record.quietHours && typeof record.quietHours === 'object'
+      ? (record.quietHours as Record<string, unknown>)
+      : {};
+
   const webhookUrl = normalizeString(record.webhookUrl);
-  return {
-    emailOptIn,
-    webhookUrl: emailOptIn ? webhookUrl : null,
+  const channels: NotificationChannels = {
+    inApp: normalizeBoolean(channelsRaw.inApp, true),
+    email: normalizeBoolean(channelsRaw.email, normalizeBoolean(record.emailOptIn, false)),
+    webhook: normalizeBoolean(channelsRaw.webhook, Boolean(webhookUrl)),
   };
+
+  const quietHoursEnabled = normalizeBoolean(quietHoursRaw.enabled, false);
+  const quietTimezone = normalizeString(quietHoursRaw.timezone);
+  const normalizedTimezone =
+    quietTimezone && isValidTimezone(quietTimezone) ? quietTimezone : null;
+
+  return {
+    emailOptIn: channels.email,
+    webhookUrl: channels.webhook ? webhookUrl : null,
+    channels,
+    filters: {
+      severities: normalizeAllowedList(filtersRaw.severities, ALERT_SEVERITIES, ALERT_SEVERITIES),
+      sources: normalizeAllowedList(filtersRaw.sources, ALERT_SOURCES, ALERT_SOURCES),
+    },
+    frequency: normalizeAllowedList(
+      [record.frequency],
+      ALERT_FREQUENCIES,
+      [ALERT_FREQUENCIES[0]]
+    )[0],
+    quietHours: {
+      enabled: quietHoursEnabled,
+      start: quietHoursEnabled ? normalizeTime(quietHoursRaw.start) : null,
+      end: quietHoursEnabled ? normalizeTime(quietHoursRaw.end) : null,
+      timezone: quietHoursEnabled ? normalizedTimezone : null,
+    },
+  };
+}
+
+function validateNotificationPreferences(preferences: NotificationPreferences): void {
+  if (preferences.channels.webhook && !preferences.webhookUrl) {
+    throw new Error(
+      'notificationPreferences.webhookUrl is required when webhook channel is enabled.'
+    );
+  }
+
+  if (preferences.webhookUrl) {
+    const webhookValidation = validateWebhookUrl(
+      preferences.webhookUrl,
+      WEBHOOK_SECURITY_CONFIG
+    );
+    if (!webhookValidation.valid) {
+      throw new Error(
+        `notificationPreferences.webhookUrl ${webhookValidation.message}`
+      );
+    }
+  }
+
+  if (!preferences.filters.severities.length) {
+    throw new Error('notificationPreferences.filters.severities must include at least one value.');
+  }
+  if (!preferences.filters.sources.length) {
+    throw new Error('notificationPreferences.filters.sources must include at least one value.');
+  }
+
+  if (!preferences.quietHours.enabled) {
+    return;
+  }
+
+  if (!preferences.quietHours.start || !preferences.quietHours.end) {
+    throw new Error(
+      'notificationPreferences.quietHours.start and end are required when quiet hours are enabled.'
+    );
+  }
+
+  if (preferences.quietHours.start === preferences.quietHours.end) {
+    throw new Error('notificationPreferences.quietHours.start and end must differ.');
+  }
+
+  if (!preferences.quietHours.timezone) {
+    throw new Error(
+      'notificationPreferences.quietHours.timezone is required when quiet hours are enabled.'
+    );
+  }
+
+  validateLength(preferences.quietHours.timezone, 'notificationPreferences.quietHours.timezone', 80);
 }
 
 function sanitizePayload(payload: unknown): SanitizedProfileInput {
   const record = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
+  const notificationPreferences = normalizeNotificationPreferences(record.notificationPreferences);
 
   const sanitized: SanitizedProfileInput = {
     firstName: normalizeString(record.firstName),
@@ -157,7 +341,7 @@ function sanitizePayload(payload: unknown): SanitizedProfileInput {
     avatarUrl: normalizeString(record.avatarUrl),
     sectorPreferences: normalizeStringList(record.sectorPreferences, 20, 40),
     provincePreferences: normalizeStringList(record.provincePreferences, 20, 20),
-    notificationPreferences: sanitizeNotificationPreferences(record.notificationPreferences),
+    notificationPreferences,
   };
 
   validateLength(sanitized.firstName, 'firstName', 80);
@@ -166,9 +350,7 @@ function sanitizePayload(payload: unknown): SanitizedProfileInput {
   validateLength(sanitized.organization, 'organization', 120);
   validatePhone(sanitized.phone);
   validateUrl(sanitized.avatarUrl, 'avatarUrl');
-  validateUrl(sanitized.notificationPreferences.webhookUrl, 'notificationPreferences.webhookUrl', {
-    httpsOnly: true,
-  });
+  validateNotificationPreferences(sanitized.notificationPreferences);
 
   return sanitized;
 }
@@ -252,10 +434,7 @@ async function fetchUserById(
 
 function mapResponse(user: UsersPermissionsUser, profile: Record<string, unknown> | null) {
   const source = profile ?? {};
-  const notificationPreferencesRaw =
-    source.notificationPreferences && typeof source.notificationPreferences === 'object'
-      ? (source.notificationPreferences as Record<string, unknown>)
-      : {};
+  const notificationPreferences = normalizeNotificationPreferences(source.notificationPreferences);
 
   return {
     id: String(user.id),
@@ -276,13 +455,7 @@ function mapResponse(user: UsersPermissionsUser, profile: Record<string, unknown
     provincePreferences: Array.isArray(source.provincePreferences)
       ? (source.provincePreferences as string[])
       : [],
-    notificationPreferences: {
-      emailOptIn: Boolean(notificationPreferencesRaw.emailOptIn),
-      webhookUrl:
-        typeof notificationPreferencesRaw.webhookUrl === 'string'
-          ? notificationPreferencesRaw.webhookUrl
-          : null,
-    },
+    notificationPreferences,
   };
 }
 

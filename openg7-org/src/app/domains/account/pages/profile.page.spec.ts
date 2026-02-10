@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthService } from '@app/core/auth/auth.service';
 import { AuthUser } from '@app/core/auth/auth.types';
+import { HttpClientService } from '@app/core/http/http-client.service';
 import { NotificationStore, NotificationStoreApi } from '@app/core/observability/notification.store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, of, throwError } from 'rxjs';
@@ -44,6 +45,7 @@ describe('ProfilePage', () => {
   let fixture: ComponentFixture<ProfilePage>;
   let component: ProfilePage;
   let auth: jasmine.SpyObj<AuthService>;
+  let http: jasmine.SpyObj<HttpClientService>;
   let notifications: jasmine.SpyObj<NotificationStoreApi>;
 
   const profile: AuthUser = {
@@ -58,7 +60,26 @@ describe('ProfilePage', () => {
     avatarUrl: 'https://cdn.example.com/avatar.png',
     sectorPreferences: ['energy', 'agri'],
     provincePreferences: ['qc'],
-    notificationPreferences: { emailOptIn: true, webhookUrl: 'https://hooks.example.com/og7' },
+    notificationPreferences: {
+      emailOptIn: true,
+      webhookUrl: 'https://hooks.example.com/og7',
+      channels: {
+        inApp: true,
+        email: true,
+        webhook: true,
+      },
+      filters: {
+        severities: ['warning', 'critical'],
+        sources: ['saved-search'],
+      },
+      frequency: 'daily-digest',
+      quietHours: {
+        enabled: true,
+        start: '22:00',
+        end: '06:00',
+        timezone: 'America/Toronto',
+      },
+    },
   };
 
   beforeEach(async () => {
@@ -69,6 +90,7 @@ describe('ProfilePage', () => {
       'requestEmailChange',
       'sendEmailConfirmation',
     ]);
+    http = jasmine.createSpyObj<HttpClientService>('HttpClientService', ['post']);
     notifications = jasmine.createSpyObj<NotificationStoreApi>('NotificationStore', [
       'success',
       'error',
@@ -82,11 +104,13 @@ describe('ProfilePage', () => {
       of({ email: 'new@example.com', sent: true, accountStatus: 'emailNotConfirmed' })
     );
     auth.sendEmailConfirmation.and.returnValue(of({ email: profile.email, sent: true }));
+    http.post.and.returnValue(of([{ url: '/uploads/avatar.png' }]));
 
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
       providers: [
         { provide: AuthService, useValue: auth },
+        { provide: HttpClientService, useValue: http },
         { provide: NotificationStore, useValue: notifications },
         { provide: TranslateService, useClass: TranslateStub },
       ],
@@ -106,10 +130,22 @@ describe('ProfilePage', () => {
     expect(form.controls.jobTitle.value).toBe(profile.jobTitle);
     expect(form.controls.sectorPreferences.value).toBe('energy, agri');
     expect(form.controls.provincePreferences.value).toBe('qc');
+    expect(form.controls.alertChannelInApp.value).toBeTrue();
     expect(form.controls.emailNotifications.value).toBeTrue();
+    expect(form.controls.webhookNotifications.value).toBeTrue();
     expect(form.controls.notificationWebhook.value).toBe(
       'https://hooks.example.com/og7'
     );
+    expect(form.controls.alertFrequency.value).toBe('daily-digest');
+    expect(form.controls.alertSeverityWarning.value).toBeTrue();
+    expect(form.controls.alertSeverityCritical.value).toBeTrue();
+    expect(form.controls.alertSeverityInfo.value).toBeFalse();
+    expect(form.controls.alertSourceSavedSearch.value).toBeTrue();
+    expect(form.controls.alertSourceSystem.value).toBeFalse();
+    expect(form.controls.quietHoursEnabled.value).toBeTrue();
+    expect(form.controls.quietHoursStart.value).toBe('22:00');
+    expect(form.controls.quietHoursEnd.value).toBe('06:00');
+    expect(form.controls.quietHoursTimezone.value).toBe('America/Toronto');
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('[data-og7="user-profile-email"]')?.textContent).toContain(
@@ -134,8 +170,21 @@ describe('ProfilePage', () => {
     form.controls.sectorPreferences.setValue('energy, mining');
     form.controls.provincePreferences.setValue('qc, on');
     form.controls.avatarUrl.setValue(updated.avatarUrl ?? '');
+    form.controls.alertChannelInApp.setValue(true);
     form.controls.emailNotifications.setValue(false);
-    form.controls.notificationWebhook.setValue('');
+    form.controls.webhookNotifications.setValue(true);
+    form.controls.notificationWebhook.setValue('https://hooks.example.com/new');
+    form.controls.alertFrequency.setValue('instant');
+    form.controls.alertSeverityInfo.setValue(true);
+    form.controls.alertSeveritySuccess.setValue(false);
+    form.controls.alertSeverityWarning.setValue(true);
+    form.controls.alertSeverityCritical.setValue(false);
+    form.controls.alertSourceSavedSearch.setValue(true);
+    form.controls.alertSourceSystem.setValue(false);
+    form.controls.quietHoursEnabled.setValue(true);
+    form.controls.quietHoursStart.setValue('21:30');
+    form.controls.quietHoursEnd.setValue('06:30');
+    form.controls.quietHoursTimezone.setValue('America/Montreal');
 
     (component as any).onSubmit();
 
@@ -148,7 +197,26 @@ describe('ProfilePage', () => {
       avatarUrl: updated.avatarUrl,
       sectorPreferences: ['energy', 'mining'],
       provincePreferences: ['qc', 'on'],
-      notificationPreferences: { emailOptIn: false, webhookUrl: null },
+      notificationPreferences: {
+        channels: {
+          inApp: true,
+          email: false,
+          webhook: true,
+        },
+        filters: {
+          severities: ['info', 'warning'],
+          sources: ['saved-search'],
+        },
+        frequency: 'instant',
+        quietHours: {
+          enabled: true,
+          start: '21:30',
+          end: '06:30',
+          timezone: 'America/Montreal',
+        },
+        emailOptIn: false,
+        webhookUrl: 'https://hooks.example.com/new',
+      },
     });
 
     expect(notifications.success).toHaveBeenCalledWith(
@@ -172,14 +240,26 @@ describe('ProfilePage', () => {
     );
   });
 
-  it('clears and disables webhook when email notifications are turned off', () => {
+  it('clears and disables webhook when webhook notifications are turned off', () => {
     const form = (component as any).form;
     form.controls.notificationWebhook.setValue('https://hooks.example.com/new');
 
-    form.controls.emailNotifications.setValue(false);
+    form.controls.webhookNotifications.setValue(false);
 
     expect(form.controls.notificationWebhook.disabled).toBeTrue();
     expect(form.controls.notificationWebhook.value).toBe('');
+  });
+
+  it('does not submit when no severity is selected', () => {
+    const form = (component as any).form;
+    form.controls.alertSeverityInfo.setValue(false);
+    form.controls.alertSeveritySuccess.setValue(false);
+    form.controls.alertSeverityWarning.setValue(false);
+    form.controls.alertSeverityCritical.setValue(false);
+
+    (component as any).onSubmit();
+
+    expect(auth.updateProfile).not.toHaveBeenCalled();
   });
 
   it('does not submit when form validation fails', () => {
@@ -240,6 +320,40 @@ describe('ProfilePage', () => {
     expect(auth.sendEmailConfirmation).toHaveBeenCalledWith({ email: profile.email });
     expect(notifications.success).toHaveBeenCalledWith(
       'auth.login.activationEmailSent',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('uploads a profile picture file and updates avatarUrl', () => {
+    const file = new File(['avatar'], 'avatar.png', { type: 'image/png' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    const input = document.createElement('input');
+    Object.defineProperty(input, 'files', { value: dataTransfer.files });
+
+    (component as any).onAvatarFileSelected({ target: input } as unknown as Event);
+
+    expect(http.post).toHaveBeenCalledWith('/api/upload', jasmine.any(FormData));
+    const form = (component as any).form;
+    expect(form.controls.avatarUrl.value).toContain('/uploads/avatar.png');
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.profile.avatar.uploadSuccess',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('rejects non-image avatar files before upload', () => {
+    const file = new File(['not-image'], 'avatar.txt', { type: 'text/plain' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    const input = document.createElement('input');
+    Object.defineProperty(input, 'files', { value: dataTransfer.files });
+
+    (component as any).onAvatarFileSelected({ target: input } as unknown as Event);
+
+    expect(http.post).not.toHaveBeenCalled();
+    expect(notifications.error).toHaveBeenCalledWith(
+      'auth.profile.avatar.uploadInvalidType',
       jasmine.objectContaining({ source: 'auth' })
     );
   });

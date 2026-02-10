@@ -103,6 +103,18 @@ export class HttpClientService {
   }
 
   /**
+   * Contexte : Used by feature services for partial updates on existing entities.
+   * Raison dâ€™Ãªtre : Keeps PATCH requests aligned with shared URL and credential handling.
+   * @param url Relative or absolute URL to target.
+   * @param body Partial payload to send in the request body.
+   * @param options Optional request configuration such as headers or context.
+   * @returns Observable emitting the deserialised response body.
+   */
+  patch<T>(url: string, body: unknown, options?: JsonRequestOptions): Observable<T> {
+    return this.http.patch<T>(this.buildUrl(url), body, this.mergeOptions(options));
+  }
+
+  /**
    * Contexte : Leveraged by services removing entities or revoking tokens from the API.
    * Raison d’être : Keeps DELETE calls aligned with the shared configuration strategy.
    * @param url Relative or absolute URL to target.

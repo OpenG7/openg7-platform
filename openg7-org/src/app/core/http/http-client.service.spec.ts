@@ -47,6 +47,13 @@ describe('HttpClientService', () => {
     expect(req.request.withCredentials).toBeFalse();
   });
 
+  it('supports patch requests with shared defaults', () => {
+    service.patch('/test/1', { name: 'updated' }).subscribe();
+    const req = http.expectOne('/api/test/1');
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.withCredentials).toBeTrue();
+  });
+
   it('falls back to runtime config when injection token is missing', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({

@@ -2,13 +2,15 @@ import { PLATFORM_ID, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { AuthService } from '@app/core/auth/auth.service';
 import { RecentSearch, SearchContext, SearchResult, SearchSection } from '@app/core/models/search';
 import { AnalyticsService } from '@app/core/observability/analytics.service';
 import { RbacFacadeService } from '@app/core/security/rbac.facade';
+import { SavedSearchesApiService } from '@app/core/services/saved-searches-api.service';
 import { OG7_MODAL_DATA, OG7_MODAL_REF } from '@app/core/ui/modal/og7-modal.tokens';
 import { Og7ModalRef } from '@app/core/ui/modal/og7-modal.types';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { SearchHistoryStore } from '../search-history.store';
 import { SearchService } from '../search.service';
@@ -54,6 +56,31 @@ class MockRbacFacadeService {
   readonly isPremium = jasmine.createSpy('isPremium').and.returnValue(true);
 }
 
+class MockAuthService {
+  private readonly isAuthenticatedSig = signal(true);
+  readonly isAuthenticated = this.isAuthenticatedSig.asReadonly();
+
+  setAuthenticated(value: boolean) {
+    this.isAuthenticatedSig.set(value);
+  }
+}
+
+class MockSavedSearchesApiService {
+  readonly createMine = jasmine.createSpy('createMine').and.returnValue(
+    of({
+      id: 'saved-1',
+      name: 'Initial',
+      scope: 'all' as const,
+      filters: { query: 'Initial' },
+      notifyEnabled: false,
+      frequency: 'daily' as const,
+      lastRunAt: null,
+      createdAt: null,
+      updatedAt: null,
+    }),
+  );
+}
+
 describe('QuickSearchModalComponent', () => {
   let fixture: ComponentFixture<QuickSearchModalComponent>;
   let component: QuickSearchModalComponent;
@@ -62,6 +89,8 @@ describe('QuickSearchModalComponent', () => {
   let analytics: MockAnalyticsService;
   let modalRef: MockModalRef;
   let rbac: MockRbacFacadeService;
+  let auth: MockAuthService;
+  let savedSearchesApi: MockSavedSearchesApiService;
   let modalData: QuickSearchModalData;
   let router: Router;
   let host: HTMLElement;
@@ -72,6 +101,8 @@ describe('QuickSearchModalComponent', () => {
     analytics = new MockAnalyticsService();
     modalRef = new MockModalRef();
     rbac = new MockRbacFacadeService();
+    auth = new MockAuthService();
+    savedSearchesApi = new MockSavedSearchesApiService();
     modalData = { initialQuery: 'enbridge', context: { sectorId: 'energy' }, source: 'unit-test' };
 
     await TestBed.configureTestingModule({
@@ -81,6 +112,8 @@ describe('QuickSearchModalComponent', () => {
         { provide: SearchHistoryStore, useValue: history },
         { provide: AnalyticsService, useValue: analytics },
         { provide: RbacFacadeService, useValue: rbac },
+        { provide: AuthService, useValue: auth },
+        { provide: SavedSearchesApiService, useValue: savedSearchesApi },
         { provide: OG7_MODAL_REF, useValue: modalRef },
         { provide: OG7_MODAL_DATA, useValue: modalData },
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -180,10 +213,66 @@ describe('QuickSearchModalComponent', () => {
     expect(modalRef.close).toHaveBeenCalled();
   });
 
-  it('retry triggers a fresh search request', () => {
+  it('retry triggers a fresh search request', async () => {
     expect(searchService.searchCalls.length).toBe(1);
     component.retry();
+    await fixture.whenStable();
     expect(searchService.searchCalls.length).toBe(2);
+  });
+
+  it('saveCurrentQuery stores the active query when authenticated', () => {
+    auth.setAuthenticated(true);
+    analytics.emit.calls.reset();
+    savedSearchesApi.createMine.calls.reset();
+    component.query.set('critical minerals');
+
+    component.saveCurrentQuery();
+
+    expect(savedSearchesApi.createMine).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        name: 'critical minerals',
+        scope: 'map',
+        frequency: 'daily',
+        notifyEnabled: false,
+        filters: jasmine.objectContaining({ query: 'critical minerals', sectorId: 'energy' }),
+      }),
+    );
+    expect(component.saveStatus()).toBe('success');
+    expect(analytics.emit).toHaveBeenCalledWith(
+      'search_saved',
+      jasmine.objectContaining({ query: 'critical minerals', savedSearchId: 'saved-1' }),
+    );
+  });
+
+  it('saveCurrentQuery reports authRequired when user is anonymous', () => {
+    auth.setAuthenticated(false);
+    analytics.emit.calls.reset();
+    savedSearchesApi.createMine.calls.reset();
+    component.query.set('aluminium');
+
+    component.saveCurrentQuery();
+
+    expect(savedSearchesApi.createMine).not.toHaveBeenCalled();
+    expect(component.saveStatus()).toBe('authRequired');
+    expect(analytics.emit).toHaveBeenCalledWith(
+      'search_save_denied',
+      jasmine.objectContaining({ reason: 'unauthenticated', query: 'aluminium' }),
+    );
+  });
+
+  it('saveCurrentQuery reports error when API creation fails', () => {
+    auth.setAuthenticated(true);
+    analytics.emit.calls.reset();
+    savedSearchesApi.createMine.and.returnValue(throwError(() => new Error('boom')));
+    component.query.set('battery');
+
+    component.saveCurrentQuery();
+
+    expect(component.saveStatus()).toBe('error');
+    expect(analytics.emit).toHaveBeenCalledWith(
+      'search_save_failed',
+      jasmine.objectContaining({ query: 'battery' }),
+    );
   });
 
   it('allows typing text in the query input', () => {
@@ -212,7 +301,7 @@ describe('QuickSearchModalComponent', () => {
 
   it('closes the modal when the close button is clicked', () => {
     modalRef.close.calls.reset();
-    const button = host.querySelector<HTMLButtonElement>('button[aria-label="Close quick search"]');
+    const button = host.querySelector<HTMLButtonElement>('[data-og7-id="quick-search-close"]');
     expect(button).withContext('close button should be present').not.toBeNull();
     button?.click();
     expect(modalRef.close).toHaveBeenCalledTimes(1);

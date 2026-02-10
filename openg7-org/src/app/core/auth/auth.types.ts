@@ -80,9 +80,35 @@ export interface UpdateProfilePayload {
   notificationPreferences?: UserNotificationPreferences | null;
 }
 
+export type AlertSeverityPreference = 'info' | 'success' | 'warning' | 'critical';
+export type AlertSourcePreference = 'saved-search' | 'system';
+export type AlertFrequencyPreference = 'instant' | 'daily-digest';
+
+export interface UserNotificationChannels {
+  inApp?: boolean;
+  email?: boolean;
+  webhook?: boolean;
+}
+
+export interface UserNotificationFilters {
+  severities?: AlertSeverityPreference[];
+  sources?: AlertSourcePreference[];
+}
+
+export interface UserNotificationQuietHours {
+  enabled?: boolean;
+  start?: string | null;
+  end?: string | null;
+  timezone?: string | null;
+}
+
 export interface UserNotificationPreferences {
   emailOptIn?: boolean;
   webhookUrl?: string | null;
+  channels?: UserNotificationChannels | null;
+  filters?: UserNotificationFilters | null;
+  frequency?: AlertFrequencyPreference | null;
+  quietHours?: UserNotificationQuietHours | null;
 }
 
 export interface ChangePasswordPayload {

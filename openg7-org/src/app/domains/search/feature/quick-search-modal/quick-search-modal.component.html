@@ -44,10 +44,33 @@
         aria-autocomplete="list"
         aria-haspopup="listbox"
       />
-      <span class="hidden rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-subtle sm:block">
+      <button
+        type="button"
+        class="inline-flex items-center rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 disabled:opacity-50"
+        (click)="saveCurrentQuery()"
+        [disabled]="!canSaveCurrentQuery()"
+        data-og7-id="quick-search-save"
+      >
+        <ng-container *ngIf="savePending(); else saveSearchLabel">
+          {{ 'search.quick.actions.saveLoading' | translate }}
+        </ng-container>
+        <ng-template #saveSearchLabel>
+          {{ 'search.quick.actions.save' | translate }}
+        </ng-template>
+      </button>
+      <span class="hidden rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-subtle md:block">
         Ctrl K
       </span>
     </div>
+    <p
+      *ngIf="saveStatusMessageKey() as statusKey"
+      class="text-xs text-subtle"
+      [class.text-emerald-700]="saveStatus() === 'success'"
+      [class.text-rose-700]="saveStatus() !== 'success'"
+      data-og7-id="quick-search-save-feedback"
+    >
+      {{ statusKey | translate }}
+    </p>
   </div>
 
   <div class="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,16rem)]">
