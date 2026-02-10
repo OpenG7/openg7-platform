@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '@app/core/auth/auth.service';
 import { SubscriptionPlansComponent } from '@app/shared/components/billing/subscription-plans.component';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -95,6 +96,8 @@ interface ComplianceBadge {
  * @returns PricingPage gérée par le framework.
  */
 export class PricingPage {
+  private readonly auth = inject(AuthService);
+
   protected readonly billingCycle = signal<BillingCycle>('monthly');
 
   protected readonly plans: MarketingPlan[] = [
@@ -338,6 +341,25 @@ export class PricingPage {
     },
   ];
 
+  protected readonly isAuthenticated = this.auth.isAuthenticated;
+  protected readonly currentPlanId = this.auth.currentPlanId;
+  protected readonly currentMarketingPlan = computed<MarketingPlan['key'] | null>(() =>
+    this.resolveCurrentMarketingPlan(this.currentPlanId(), this.auth.isPremium(), this.isAuthenticated())
+  );
+  protected readonly recommendedPlan = computed<MarketingPlan | null>(() => {
+    const current = this.currentMarketingPlan();
+    if (!current) {
+      return this.plans.find((plan) => plan.featured) ?? this.plans[0] ?? null;
+    }
+    if (current === 'explorer') {
+      return this.findPlan('analyst');
+    }
+    if (current === 'analyst') {
+      return this.findPlan('enterprise');
+    }
+    return null;
+  });
+
   protected setBillingCycle(cycle: BillingCycle): void {
     this.billingCycle.set(cycle);
   }
@@ -393,5 +415,46 @@ export class PricingPage {
       params[plan.cta.includeCycleParam] = this.billingCycle();
     }
     return Object.keys(params).length > 0 ? params : null;
+  }
+
+  protected isCurrentPlan(plan: MarketingPlan): boolean {
+    const current = this.currentMarketingPlan();
+    return Boolean(current && current === plan.key);
+  }
+
+  protected isRecommendedPlan(plan: MarketingPlan): boolean {
+    const recommended = this.recommendedPlan();
+    return Boolean(recommended && recommended.key === plan.key && !this.isCurrentPlan(plan));
+  }
+
+  private findPlan(key: MarketingPlan['key']): MarketingPlan | null {
+    return this.plans.find((plan) => plan.key === key) ?? null;
+  }
+
+  private resolveCurrentMarketingPlan(
+    currentPlanId: string | null,
+    isPremium: boolean,
+    isAuthenticated: boolean
+  ): MarketingPlan['key'] | null {
+    if (!isAuthenticated) {
+      return null;
+    }
+
+    const normalized = (currentPlanId ?? '').trim().toLowerCase();
+    if (!normalized) {
+      return isPremium ? 'analyst' : 'explorer';
+    }
+
+    if (normalized.includes('enterprise') || normalized.includes('business') || normalized.includes('team')) {
+      return 'enterprise';
+    }
+    if (normalized.includes('analyst') || normalized.includes('premium') || normalized.includes('pro')) {
+      return 'analyst';
+    }
+    if (normalized.includes('explorer') || normalized.includes('free') || normalized.includes('starter')) {
+      return 'explorer';
+    }
+
+    return isPremium ? 'analyst' : 'explorer';
   }
 }

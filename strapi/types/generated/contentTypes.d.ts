@@ -476,6 +476,46 @@ export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiConnectionConnection extends Struct.CollectionTypeSchema {
+  collectionName: 'connections';
+  info: {
+    displayName: 'Connection';
+    pluralName: 'connections';
+    singularName: 'connection';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    attachments: Schema.Attribute.JSON;
+    buyerProfileId: Schema.Attribute.Integer & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    introMessage: Schema.Attribute.Text & Schema.Attribute.Required;
+    lastStatusAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::connection.connection'> &
+      Schema.Attribute.Private;
+    logisticsPlan: Schema.Attribute.JSON;
+    matchId: Schema.Attribute.Integer & Schema.Attribute.Required;
+    meetingProposal: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    stage: Schema.Attribute.Enumeration<['intro', 'reply', 'meeting', 'review', 'deal']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'reply'>;
+    stageHistory: Schema.Attribute.JSON;
+    status: Schema.Attribute.Enumeration<['pending', 'inDiscussion', 'completed', 'closed']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'pending'>;
+    statusHistory: Schema.Attribute.JSON;
+    supplierProfileId: Schema.Attribute.Integer & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'> &
+      Schema.Attribute.Required;
+  };
+}
+
 export interface ApiExchangeExchange extends Struct.CollectionTypeSchema {
   collectionName: 'exchanges';
   info: {
@@ -504,6 +544,77 @@ export interface ApiExchangeExchange extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     value: Schema.Attribute.Decimal;
+  };
+}
+
+export interface ApiFeedFeed extends Struct.CollectionTypeSchema {
+  collectionName: 'feed_items';
+  info: {
+    displayName: 'Feed';
+    pluralName: 'feeds';
+    singularName: 'feed';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    accessibilitySummary: Schema.Attribute.Text;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    credibility: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 3;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    fromProvinceId: Schema.Attribute.String;
+    geo: Schema.Attribute.JSON;
+    idempotencyKey: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::feed.feed'> &
+      Schema.Attribute.Private;
+    mode: Schema.Attribute.Enumeration<['EXPORT', 'IMPORT', 'BOTH']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'BOTH'>;
+    publishedAt: Schema.Attribute.DateTime;
+    quantityUnit: Schema.Attribute.Enumeration<
+      ['MW', 'MWh', 'bbl_d', 'ton', 'kg', 'hours', 'cad', 'usd']
+    >;
+    quantityValue: Schema.Attribute.Decimal;
+    sectorId: Schema.Attribute.String;
+    sourceKind: Schema.Attribute.Enumeration<['GOV', 'COMPANY', 'PARTNER', 'USER']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'USER'>;
+    sourceLabel: Schema.Attribute.String & Schema.Attribute.Required;
+    sourceUrl: Schema.Attribute.String;
+    status: Schema.Attribute.Enumeration<['confirmed', 'pending', 'failed']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'confirmed'>;
+    summary: Schema.Attribute.Text & Schema.Attribute.Required;
+    tags: Schema.Attribute.JSON;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    toProvinceId: Schema.Attribute.String;
+    type: Schema.Attribute.Enumeration<
+      ['OFFER', 'REQUEST', 'ALERT', 'TENDER', 'CAPACITY', 'INDICATOR']
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    urgency: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 3;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'> &
+      Schema.Attribute.Required;
+    volumeScore: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -1238,7 +1349,9 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::account-profile.account-profile': ApiAccountProfileAccountProfile;
       'api::company.company': ApiCompanyCompany;
+      'api::connection.connection': ApiConnectionConnection;
       'api::exchange.exchange': ApiExchangeExchange;
+      'api::feed.feed': ApiFeedFeed;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::national-project.national-project': ApiNationalProjectNationalProject;
       'api::province.province': ApiProvinceProvince;

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/auth.guard';
+import { permissionsGuard } from './core/auth/permissions.guard';
 import { profilePendingChangesGuard } from './core/auth/profile-pending-changes.guard';
 import { roleGuard } from './core/auth/role.guard';
 import { featureFlagGuard } from './core/feature-flags/feature-flag.guard';
@@ -169,6 +170,16 @@ export const routes: Routes = [
     loadComponent: () => import('./domains/account/pages/profile.page').then(m => m.ProfilePage),
     canMatch: [authGuard],
     canDeactivate: [profilePendingChangesGuard],
+  },
+  {
+    path: 'pro',
+    loadComponent: () => import('./domains/account/pages/profile.page').then(m => m.ProfilePage),
+    canMatch: [authGuard, roleGuard, permissionsGuard],
+    canDeactivate: [profilePendingChangesGuard],
+    data: {
+      roles: ['editor', 'admin'],
+      permissions: ['write'],
+    },
   },
   {
     path: 'access-denied',

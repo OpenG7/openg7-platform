@@ -52,6 +52,7 @@ export class LoginPage implements AfterViewInit, OnInit {
 
   protected readonly loading = signal(false);
   protected readonly apiError = signal<string | null>(null);
+  protected readonly loginNotice = signal<string | null>(null);
   protected readonly authMode = this.authConfig.authMode;
   protected readonly passwordVisible = signal(false);
   protected readonly sendingActivationEmail = signal(false);
@@ -80,8 +81,12 @@ export class LoginPage implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     const redirectParam = this.route.snapshot.queryParamMap.get('redirect');
+    const reasonParam = this.route.snapshot.queryParamMap.get('reason');
     if (redirectParam) {
       this.authRedirect.captureRedirectParam(redirectParam);
+    }
+    if (reasonParam === 'session-expired') {
+      this.loginNotice.set('auth.sessionExpired');
     }
 
     this.redirectTarget.set(this.authRedirect.peekRedirectUrl('/profile'));

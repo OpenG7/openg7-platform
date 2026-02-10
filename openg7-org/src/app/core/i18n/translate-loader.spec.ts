@@ -3,8 +3,11 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TransferState, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { AuthRedirectService } from '../auth/auth-redirect.service';
+import { AuthService } from '../auth/auth.service';
 import { errorInterceptor } from '../http/error.interceptor';
 import { NotificationStore } from '../observability/notification.store';
 
@@ -24,6 +27,26 @@ describe('AppTranslateLoader', () => {
       ],
       providers: [
         { provide: HTTP_INTERCEPTORS, useValue: errorInterceptor, multi: true },
+        {
+          provide: Router,
+          useValue: {
+            url: '/',
+            navigate: () => Promise.resolve(true),
+            getCurrentNavigation: () => null,
+          },
+        },
+        {
+          provide: AuthRedirectService,
+          useValue: {
+            setRedirectUrl: () => undefined,
+          },
+        },
+        {
+          provide: AuthService,
+          useValue: {
+            handleUnauthorizedSession: () => false,
+          },
+        },
         NotificationStore,
         TransferState,
       ],

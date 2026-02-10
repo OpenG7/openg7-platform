@@ -154,6 +154,7 @@
     "email": "Email address",
     "password": "Password",
     "accessDenied": "You must be authenticated to access this page.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
     "profile": {
       "title": "My profile",
       "subtitle": "Review your contact details and preferences shared with partners.",
@@ -263,6 +264,31 @@
           "success": "A confirmation email has been sent to your new address.",
           "error": "We could not start the email change flow. Please try again.",
           "sameAsCurrent": "Use an email address different from your current one."
+        },
+        "exportData": {
+          "title": "Export my account data",
+          "help": "Download a JSON archive containing your profile, alerts, favorites, and saved searches.",
+          "cta": "Download my data",
+          "loading": "Preparing export...",
+          "success": "Your data export is ready.",
+          "error": "Unable to export your data right now. Please try again."
+        },
+        "sessions": {
+          "title": "Connected sessions",
+          "help": "Review active devices and disconnect all other sessions.",
+          "empty": "No active session found.",
+          "refresh": "Refresh",
+          "refreshLoading": "Refreshing...",
+          "current": "Current",
+          "revoked": "Revoked",
+          "lastSeen": "Last activity",
+          "unknownDevice": "Unknown device",
+          "unknownIp": "Unknown IP",
+          "logoutOthers": "Log out other devices",
+          "logoutOthersLoading": "Disconnecting...",
+          "logoutOthersSuccess": "{{count}} session(s) disconnected.",
+          "logoutOthersError": "Unable to disconnect other sessions right now.",
+          "error": "Unable to load your connected sessions."
         }
       }
     },
@@ -1450,6 +1476,8 @@
         "heading": "Flexible plans for every stage of your export journey",
         "subheading": "All plans include secure marketplace access, bilingual support, and compliance-ready documentation.",
         "featuredLabel": "Most popular",
+        "currentLabel": "Current plan",
+        "recommendedLabel": "Recommended",
         "interval": {
           "monthly": "per month",
           "yearly": "per year"
@@ -1742,7 +1770,30 @@
     "favorites": {
       "title": "My favorites",
       "description": "Here are the items you have saved for quick access.",
-      "empty": "Save companies or opportunities to find them here later."
+      "listTitle": "Saved items",
+      "empty": "Save companies or opportunities to find them here later.",
+      "emptyHint": "Build your shortlist to reopen opportunities faster from this page.",
+      "labels": {
+        "total": "{{ count }} saved"
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "clear": "Clear all",
+        "remove": "Remove",
+        "open": "Open",
+        "openFeed": "Browse feed",
+        "openSavedSearches": "Open saved searches"
+      },
+      "types": {
+        "company": "Company",
+        "opportunity": "Opportunity",
+        "partner": "Partner",
+        "linkup": "Linkup",
+        "generic": "Saved item"
+      },
+      "errors": {
+        "syncFailed": "Unable to sync your favorites right now. Please try again."
+      }
     },
     "savedSearches": {
       "title": "Saved searches",
@@ -2325,6 +2376,18 @@
         "countryAll": "All countries",
         "province": "Province",
         "provinceAll": "All provinces"
+      },
+      "actions": {
+        "retry": "Retry",
+        "resetFilters": "Reset filters"
+      },
+      "states": {
+        "fallbackLabel": "Fallback data active",
+        "fallbackBody": "The dashboard is currently using temporary local data. Retry in a moment to restore live indicators.",
+        "errorTitle": "Unable to load statistics",
+        "errorBody": "We could not retrieve the indicators right now. Check your connection and retry.",
+        "emptyTitle": "No statistics match these filters",
+        "emptyBody": "Adjust period, province, or country filters, or reset everything to view available indicators."
       },
       "units": {
         "billionCAD": "Billion CAD",

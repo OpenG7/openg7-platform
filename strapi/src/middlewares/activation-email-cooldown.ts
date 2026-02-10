@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 
-import type { Context, Next } from 'koa';
 import Redis from 'ioredis';
+import type { Context, Next } from 'koa';
 
 interface ActivationEmailCooldownConfig {
   enabled?: boolean;

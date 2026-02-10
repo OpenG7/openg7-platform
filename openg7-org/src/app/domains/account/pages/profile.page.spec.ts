@@ -85,10 +85,13 @@ describe('ProfilePage', () => {
   beforeEach(async () => {
     auth = jasmine.createSpyObj<AuthService>('AuthService', [
       'getProfile',
+      'getActiveSessions',
       'updateProfile',
       'changePassword',
       'requestEmailChange',
       'sendEmailConfirmation',
+      'exportProfileData',
+      'logoutOtherSessions',
     ]);
     http = jasmine.createSpyObj<HttpClientService>('HttpClientService', ['post']);
     notifications = jasmine.createSpyObj<NotificationStoreApi>('NotificationStore', [
@@ -98,12 +101,54 @@ describe('ProfilePage', () => {
     ]);
 
     auth.getProfile.and.returnValue(of(profile));
+    auth.getActiveSessions.and.returnValue(
+      of({
+        version: 1,
+        sessions: [
+          {
+            id: 'session-current',
+            version: 1,
+            createdAt: '2026-02-10T00:00:00.000Z',
+            lastSeenAt: '2026-02-10T00:00:00.000Z',
+            status: 'active',
+            current: true,
+            revokedAt: null,
+            userAgent: 'Chrome',
+            ipAddress: '203.0.113.2',
+          },
+        ],
+      })
+    );
     auth.updateProfile.and.returnValue(of(profile));
     auth.changePassword.and.returnValue(of({ jwt: 'next.jwt.token', user: profile }));
     auth.requestEmailChange.and.returnValue(
       of({ email: 'new@example.com', sent: true, accountStatus: 'emailNotConfirmed' })
     );
     auth.sendEmailConfirmation.and.returnValue(of({ email: profile.email, sent: true }));
+    auth.exportProfileData.and.returnValue(
+      of(new Blob([JSON.stringify({ id: profile.id })], { type: 'application/json' }))
+    );
+    auth.logoutOtherSessions.and.returnValue(
+      of({
+        jwt: 'rotated.jwt.token',
+        user: profile,
+        sessionsRevoked: 1,
+        sessionVersion: 2,
+        sessions: [
+          {
+            id: 'session-next',
+            version: 2,
+            createdAt: '2026-02-10T01:00:00.000Z',
+            lastSeenAt: '2026-02-10T01:00:00.000Z',
+            status: 'active',
+            current: true,
+            revokedAt: null,
+            userAgent: 'Firefox',
+            ipAddress: '198.51.100.9',
+          },
+        ],
+      })
+    );
     http.post.and.returnValue(of([{ url: '/uploads/avatar.png' }]));
 
     await TestBed.configureTestingModule({
@@ -123,6 +168,7 @@ describe('ProfilePage', () => {
 
   it('loads the profile on init and fills the form', () => {
     expect(auth.getProfile).toHaveBeenCalled();
+    expect(auth.getActiveSessions).toHaveBeenCalled();
     const form = (component as any).form;
 
     expect(form.controls.firstName.value).toBe(profile.firstName);
@@ -340,6 +386,31 @@ describe('ProfilePage', () => {
       'auth.profile.avatar.uploadSuccess',
       jasmine.objectContaining({ source: 'auth' })
     );
+  });
+
+  it('exports account data and notifies success', () => {
+    const downloadSpy = spyOn<any>(component, 'downloadProfileExport').and.stub();
+
+    (component as any).onExportProfileData();
+
+    expect(auth.exportProfileData).toHaveBeenCalled();
+    expect(downloadSpy).toHaveBeenCalled();
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.profile.security.exportData.success',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+  });
+
+  it('logs out other sessions and updates the local session list', () => {
+    (component as any).onLogoutOtherSessions();
+
+    expect(auth.logoutOtherSessions).toHaveBeenCalled();
+    expect(notifications.success).toHaveBeenCalledWith(
+      'auth.profile.security.sessions.logoutOthersSuccess',
+      jasmine.objectContaining({ source: 'auth' })
+    );
+    expect((component as any).sessions().length).toBe(1);
+    expect((component as any).sessions()[0].current).toBeTrue();
   });
 
   it('rejects non-image avatar files before upload', () => {

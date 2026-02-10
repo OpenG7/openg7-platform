@@ -157,6 +157,29 @@ describe('AuthService', () => {
     expect(service.isAuthenticated()).toBeFalse();
   });
 
+  it('handleUnauthorizedSession clears local auth state once for a valid session', async () => {
+    service.completeOidcLogin({
+      jwt: 'jwt.token.value',
+      user: { id: '100', email: 'member@example.com', roles: ['user'] },
+    });
+    await flushAsync();
+
+    expect(service.isAuthenticated()).toBeTrue();
+
+    const handled = service.handleUnauthorizedSession();
+    const duplicateAttempt = service.handleUnauthorizedSession();
+    await flushAsync();
+
+    expect(handled).toBeTrue();
+    expect(duplicateAttempt).toBeFalse();
+    expect(service.isAuthenticated()).toBeFalse();
+    await expectAsync(storage.getToken()).toBeResolvedTo(null);
+  });
+
+  it('handleUnauthorizedSession returns false when there is no local session', () => {
+    expect(service.handleUnauthorizedSession()).toBeFalse();
+  });
+
   it('restores cached user state when profile refresh fails with a non-auth error', async () => {
     if (!crypto.subtle) {
       pending('SubtleCrypto not available in this environment');
@@ -371,6 +394,113 @@ describe('AuthService', () => {
       email: payload.email,
       sent: true,
       accountStatus: 'emailNotConfirmed',
+    });
+  });
+
+  it('exportProfileData requests the account export endpoint as blob', () => {
+    let received: Blob | undefined;
+    service.exportProfileData().subscribe((value) => {
+      received = value;
+    });
+
+    const req = http.expectOne(STRAPI_ROUTES.users.meProfileExport);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.responseType).toBe('blob');
+
+    const payload = new Blob([JSON.stringify({ exportedAt: '2026-02-10T00:00:00.000Z' })], {
+      type: 'application/json',
+    });
+    req.flush(payload);
+
+    expect(received).toBeTruthy();
+    expect(received?.size).toBeGreaterThan(0);
+  });
+
+  it('getActiveSessions requests the profile sessions endpoint', () => {
+    let response:
+      | {
+          version: number;
+          sessions: Array<{
+            id: string;
+            version: number;
+            createdAt: string;
+            lastSeenAt: string;
+            status: 'active' | 'revoked';
+            current: boolean;
+            revokedAt: string | null;
+            userAgent: string | null;
+            ipAddress: string | null;
+          }>;
+        }
+      | undefined;
+
+    service.getActiveSessions().subscribe((value) => {
+      response = value;
+    });
+
+    const req = http.expectOne(STRAPI_ROUTES.users.meProfileSessions);
+    expect(req.request.method).toBe('GET');
+    req.flush({
+      version: 3,
+      sessions: [
+        {
+          id: 'session-1',
+          version: 3,
+          createdAt: '2026-02-10T00:00:00.000Z',
+          lastSeenAt: '2026-02-10T01:00:00.000Z',
+          status: 'active',
+          current: true,
+          revokedAt: null,
+          userAgent: 'Chrome',
+          ipAddress: '203.0.113.20',
+        },
+      ],
+    });
+
+    expect(response?.version).toBe(3);
+    expect(response?.sessions.length).toBe(1);
+    expect(response?.sessions[0]?.current).toBeTrue();
+  });
+
+  it('logoutOtherSessions rotates token and refreshes local auth state', async () => {
+    let response: unknown;
+
+    service.logoutOtherSessions().subscribe((value) => {
+      response = value;
+    });
+
+    const req = http.expectOne(STRAPI_ROUTES.users.meProfileLogoutOthers);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({});
+
+    req.flush({
+      jwt: 'rotated.session.jwt',
+      user: { id: '10', email: 'session@example.com', roles: ['user'] },
+      sessionsRevoked: 2,
+      sessionVersion: 4,
+      sessions: [
+        {
+          id: 'session-current',
+          version: 4,
+          createdAt: '2026-02-10T01:00:00.000Z',
+          lastSeenAt: '2026-02-10T01:00:00.000Z',
+          status: 'active',
+          current: true,
+          revokedAt: null,
+          userAgent: 'Firefox',
+          ipAddress: '198.51.100.10',
+        },
+      ],
+    });
+
+    await flushAsync();
+
+    expect((response as { sessionsRevoked: number }).sessionsRevoked).toBe(2);
+    expect(service.token()).toBe('rotated.session.jwt');
+    expect(service.user()).toEqual({
+      id: '10',
+      email: 'session@example.com',
+      roles: ['user'],
     });
   });
 

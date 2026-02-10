@@ -112,3 +112,32 @@ The seed files located in `strapi/src/seed/` initialise:
 - Additional demo data such as national projects, statistics, and permissions.
 
 All seeders are idempotent, making them safe to re-run during development or integration testing.
+
+## Runtime APIs delivered in this sprint
+
+Strapi now exposes additional backend endpoints used directly by authenticated users and home widgets:
+
+- Feed domain:
+  - `GET /api/feed`
+  - `POST /api/feed`
+  - `GET /api/feed/highlights`
+  - `GET /api/feed/stream` (SSE)
+- Realtime corridors:
+  - `GET /api/corridors/realtime`
+- Persistent connections:
+  - `POST /api/connections`
+  - `GET /api/connections`
+  - `GET /api/connections/:id`
+  - `PATCH /api/connections/:id/status`
+
+For payload details, auth model, filters, and transition rules, see `../docs/strapi/realtime-apis.md`.
+
+## Integration tests for runtime APIs
+
+Run from monorepo root:
+
+```bash
+yarn workspace @openg7/strapi test:integration:feed
+yarn workspace @openg7/strapi test:integration:corridors
+yarn workspace @openg7/strapi test:integration:connections
+```

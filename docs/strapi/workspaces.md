@@ -6,7 +6,7 @@ This document summarizes the scope and operational expectations for the official
 
 | Workspace | Location | Strapi generation | Purpose | Owner(s) |
 |-----------|----------|-------------------|---------|----------|
-| `strapi` | `/strapi` | v5 | Canonical CMS powering content, demo seeds, preview endpoints and API tokens for the Angular application. | Data Platform squad |
+| `strapi` | `/strapi` | v5 | Canonical CMS powering content, demo seeds, preview endpoints, API tokens, and runtime APIs consumed by Angular. | Data Platform squad |
 
 ## Day-to-day usage
 
@@ -24,6 +24,6 @@ This document summarizes the scope and operational expectations for the official
 
 ## Next steps
 
-- Extend CI smoke tests that hit the key Strapi endpoints (`/api/companies`, `/api/exchanges`, `/api/homepage`).
+- Extend CI smoke tests that hit the key Strapi endpoints (`/api/companies`, `/api/exchanges`, `/api/feed/highlights`, `/api/corridors/realtime`, `/api/connections`).
 - Keep documenting notable migrations (content-type breaking changes, plugin upgrades) inside `docs/strapi/` for future reference.
 - Remove stale references to the legacy CMS in scripts or tooling whenever you encounter them.

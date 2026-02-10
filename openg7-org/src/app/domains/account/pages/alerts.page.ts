@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { UserAlertsService } from '@app/core/user-alerts.service';
 import { UserAlertRecord } from '@app/core/services/user-alerts-api.service';
+import { UserAlertsService } from '@app/core/user-alerts.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({

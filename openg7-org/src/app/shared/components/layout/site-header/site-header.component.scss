@@ -4,3 +4,78 @@
   top: 0;
   z-index: 50;
 }
+
+:host [data-og7='more'] > div a {
+  color: rgba(248, 250, 252, 0.95);
+  font-weight: 500;
+}
+
+:host [data-og7='more'] > div a:hover,
+:host [data-og7='more'] > div a:focus-visible {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.14);
+  text-decoration: none;
+}
+
+:host [data-og7='more'] > div a:active {
+  color: #fff;
+}
+
+:host [data-og7='profile'] ul a,
+:host [data-og7='profile'] ul button {
+  color: rgba(248, 250, 252, 0.95);
+  font-weight: 500;
+}
+
+:host [data-og7='profile'] ul a:hover,
+:host [data-og7='profile'] ul a:focus-visible,
+:host [data-og7='profile'] ul button:hover,
+:host [data-og7='profile'] ul button:focus-visible {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.14);
+  text-decoration: none;
+}
+
+:host [data-og7='profile'] ul a:active,
+:host [data-og7='profile'] ul button:active {
+  color: #fff;
+}
+
+:host [data-og7='notif'] p,
+:host [data-og7='notif'] li button span {
+  color: rgba(248, 250, 252, 0.95);
+}
+
+:host [data-og7='notif'] li button span + span {
+  color: rgba(226, 232, 240, 0.88);
+}
+
+:host [data-og7='notif'] button,
+:host [data-og7='notif'] a {
+  color: rgba(248, 250, 252, 0.95);
+  font-weight: 500;
+}
+
+:host [data-og7='notif'] button:hover,
+:host [data-og7='notif'] button:focus-visible,
+:host [data-og7='notif'] a:hover,
+:host [data-og7='notif'] a:focus-visible {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.14);
+  text-decoration: none;
+}
+
+:host [data-og7='notif'] button:active,
+:host [data-og7='notif'] a:active {
+  color: #fff;
+}
+
+:host [data-og7='notif'] button:disabled {
+  color: rgba(148, 163, 184, 0.85);
+  cursor: default;
+}
+
+:host [data-og7='notif'] button:disabled:hover,
+:host [data-og7='notif'] button:disabled:focus-visible {
+  background-color: transparent;
+}

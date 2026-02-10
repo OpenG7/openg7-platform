@@ -1,6 +1,7 @@
+import { Buffer } from 'buffer';
+
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Buffer } from 'buffer';
 
 import { CryptoService } from './crypto.service';
 

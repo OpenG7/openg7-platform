@@ -29,6 +29,7 @@ export class StatisticsEffects {
   readonly triggerLoad$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
+        StatisticsActions.resetFilters,
         StatisticsActions.changeScope,
         StatisticsActions.changeIntrant,
         StatisticsActions.changePeriod,

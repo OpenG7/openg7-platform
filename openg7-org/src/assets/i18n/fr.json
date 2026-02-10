@@ -154,6 +154,7 @@
     "email": "Courriel",
     "password": "Mot de passe",
     "accessDenied": "Vous devez être authentifié pour accéder à cette page.",
+    "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",
     "profile": {
       "title": "Mon profil",
       "subtitle": "Vérifiez vos coordonnées et préférences partagées avec les partenaires.",
@@ -263,6 +264,31 @@
           "success": "Un courriel de confirmation a ete envoye a votre nouvelle adresse.",
           "error": "Impossible de demarrer le changement de courriel. Veuillez reessayer.",
           "sameAsCurrent": "Utilisez une adresse courriel differente de l'adresse actuelle."
+        },
+        "exportData": {
+          "title": "Exporter mes donnees",
+          "help": "Telechargez une archive JSON contenant votre profil, alertes, favoris et recherches sauvegardees.",
+          "cta": "Telecharger mes donnees",
+          "loading": "Preparation de l'export...",
+          "success": "L'export de vos donnees est pret.",
+          "error": "Impossible d'exporter vos donnees pour le moment. Veuillez reessayer."
+        },
+        "sessions": {
+          "title": "Sessions connectees",
+          "help": "Consultez les appareils actifs et deconnectez les autres sessions.",
+          "empty": "Aucune session active trouvee.",
+          "refresh": "Rafraichir",
+          "refreshLoading": "Rafraichissement...",
+          "current": "Actuelle",
+          "revoked": "Revoquee",
+          "lastSeen": "Derniere activite",
+          "unknownDevice": "Appareil inconnu",
+          "unknownIp": "IP inconnue",
+          "logoutOthers": "Deconnecter les autres appareils",
+          "logoutOthersLoading": "Deconnexion...",
+          "logoutOthersSuccess": "{{count}} session(s) deconnectee(s).",
+          "logoutOthersError": "Impossible de deconnecter les autres sessions pour le moment.",
+          "error": "Impossible de charger vos sessions connectees."
         }
       }
     },
@@ -1339,6 +1365,8 @@
         "heading": "Des offres flexibles pour chaque étape de votre parcours export",
         "subheading": "Toutes les offres incluent l’accès sécurisé à la place de marché, un support bilingue et une documentation conforme.",
         "featuredLabel": "Plus populaire",
+        "currentLabel": "Plan actuel",
+        "recommendedLabel": "Recommandé",
         "interval": {
           "monthly": "par mois",
           "yearly": "par an"
@@ -1631,7 +1659,30 @@
     "favorites": {
       "title": "Mes favoris",
       "description": "Voici la liste des éléments que vous avez ajoutés en favoris.",
-      "empty": "Enregistrez des entreprises ou des opportunités pour les retrouver ici."
+      "listTitle": "Éléments enregistrés",
+      "empty": "Enregistrez des entreprises ou des opportunités pour les retrouver ici.",
+      "emptyHint": "Constituez votre short list pour relancer plus vite vos pistes depuis cette page.",
+      "labels": {
+        "total": "{{ count }} enregistrés"
+      },
+      "actions": {
+        "refresh": "Rafraîchir",
+        "clear": "Tout effacer",
+        "remove": "Retirer",
+        "open": "Ouvrir",
+        "openFeed": "Parcourir le fil",
+        "openSavedSearches": "Ouvrir les recherches sauvegardées"
+      },
+      "types": {
+        "company": "Entreprise",
+        "opportunity": "Opportunité",
+        "partner": "Partenaire",
+        "linkup": "Mise en relation",
+        "generic": "Élément enregistré"
+      },
+      "errors": {
+        "syncFailed": "Impossible de synchroniser vos favoris pour le moment. Veuillez réessayer."
+      }
     },
     "savedSearches": {
       "title": "Recherches sauvegardées",
@@ -1753,6 +1804,18 @@
         "countryAll": "Tous les pays",
         "province": "Province",
         "provinceAll": "Toutes les provinces"
+      },
+      "actions": {
+        "retry": "Réessayer",
+        "resetFilters": "Réinitialiser les filtres"
+      },
+      "states": {
+        "fallbackLabel": "Données de secours actives",
+        "fallbackBody": "Les données affichées proviennent d’une source locale temporaire. Réessayez dans quelques instants pour récupérer la source en direct.",
+        "errorTitle": "Impossible de charger les statistiques",
+        "errorBody": "Nous n’avons pas pu récupérer les indicateurs pour le moment. Vérifiez votre connexion et relancez le chargement.",
+        "emptyTitle": "Aucune statistique ne correspond à vos filtres",
+        "emptyBody": "Ajustez votre période, votre province ou votre pays, ou réinitialisez les filtres pour retrouver les indicateurs disponibles."
       },
       "units": {
         "billionCAD": "milliards de $ CA",

@@ -1,8 +1,12 @@
+import { isPlatformBrowser } from '@angular/common';
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { PLATFORM_ID, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, throwError } from 'rxjs';
 
+import { AuthRedirectService } from '../auth/auth-redirect.service';
+import { AuthService } from '../auth/auth.service';
 import { injectNotificationStore } from '../observability/notification.store';
 
 import { SUPPRESS_ERROR_TOAST } from './error.interceptor.tokens';
@@ -17,12 +21,48 @@ import { SUPPRESS_ERROR_TOAST } from './error.interceptor.tokens';
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const translate = inject(TranslateService);
   const notifications = injectNotificationStore();
+  const router = inject(Router);
+  const authRedirect = inject(AuthRedirectService);
+  const platformId = inject(PLATFORM_ID);
+  const auth = inject(AuthService);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       if (req.context.get(SUPPRESS_ERROR_TOAST)) {
         return throwError(() => err);
       }
+
+      if (err.status === 401 && auth.handleUnauthorizedSession()) {
+        const key = 'auth.sessionExpired';
+        const sessionExpired =
+          translate.instant(key) === key
+            ? 'Your session has expired. Please sign in again.'
+            : translate.instant(key);
+
+        if (isPlatformBrowser(platformId)) {
+          const currentUrl = resolveCurrentUrl(router);
+          if (!isLoginUrl(currentUrl)) {
+            if (currentUrl) {
+              authRedirect.setRedirectUrl(currentUrl);
+            }
+            void router.navigate(['/login'], {
+              queryParams: {
+                reason: 'session-expired',
+                ...(currentUrl ? { redirect: currentUrl } : {}),
+              },
+              replaceUrl: true,
+            });
+          }
+        }
+
+        notifications.info(sessionExpired, {
+          source: 'auth',
+          context: { status: err.status, url: err.url, reason: 'session-expired' },
+          metadata: { status: err.status, reason: 'session-expired' },
+        });
+        return throwError(() => err);
+      }
+
       const key = `errors.${err.status}`;
       let message = translate.instant(key);
       if (message === key) {
@@ -38,3 +78,17 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+
+function resolveCurrentUrl(router: Router): string | null {
+  const navigation = router.getCurrentNavigation();
+  const url = navigation?.finalUrl?.toString() ?? navigation?.extractedUrl?.toString() ?? router.url;
+  if (typeof url !== 'string') {
+    return null;
+  }
+  const normalized = url.trim();
+  return normalized.length > 0 ? normalized : null;
+}
+
+function isLoginUrl(url: string | null): boolean {
+  return typeof url === 'string' && /^\/login(?:[/?#]|$)/.test(url);
+}

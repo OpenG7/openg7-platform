@@ -11,7 +11,6 @@ import { SiteHeaderComponent } from '@app/shared/components/layout/site-header/s
 import { UnderConstructionBannerComponent } from '@app/shared/components/layout/under-construction-banner/under-construction-banner.component';
 import { CtrlKDirective } from '@app/shared/directives/ctrl-k.directive';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxGalaxyComponent } from '@omnedia/ngx-galaxy';
 import { NgxStarrySkyComponent } from '@omnedia/ngx-starry-sky';
 import { map } from 'rxjs';
 
@@ -34,7 +33,6 @@ import { Og7ModalContainerComponent } from './core/ui/modal/og7-modal-container.
     RouterLink,
     TranslateModule,
     CtrlKDirective,
-    NgxGalaxyComponent,
     NgxStarrySkyComponent
   ],
   templateUrl: './app.component.html',

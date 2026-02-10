@@ -6,6 +6,7 @@ export const StatisticsActions = createActionGroup({
   source: 'Statistics',
   events: {
     'Initialize': emptyProps(),
+    'Reset Filters': emptyProps(),
     'Change Scope': props<{ scope: StatisticsScope }>(),
     'Change Intrant': props<{ intrant: StatisticsIntrant }>(),
     'Change Period': props<{ period: string | null }>(),
