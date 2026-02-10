@@ -749,6 +749,39 @@ export interface ApiStatisticInsightStatisticInsight extends Struct.CollectionTy
   };
 }
 
+export interface ApiUserAlertUserAlert extends Struct.CollectionTypeSchema {
+  collectionName: 'user_alerts';
+  info: {
+    displayName: 'User Alert';
+    pluralName: 'user-alerts';
+    singularName: 'user-alert';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::user-alert.user-alert'> &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text & Schema.Attribute.Required;
+    metadata: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    readAt: Schema.Attribute.DateTime;
+    severity: Schema.Attribute.Enumeration<['info', 'success', 'warning', 'critical']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'info'>;
+    sourceId: Schema.Attribute.String;
+    sourceType: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'> &
+      Schema.Attribute.Required;
+  };
+}
+
 export interface ApiUserFavoriteUserFavorite extends Struct.CollectionTypeSchema {
   collectionName: 'user_favorites';
   info: {
@@ -1212,6 +1245,7 @@ declare module '@strapi/strapi' {
       'api::saved-search.saved-search': ApiSavedSearchSavedSearch;
       'api::sector.sector': ApiSectorSector;
       'api::statistic-insight.statistic-insight': ApiStatisticInsightStatisticInsight;
+      'api::user-alert.user-alert': ApiUserAlertUserAlert;
       'api::user-favorite.user-favorite': ApiUserFavoriteUserFavorite;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

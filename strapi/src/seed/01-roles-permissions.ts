@@ -44,6 +44,15 @@ export default async () => {
       updateMe: true,
       deleteMe: true,
     },
+    'api::user-alert.user-alert': {
+      me: true,
+      createMe: true,
+      generateFromSavedSearches: true,
+      markReadMe: true,
+      markAllReadMe: true,
+      deleteReadMe: true,
+      deleteMe: true,
+    },
   };
 
   const proExtra: PermissionMap = {

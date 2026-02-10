@@ -461,6 +461,7 @@
     "profile": {
       "matches": "Mes opportunités",
       "savedSearches": "Recherches sauvegardées",
+      "alerts": "Boite d'alertes",
       "account": "Mon profil",
       "logout": "Se déconnecter",
       "menuLabel": "Ouvrir le menu du profil"
@@ -1644,6 +1645,50 @@
         "create": "Impossible de créer cette recherche sauvegardée. Veuillez réessayer.",
         "update": "Impossible de mettre à jour cette recherche sauvegardée. Veuillez réessayer.",
         "delete": "Impossible de supprimer cette recherche sauvegardée. Veuillez réessayer."
+      }
+    },
+    "alerts": {
+      "title": "Boite d'alertes",
+      "subtitle": "Suivez les alertes proactives generees depuis vos recherches sauvegardees et votre activite.",
+      "loading": "Chargement de vos alertes...",
+      "empty": "Aucune alerte pour le moment. Generez des alertes depuis vos recherches sauvegardees.",
+      "list": {
+        "title": "Mes alertes"
+      },
+      "labels": {
+        "unreadCount": "{{ count }} non lues",
+        "createdAt": "Creee le"
+      },
+      "states": {
+        "read": "Lue",
+        "unread": "Non lue"
+      },
+      "sources": {
+        "savedSearch": "Recherche sauvegardee",
+        "system": "Systeme"
+      },
+      "severity": {
+        "info": "Info",
+        "success": "Succes",
+        "warning": "Avertissement",
+        "critical": "Critique"
+      },
+      "actions": {
+        "generate": "Generer des alertes",
+        "generateLoading": "Generation...",
+        "markAllRead": "Tout marquer comme lu",
+        "markAllReadLoading": "Mise a jour...",
+        "clearRead": "Supprimer les lues",
+        "clearReadLoading": "Suppression...",
+        "markRead": "Marquer lue",
+        "markUnread": "Marquer non lue",
+        "delete": "Supprimer"
+      },
+      "errors": {
+        "load": "Impossible de charger les alertes. Veuillez reessayer.",
+        "generate": "Impossible de generer les alertes pour le moment. Veuillez reessayer.",
+        "update": "Impossible de mettre a jour cette alerte. Veuillez reessayer.",
+        "delete": "Impossible de supprimer cette alerte. Veuillez reessayer."
       }
     },
     "statistics": {

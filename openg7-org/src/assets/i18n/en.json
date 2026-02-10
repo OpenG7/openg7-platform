@@ -461,6 +461,7 @@
     "profile": {
       "matches": "My matches",
       "savedSearches": "Saved searches",
+      "alerts": "Alerts inbox",
       "account": "My profile",
       "logout": "Sign out",
       "menuLabel": "Open profile menu"
@@ -1755,6 +1756,50 @@
         "create": "Unable to create this saved search. Please try again.",
         "update": "Unable to update this saved search. Please try again.",
         "delete": "Unable to delete this saved search. Please try again."
+      }
+    },
+    "alerts": {
+      "title": "Alerts inbox",
+      "subtitle": "Track proactive alerts generated from your saved searches and workflow activity.",
+      "loading": "Loading your alerts...",
+      "empty": "No alerts yet. Generate alerts from your saved searches to get started.",
+      "list": {
+        "title": "My alerts"
+      },
+      "labels": {
+        "unreadCount": "{{ count }} unread",
+        "createdAt": "Created"
+      },
+      "states": {
+        "read": "Read",
+        "unread": "Unread"
+      },
+      "sources": {
+        "savedSearch": "Saved search",
+        "system": "System"
+      },
+      "severity": {
+        "info": "Info",
+        "success": "Success",
+        "warning": "Warning",
+        "critical": "Critical"
+      },
+      "actions": {
+        "generate": "Generate alerts",
+        "generateLoading": "Generating...",
+        "markAllRead": "Mark all read",
+        "markAllReadLoading": "Updating...",
+        "clearRead": "Clear read",
+        "clearReadLoading": "Clearing...",
+        "markRead": "Mark read",
+        "markUnread": "Mark unread",
+        "delete": "Delete"
+      },
+      "errors": {
+        "load": "Unable to load alerts. Please try again.",
+        "generate": "Unable to generate alerts right now. Please try again.",
+        "update": "Unable to update this alert. Please try again.",
+        "delete": "Unable to delete this alert. Please try again."
       }
     },
     "terms": {

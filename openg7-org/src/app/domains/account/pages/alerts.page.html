@@ -1,0 +1,154 @@
+<section
+  class="relative isolate mx-auto w-full max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8"
+  data-og7="user-alerts"
+>
+  <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(ellipse_at_top,rgba(14,116,144,0.18),transparent_70%)]"></div>
+  <div class="pointer-events-none absolute -left-20 top-24 -z-10 h-56 w-56 rounded-full bg-cyan-200/35 blur-3xl"></div>
+  <div class="pointer-events-none absolute -right-20 top-20 -z-10 h-64 w-64 rounded-full bg-sky-100/60 blur-3xl"></div>
+
+  <header class="rounded-3xl border border-slate-200/80 bg-white/90 p-6 shadow-[0_24px_60px_-38px_rgba(15,23,42,0.45)] backdrop-blur">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-semibold text-slate-900 sm:text-4xl">
+          {{ 'pages.alerts.title' | translate }}
+        </h1>
+        <p class="mt-2 max-w-3xl text-sm text-slate-600 sm:text-base">
+          {{ 'pages.alerts.subtitle' | translate }}
+        </p>
+      </div>
+      <div class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700" data-og7-id="alerts-unread-count">
+        {{ 'pages.alerts.labels.unreadCount' | translate:{ count: unreadCount() } }}
+      </div>
+    </div>
+  </header>
+
+  <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)]">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">
+        {{ 'pages.alerts.list.title' | translate }}
+      </h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 disabled:opacity-50"
+          (click)="onMarkAllRead()"
+          [disabled]="markAllReadPending() || unreadCount() === 0 || loading()"
+          data-og7-id="alerts-mark-all-read"
+        >
+          <ng-container *ngIf="markAllReadPending(); else markAllReadLabel">
+            {{ 'pages.alerts.actions.markAllReadLoading' | translate }}
+          </ng-container>
+          <ng-template #markAllReadLabel>{{ 'pages.alerts.actions.markAllRead' | translate }}</ng-template>
+        </button>
+
+        <button
+          type="button"
+          class="inline-flex items-center rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 shadow-sm transition hover:bg-rose-100 disabled:opacity-50"
+          (click)="onClearRead()"
+          [disabled]="clearReadPending() || !hasReadEntries() || loading()"
+          data-og7-id="alerts-clear-read"
+        >
+          <ng-container *ngIf="clearReadPending(); else clearReadLabel">
+            {{ 'pages.alerts.actions.clearReadLoading' | translate }}
+          </ng-container>
+          <ng-template #clearReadLabel>{{ 'pages.alerts.actions.clearRead' | translate }}</ng-template>
+        </button>
+
+        <button
+          type="button"
+          class="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50"
+          (click)="onGenerate()"
+          [disabled]="generating()"
+          data-og7-id="alerts-generate"
+        >
+          <ng-container *ngIf="generating(); else generateLabel">
+            {{ 'pages.alerts.actions.generateLoading' | translate }}
+          </ng-container>
+          <ng-template #generateLabel>{{ 'pages.alerts.actions.generate' | translate }}</ng-template>
+        </button>
+      </div>
+    </div>
+
+    <p
+      *ngIf="error() as errorKey"
+      class="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700"
+      data-og7-id="alerts-error"
+    >
+      {{ errorKey | translate }}
+    </p>
+
+    <ng-container *ngIf="loading(); else ready">
+      <p class="mt-4 text-sm text-slate-600">{{ 'pages.alerts.loading' | translate }}</p>
+    </ng-container>
+
+    <ng-template #ready>
+      <p *ngIf="!hasEntries()" class="mt-4 text-sm text-slate-600" data-og7-id="alerts-empty">
+        {{ 'pages.alerts.empty' | translate }}
+      </p>
+
+      <ul *ngIf="hasEntries()" class="mt-4 space-y-3">
+        <li
+          *ngFor="let entry of entries(); trackBy: trackById"
+          class="rounded-xl border border-slate-200 bg-slate-50/70 p-4"
+          data-og7="user-alert-item"
+          [attr.data-og7-state]="alertState(entry)"
+        >
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide" [ngClass]="severityClasses(entry)" data-og7-id="alert-severity">
+                  {{ ('pages.alerts.severity.' + entry.severity) | translate }}
+                </span>
+                <span class="inline-flex rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-600">
+                  {{ sourceLabel(entry) | translate }}
+                </span>
+                <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-medium"
+                  [class.border-slate-200]="entry.isRead"
+                  [class.bg-white]="entry.isRead"
+                  [class.text-slate-600]="entry.isRead"
+                  [class.border-amber-200]="!entry.isRead"
+                  [class.bg-amber-50]="!entry.isRead"
+                  [class.text-amber-700]="!entry.isRead"
+                  data-og7-id="alert-read-badge"
+                >
+                  {{ ('pages.alerts.states.' + alertState(entry)) | translate }}
+                </span>
+              </div>
+
+              <p class="mt-2 text-sm font-semibold text-slate-900">
+                {{ entry.title }}
+              </p>
+              <p class="mt-1 text-sm text-slate-700">
+                {{ entry.message }}
+              </p>
+              <p class="mt-2 text-xs text-slate-500">
+                {{ 'pages.alerts.labels.createdAt' | translate }}: {{ entry.createdAt | date:'medium' }}
+              </p>
+            </div>
+
+            <div class="flex shrink-0 flex-row gap-2 sm:flex-col">
+              <button
+                type="button"
+                class="inline-flex items-center rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 disabled:opacity-50"
+                (click)="onToggleRead(entry)"
+                [disabled]="isPending(entry.id)"
+                data-og7-id="alert-toggle-read"
+              >
+                {{ (entry.isRead ? 'pages.alerts.actions.markUnread' : 'pages.alerts.actions.markRead') | translate }}
+              </button>
+              <button
+                type="button"
+                class="inline-flex items-center rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
+                (click)="onDelete(entry.id)"
+                [disabled]="isPending(entry.id)"
+                data-og7-id="alert-delete"
+              >
+                {{ 'pages.alerts.actions.delete' | translate }}
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </ng-template>
+  </section>
+</section>

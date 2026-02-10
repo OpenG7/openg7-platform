@@ -77,6 +77,7 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Opportunités & analytics | og7-opportunity-impact-banner | og7-opportunity-impact-banner | OpportunityImpactBannerComponent | openg7-org/src/app/domains/opportunities/opportunities/ui/opportunity-impact-banner/opportunity-impact-banner.component.ts | ok |  |
 | Opportunités & analytics | og7-home-statistics-section | og7-home-statistics-section | HomeStatisticsSectionComponent | openg7-org/src/app/domains/home/feature/home-statistics-section/home-statistics-section.component.ts | ok |  |
 | Opportunités & analytics | og7-home-inputs-section | og7-home-inputs-section | HomeInputsSectionComponent | openg7-org/src/app/domains/home/feature/home-inputs-section/home-inputs-section.component.ts | ok |  |
+| Conformité & i18n / Auth | og7-alerts-page | og7-alerts-page | AlertsPage | openg7-org/src/app/domains/account/pages/alerts.page.ts | ok | Inbox des alertes utilisateur connecté. |
 
 ## Registry des sélecteurs [data-og7*] (hooks UI & tests)
 
@@ -92,6 +93,7 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Conformité & i18n / Auth | [data-og7="auth-register"] | RegisterPage | openg7-org/src/app/domains/auth/pages/register.page.html | ok | Présent sur la page d’inscription. |
 | Conformité & i18n / Auth | [data-og7="access-denied"] | AccessDeniedPage | openg7-org/src/app/domains/auth/pages/access-denied.page.html | ok | Présent sur la page d’accès refusé. |
 | Conformité & i18n / Auth | [data-og7="user-profile"] | ProfilePage | openg7-org/src/app/domains/account/pages/profile.page.html | ok | Présent sur la page profil. |
+| Conformité & i18n / Auth | [data-og7="user-alerts"] | AlertsPage | openg7-org/src/app/domains/account/pages/alerts.page.html | ok | Inbox des alertes utilisateur connecte. |
 | Hero & marketing | [data-og7="hero"] | HeroSectionComponent | openg7-org/src/app/shared/components/hero/hero-section/hero-section.component.ts | ok | Selector actuel du composant. |
 | Hero & marketing | [data-og7="hero-copy"] | HeroCopyComponent | openg7-org/src/app/shared/components/hero/hero-copy/hero-copy.component.ts | ok |  |
 | Hero & marketing | [data-og7="hero-ctas"] | HeroCtasComponent | openg7-org/src/app/shared/components/hero/hero-ctas/hero-ctas.component.ts | ok |  |
@@ -112,6 +114,7 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Recherche & filtres | [data-og7="filters"][data-og7-id="filters-group"] | GlobalFiltersComponent | openg7-org/src/app/shared/components/filters/global-filters.component.ts | ok |  |
 | Recherche & filtres | [data-og7="filters"][data-og7-id="sector-carousel"] | SectorCarouselComponent | openg7-org/src/app/shared/components/filters/sector-carousel.component.ts | ok |  |
 | Recherche & filtres | [data-og7="search-box"] | SiteHeaderComponent | openg7-org/src/app/shared/components/layout/site-header.component.ts | planned | Nom en kebab-case aligné sur la convention data-og7 ; sera branché avec l’omnibox. |
+| Layout / nav / a11y | [data-og7-id="alerts"] | SiteHeaderComponent | openg7-org/src/app/shared/components/layout/site-header/site-header.component.html | ok | Lien menu profil vers /alerts (desktop + mobile). |
 | Commerce & entreprises | [data-og7="company-table"] | CompanyTableComponent | openg7-org/src/app/shared/components/company/company-table.component.ts | ok |  |
 | Commerce & entreprises | [data-og7="company-detail"] | CompanyDetailComponent | openg7-org/src/app/shared/components/company/company-detail.component.ts | ok |  |
 

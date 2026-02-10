@@ -14,6 +14,7 @@ export const STRAPI_ROUTES = {
     meProfileEmailChange: '/api/users/me/profile/email-change',
     meFavorites: '/api/users/me/favorites',
     meSavedSearches: '/api/users/me/saved-searches',
+    meAlerts: '/api/users/me/alerts',
   },
   upload: {
     files: '/api/upload',
@@ -34,3 +35,17 @@ export const strapiSavedSearchById = (id: string | number): string => {
   const savedSearchId = encodeURIComponent(String(id));
   return `${STRAPI_ROUTES.users.meSavedSearches}/${savedSearchId}`;
 };
+
+export const strapiAlertById = (id: string | number): string => {
+  const alertId = encodeURIComponent(String(id));
+  return `${STRAPI_ROUTES.users.meAlerts}/${alertId}`;
+};
+
+export const strapiAlertReadById = (id: string | number): string => {
+  const alertId = encodeURIComponent(String(id));
+  return `${STRAPI_ROUTES.users.meAlerts}/${alertId}/read`;
+};
+
+export const strapiAlertReadAll = (): string => `${STRAPI_ROUTES.users.meAlerts}/read-all`;
+export const strapiAlertDeleteRead = (): string => `${STRAPI_ROUTES.users.meAlerts}/read`;
+export const strapiGenerateAlerts = (): string => `${STRAPI_ROUTES.users.meAlerts}/generate`;
