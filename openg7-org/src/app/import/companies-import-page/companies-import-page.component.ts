@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientService } from '@app/core/http/http-client.service';
+import { CatalogActions } from '@app/state/catalog/catalog.actions';
+import { Company as CatalogCompany } from '@app/state/catalog/catalog.selectors';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
@@ -175,6 +179,8 @@ export class CompaniesImportPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
   private readonly importService = inject(CompaniesImportService);
+  private readonly http = inject(HttpClientService);
+  private readonly store = inject(Store);
 
   readonly fileContentRaw = signal<string | null>(null);
   readonly parsedCompanies = signal<Og7ImportedCompany[]>([]);
@@ -252,12 +258,25 @@ export class CompaniesImportPageComponent {
       .importCompanies(this.parsedCompanies())
       .pipe(finalize(() => this.isImporting.set(false)))
       .subscribe({
-        next: () => {
+        next: (response) => {
+          const result = response?.data;
+          const processedCount = result?.processed ?? this.parsedCompanies().length;
           this.importSuccessMessage.set(
             this.translate.instant('importCompaniesPage.successMessage', {
-              count: this.parsedCompanies().length,
+              count: processedCount,
             })
           );
+          if (result?.errors?.length) {
+            this.validationErrors.set(
+              result.errors.map((entry) => {
+                const businessId = entry.businessId ?? 'n/a';
+                return `#${entry.index} (${businessId}): ${entry.reason}`;
+              })
+            );
+          } else {
+            this.validationErrors.set([]);
+          }
+          this.refreshCatalogCompanies();
         },
         error: (error: unknown) => {
           console.error('OpenG7 companies import failed', error);
@@ -377,5 +396,60 @@ export class CompaniesImportPageComponent {
     });
 
     return { validCompanies, errors };
+  }
+
+  private refreshCatalogCompanies(): void {
+    this.http.get<unknown>('/api/companies').subscribe({
+      next: (response) => {
+        const companies = this.mapCatalogCompanies(response);
+        if (companies.length > 0) {
+          this.store.dispatch(CatalogActions.companiesUpdated({ companies }));
+        }
+      },
+      error: (error) => {
+        console.warn('Unable to refresh catalog companies after import.', error);
+      },
+    });
+  }
+
+  private mapCatalogCompanies(payload: unknown): CatalogCompany[] {
+    const entries = this.extractCollectionItems(payload);
+    const items: CatalogCompany[] = [];
+
+    for (const entry of entries) {
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+        continue;
+      }
+      const record = entry as {
+        id?: unknown;
+        name?: unknown;
+        attributes?: {
+          name?: unknown;
+        } | null;
+      };
+      const id = record.id;
+      const nameCandidate = record.name ?? record.attributes?.name;
+      const name = typeof nameCandidate === 'string' ? nameCandidate.trim() : '';
+      if ((typeof id !== 'number' && typeof id !== 'string') || !name) {
+        continue;
+      }
+      items.push({
+        id: String(id),
+        name,
+      });
+    }
+
+    return items;
+  }
+
+  private extractCollectionItems(payload: unknown): unknown[] {
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      return [];
+    }
+    const data = (payload as { data?: unknown }).data;
+    return Array.isArray(data) ? data : [];
   }
 }

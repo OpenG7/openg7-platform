@@ -30,6 +30,9 @@
   <p *ngIf="viewModel.loading" class="og7-importation-flow__loading">
     {{ 'pages.importation.flow.loading' | translate }}
   </p>
+  <p *ngIf="!viewModel.loading && viewModel.error" class="og7-importation-flow__error" role="status">
+    {{ viewModel.error | translate }}
+  </p>
 
   <div
     *ngIf="!viewModel.loading"

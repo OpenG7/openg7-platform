@@ -505,6 +505,7 @@
     "more": {
       "registration": "Registration",
       "importation": "Import",
+      "bulkImport": "Bulk import",
       "stats": "Statistics",
       "pricing": "Pricing",
       "discord": "Discord",
@@ -1325,6 +1326,16 @@
         },
         "compare": {
           "label": "Compare against another period"
+        },
+        "actions": {
+          "apply": "Apply"
+        },
+        "validation": {
+          "periodMonth": "Expected format: YYYY-MM (e.g. 2024-03).",
+          "periodQuarter": "Expected format: YYYY-QN (e.g. 2024-Q1).",
+          "periodYear": "Expected format: YYYY (e.g. 2024).",
+          "originCodes": "Use 2-letter ISO codes separated by commas (e.g. US, MX, EU).",
+          "compareWith": "Comparison period must match the selected granularity format."
         }
       },
       "kpis": {
@@ -1353,7 +1364,8 @@
         "list": "Origin flows",
         "drilldown": "Drill down",
         "empty": "No flows available for the selected filters.",
-        "loading": "Loading trade flows…"
+        "loading": "Loading trade flows…",
+        "error": "Unable to load trade flows right now."
       },
       "commodities": {
         "title": "Commodity deep dive",
@@ -1372,6 +1384,7 @@
         },
         "empty": "No commodity found for the current filters.",
         "loading": "Loading commodity analytics…",
+        "error": "Unable to load commodity analytics right now.",
         "flags": {
           "title": "Risk details",
           "level": {
@@ -1392,18 +1405,24 @@
         "diversification": "Diversification",
         "reliability": "Reliability",
         "lastReviewed": "Last reviewed on {{ date }}",
-        "empty": "No supplier insight available for this selection."
+        "empty": "No supplier insight available for this selection.",
+        "error": "Unable to load suppliers right now."
       },
       "collaboration": {
         "title": "Collaboration hub",
         "subtitle": "Activate teams around watchlists, annotations and scheduled reports.",
+        "error": "Unable to load collaboration data right now.",
         "watchlists": {
           "title": "Shared watchlists",
           "newLabel": "Create a new watchlist",
           "placeholder": "Name your watchlist",
           "create": "Create",
           "updated": "Updated {{ date }}",
-          "empty": "No watchlists yet — create one to monitor your filters."
+          "empty": "No watchlists yet — create one to monitor your filters.",
+          "validation": {
+            "required": "Enter a watchlist name.",
+            "minLength": "Watchlist name must contain at least 3 characters."
+          }
         },
         "annotations": {
           "title": "Recent annotations",
@@ -1418,7 +1437,11 @@
           "monthly": "Monthly",
           "quarterly": "Quarterly",
           "notes": "Optional notes",
-          "submit": "Schedule report"
+          "submit": "Schedule report",
+          "validation": {
+            "required": "Add at least one recipient email address.",
+            "invalid": "One or more recipient email addresses are invalid."
+          }
         }
       },
       "knowledge": {
@@ -1426,7 +1449,8 @@
         "subtitle": "Articles and alerts curated for the importation workspace.",
         "loading": "Loading knowledge articles…",
         "read": "Read article",
-        "empty": "No knowledge content available yet."
+        "empty": "No knowledge content available yet.",
+        "error": "Unable to load knowledge content right now."
       }
     },
     "pricing": {

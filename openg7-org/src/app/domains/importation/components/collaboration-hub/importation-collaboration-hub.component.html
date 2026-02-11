@@ -15,13 +15,18 @@
           <input
             type="text"
             [(ngModel)]="watchlistName"
+            (ngModelChange)="clearWatchlistError()"
             name="watchlistName"
             placeholder="{{ 'pages.importation.collaboration.watchlists.placeholder' | translate }}"
+            [attr.aria-invalid]="watchlistErrorKey ? 'true' : null"
           />
         </label>
+        <p *ngIf="watchlistErrorKey" class="og7-importation-collaboration__error">
+          {{ watchlistErrorKey | translate }}
+        </p>
         <button type="submit">{{ 'pages.importation.collaboration.watchlists.create' | translate }}</button>
       </form>
-      <p *ngIf="viewModel.error" class="og7-importation-collaboration__error">{{ viewModel.error }}</p>
+      <p *ngIf="viewModel.error" class="og7-importation-collaboration__error">{{ viewModel.error | translate }}</p>
       <div class="og7-importation-collaboration__watchlist-grid">
         <article *ngFor="let watchlist of viewModel.watchlists; trackBy: trackWatchlist">
           <header>
@@ -69,9 +74,14 @@
             type="text"
             name="recipients"
             [(ngModel)]="scheduleDraft.recipients"
+            (ngModelChange)="clearScheduleRecipientsError()"
             placeholder="a@openg7.org, b@openg7.org"
+            [attr.aria-invalid]="scheduleRecipientsErrorKey ? 'true' : null"
           />
         </label>
+        <p *ngIf="scheduleRecipientsErrorKey" class="og7-importation-collaboration__error">
+          {{ scheduleRecipientsErrorKey | translate }}
+        </p>
         <div class="og7-importation-collaboration__schedule-grid">
           <label>
             <span>{{ 'pages.importation.collaboration.schedule.format' | translate }}</span>

@@ -56,14 +56,17 @@ describe('ImportationViewModelMapper', () => {
       dataProvider: 'StatCan',
     };
 
-    const vm = mapper.mapFlowMap(filters, response, null, true, true);
+    const vm = mapper.mapFlowMap(filters, response, null, true, true, null);
 
     expect(vm.loading).toBeTrue();
     expect(vm.timeline.length).toBe(2);
     expect(vm.legendMin).toBe(400);
     expect(vm.legendMax).toBe(600);
     expect(vm.flows[0]).toEqual(
-      jasmine.objectContaining({ originCode: 'US', corridors: jasmine.arrayContaining([{ target: 'ON', value: 300 }]) })
+      jasmine.objectContaining({
+        originCode: 'US',
+        corridors: jasmine.arrayContaining([jasmine.objectContaining({ target: 'ON', value: 300 })]),
+      })
     );
   });
 
@@ -88,7 +91,7 @@ describe('ImportationViewModelMapper', () => {
       { id: 'shortage', severity: 'high', title: 'Shortage risk', description: 'Global shortage' },
     ];
 
-    const vm = mapper.mapCommoditySection(filters, collections, riskFlags, 'top', 'steel', false, true);
+    const vm = mapper.mapCommoditySection(filters, collections, riskFlags, 'top', 'steel', false, true, null);
 
     expect(vm.loading).toBeFalse();
     expect(vm.rows.length).toBe(1);

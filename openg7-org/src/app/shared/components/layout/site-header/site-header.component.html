@@ -142,6 +142,14 @@
             {{ 'header.more.importation' | translate }}
           </a>
           <a
+            routerLink="/bulk-import"
+            (click)="toggleMore()"
+            class="block rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-white/10 hover:text-white"
+            data-og7-id="bulk-import"
+          >
+            {{ 'header.more.bulkImport' | translate }}
+          </a>
+          <a
             routerLink="/statistics"
             (click)="toggleMore()"
             class="block rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-white/10 hover:text-white"
@@ -332,6 +340,14 @@
         class="rounded-lg px-3 py-2 text-sm text-white hover:bg-white/10 hover:text-white"
       >
         {{ 'header.more.importation' | translate }}
+      </a>
+      <a
+        routerLink="/bulk-import"
+        (click)="closeMobileMenu()"
+        class="rounded-lg px-3 py-2 text-sm text-white hover:bg-white/10 hover:text-white"
+        data-og7-id="bulk-import"
+      >
+        {{ 'header.more.bulkImport' | translate }}
       </a>
       <a
         href="https://discord.gg/openg7"

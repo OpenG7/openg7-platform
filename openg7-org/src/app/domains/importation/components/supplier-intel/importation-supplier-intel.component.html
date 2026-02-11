@@ -7,6 +7,9 @@
   <p *ngIf="viewModel.loading" class="og7-importation-suppliers__loading">
     {{ 'pages.importation.suppliers.loading' | translate }}
   </p>
+  <p *ngIf="!viewModel.loading && viewModel.error" class="og7-importation-suppliers__error" role="status">
+    {{ viewModel.error | translate }}
+  </p>
 
   <div *ngIf="!viewModel.loading" class="og7-importation-suppliers__grid">
     <article *ngFor="let supplier of viewModel.suppliers; trackBy: trackSupplier">

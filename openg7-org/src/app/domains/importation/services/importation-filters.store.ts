@@ -145,7 +145,8 @@ export class ImportationFiltersStore {
       this.stateSig().flows,
       this.stateSig().timelinePoint,
       this.stateSig().playing,
-      this.stateSig().flowsLoading
+      this.stateSig().flowsLoading,
+      this.stateSig().flowsError
     )
   );
 
@@ -157,12 +158,17 @@ export class ImportationFiltersStore {
       this.stateSig().activeTab,
       this.stateSig().selectedCommodityId,
       this.stateSig().commoditiesLoading,
-      this.permissions.canExportData()
+      this.permissions.canExportData(),
+      this.stateSig().commoditiesError
     )
   );
 
   readonly supplierVm: Signal<ImportationSupplierSectionViewModel> = computed(() =>
-    this.mapper.mapSuppliers(this.stateSig().suppliers, this.stateSig().suppliersLoading)
+    this.mapper.mapSuppliers(
+      this.stateSig().suppliers,
+      this.stateSig().suppliersLoading,
+      this.stateSig().suppliersError
+    )
   );
 
   readonly collaborationVm: Signal<ImportationCollaborationViewModel> = computed(() =>
@@ -180,7 +186,11 @@ export class ImportationFiltersStore {
   );
 
   readonly knowledgeVm: Signal<ImportationKnowledgeSectionViewModel> = computed(() =>
-    this.mapper.mapKnowledge(this.stateSig().knowledge, this.stateSig().knowledgeLoading)
+    this.mapper.mapKnowledge(
+      this.stateSig().knowledge,
+      this.stateSig().knowledgeLoading,
+      this.stateSig().knowledgeError
+    )
   );
 
   constructor() {

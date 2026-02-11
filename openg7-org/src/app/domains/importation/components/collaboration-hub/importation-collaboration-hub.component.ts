@@ -27,12 +27,17 @@ interface ScheduleDraft {
  * @returns ImportationCollaborationHubComponent géré par le framework.
  */
 export class ImportationCollaborationHubComponent {
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
+
   @Input({ required: true }) viewModel!: ImportationCollaborationViewModel;
 
   @Output() createWatchlist = new EventEmitter<string>();
   @Output() scheduleReport = new EventEmitter<{ recipients: readonly string[]; format: 'csv' | 'json' | 'look'; frequency: 'weekly' | 'monthly' | 'quarterly'; notes?: string }>();
 
   watchlistName = '';
+  watchlistErrorKey: string | null = null;
+  scheduleRecipientsErrorKey: string | null = null;
+
   scheduleDraft: ScheduleDraft = {
     recipients: '',
     format: 'csv',
@@ -49,8 +54,14 @@ export class ImportationCollaborationHubComponent {
     }
     const trimmed = this.watchlistName.trim();
     if (!trimmed) {
+      this.watchlistErrorKey = 'pages.importation.collaboration.watchlists.validation.required';
       return;
     }
+    if (trimmed.length < 3) {
+      this.watchlistErrorKey = 'pages.importation.collaboration.watchlists.validation.minLength';
+      return;
+    }
+    this.watchlistErrorKey = null;
     this.createWatchlist.emit(trimmed);
     this.watchlistName = '';
   }
@@ -59,13 +70,19 @@ export class ImportationCollaborationHubComponent {
     if (!this.viewModel.canScheduleReports) {
       return;
     }
-    const recipients = this.scheduleDraft.recipients
-      .split(',')
-      .map((value) => value.trim())
-      .filter((value) => Boolean(value));
+    const recipients = this.normalizeRecipients(this.scheduleDraft.recipients);
     if (!recipients.length) {
+      this.scheduleRecipientsErrorKey = 'pages.importation.collaboration.schedule.validation.required';
       return;
     }
+
+    const invalidRecipient = recipients.find((email) => !this.emailPattern.test(email));
+    if (invalidRecipient) {
+      this.scheduleRecipientsErrorKey = 'pages.importation.collaboration.schedule.validation.invalid';
+      return;
+    }
+
+    this.scheduleRecipientsErrorKey = null;
     this.scheduleReport.emit({
       recipients,
       format: this.scheduleDraft.format,
@@ -73,5 +90,26 @@ export class ImportationCollaborationHubComponent {
       notes: this.scheduleDraft.notes?.trim() || undefined,
     });
     this.scheduleDraft = { recipients: '', format: 'csv', frequency: 'monthly', notes: '' };
+  }
+
+  clearWatchlistError(): void {
+    this.watchlistErrorKey = null;
+  }
+
+  clearScheduleRecipientsError(): void {
+    this.scheduleRecipientsErrorKey = null;
+  }
+
+  private normalizeRecipients(raw: string): string[] {
+    const unique = new Set<string>();
+    for (const value of raw.split(',')) {
+      const trimmed = value.trim().toLowerCase();
+      if (!trimmed) {
+        continue;
+      }
+      unique.add(trimmed);
+    }
+
+    return Array.from(unique);
   }
 }

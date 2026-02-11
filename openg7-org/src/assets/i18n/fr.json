@@ -505,6 +505,7 @@
     "more": {
       "registration": "Inscription",
       "importation": "Importation",
+      "bulkImport": "Import en masse",
       "stats": "Statistiques",
       "pricing": "Abonnements",
       "discord": "Discord",
@@ -1214,6 +1215,16 @@
         },
         "compare": {
           "label": "Comparer à une autre période"
+        },
+        "actions": {
+          "apply": "Appliquer"
+        },
+        "validation": {
+          "periodMonth": "Format attendu : AAAA-MM (ex. 2024-03).",
+          "periodQuarter": "Format attendu : AAAA-QN (ex. 2024-Q1).",
+          "periodYear": "Format attendu : AAAA (ex. 2024).",
+          "originCodes": "Utilisez des codes ISO à 2 lettres séparés par des virgules (ex. US, MX, EU).",
+          "compareWith": "La période de comparaison doit respecter le format de la granularité sélectionnée."
         }
       },
       "kpis": {
@@ -1242,7 +1253,8 @@
         "list": "Flux par origine",
         "drilldown": "Explorer",
         "empty": "Aucun flux disponible avec ces filtres.",
-        "loading": "Chargement des flux commerciaux…"
+        "loading": "Chargement des flux commerciaux…",
+        "error": "Impossible de charger les flux commerciaux pour le moment."
       },
       "commodities": {
         "title": "Analyse des produits",
@@ -1261,6 +1273,7 @@
         },
         "empty": "Aucun produit trouvé pour cette sélection.",
         "loading": "Chargement des analyses produits…",
+        "error": "Impossible de charger les analyses produits pour le moment.",
         "flags": {
           "title": "Détails des risques",
           "level": {
@@ -1281,18 +1294,24 @@
         "diversification": "Diversification",
         "reliability": "Fiabilité",
         "lastReviewed": "Dernière revue le {{ date }}",
-        "empty": "Aucun renseignement fournisseur pour cette sélection."
+        "empty": "Aucun renseignement fournisseur pour cette sélection.",
+        "error": "Impossible de charger les fournisseurs pour le moment."
       },
       "collaboration": {
         "title": "Espace de collaboration",
         "subtitle": "Activez les équipes autour des listes de veille, annotations et rapports planifiés.",
+        "error": "Impossible de charger les données de collaboration pour le moment.",
         "watchlists": {
           "title": "Listes de veille partagées",
           "newLabel": "Créer une nouvelle liste",
           "placeholder": "Nom de la liste",
           "create": "Créer",
           "updated": "Actualisée le {{ date }}",
-          "empty": "Aucune liste de veille — créez-en une pour suivre vos filtres."
+          "empty": "Aucune liste de veille — créez-en une pour suivre vos filtres.",
+          "validation": {
+            "required": "Saisissez un nom de liste de veille.",
+            "minLength": "Le nom de la liste doit contenir au moins 3 caractères."
+          }
         },
         "annotations": {
           "title": "Annotations récentes",
@@ -1307,7 +1326,11 @@
           "monthly": "Mensuelle",
           "quarterly": "Trimestrielle",
           "notes": "Notes optionnelles",
-          "submit": "Planifier le rapport"
+          "submit": "Planifier le rapport",
+          "validation": {
+            "required": "Ajoutez au moins une adresse courriel destinataire.",
+            "invalid": "Une ou plusieurs adresses courriel ne sont pas valides."
+          }
         }
       },
       "knowledge": {
@@ -1315,7 +1338,8 @@
         "subtitle": "Articles et alertes sélectionnés pour l'espace importation.",
         "loading": "Chargement des contenus…",
         "read": "Lire l'article",
-        "empty": "Aucun contenu disponible pour le moment."
+        "empty": "Aucun contenu disponible pour le moment.",
+        "error": "Impossible de charger les contenus de connaissance pour le moment."
       }
     },
     "pricing": {

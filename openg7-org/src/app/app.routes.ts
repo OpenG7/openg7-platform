@@ -4,7 +4,6 @@ import { authGuard } from './core/auth/auth.guard';
 import { permissionsGuard } from './core/auth/permissions.guard';
 import { profilePendingChangesGuard } from './core/auth/profile-pending-changes.guard';
 import { roleGuard } from './core/auth/role.guard';
-import { featureFlagGuard } from './core/feature-flags/feature-flag.guard';
 
 export const routes: Routes = [
   {
@@ -45,11 +44,35 @@ export const routes: Routes = [
     canMatch: [authGuard],
   },
   {
+    path: 'import',
+    redirectTo: 'importation',
+    pathMatch: 'full',
+  },
+  {
+    path: 'imports',
+    redirectTo: 'importation',
+    pathMatch: 'full',
+  },
+  {
     path: 'importation',
     loadComponent: () =>
       import('./domains/importation/pages/importation.page').then(m => m.ImportationPage),
-    canMatch: [authGuard, roleGuard, featureFlagGuard('importationModule')],
-    data: { roles: ['editor', 'admin'] },
+    canMatch: [authGuard],
+  },
+  {
+    path: 'bulk-import',
+    redirectTo: 'import/companies',
+    pathMatch: 'full',
+  },
+  {
+    path: 'import/bulk',
+    redirectTo: 'import/companies',
+    pathMatch: 'full',
+  },
+  {
+    path: 'importation/bulk-import',
+    redirectTo: 'import/companies',
+    pathMatch: 'full',
   },
   {
     path: 'import/companies',
@@ -57,8 +80,7 @@ export const routes: Routes = [
       import('./import/companies-import-page/companies-import-page.component').then(
         m => m.CompaniesImportPageComponent
       ),
-    canMatch: [authGuard, roleGuard, featureFlagGuard('importationModule')],
-    data: { roles: ['editor', 'admin'] },
+    canMatch: [authGuard],
   },
   {
     path: 'auth/callback',

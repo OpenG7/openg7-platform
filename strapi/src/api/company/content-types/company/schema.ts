@@ -21,6 +21,15 @@ const schema = {
     },
   },
   attributes: {
+    businessId: {
+      type: 'string',
+      unique: true,
+      pluginOptions: {
+        i18n: {
+          localized: false,
+        },
+      },
+    },
     name: {
       type: 'string',
     },
@@ -132,6 +141,14 @@ const schema = {
     },
     secondaryLogoUrl: {
       type: 'string',
+      pluginOptions: {
+        i18n: {
+          localized: false,
+        },
+      },
+    },
+    importMetadata: {
+      type: 'json',
       pluginOptions: {
         i18n: {
           localized: false,
