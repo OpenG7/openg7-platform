@@ -35,6 +35,9 @@ export default async () => {
       updateStatus: true,
     },
     'api::company.company': { update: true },
+    'api::company-import.company-import': {
+      importCompanies: true,
+    },
     'api::feed.feed': {
       index: true,
       create: true,
@@ -74,11 +77,24 @@ export default async () => {
     'api::company.company': { create: true, delete: true },
   };
 
+  const provinceExtra: PermissionMap = {
+    'api::company.company': { create: true, update: true },
+    'api::company-import.company-import': {
+      importCompanies: true,
+    },
+  };
+
   const authenticatedRole = await ensureRole('Authenticated');
   await setRolePermissions(authenticatedRole.id, mergePermissions(baseReadPermissions, authenticatedExtra));
 
   const proRole = await ensureRole('Pro');
   await setRolePermissions(proRole.id, mergePermissions(baseReadPermissions, authenticatedExtra, proExtra));
+
+  const provinceRole = await ensureRole('Province');
+  await setRolePermissions(
+    provinceRole.id,
+    mergePermissions(baseReadPermissions, authenticatedExtra, provinceExtra)
+  );
 
   await ensureRole('Admin');
 };

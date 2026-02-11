@@ -5,6 +5,9 @@
   </header>
 
   <p *ngIf="viewModel.loading" class="og7-importation-knowledge__loading">{{ 'pages.importation.knowledge.loading' | translate }}</p>
+  <p *ngIf="!viewModel.loading && viewModel.error" class="og7-importation-knowledge__error" role="status">
+    {{ viewModel.error | translate }}
+  </p>
 
   <div *ngIf="!viewModel.loading" class="og7-importation-knowledge__grid">
     <article *ngFor="let article of viewModel.articles; trackBy: trackArticle">

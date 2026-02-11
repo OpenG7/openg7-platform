@@ -48,11 +48,22 @@
           <span>{{ 'pages.importation.filters.period.value' | translate }}</span>
           <input
             type="text"
-            [value]="viewModel.filters.filters.periodValue || ''"
-            (blur)="periodValueChange.emit($any($event.target).value || null)"
+            name="periodValueDraft"
+            [(ngModel)]="periodValueDraft"
+            (ngModelChange)="clearPeriodError()"
+            (keydown.enter)="$event.preventDefault(); applyPeriodValue()"
             placeholder="2024-Q1"
+            [attr.aria-invalid]="periodValueErrorKey ? 'true' : null"
           />
         </label>
+        <p *ngIf="periodValueErrorKey" class="og7-importation-overview__field-error">
+          {{ periodValueErrorKey | translate }}
+        </p>
+        <div class="og7-importation-overview__field-actions">
+          <button type="button" (click)="applyPeriodValue()" data-og7="importation-filters" data-og7-id="apply-period">
+            {{ 'pages.importation.filters.actions.apply' | translate }}
+          </button>
+        </div>
       </fieldset>
 
       <fieldset>
@@ -72,11 +83,22 @@
           <span>{{ 'pages.importation.filters.origin.codes' | translate }}</span>
           <input
             type="text"
-            [value]="viewModel.filters.originCodes.join(', ')"
-            (blur)="onOriginCodesBlur($any($event.target).value || '')"
+            name="originCodesDraft"
+            [(ngModel)]="originCodesDraft"
+            (ngModelChange)="clearOriginCodesError()"
+            (keydown.enter)="$event.preventDefault(); applyOriginCodes()"
             placeholder="US, MX, EU"
+            [attr.aria-invalid]="originCodesErrorKey ? 'true' : null"
           />
         </label>
+        <p *ngIf="originCodesErrorKey" class="og7-importation-overview__field-error">
+          {{ originCodesErrorKey | translate }}
+        </p>
+        <div class="og7-importation-overview__field-actions" *ngIf="viewModel.filters.filters.originScope === 'custom'">
+          <button type="button" (click)="applyOriginCodes()" data-og7="importation-filters" data-og7-id="apply-origin-codes">
+            {{ 'pages.importation.filters.actions.apply' | translate }}
+          </button>
+        </div>
       </fieldset>
 
       <fieldset>
@@ -102,11 +124,27 @@
           type="text"
           class="og7-importation-overview__compare-input"
           [disabled]="!viewModel.filters.filters.compareMode"
-          [value]="viewModel.filters.filters.compareWith || ''"
-          (blur)="onCompareWithChange($any($event.target).value || '')"
+          name="compareWithDraft"
+          [(ngModel)]="compareWithDraft"
+          (ngModelChange)="clearCompareError()"
+          (keydown.enter)="$event.preventDefault(); applyCompareWith()"
           placeholder="2023-Q4"
+          [attr.aria-invalid]="compareWithErrorKey ? 'true' : null"
         />
+        <button
+          type="button"
+          class="og7-importation-overview__compare-apply"
+          [disabled]="!viewModel.filters.filters.compareMode"
+          (click)="applyCompareWith()"
+          data-og7="importation-filters"
+          data-og7-id="apply-compare"
+        >
+          {{ 'pages.importation.filters.actions.apply' | translate }}
+        </button>
       </div>
+      <p *ngIf="compareWithErrorKey" class="og7-importation-overview__field-error">
+        {{ compareWithErrorKey | translate }}
+      </p>
     </section>
   </div>
 

@@ -11,6 +11,7 @@
     "strapi": "strapi",
     "seed:dev": "ts-node scripts/seed.ts",
     "test:integration:connections": "node scripts/test-connections-api-integration.js",
+    "test:integration:company-import": "node scripts/test-company-import-api-integration.js",
     "test:integration:corridors": "node scripts/test-corridors-api-integration.js",
     "test:integration:feed": "node scripts/test-feed-api-integration.js",
     "start:trace": "node --trace-deprecation ../node_modules/.bin/ng serve"

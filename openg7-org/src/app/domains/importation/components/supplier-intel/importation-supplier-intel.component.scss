@@ -26,6 +26,16 @@
   color: var(--og7-text-subtle, #475569);
 }
 
+.og7-importation-suppliers__error {
+  margin: 0;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  background: rgba(239, 68, 68, 0.08);
+  padding: 0.75rem 0.9rem;
+  color: #991b1b;
+  font-size: 0.9rem;
+}
+
 .og7-importation-suppliers__grid {
   display: grid;
   gap: 1.25rem;

@@ -234,6 +234,7 @@ const mapCompany = (entity: CompanyEntity | null | undefined) => {
 
   const descriptionRaw = (attributes as Record<string, unknown>).description;
   const websiteRaw = (attributes as Record<string, unknown>).website;
+  const businessIdRaw = (attributes as Record<string, unknown>).businessId;
   const logoRaw = (attributes as Record<string, unknown>).logoUrl;
   const secondaryLogoRaw = (attributes as Record<string, unknown>).secondaryLogoUrl;
   const countryRaw = (attributes as Record<string, unknown>).country;
@@ -241,6 +242,7 @@ const mapCompany = (entity: CompanyEntity | null | undefined) => {
 
   return {
     id: entity.id,
+    businessId: typeof businessIdRaw === 'string' ? businessIdRaw : null,
     name: typeof (attributes as Record<string, unknown>).name === 'string'
       ? ((attributes as Record<string, unknown>).name as string)
       : '',

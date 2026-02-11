@@ -5,7 +5,18 @@ import { Observable } from 'rxjs';
 import { Og7ImportedCompany } from './companies-import.models';
 
 export interface CompaniesImportResponse {
-  message?: string;
+  data: {
+    received: number;
+    processed: number;
+    created: number;
+    updated: number;
+    skipped: number;
+    errors: ReadonlyArray<{
+      index: number;
+      businessId: string | null;
+      reason: string;
+    }>;
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +29,7 @@ export class CompaniesImportService {
    * @param companies Entreprises validées prêtes pour intégration dans l’écosystème OpenG7.
    * @returns Observable résolu lorsque l’API confirme la réception.
    */
-  importCompanies(companies: Og7ImportedCompany[]): Observable<void | CompaniesImportResponse> {
-    return this.http.post<void | CompaniesImportResponse>('/api/import/companies', { companies });
+  importCompanies(companies: Og7ImportedCompany[]): Observable<CompaniesImportResponse> {
+    return this.http.post<CompaniesImportResponse>('/api/import/companies', { companies });
   }
 }

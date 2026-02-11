@@ -18,6 +18,9 @@
   </header>
 
   <div class="og7-importation-commodities__table" *ngIf="!viewModel.loading; else loading">
+    <p *ngIf="viewModel.error" class="og7-importation-commodities__error" role="status">
+      {{ viewModel.error | translate }}
+    </p>
     <table>
       <thead>
         <tr>

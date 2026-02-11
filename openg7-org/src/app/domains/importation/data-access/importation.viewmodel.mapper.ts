@@ -163,7 +163,8 @@ export class ImportationViewModelMapper {
     flows: ImportationFlowsResponseDto | null,
     timelinePoint: string | null,
     playing: boolean,
-    loading: boolean
+    loading: boolean,
+    error: string | null
   ): ImportationFlowMapViewModel {
     const timeline = flows?.timeline ?? [];
     const activeTimeline = this.resolveTimelinePoint(timeline, timelinePoint);
@@ -189,7 +190,7 @@ export class ImportationViewModelMapper {
 
     return {
       loading,
-      error: null,
+      error: error ? 'pages.importation.flow.error' : null,
       timeline: timeline.map((point) => ({
         id: point.period,
         label: point.label,
@@ -215,7 +216,8 @@ export class ImportationViewModelMapper {
     activeTab: ImportationCommodityTab,
     selectedCommodityId: string | null,
     loading: boolean,
-    canExport: boolean
+    canExport: boolean,
+    error: string | null
   ): ImportationCommoditySectionViewModel {
     const rows = this.pickCommodityCollection(collections, activeTab).map((commodity) =>
       this.toCommodityRow(commodity, riskFlags)
@@ -224,7 +226,7 @@ export class ImportationViewModelMapper {
 
     return {
       loading,
-      error: null,
+      error: error ? 'pages.importation.commodities.error' : null,
       activeTab,
       tabs: [
         { id: 'top', label: 'pages.importation.commodities.tabs.top', count: collections?.top.length ?? 0 },
@@ -244,7 +246,8 @@ export class ImportationViewModelMapper {
 
   mapSuppliers(
     suppliers: readonly ImportationSupplierDto[] | null,
-    loading: boolean
+    loading: boolean,
+    error: string | null
   ): ImportationSupplierSectionViewModel {
     const cards: ImportationSupplierCardViewModel[] = (suppliers ?? []).map((supplier) => ({
       id: supplier.id,
@@ -259,7 +262,7 @@ export class ImportationViewModelMapper {
 
     return {
       loading,
-      error: null,
+      error: error ? 'pages.importation.suppliers.error' : null,
       suppliers: cards,
     } satisfies ImportationSupplierSectionViewModel;
   }
@@ -273,7 +276,7 @@ export class ImportationViewModelMapper {
   ): ImportationCollaborationViewModel {
     return {
       loading,
-      error,
+      error: error ? 'pages.importation.collaboration.error' : null,
       watchlists: (watchlists ?? []).map((watchlist) => ({
         id: watchlist.id,
         name: watchlist.name,
@@ -295,7 +298,8 @@ export class ImportationViewModelMapper {
 
   mapKnowledge(
     response: ImportationKnowledgeResponseDto | null,
-    loading: boolean
+    loading: boolean,
+    error: string | null
   ): ImportationKnowledgeSectionViewModel {
     const articles: ImportationKnowledgeArticleCardViewModel[] = (response?.articles ?? []).map((article) => ({
       id: article.id,
@@ -318,7 +322,7 @@ export class ImportationViewModelMapper {
 
     return {
       loading,
-      error: null,
+      error: error ? 'pages.importation.knowledge.error' : null,
       articles,
       cta,
     } satisfies ImportationKnowledgeSectionViewModel;
