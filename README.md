@@ -25,6 +25,21 @@ Detailed guides live in `docs/`:
 - `docs/first-contribution.md`: checklist for a first PR
 - `docs/roadmap.md`: public roadmap and priorities
 
+## Owner Ops dashboard
+
+The platform now includes an owner/admin operations dashboard:
+
+- Frontend route: `/admin/ops`
+- API endpoints:
+  - `GET /api/admin/ops/health`
+  - `GET /api/admin/ops/backups`
+  - `GET /api/admin/ops/imports`
+  - `GET /api/admin/ops/security`
+- Access control: role `Admin` or `Owner` only
+- Strapi policy: `global::owner-admin-ops` (applied on all `/api/admin/ops/*` routes)
+
+The dashboard provides a consolidated view of runtime health, backup visibility, import throughput, and security indicators.
+
 ## Where does code live?
 
 - Read CHARTER.md for the scope and non-goals of openg7-platform.
@@ -79,6 +94,21 @@ Les guides dÃ©taillÃ©s sont dans `docs/` :
 - `docs/strapi/` : conventions CMS et seeds idempotents
 - `docs/first-contribution.md` : checklist pour une premiÃ¨re PR
 - `docs/roadmap.md` : feuille de route publique et prioritÃ©s
+
+## Tableau de bord Ops propriÃ©taire
+
+La plateforme inclut maintenant un tableau de bord d'exploitation pour owner/admin :
+
+- Route frontend : `/admin/ops`
+- Endpoints API :
+  - `GET /api/admin/ops/health`
+  - `GET /api/admin/ops/backups`
+  - `GET /api/admin/ops/imports`
+  - `GET /api/admin/ops/security`
+- ContrÃ´le d'accÃ¨s : rÃ´les `Admin` ou `Owner` uniquement
+- Policy Strapi : `global::owner-admin-ops` (appliquÃ©e sur toutes les routes `/api/admin/ops/*`)
+
+Ce tableau de bord centralise la santÃ© runtime, la visibilitÃ© des backups, le suivi des imports et les indicateurs de sÃ©curitÃ©.
 
 ## Ou vit le code?
 

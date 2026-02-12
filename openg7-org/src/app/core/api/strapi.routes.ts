@@ -22,6 +22,12 @@ export const STRAPI_ROUTES = {
   upload: {
     files: '/api/upload',
   },
+  admin: {
+    opsHealth: '/api/admin/ops/health',
+    opsBackups: '/api/admin/ops/backups',
+    opsImports: '/api/admin/ops/imports',
+    opsSecurity: '/api/admin/ops/security',
+  },
 } as const;
 
 export const strapiUserById = (id: string | number): string => {
