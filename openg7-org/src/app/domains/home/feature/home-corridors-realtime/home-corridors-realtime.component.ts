@@ -10,6 +10,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   CorridorsRealtimeItem,
   CorridorsRealtimeSnapshot,
@@ -41,6 +42,7 @@ const FALLBACK_SNAPSHOT: CorridorsRealtimeSnapshot = {
  */
 export class HomeCorridorsRealtimeComponent {
   private readonly service = inject(HomeCorridorsRealtimeService);
+  private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
   private readonly host = inject(ElementRef<HTMLElement>);
@@ -130,6 +132,33 @@ export class HomeCorridorsRealtimeComponent {
     if (target.requestFullscreen) {
       void target.requestFullscreen().catch(() => undefined);
     }
+  }
+
+  protected openCorridor(item: CorridorsRealtimeItem): void {
+    this.openMap(item);
+  }
+
+  protected openMap(item?: CorridorsRealtimeItem): void {
+    if (this.browser) {
+      const mapElement = this.document.getElementById('map');
+      if (mapElement) {
+        mapElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        void this.router.navigate([], {
+          fragment: 'map',
+          queryParamsHandling: 'preserve',
+          replaceUrl: true,
+        });
+        return;
+      }
+    }
+
+    const queryParams: Record<string, string> = {
+      source: 'corridors-realtime',
+    };
+    if (item?.id) {
+      queryParams['corridorId'] = item.id;
+    }
+    void this.router.navigate(['/feed'], { queryParams });
   }
 
   protected trackItem(index: number, item: CorridorsRealtimeItem): string {

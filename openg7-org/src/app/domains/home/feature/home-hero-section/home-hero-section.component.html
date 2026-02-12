@@ -39,6 +39,8 @@
       [opportunityItems]="opportunityItems()"
       [indicatorItems]="indicatorItems()"
       [subtitleForItem]="subtitleForItem()"
+      (itemOpened)="panelItemOpened.emit($event)"
+      (connectRequested)="panelConnectRequested.emit($event)"
     ></og7-home-feed-panels>
 
     <section class="mx-auto w-full max-w-6xl">

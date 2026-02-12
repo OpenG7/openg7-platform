@@ -211,6 +211,36 @@ export class Og7HomePageComponent {
     void this.router.navigate(['/linkup', matchId]);
   }
 
+  protected onFeedPanelItemOpened(item: FeedItem): void {
+    const itemId = item.id?.trim();
+    if (!itemId) {
+      return;
+    }
+    this.analytics.emit(
+      'home_feed_panel_item_opened',
+      { itemId, itemType: item.type },
+      { priority: true }
+    );
+    void this.router.navigate(['/feed', itemId]);
+  }
+
+  protected onFeedPanelConnectRequested(item: FeedItem): void {
+    const matchId = this.resolveLinkupMatchIdForFeedItem(item);
+    if (matchId == null) {
+      this.onFeedPanelItemOpened(item);
+      return;
+    }
+    this.logOpportunityConnect(matchId);
+    this.analytics.emit(
+      'home_feed_panel_connect_requested',
+      { itemId: item.id, itemType: item.type, matchId },
+      { priority: true }
+    );
+    void this.router.navigate(['/linkup', matchId], {
+      queryParams: { source: 'home-feed-panels', feedItemId: item.id },
+    });
+  }
+
   protected onRetryRequested(): void {
     this.opportunities.reload();
   }
@@ -321,6 +351,64 @@ export class Og7HomePageComponent {
 
   private countFeedType(items: FeedItem[], type: FeedItemType): number {
     return items.filter((item) => item.type === type).length;
+  }
+
+  private resolveLinkupMatchIdForFeedItem(item: FeedItem): number | null {
+    const list = this.matches();
+    if (!list.length) {
+      return null;
+    }
+
+    let bestMatch: OpportunityMatch | null = null;
+    let bestScore = Number.NEGATIVE_INFINITY;
+
+    for (const match of list) {
+      const score = this.scoreMatchForFeedItem(item, match);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = match;
+      }
+    }
+
+    if (bestMatch && bestScore > 0) {
+      return bestMatch.id;
+    }
+
+    return this.activeMatch()?.id ?? list[0]?.id ?? null;
+  }
+
+  private scoreMatchForFeedItem(item: FeedItem, match: OpportunityMatch): number {
+    let score = 0;
+
+    const fromProvince = item.fromProvinceId ?? null;
+    const toProvince = item.toProvinceId ?? null;
+    if (fromProvince && fromProvince === match.seller.province) {
+      score += 3;
+    }
+    if (toProvince && toProvince === match.buyer.province) {
+      score += 3;
+    }
+    if (fromProvince && fromProvince === match.buyer.province) {
+      score += 1;
+    }
+    if (toProvince && toProvince === match.seller.province) {
+      score += 1;
+    }
+
+    const sector = item.sectorId ?? null;
+    if (sector && (sector === match.buyer.sector || sector === match.seller.sector)) {
+      score += 2;
+    }
+
+    if (item.mode === 'BOTH' || match.mode === 'all') {
+      score += 1;
+    } else if (item.mode === 'EXPORT' && match.mode === 'export') {
+      score += 2;
+    } else if (item.mode === 'IMPORT' && match.mode === 'import') {
+      score += 2;
+    }
+
+    return score;
   }
 
   private setupHomeFeed(): void {

@@ -1,5 +1,5 @@
 import { NgComponentOutlet, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, PLATFORM_ID, Type, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, PLATFORM_ID, Type, inject, input, output, signal } from '@angular/core';
 import { FeedItem } from '@app/domains/feed/feature/models/feed.models';
 import { HomeCorridorsRealtimeComponent } from '@app/domains/home/feature/home-corridors-realtime/home-corridors-realtime.component';
 import { HomeCtaRowComponent } from '@app/domains/home/feature/home-cta-row/home-cta-row.component';
@@ -56,6 +56,8 @@ export class HomeHeroSectionComponent {
   @Output() readonly scopeChanged = new EventEmitter<HomeFeedScope>();
   @Output() readonly filterChanged = new EventEmitter<HomeFeedFilter>();
   @Output() readonly searchChanged = new EventEmitter<string>();
+  readonly panelItemOpened = output<FeedItem>();
+  readonly panelConnectRequested = output<FeedItem>();
   readonly isBrowser = isPlatformBrowser(this.platformId);
   readonly backdropComponent = signal<Type<unknown> | null>(null);
 
