@@ -767,6 +767,11 @@
       "quantityUnitPlaceholder": "Select a unit",
       "tags": "Tags",
       "tagsPlaceholder": "e.g. priority, cold-chain, certified",
+      "authRequired": {
+        "title": "Sign in to publish",
+        "description": "You can browse the feed anonymously, but publishing an offer or a request requires an authenticated account.",
+        "cta": "Log in to publish"
+      },
       "submit": "Publish",
       "submitting": "Publishing...",
       "clear": "Clear draft"

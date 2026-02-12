@@ -656,6 +656,11 @@
       "quantityUnitPlaceholder": "Choisir une unite",
       "tags": "Etiquettes",
       "tagsPlaceholder": "ex. priorite, chaine-froid, certifie",
+      "authRequired": {
+        "title": "Connectez-vous pour publier",
+        "description": "Vous pouvez parcourir le fil anonymement, mais publier une offre ou une demande exige un compte authentifie.",
+        "cta": "Connexion pour publier"
+      },
       "submit": "Publier",
       "submitting": "Publication...",
       "clear": "Effacer"
