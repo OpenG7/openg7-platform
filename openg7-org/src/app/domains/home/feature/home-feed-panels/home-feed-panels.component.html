@@ -6,14 +6,29 @@
         <span class="text-[10px] uppercase tracking-[0.3em] text-slate-400">{{ 'home.feed.kicker' | translate }}</span>
       </header>
       <ul class="space-y-3">
-        <li *ngFor="let item of alertItems(); trackBy: trackFeedItem" class="flex gap-3">
-          <span class="mt-1 h-1.5 w-1.5 rounded-full bg-amber-300"></span>
-          <div>
-            <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
-            <p class="text-[11px] text-slate-400">
-              {{ subtitle(item) }}
-            </p>
-          </div>
+        <li *ngFor="let item of alertItems(); trackBy: trackFeedItem">
+          <button
+            type="button"
+            class="group flex w-full items-start gap-3 rounded-xl border border-transparent px-3 py-2 text-left transition duration-200 hover:-translate-y-1 hover:border-amber-200/30 hover:bg-amber-400/10 hover:shadow-[0_14px_30px_rgba(251,191,36,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300"
+            [attr.aria-label]="'feed.cta.open' | translate"
+            (click)="openItem(item)"
+          >
+            <span class="mt-1 h-1.5 w-1.5 rounded-full bg-amber-300"></span>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-slate-100 transition group-hover:text-amber-100">{{ item.title }}</p>
+              <p class="text-[11px] text-slate-400 transition group-hover:text-amber-200/80">
+                {{ subtitle(item) }}
+              </p>
+            </div>
+            <span
+              class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-amber-200/40 text-amber-100 transition group-hover:scale-110 group-hover:border-amber-200 group-hover:bg-amber-300/15"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 3l6.7 17 2.3-6.2L21 11 4 3z" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+          </button>
         </li>
       </ul>
     </article>
@@ -24,14 +39,29 @@
         <span class="text-[10px] uppercase tracking-[0.3em] text-slate-400">{{ 'home.feed.kicker' | translate }}</span>
       </header>
       <ul class="space-y-3">
-        <li *ngFor="let item of opportunityItems(); trackBy: trackFeedItem" class="flex gap-3">
-          <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
-          <div>
-            <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
-            <p class="text-[11px] text-slate-400">
-              {{ subtitle(item) }}
-            </p>
-          </div>
+        <li *ngFor="let item of opportunityItems(); trackBy: trackFeedItem">
+          <button
+            type="button"
+            class="group flex w-full items-start gap-3 rounded-xl border border-transparent px-3 py-2 text-left transition duration-200 hover:-translate-y-1 hover:border-emerald-200/30 hover:bg-emerald-400/10 hover:shadow-[0_14px_30px_rgba(5,150,105,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+            [attr.aria-label]="'feed.cta.contact' | translate"
+            (click)="requestConnection(item)"
+          >
+            <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-slate-100 transition group-hover:text-emerald-100">{{ item.title }}</p>
+              <p class="text-[11px] text-slate-400 transition group-hover:text-emerald-200/80">
+                {{ subtitle(item) }}
+              </p>
+            </div>
+            <span
+              class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-emerald-200/40 text-emerald-100 transition group-hover:scale-110 group-hover:border-emerald-200 group-hover:bg-emerald-300/15"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 3l6.7 17 2.3-6.2L21 11 4 3z" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+          </button>
         </li>
       </ul>
     </article>
@@ -42,14 +72,29 @@
         <span class="text-[10px] uppercase tracking-[0.3em] text-slate-400">{{ 'home.feed.kicker' | translate }}</span>
       </header>
       <ul class="space-y-3">
-        <li *ngFor="let item of indicatorItems(); trackBy: trackFeedItem" class="flex gap-3">
-          <span class="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-300"></span>
-          <div>
-            <p class="text-sm font-semibold text-slate-100">{{ item.title }}</p>
-            <p class="text-[11px] text-slate-400">
-              {{ subtitle(item) }}
-            </p>
-          </div>
+        <li *ngFor="let item of indicatorItems(); trackBy: trackFeedItem">
+          <button
+            type="button"
+            class="group flex w-full items-start gap-3 rounded-xl border border-transparent px-3 py-2 text-left transition duration-200 hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-cyan-400/10 hover:shadow-[0_14px_30px_rgba(34,211,238,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
+            [attr.aria-label]="'feed.cta.open' | translate"
+            (click)="openItem(item)"
+          >
+            <span class="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-300"></span>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-slate-100 transition group-hover:text-cyan-100">{{ item.title }}</p>
+              <p class="text-[11px] text-slate-400 transition group-hover:text-cyan-200/80">
+                {{ subtitle(item) }}
+              </p>
+            </div>
+            <span
+              class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cyan-200/40 text-cyan-100 transition group-hover:scale-110 group-hover:border-cyan-200 group-hover:bg-cyan-300/15"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 3l6.7 17 2.3-6.2L21 11 4 3z" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+          </button>
         </li>
       </ul>
     </article>

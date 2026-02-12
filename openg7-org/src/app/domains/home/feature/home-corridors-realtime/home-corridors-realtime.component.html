@@ -58,33 +58,49 @@
         } @else if (items().length) {
           <ul class="flex flex-col gap-2 text-sm text-slate-200" role="list">
             @for (item of items(); track trackItem($index, item)) {
-              <li class="flex flex-wrap items-center gap-3" data-og7-id="corridor-item">
-                <span class="h-1.5 w-1.5 rounded-full bg-cyan-300/70"></span>
-                <span class="font-semibold">
-                  @if (item.label; as label) {
-                    {{ label }}
-                  } @else {
-                    {{ (item.labelKey ?? 'home.corridorsRealtime.itemFallback') | translate }}
+              <li>
+                <button
+                  type="button"
+                  class="group flex w-full flex-wrap items-center gap-3 rounded-lg border border-transparent px-2 py-1.5 text-left transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200/20 hover:bg-cyan-300/10 hover:shadow-[0_10px_24px_rgba(34,211,238,0.14)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+                  data-og7-id="corridor-item"
+                  [attr.data-og7-corridor-id]="item.id"
+                  (click)="openCorridor(item)"
+                >
+                  <span class="h-1.5 w-1.5 rounded-full bg-cyan-300/70"></span>
+                  <span class="font-semibold transition group-hover:text-cyan-100">
+                    @if (item.label; as label) {
+                      {{ label }}
+                    } @else {
+                      {{ (item.labelKey ?? 'home.corridorsRealtime.itemFallback') | translate }}
+                    }
+                  </span>
+                  @if (item.route || item.routeKey) {
+                    <span class="text-xs text-slate-400 transition group-hover:text-cyan-200/80">
+                      @if (item.route; as route) {
+                        {{ route }}
+                      } @else {
+                        {{ item.routeKey | translate }}
+                      }
+                    </span>
                   }
-                </span>
-                @if (item.route || item.routeKey) {
-                  <span class="text-xs text-slate-400">
-                    @if (item.route; as route) {
-                      {{ route }}
-                    } @else {
-                      {{ item.routeKey | translate }}
-                    }
+                  @if (item.meta || item.metaKey) {
+                    <span class="text-xs text-slate-500 transition group-hover:text-cyan-300/70">
+                      @if (item.meta; as meta) {
+                        {{ meta }}
+                      } @else {
+                        {{ item.metaKey | translate }}
+                      }
+                    </span>
+                  }
+                  <span
+                    class="ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-cyan-200/35 text-cyan-100 transition group-hover:scale-110 group-hover:border-cyan-200 group-hover:bg-cyan-300/15"
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5" stroke="currentColor" stroke-width="1.8">
+                      <path d="M4 3l6.7 17 2.3-6.2L21 11 4 3z" stroke-linejoin="round"></path>
+                    </svg>
                   </span>
-                }
-                @if (item.meta || item.metaKey) {
-                  <span class="text-xs text-slate-500">
-                    @if (item.meta; as meta) {
-                      {{ meta }}
-                    } @else {
-                      {{ item.metaKey | translate }}
-                    }
-                  </span>
-                }
+                </button>
               </li>
             }
           </ul>
@@ -110,8 +126,7 @@
           type="button"
           class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200/90 transition hover:text-cyan-100 disabled:cursor-not-allowed disabled:text-slate-500"
           data-og7-id="view-map"
-          [disabled]="true"
-          [attr.aria-disabled]="true"
+          (click)="openMap()"
         >
           @if (snapshot().cta?.label; as label) {
             {{ label }}
