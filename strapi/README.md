@@ -129,6 +129,12 @@ Strapi now exposes additional backend endpoints used directly by authenticated u
   - `GET /api/connections`
   - `GET /api/connections/:id`
   - `PATCH /api/connections/:id/status`
+- Owner/Admin operations:
+  - `GET /api/admin/ops/health`
+  - `GET /api/admin/ops/backups`
+  - `GET /api/admin/ops/imports`
+  - `GET /api/admin/ops/security`
+  - Guarded by policy: `global::owner-admin-ops`
 
 For payload details, auth model, filters, and transition rules, see `../docs/strapi/realtime-apis.md`.
 
@@ -140,4 +146,5 @@ Run from monorepo root:
 yarn workspace @openg7/strapi test:integration:feed
 yarn workspace @openg7/strapi test:integration:corridors
 yarn workspace @openg7/strapi test:integration:connections
+yarn workspace @openg7/strapi test:integration:admin-ops
 ```

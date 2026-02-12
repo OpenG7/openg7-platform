@@ -1,0 +1,145 @@
+import { Injectable, inject } from '@angular/core';
+import { STRAPI_ROUTES } from '@app/core/api/strapi.routes';
+import { HttpClientService } from '@app/core/http/http-client.service';
+import { forkJoin, map, Observable } from 'rxjs';
+
+export interface AdminOpsHealthSnapshot {
+  generatedAt: string;
+  status: 'ok' | 'degraded';
+  runtime: {
+    env: string;
+    nodeVersion: string;
+    uptimeSeconds: number;
+  };
+  memory: {
+    rssBytes: number;
+    heapUsedBytes: number;
+    heapTotalBytes: number;
+  };
+  database: {
+    status: 'ok' | 'degraded';
+    users: number;
+    companies: number;
+    feedItems: number;
+  };
+}
+
+export interface AdminOpsBackupFile {
+  name: string;
+  sizeBytes: number;
+  modifiedAt: string;
+}
+
+export interface AdminOpsBackupsSnapshot {
+  generatedAt: string;
+  status: 'ok' | 'warning' | 'disabled';
+  enabled: boolean;
+  directory: string;
+  retentionDays: number;
+  schedule: string | null;
+  totalFiles: number;
+  totalSizeBytes: number;
+  lastBackupAt: string | null;
+  files: AdminOpsBackupFile[];
+}
+
+export interface AdminOpsImportsSnapshot {
+  generatedAt: string;
+  totalCompanies: number;
+  scannedCompanies: number;
+  truncated: boolean;
+  importedCompanies: number;
+  importsLast24h: number;
+  lastImportAt: string | null;
+  sources: Array<{
+    source: string;
+    count: number;
+  }>;
+  recent: Array<{
+    id: string;
+    businessId: string | null;
+    name: string;
+    status: string;
+    source: string | null;
+    importedAt: string | null;
+    updatedAt: string | null;
+  }>;
+}
+
+export interface AdminOpsSecuritySnapshot {
+  generatedAt: string;
+  users: {
+    total: number;
+    blocked: number;
+    registrationsLast7d: number;
+  };
+  sessions: {
+    scannedUsers: number;
+    truncated: boolean;
+    active: number;
+    revoked: number;
+    usersWithActiveSessions: number;
+  };
+  uploads: {
+    safetyEnabled: boolean;
+    maxFileSizeBytes: number;
+    allowedMimeTypes: string[];
+  };
+  auth: {
+    sessionIdleTimeoutMs: number | null;
+  };
+  moderation: {
+    pendingCompanies: number;
+    suspendedCompanies: number;
+  };
+}
+
+export interface AdminOpsSnapshot {
+  health: AdminOpsHealthSnapshot;
+  backups: AdminOpsBackupsSnapshot;
+  imports: AdminOpsImportsSnapshot;
+  security: AdminOpsSecuritySnapshot;
+}
+
+interface StrapiDataResponse<T> {
+  data: T;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AdminOpsService {
+  private readonly http = inject(HttpClientService);
+
+  getHealth(): Observable<AdminOpsHealthSnapshot> {
+    return this.http
+      .get<StrapiDataResponse<AdminOpsHealthSnapshot>>(STRAPI_ROUTES.admin.opsHealth)
+      .pipe(map((response) => response.data));
+  }
+
+  getBackups(): Observable<AdminOpsBackupsSnapshot> {
+    return this.http
+      .get<StrapiDataResponse<AdminOpsBackupsSnapshot>>(STRAPI_ROUTES.admin.opsBackups)
+      .pipe(map((response) => response.data));
+  }
+
+  getImports(): Observable<AdminOpsImportsSnapshot> {
+    return this.http
+      .get<StrapiDataResponse<AdminOpsImportsSnapshot>>(STRAPI_ROUTES.admin.opsImports)
+      .pipe(map((response) => response.data));
+  }
+
+  getSecurity(): Observable<AdminOpsSecuritySnapshot> {
+    return this.http
+      .get<StrapiDataResponse<AdminOpsSecuritySnapshot>>(STRAPI_ROUTES.admin.opsSecurity)
+      .pipe(map((response) => response.data));
+  }
+
+  getSnapshot(): Observable<AdminOpsSnapshot> {
+    return forkJoin({
+      health: this.getHealth(),
+      backups: this.getBackups(),
+      imports: this.getImports(),
+      security: this.getSecurity(),
+    });
+  }
+}
+

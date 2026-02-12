@@ -5,6 +5,8 @@ import { permissionsGuard } from './core/auth/permissions.guard';
 import { profilePendingChangesGuard } from './core/auth/profile-pending-changes.guard';
 import { roleGuard } from './core/auth/role.guard';
 
+const ROBOTS_NOINDEX = 'noindex,nofollow';
+
 export const routes: Routes = [
   {
     path: '',
@@ -14,13 +16,19 @@ export const routes: Routes = [
     path: 'admin/trust',
     loadComponent: () => import('./domains/admin/pages/admin-trust.page').then(m => m.AdminTrustPage),
     canMatch: [authGuard, roleGuard],
-    data: { roles: ['admin'] },
+    data: { roles: ['admin'], robots: ROBOTS_NOINDEX },
+  },
+  {
+    path: 'admin/ops',
+    loadComponent: () => import('./domains/admin/pages/admin-ops.page').then(m => m.AdminOpsPage),
+    canMatch: [authGuard, roleGuard],
+    data: { roles: ['admin'], robots: ROBOTS_NOINDEX },
   },
   {
     path: 'admin',
     loadComponent: () => import('./domains/admin/pages/admin.page').then(m => m.AdminPage),
     canMatch: [authGuard, roleGuard],
-    data: { roles: ['admin'] },
+    data: { roles: ['admin'], robots: ROBOTS_NOINDEX },
   },
   {
     path: 'login',
@@ -42,6 +50,7 @@ export const routes: Routes = [
     path: 'companies/register',
     loadComponent: () => import('./domains/enterprise/pages/company-register.page').then(m => m.CompanyRegisterPage),
     canMatch: [authGuard],
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'import',
@@ -58,6 +67,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./domains/importation/pages/importation.page').then(m => m.ImportationPage),
     canMatch: [authGuard],
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'bulk-import',
@@ -81,10 +91,12 @@ export const routes: Routes = [
         m => m.CompaniesImportPageComponent
       ),
     canMatch: [authGuard],
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'auth/callback',
     loadComponent: () => import('./domains/auth/pages/auth-callback.page').then(m => m.AuthCallbackPage),
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'features',
@@ -131,6 +143,7 @@ export const routes: Routes = [
   {
     path: 'preview/homepage',
     loadComponent: () => import('./domains/admin/pages/preview/preview.page').then(m => m.PreviewPage),
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'faq',
@@ -175,23 +188,27 @@ export const routes: Routes = [
     path: 'favorites',
     loadComponent: () => import('./domains/account/pages/favorites.page').then(m => m.FavoritesPage),
     canMatch: [authGuard],
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'saved-searches',
     loadComponent: () =>
       import('./domains/account/pages/saved-searches.page').then(m => m.SavedSearchesPage),
     canMatch: [authGuard],
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'alerts',
     loadComponent: () => import('./domains/account/pages/alerts.page').then(m => m.AlertsPage),
     canMatch: [authGuard],
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'profile',
     loadComponent: () => import('./domains/account/pages/profile.page').then(m => m.ProfilePage),
     canMatch: [authGuard],
     canDeactivate: [profilePendingChangesGuard],
+    data: { robots: ROBOTS_NOINDEX },
   },
   {
     path: 'pro',
@@ -201,6 +218,7 @@ export const routes: Routes = [
     data: {
       roles: ['editor', 'admin'],
       permissions: ['write'],
+      robots: ROBOTS_NOINDEX,
     },
   },
   {
@@ -211,5 +229,6 @@ export const routes: Routes = [
     path: '_dev/component-lab',
     //canMatch: [featureFlagGuard('componentLab')],
     loadComponent: () => import('./domains/developer/pages/component-lab.page').then(m => m.ComponentLabPage),
+    data: { robots: ROBOTS_NOINDEX },
   },
 ];

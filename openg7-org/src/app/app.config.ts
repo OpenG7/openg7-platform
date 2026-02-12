@@ -24,6 +24,7 @@ import { authInterceptor } from './core/http/auth.interceptor';
 import { csrfInterceptor } from './core/http/csrf.interceptor';
 import { errorInterceptor } from './core/http/error.interceptor';
 import { AppTranslateLoader } from './core/i18n/translate-loader';
+import { RobotsMetaService } from './core/seo/robots-meta.service';
 import { authReducer } from './state/auth/auth.reducer';
 import { CatalogMockService } from './state/catalog/catalog-mock.service';
 import { catalogReducer } from './state/catalog/catalog.reducer';
@@ -78,6 +79,14 @@ export const appConfig: ApplicationConfig = {
       useFactory: () => {
         const loader = inject(CatalogMockService);
         return () => loader.load();
+      },
+    },
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: () => {
+        const robotsMeta = inject(RobotsMetaService);
+        return () => robotsMeta.init();
       },
     },
     provideEffects(ConnectionsEffects, StatisticsEffects),

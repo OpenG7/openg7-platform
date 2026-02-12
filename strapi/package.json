@@ -10,6 +10,7 @@
     "start": "strapi start",
     "strapi": "strapi",
     "seed:dev": "ts-node scripts/seed.ts",
+    "test:integration:admin-ops": "node scripts/test-admin-ops-api-integration.js",
     "test:integration:connections": "node scripts/test-connections-api-integration.js",
     "test:integration:company-import": "node scripts/test-company-import-api-integration.js",
     "test:integration:corridors": "node scripts/test-corridors-api-integration.js",

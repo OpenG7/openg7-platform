@@ -335,7 +335,7 @@ export class AuthService {
   }
 
   private resolveRole(roles: readonly string[]): Role {
-    if (roles.includes('admin')) {
+    if (roles.includes('admin') || roles.includes('owner')) {
       return 'admin';
     }
     if (roles.includes('editor') || roles.includes('pro')) {

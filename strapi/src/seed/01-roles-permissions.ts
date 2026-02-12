@@ -84,6 +84,15 @@ export default async () => {
     },
   };
 
+  const adminOpsExtra: PermissionMap = {
+    'api::admin-ops.admin-ops': {
+      health: true,
+      backups: true,
+      imports: true,
+      security: true,
+    },
+  };
+
   const authenticatedRole = await ensureRole('Authenticated');
   await setRolePermissions(authenticatedRole.id, mergePermissions(baseReadPermissions, authenticatedExtra));
 
@@ -96,5 +105,15 @@ export default async () => {
     mergePermissions(baseReadPermissions, authenticatedExtra, provinceExtra)
   );
 
-  await ensureRole('Admin');
+  const adminRole = await ensureRole('Admin');
+  await setRolePermissions(
+    adminRole.id,
+    mergePermissions(baseReadPermissions, authenticatedExtra, proExtra, provinceExtra, adminOpsExtra)
+  );
+
+  const ownerRole = await ensureRole('Owner');
+  await setRolePermissions(
+    ownerRole.id,
+    mergePermissions(baseReadPermissions, authenticatedExtra, proExtra, provinceExtra, adminOpsExtra)
+  );
 };

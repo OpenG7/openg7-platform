@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
 import { COMPANY_STATUSES, CompanyRecord, CompanyService, CompanyStatus } from '@app/core/services/company.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,7 +14,7 @@ const STATUS_LABELS: Record<CompanyStatus, string> = {
 @Component({
   standalone: true,
   selector: 'og7-admin-page',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, RouterLink],
   templateUrl: './admin.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
