@@ -4,6 +4,7 @@ const DEFAULT_ADMIN_PASSWORD = 'change-me';
 const DEFAULT_ADMIN_FIRSTNAME = 'Admin';
 const DEFAULT_ADMIN_LASTNAME = 'User';
 const SUPER_ADMIN_CODE = 'strapi-super-admin';
+const DEFAULT_WEB_ADMIN_ROLE = 'Owner';
 
 function isSeedAdminAllowed(): boolean {
   const explicitFlag = process.env.STRAPI_SEED_ADMIN_ALLOWED?.trim().toLowerCase();
@@ -33,6 +34,151 @@ function isPasswordHashed(password: string | null | undefined): boolean {
   }
 
   return /^\$2[aby]\$/.test(password) || password.startsWith('$argon2');
+}
+
+function normalizeRoleName(value: unknown): string | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const normalized = value.trim().toLowerCase();
+  return normalized.length > 0 ? normalized : null;
+}
+
+async function resolveUsersPermissionsRoleId(preferredRoleName: string): Promise<number | string | null> {
+  const roleQuery = strapi.db.query('plugin::users-permissions.role');
+  const roles = (await roleQuery.findMany()) as Array<{ id: number | string; name?: string; type?: string }>;
+  if (!Array.isArray(roles) || roles.length === 0) {
+    return null;
+  }
+
+  const candidates = [
+    normalizeRoleName(preferredRoleName),
+    normalizeRoleName(DEFAULT_WEB_ADMIN_ROLE),
+    normalizeRoleName('Admin'),
+    normalizeRoleName('Authenticated'),
+  ].filter((value): value is string => Boolean(value));
+
+  for (const candidate of candidates) {
+    const match = roles.find((role) => {
+      const roleName = normalizeRoleName(role.name);
+      const roleType = normalizeRoleName(role.type);
+      return roleName === candidate || roleType === candidate;
+    });
+
+    if (match?.id !== undefined && match.id !== null) {
+      return match.id;
+    }
+  }
+
+  return roles[0]?.id ?? null;
+}
+
+async function ensureUsersPermissionsAdminUser(params: {
+  email: string;
+  password: string;
+  adminPasswordHash?: string | null;
+}): Promise<void> {
+  const { email, password, adminPasswordHash } = params;
+  const usersPermissionsUserService = strapi.plugin('users-permissions').service('user') as {
+    add: (values: Record<string, unknown>) => Promise<unknown>;
+    edit: (userId: number | string, values: Record<string, unknown>) => Promise<unknown>;
+    validatePassword: (password: string, hash: string) => Promise<boolean>;
+  };
+  const userQuery = strapi.db.query('plugin::users-permissions.user');
+  const hasAdminPasswordHash = isPasswordHashed(adminPasswordHash);
+
+  const targetRoleName = readNonEmpty(process.env.STRAPI_WEB_ADMIN_ROLE, DEFAULT_WEB_ADMIN_ROLE);
+  const roleId = await resolveUsersPermissionsRoleId(targetRoleName);
+  if (roleId === null) {
+    throw new Error('No users-permissions role available to provision the web admin user.');
+  }
+
+  const existing = (await userQuery.findOne({
+    where: {
+      $or: [{ email }, { username: email }],
+    },
+    populate: ['role'],
+  })) as
+    | {
+        id: number | string;
+        email?: string | null;
+        username?: string | null;
+        provider?: string | null;
+        confirmed?: boolean | null;
+        blocked?: boolean | null;
+        password?: string | null;
+        role?: { id?: number | string | null } | null;
+      }
+    | null;
+
+  if (!existing) {
+    const createPayload: Record<string, unknown> = {
+      username: email,
+      email,
+      provider: 'local',
+      confirmed: true,
+      blocked: false,
+      role: roleId,
+    };
+
+    if (hasAdminPasswordHash) {
+      createPayload.password = adminPasswordHash;
+      await userQuery.create({ data: createPayload, populate: ['role'] });
+    } else {
+      createPayload.password = password;
+      await usersPermissionsUserService.add(createPayload);
+    }
+    return;
+  }
+
+  const updatePayload: Record<string, unknown> = {};
+  if (existing.email !== email) {
+    updatePayload.email = email;
+  }
+  if (existing.username !== email) {
+    updatePayload.username = email;
+  }
+  if (existing.provider !== 'local') {
+    updatePayload.provider = 'local';
+  }
+  if (existing.confirmed !== true) {
+    updatePayload.confirmed = true;
+    updatePayload.confirmationToken = null;
+  }
+  if (existing.blocked === true) {
+    updatePayload.blocked = false;
+  }
+  if ((existing.role?.id ?? null) !== roleId) {
+    updatePayload.role = roleId;
+  }
+
+  if (hasAdminPasswordHash) {
+    if (existing.password !== adminPasswordHash) {
+      updatePayload.password = adminPasswordHash;
+    }
+  } else {
+    const passwordHash = typeof existing.password === 'string' ? existing.password : '';
+    const passwordMatches =
+      passwordHash.length > 0
+        ? await usersPermissionsUserService.validatePassword(password, passwordHash)
+        : false;
+    if (!passwordMatches) {
+      updatePayload.password = password;
+    }
+  }
+
+  if (Object.keys(updatePayload).length > 0) {
+    if (hasAdminPasswordHash) {
+      await userQuery.update({
+        where: { id: existing.id },
+        data: updatePayload,
+        populate: ['role'],
+      });
+      return;
+    }
+
+    await usersPermissionsUserService.edit(existing.id, updatePayload);
+  }
 }
 
 export default async () => {
@@ -79,10 +225,12 @@ export default async () => {
     if (Object.keys(updatePayload).length > 0) {
       await adminUserService.updateById(existing.id, updatePayload);
     }
+    const adminPasswordHash = isPasswordHashed(existing.password) ? existing.password : null;
+    await ensureUsersPermissionsAdminUser({ email, password, adminPasswordHash });
     return;
   }
 
-  await adminUserService.create({
+  const createdAdminUser = await adminUserService.create({
     email,
     password,
     firstname,
@@ -91,4 +239,9 @@ export default async () => {
     registrationToken: null,
     roles: [superAdminRole.id],
   });
+
+  const adminPasswordHash = isPasswordHashed(createdAdminUser?.password)
+    ? createdAdminUser.password
+    : null;
+  await ensureUsersPermissionsAdminUser({ email, password, adminPasswordHash });
 };

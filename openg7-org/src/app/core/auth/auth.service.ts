@@ -118,7 +118,7 @@ export class AuthService {
       password: credentials.password,
     };
 
-    return this.http.post<LoginResponse>(STRAPI_ROUTES.auth.login, payload).pipe(
+    return this.http.post<LoginResponse>(STRAPI_ROUTES.auth.login, payload, { withCredentials: false }).pipe(
       tap((res) => this.persistAuth(res))
     );
   }
@@ -135,7 +135,7 @@ export class AuthService {
       username: credentials.username?.trim() || credentials.email,
     };
 
-    return this.http.post<RegisterResponse>(STRAPI_ROUTES.auth.register, payload).pipe(
+    return this.http.post<RegisterResponse>(STRAPI_ROUTES.auth.register, payload, { withCredentials: false }).pipe(
       tap((res) => {
         if (this.hasSessionPayload(res)) {
           this.persistAuth(res);
@@ -155,7 +155,8 @@ export class AuthService {
   }): Observable<{ email: string; sent: boolean }> {
     return this.http.post<{ email: string; sent: boolean }>(
       STRAPI_ROUTES.auth.sendEmailConfirmation,
-      payload
+      payload,
+      { withCredentials: false }
     );
   }
 
@@ -288,7 +289,7 @@ export class AuthService {
    * @returns Observable completing once the request is handled.
    */
   requestPasswordReset(payload: { email: string }): Observable<void> {
-    return this.http.post<void>(STRAPI_ROUTES.auth.forgotPassword, payload).pipe(
+    return this.http.post<void>(STRAPI_ROUTES.auth.forgotPassword, payload, { withCredentials: false }).pipe(
       tap(() =>
         this.notifications.success(
           this.translate.instant('auth.forgotPassword.success'),
@@ -308,7 +309,7 @@ export class AuthService {
    * @returns Observable completing when the reset has been processed.
    */
   resetPassword(payload: { token: string; password: string }): Observable<void> {
-    return this.http.post<void>(STRAPI_ROUTES.auth.resetPassword, payload).pipe(
+    return this.http.post<void>(STRAPI_ROUTES.auth.resetPassword, payload, { withCredentials: false }).pipe(
       tap(() =>
         this.notifications.success(
           this.translate.instant('auth.resetPassword.success'),

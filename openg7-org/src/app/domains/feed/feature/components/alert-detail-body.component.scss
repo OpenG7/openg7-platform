@@ -1,0 +1,134 @@
+﻿:host {
+  display: block;
+}
+
+.alert-detail-body {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.alert-detail-body__card {
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.42);
+  padding: 1rem;
+}
+
+.alert-detail-body__card h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.15rem;
+}
+
+.alert-detail-body__card h3 {
+  margin: 0.95rem 0 0;
+  color: rgba(252, 211, 77, 0.95);
+  font-size: 0.92rem;
+}
+
+.alert-detail-body__card > p {
+  margin: 0.65rem 0 0;
+  color: rgba(226, 232, 240, 0.9);
+  font-size: 1.06rem;
+}
+
+.alert-detail-body__card ul {
+  list-style: disc;
+  margin: 0.65rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.alert-detail-body__card li {
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.alert-detail-body__zones-layout {
+  margin-top: 0.7rem;
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.9fr);
+}
+
+.alert-detail-body__map {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.alert-detail-body__map-main,
+.alert-detail-body__map-mini {
+  border-radius: 0.85rem;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  background:
+    radial-gradient(circle at 40% 45%, rgba(251, 191, 36, 0.45), transparent 58%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.75), rgba(2, 6, 23, 0.75));
+}
+
+.alert-detail-body__map-main {
+  min-height: 160px;
+}
+
+.alert-detail-body__map-mini {
+  min-height: 78px;
+  max-width: 190px;
+}
+
+.alert-detail-body__card li span {
+  display: inline-block;
+  min-width: 9rem;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.alert-detail-body__card li strong {
+  color: #f8fafc;
+}
+
+.alert-detail-body__updates {
+  list-style: none;
+  padding: 0;
+  margin: 0.7rem 0 0;
+}
+
+.alert-detail-body__updates li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  padding-bottom: 0.45rem;
+}
+
+.alert-detail-body__updates li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.alert-detail-body__updates small {
+  color: rgba(203, 213, 225, 0.72);
+}
+
+.alert-detail-body__sources {
+  list-style: none;
+  padding: 0;
+  margin: 0.7rem 0 0;
+}
+
+.alert-detail-body__sources li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.alert-detail-body__sources a {
+  color: #fde68a;
+}
+
+.alert-detail-body__sources small {
+  color: rgba(226, 232, 240, 0.75);
+}
+
+@media (max-width: 900px) {
+  .alert-detail-body__zones-layout {
+    grid-template-columns: 1fr;
+  }
+}

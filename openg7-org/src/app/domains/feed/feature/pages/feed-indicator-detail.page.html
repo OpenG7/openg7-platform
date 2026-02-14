@@ -1,0 +1,100 @@
+<section class="feed-indicator-detail" data-og7="indicator-detail-page">
+  <ng-container *ngIf="detailVm() as detail; else emptyState">
+    <og7-indicator-hero
+      [title]="detail.title"
+      [subtitle]="detail.subtitle"
+      [deltaPctLabel]="deltaPctLabel()"
+      [deltaAbsLabel]="deltaAbsLabel()"
+      [windowHours]="windowHours()"
+      [granularityLabel]="granularityLabel()"
+      [timeframe]="timeframe()"
+      [granularity]="granularity()"
+      [compact]="headerCompact()"
+      [subscribed]="subscribed()"
+      [connectionState]="connectionState()"
+      [lastUpdatedLabel]="lastUpdatedLabel()"
+      (toggleSubscribe)="toggleSubscribe()"
+      (share)="share()"
+      (createAlert)="openAlertDrawer()"
+      (timeframeChange)="setTimeframe($event)"
+      (granularityChange)="setGranularity($event)"
+    ></og7-indicator-hero>
+
+    <p class="feed-indicator-detail__offline" *ngIf="connectionState() === 'offline'" data-og7="indicator-offline">
+      {{ 'feed.indicator.detail.offline' | translate }}
+    </p>
+
+    <div class="feed-indicator-detail__layout">
+      <div class="feed-indicator-detail__main">
+        <og7-indicator-chart
+          [chartTitle]="chartTitle()"
+          [completedAtLabel]="detail.completedLabel"
+          [levelLabel]="levelLabel()"
+          [points]="series()"
+          [unitLabel]="unitLabel()"
+          [loading]="loading()"
+          [error]="error()"
+          (retry)="retry()"
+        ></og7-indicator-chart>
+
+        <og7-indicator-key-data
+          [currentValueLabel]="keyCurrentValueLabel()"
+          [variationLabel]="keyVariationLabel()"
+          [factors]="detail.keyFactors"
+          [miniStatLabel]="miniStatLabel()"
+          [miniStatDelta]="miniStatDelta()"
+          [miniStatSeries]="miniStatSeries()"
+        ></og7-indicator-key-data>
+      </div>
+
+      <aside class="feed-indicator-detail__aside">
+        <og7-indicator-stats-aside
+          [stats]="detail.stats"
+          (openDetails)="openStatsDetails()"
+        ></og7-indicator-stats-aside>
+
+        <og7-indicator-related-list
+          data-og7="indicator-related-alerts"
+          [title]="'feed.indicator.detail.related.alerts' | translate"
+          [entries]="detail.relatedAlerts"
+          [containerHook]="'indicator-related-alerts'"
+          [footerLabelKey]="'feed.indicator.detail.related.viewAlerts'"
+          (openEntry)="openRelatedEntry($event)"
+          (openFooter)="openRelatedCollection('alert')"
+        ></og7-indicator-related-list>
+
+        <og7-indicator-related-list
+          data-og7="indicator-related-opportunities"
+          [title]="'feed.indicator.detail.related.opportunities' | translate"
+          [entries]="detail.relatedOpportunities"
+          [containerHook]="'indicator-related-opportunities'"
+          [footerLabelKey]="'feed.indicator.detail.related.viewOpportunities'"
+          (openEntry)="openRelatedEntry($event)"
+          (openFooter)="openRelatedCollection('opportunity')"
+        ></og7-indicator-related-list>
+      </aside>
+    </div>
+
+    <og7-indicator-alert-drawer
+      [open]="drawerOpen()"
+      [indicatorTitle]="detail.title"
+      (closed)="closeAlertDrawer()"
+      (submitted)="onAlertDraftSubmitted($event)"
+    ></og7-indicator-alert-drawer>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <article class="feed-indicator-detail__empty" *ngIf="loading(); else missingState" data-og7="indicator-detail-loading">
+      <h2>{{ 'feed.indicator.detail.loadingTitle' | translate }}</h2>
+      <p>{{ 'feed.indicator.detail.loadingBody' | translate }}</p>
+    </article>
+
+    <ng-template #missingState>
+      <article class="feed-indicator-detail__empty" data-og7="indicator-detail-missing">
+        <h2>{{ 'feed.indicator.detail.notFoundTitle' | translate }}</h2>
+        <p>{{ error() || ('feed.indicator.detail.notFoundBody' | translate) }}</p>
+        <a routerLink="/feed">{{ 'feed.indicator.detail.backToFeed' | translate }}</a>
+      </article>
+    </ng-template>
+  </ng-template>
+</section>

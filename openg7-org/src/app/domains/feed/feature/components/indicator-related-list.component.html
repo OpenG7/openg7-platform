@@ -1,0 +1,27 @@
+<section class="indicator-related-list" [attr.data-og7]="containerHook()">
+  <h3>{{ title() }}</h3>
+
+  <ul>
+    <li *ngFor="let entry of entries(); trackBy: trackEntry">
+      <button type="button" (click)="openEntry.emit(entry)">
+        <div>
+          <strong>{{ entry.title }}</strong>
+          <small>{{ entry.context }}</small>
+        </div>
+        <svg viewBox="0 0 94 28" preserveAspectRatio="none" aria-hidden="true">
+          <polyline [attr.points]="sparklinePoints(entry.sparkline)"></polyline>
+        </svg>
+      </button>
+    </li>
+  </ul>
+
+  <button
+    type="button"
+    class="indicator-related-list__footer"
+    data-og7="action"
+    data-og7-id="indicator-related-view-more"
+    (click)="openFooter.emit()"
+  >
+    {{ footerLabelKey() | translate }}
+  </button>
+</section>

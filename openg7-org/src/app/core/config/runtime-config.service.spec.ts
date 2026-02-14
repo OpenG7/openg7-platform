@@ -4,64 +4,83 @@ import { TestBed } from '@angular/core/testing';
 import { RuntimeConfigService } from './runtime-config.service';
 
 describe('RuntimeConfigService', () => {
-  const originalWindow = globalThis.window;
-  const originalEnv = process.env;
+  const browserWindow = window as Window & { __OG7_CONFIG__?: unknown };
+  const processRef = globalThis as { process?: { env?: Record<string, string | undefined> } };
+  const hadProcess = Object.prototype.hasOwnProperty.call(processRef, 'process');
+  const originalProcess = processRef.process;
+  const originalEnv = originalProcess?.env ? { ...originalProcess.env } : undefined;
+  const originalRuntimeConfig = browserWindow.__OG7_CONFIG__;
 
   afterEach(() => {
-    if (originalWindow === undefined) {
-      delete (globalThis as { window?: unknown }).window;
+    if (originalRuntimeConfig === undefined) {
+      delete browserWindow.__OG7_CONFIG__;
     } else {
-      (globalThis as { window?: unknown }).window = originalWindow;
+      browserWindow.__OG7_CONFIG__ = originalRuntimeConfig;
     }
 
-    process.env = originalEnv;
+    if (hadProcess) {
+      processRef.process = originalProcess;
+      if (originalProcess) {
+        originalProcess.env = { ...(originalEnv ?? {}) };
+      }
+      return;
+    }
+
+    delete processRef.process;
   });
 
   it('prefers the browser runtime manifest when available', () => {
-    (globalThis as { window?: { __OG7_CONFIG__?: unknown } }).window = {
-      __OG7_CONFIG__: {
-        API_URL: 'https://browser.example/api',
-        I18N_PREFIX: '/browser/i18n/',
-        FEATURE_FLAGS: {
-          experimentalMap: true,
-        },
+    browserWindow.__OG7_CONFIG__ = {
+      API_URL: 'https://browser.example/api',
+      I18N_PREFIX: '/browser/i18n/',
+      FEATURE_FLAGS: {
+        experimentalMap: true,
       },
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: PLATFORM_ID, useValue: 'browser' },
-        RuntimeConfigService,
-      ],
+      providers: [{ provide: PLATFORM_ID, useValue: 'browser' }, RuntimeConfigService],
     });
 
     const service = TestBed.inject(RuntimeConfigService);
 
     expect(service.apiUrl()).toBe('https://browser.example/api');
     expect(service.i18nPrefix()).toBe('/browser/i18n/');
-    expect(service.featureFlags()).toEqual({ experimentalMap: true });
+    expect(service.featureFlags()).toEqual(
+      jasmine.objectContaining({
+        experimentalMap: true,
+      })
+    );
   });
 
   it('falls back to process.env on the server', () => {
-    (globalThis as { window?: unknown }).window = undefined;
-    process.env = {
-      ...originalEnv,
+    if (!processRef.process) {
+      Object.defineProperty(processRef, 'process', {
+        value: { env: {} as Record<string, string | undefined> },
+        writable: true,
+        configurable: true,
+      });
+    }
+
+    processRef.process!.env = {
+      ...(originalEnv ?? {}),
       API_URL: 'https://ssr.example/api',
       I18N_PREFIX: '/ssr/i18n/',
       FEATURE_FLAGS: '{"ssrOnly":true}',
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: PLATFORM_ID, useValue: 'server' },
-        RuntimeConfigService,
-      ],
+      providers: [{ provide: PLATFORM_ID, useValue: 'server' }, RuntimeConfigService],
     });
 
     const service = TestBed.inject(RuntimeConfigService);
 
     expect(service.apiUrl()).toBe('https://ssr.example/api');
     expect(service.i18nPrefix()).toBe('/ssr/i18n/');
-    expect(service.featureFlags()).toEqual({ ssrOnly: true });
+    expect(service.featureFlags()).toEqual(
+      jasmine.objectContaining({
+        ssrOnly: true,
+      })
+    );
   });
 });

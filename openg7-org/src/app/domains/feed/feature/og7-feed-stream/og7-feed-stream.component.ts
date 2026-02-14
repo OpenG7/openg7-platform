@@ -12,6 +12,8 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '@app/core/auth/auth.service';
 import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import {
   feedModeSig,
@@ -38,6 +40,7 @@ import { FeedRealtimeService } from '../services/feed-realtime.service';
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     TranslateModule,
     Og7FeedCardComponent,
     Og7FeedComposerComponent,
@@ -50,6 +53,7 @@ import { FeedRealtimeService } from '../services/feed-realtime.service';
 export class Og7FeedStreamComponent {
   private readonly zone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly auth = inject(AuthService);
   private readonly feed = inject(FeedRealtimeService);
   private readonly store = inject(Store);
 
@@ -100,6 +104,7 @@ export class Og7FeedStreamComponent {
 
   protected readonly onboardingVisible = computed(() => !this.feed.onboardingSeen());
   protected readonly bannerVisible = computed(() => this.unreadCount() > 0);
+  protected readonly isAuthenticated = this.auth.isAuthenticated;
   protected readonly connectionLabel = computed(() => {
     const state = this.connectionState();
     if (state.reconnecting()) {

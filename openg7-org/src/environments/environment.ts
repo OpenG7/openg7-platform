@@ -31,6 +31,7 @@ export const environment: EnvironmentConfig = {
     componentLab: false,
     mapGlobe: true,
     mapNight: false,
+    feedMocks: true,
     homeFeedMocks: true,
     homeCorridorsRealtimeMocks: true,
   },

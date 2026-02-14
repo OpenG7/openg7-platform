@@ -1,0 +1,47 @@
+﻿<aside class="alert-context-aside" data-og7="alert-context-aside">
+  <section class="alert-context-aside__card" data-og7="alert-indicators">
+    <h3>{{ 'feed.alert.detail.relatedIndicators' | translate }}</h3>
+    <ul>
+      <li *ngFor="let indicator of indicators()">
+        <div>
+          <strong>{{ indicator.label }}</strong>
+          <small>{{ indicator.context }}</small>
+        </div>
+        <span [class]="'trend trend--' + indicator.trend">{{ indicator.value }}</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="alert-context-aside__card" data-og7="alert-related-alerts">
+    <h3>{{ 'feed.alert.detail.relatedAlerts' | translate }}</h3>
+    <ul>
+      <li *ngFor="let related of relatedAlerts()">
+        <button type="button" (click)="openRelatedAlert.emit(related.id)">
+          <strong>{{ related.title }}</strong>
+          <small>{{ related.region }} · {{ related.severity }}</small>
+        </button>
+      </li>
+    </ul>
+  </section>
+
+  <section class="alert-context-aside__card" data-og7="alert-related-opportunities">
+    <h3>{{ 'feed.alert.detail.relatedOpportunities' | translate }}</h3>
+    <ul>
+      <li *ngFor="let related of relatedOpportunities()">
+        <button type="button" (click)="openRelatedOpportunity.emit(related.id)">
+          <strong>{{ related.title }}</strong>
+          <small>{{ related.routeLabel }}</small>
+        </button>
+      </li>
+    </ul>
+    <button
+      type="button"
+      class="alert-context-aside__footer-action"
+      data-og7="action"
+      data-og7-id="alert-open-all"
+      (click)="openAllAlerts.emit()"
+    >
+      {{ 'feed.alert.detail.viewAllAlerts' | translate }}
+    </button>
+  </section>
+</aside>

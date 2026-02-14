@@ -1,0 +1,22 @@
+<section class="indicator-stats-aside" data-og7="indicator-stats-aside">
+  <header>
+    <h3>{{ 'feed.indicator.detail.stats.title' | translate }}</h3>
+  </header>
+
+  <ul>
+    <li *ngFor="let stat of stats(); trackBy: trackStat">
+      <div class="indicator-stats-aside__label-wrap">
+        <strong>{{ stat.label }}</strong>
+        <small>{{ stat.value }}</small>
+      </div>
+      <span [class]="'trend trend--' + stat.trend">{{ stat.delta }}</span>
+      <svg viewBox="0 0 128 36" preserveAspectRatio="none" aria-hidden="true">
+        <polyline [attr.points]="sparklinePoints(stat.series)"></polyline>
+      </svg>
+    </li>
+  </ul>
+
+  <button type="button" data-og7="action" data-og7-id="indicator-open-stats-details" (click)="openDetails.emit()">
+    {{ 'feed.indicator.detail.stats.viewDetails' | translate }}
+  </button>
+</section>

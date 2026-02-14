@@ -1,0 +1,35 @@
+﻿<aside class="opportunity-aside" data-og7="opportunity-context-aside">
+  <og7-feed-opportunity-mini-map
+    [capacityMw]="capacityMw()"
+    [fromLabel]="fromLabel()"
+    [toLabel]="toLabel()"
+    [connected]="connected()"
+    [lastUpdatedLabel]="lastUpdatedLabel()"
+  ></og7-feed-opportunity-mini-map>
+
+  <section class="opportunity-aside__card" data-og7="opportunity-indicators">
+    <h3>{{ 'feed.opportunity.detail.relatedIndicators' | translate }}</h3>
+    <ul>
+      <li *ngFor="let indicator of indicators()">
+        <div>
+          <strong>{{ indicator.label }}</strong>
+          <small>{{ indicator.context }}</small>
+        </div>
+        <span [class]="'trend trend--' + indicator.trend">{{ indicator.delta }}</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="opportunity-aside__card" data-og7="opportunity-alerts">
+    <h3>{{ 'feed.opportunity.detail.relatedAlerts' | translate }}</h3>
+    <ul>
+      <li *ngFor="let alert of alerts()">
+        <strong [class]="'alert alert--' + alert.severity">{{ alert.title }}</strong>
+        <p>{{ alert.detail }}</p>
+      </li>
+    </ul>
+    <button type="button" (click)="openAlerts.emit()" data-og7="action" data-og7-id="opportunity-open-alerts">
+      {{ 'feed.opportunity.detail.viewAllAlerts' | translate }}
+    </button>
+  </section>
+</aside>

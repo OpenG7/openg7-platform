@@ -767,6 +767,11 @@
       "quantityUnitPlaceholder": "Select a unit",
       "tags": "Tags",
       "tagsPlaceholder": "e.g. priority, cold-chain, certified",
+      "authRequired": {
+        "title": "Sign in to publish",
+        "description": "You can browse the feed anonymously, but publishing an offer or a request requires an authenticated account.",
+        "cta": "Log in to publish"
+      },
       "submit": "Publish",
       "submitting": "Publishing...",
       "clear": "Clear draft"
@@ -802,6 +807,345 @@
       "itemFailed": "Item failed to send. Edit and try again.",
       "connectionLost": "Feed connection lost. Reconnecting.",
       "connectionRestored": "Feed connection restored."
+    },
+    "opportunity": {
+      "detail": {
+        "title": "Opportunity detail",
+        "breadcrumbOpportunities": "Opportunities",
+        "breadcrumbCurrent": "Import 300 MW",
+        "status": "Status",
+        "statusOpen": "Open",
+        "urgency": "Urgency",
+        "urgencyWinterPeak": "Winter / peak",
+        "visibility": "Visibility",
+        "visibilityPublic": "Public",
+        "visibilityNetwork": "Network",
+        "shortWindow": "Short window",
+        "energy": "Energy",
+        "summary": "Summary",
+        "specs": "Specifications",
+        "terms": "Terms",
+        "documents": "Documents and links",
+        "conversation": "Conversation and replies",
+        "period": "Period",
+        "deliveryPoint": "Delivery point",
+        "pricingType": "Pricing type",
+        "overviewTitle": "Overview",
+        "connected": "Connected",
+        "offline": "Offline",
+        "lastUpdate": "Last update: {{ value }}",
+        "relatedIndicators": "Related indicators",
+        "relatedAlerts": "Related alerts",
+        "viewAllAlerts": "View all alerts",
+        "composePrompt": "Ask a question or post an offer",
+        "composePlaceholder": "Type your message...",
+        "sendReply": "Send",
+        "emptyTab": "No entries for this tab yet.",
+        "tabs": {
+          "questions": "Questions",
+          "offers": "Received offers",
+          "history": "History"
+        },
+        "shortcut": {
+          "reply": "Shift+Enter to send"
+        },
+        "docType": {
+          "pdf": "PDF",
+          "link": "Link"
+        },
+        "doc": {
+          "termSheet": "Term sheet",
+          "operator": "Grid operator reference",
+          "connectionDiagram": "Interconnection diagram"
+        },
+        "spec": {
+          "capacity": "Capacity",
+          "duration": "Duration",
+          "ramp": "Ramp-up / ramp-down",
+          "reliability": "Expected reliability",
+          "energy": "Energy",
+          "constraints": "Constraints"
+        },
+        "term": {
+          "contract": "Contract",
+          "currency": "Settlement",
+          "conditions": "Conditions"
+        },
+        "pricing": {
+          "spot": "Spot",
+          "indexed": "Indexed",
+          "fixed": "Fixed"
+        },
+        "offer": {
+          "capacity": "Proposed capacity",
+          "start": "Start date",
+          "end": "End date",
+          "pricing": "Pricing model",
+          "comment": "Comment",
+          "attachment": "Attachment",
+          "send": "Send offer",
+          "sending": "Sending..."
+        },
+        "cta": {
+          "makeOffer": "Propose an offer",
+          "save": "Save",
+          "saved": "Saved",
+          "share": "Share",
+          "duplicate": "Duplicate",
+          "archive": "Archive",
+          "report": "Report"
+        },
+        "sync": {
+          "offline": "Offline - saved locally",
+          "saved-local": "Saved locally",
+          "syncing": "Synchronizing...",
+          "synced": "Synchronized"
+        },
+        "justNow": "just now",
+        "minutesAgo": "{{ count }} min ago",
+        "hoursAgo": "{{ count }} h ago",
+        "loadingTitle": "Loading opportunity",
+        "loadingBody": "We are preparing the decision context.",
+        "notFoundTitle": "Opportunity not found",
+        "notFoundBody": "This opportunity does not exist or is no longer available.",
+        "backToFeed": "Back to feed",
+        "demo": {
+          "period": "Jan 15 to Feb 15",
+          "deliveryPoint": "Outaouais / Hawthorne interconnection",
+          "pricingType": "Spot / indexed / fixed",
+          "duration": "4 weeks",
+          "ramp": "+/-50 MW / 15 min",
+          "reliability": "99.5%",
+          "energyMix": "Hydro / Mix / any",
+          "constraints": "N-1, congestion, line capacity",
+          "contract": "Short term contract",
+          "conditions": "Deposit, penalties, guarantees",
+          "indicatorSpotPrice": "Spot electricity price",
+          "indicatorReserveMargin": "Reserve margin estimate",
+          "indicatorCongestion": "Congestion estimate",
+          "question1": "Can the nominated profile support 15-minute ramps?",
+          "offer1": "We can deliver 180 MW with hydro-backed balancing.",
+          "history1": "Opportunity published and distributed to trusted partners.",
+          "alertIceStormTitle": "Ice storm risk on Ontario lines",
+          "alertIceStormDetail": "Increased icing probability on north-east corridors in 6-12h.",
+          "alertSmokeTitle": "Wildfire smoke signal",
+          "alertSmokeDetail": "Forecasted visibility degradation on the Ottawa corridor."
+        }
+      }
+    },
+    "alert": {
+      "detail": {
+        "title": "Alert detail",
+        "breadcrumbAlerts": "Alerts",
+        "breadcrumbCurrent": "Ontario grid icing",
+        "weather": "Weather",
+        "gridNetwork": "Electric grid",
+        "ontario": "Ontario",
+        "quebec": "Quebec",
+        "routeUnknown": "Interprovincial corridor",
+        "badges": {
+          "severity": "Severity",
+          "confidence": "Confidence",
+          "window": "Window"
+        },
+        "severity": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        },
+        "confidence": {
+          "possible": "Possible",
+          "probable": "Probable",
+          "high": "High"
+        },
+        "windows": {
+          "short": "12-36h",
+          "medium": "24-48h",
+          "long": "48-72h"
+        },
+        "cta": {
+          "subscribe": "Subscribe",
+          "subscribed": "Subscribed",
+          "share": "Share",
+          "reportUpdate": "Report update",
+          "createOpportunity": "Create linked opportunity"
+        },
+        "lastUpdate": "Last update: {{ value }}",
+        "sections": {
+          "summary": "Summary and estimated impact",
+          "impact": "Potential impacts",
+          "zones": "Affected zones and infrastructure",
+          "regions": "Regions",
+          "infrastructure": "Grid assets",
+          "timeline": "Timeline",
+          "updates": "Update history",
+          "recommendations": "Recommendations and measures",
+          "sources": "Sources and reliability"
+        },
+        "timeline": {
+          "start": "Estimated start",
+          "peak": "Expected peak",
+          "recovery": "Return to normal"
+        },
+        "relatedIndicators": "Related indicators",
+        "relatedAlerts": "Related alerts",
+        "relatedOpportunities": "Suggested opportunities",
+        "viewAllAlerts": "View all alerts",
+        "justNow": "just now",
+        "minutesAgo": "{{ count }} min ago",
+        "hoursAgo": "{{ count }} h ago",
+        "loadingTitle": "Loading alert",
+        "loadingBody": "Preparing weather and grid context.",
+        "notFoundTitle": "Alert not found",
+        "notFoundBody": "This alert does not exist or is no longer available.",
+        "backToFeed": "Back to feed",
+        "demo": {
+          "summaryPoint1": "Significant icing expected on primary transmission corridors.",
+          "summaryPoint2": "Ice accretion risk above 15 mm in exposed sectors.",
+          "impactPoint1": "Potential service interruptions and constrained dispatch.",
+          "impactPoint2": "Line derating and reduced intertie transfer capacity.",
+          "impactPoint3": "Restoration delays if road access worsens overnight.",
+          "zone1": "Toronto - GTA",
+          "zone2": "Ottawa - Kingston",
+          "zone3": "Bruce - Niagara",
+          "infrastructure1": "500 kV corridor East ON backbone",
+          "infrastructure2": "Outaouais-Hawthorne intertie monitoring",
+          "infrastructure3": "Urban substations under high load watch",
+          "timelineStart": "This afternoon",
+          "timelinePeak": "Night of Jan 22 to Jan 23",
+          "timelineRecovery": "Morning of Jan 23",
+          "update1": "Forecast confidence upgraded after latest radar run.",
+          "update2": "Hydro crews pre-positioned near priority substations.",
+          "update2When": "48 min ago",
+          "update3": "System operator issued congestion advisory for east zone.",
+          "update3When": "1 h ago",
+          "reco1": "Inspect critical lines before temperature drop.",
+          "reco2": "Prepare mobile repair crews and spare transformers.",
+          "reco3": "Activate backup generators for sensitive operations.",
+          "sourceEnvironmentCanada": "Environment Canada",
+          "sourceHydroOne": "Hydro One operations bulletin",
+          "sourceIeso": "IESO system advisory",
+          "indicatorSpotPrice": "Spot electricity price",
+          "indicatorReserveMargin": "Reserve margin estimate",
+          "indicatorOutages": "Reported outages",
+          "outageValue": "23 active",
+          "relatedAlert1": "High winds warning",
+          "relatedAlert2": "Heavy snowfall alert",
+          "relatedOpportunity1": "Short-term import of 300 MW",
+          "relatedOpportunityRoute1": "Quebec -> Ontario",
+          "relatedOpportunity2": "Emergency de-icing support crews",
+          "relatedOpportunityRoute2": "Ontario -> Ontario"
+        }
+      }
+    },
+    "indicator": {
+      "detail": {
+        "title": "Indicator detail",
+        "breadcrumbIndicators": "Indicators",
+        "breadcrumbCurrent": "Ontario electricity",
+        "actions": {
+          "subscribe": "Subscribe",
+          "subscribed": "Subscribed",
+          "share": "Share",
+          "createAlert": "Create alert"
+        },
+        "connection": {
+          "online": "Connected",
+          "offline": "Offline",
+          "degraded": "Syncing"
+        },
+        "offline": "Offline mode enabled. Showing the latest known values.",
+        "lastUpdate": "Last update: {{ value }}",
+        "chips": {
+          "windowHours": "{{ value }}h"
+        },
+        "granularity": {
+          "hour": "Spot / hourly",
+          "15m": "15 min",
+          "day": "Daily"
+        },
+        "unit": "c/kWh",
+        "chart": {
+          "title": "During this period: {{ deltaPct }} {{ deltaAbs }} ({{ from }} -> {{ to }})",
+          "completedAt": "Completed: {{ value }} · {{ level }}",
+          "empty": "Insufficient chart data for this combination.",
+          "viewTable": "View table",
+          "hideTable": "Hide table",
+          "summary": "Summary: min {{ min }}, max {{ max }}, last {{ last }}, delta {{ delta }}.",
+          "tableCaption": "Indicator data points",
+          "tableTime": "Timestamp",
+          "tableValue": "Value",
+          "level": {
+            "normal": "Normal level",
+            "high": "High level",
+            "critical": "Critical level"
+          }
+        },
+        "stats": {
+          "title": "Relevant statistics",
+          "viewDetails": "View details ->"
+        },
+        "keyData": {
+          "title": "Key data",
+          "currentPrice": "Current price",
+          "factors": "Increase drivers",
+          "secondaryStat": "Current statistics"
+        },
+        "related": {
+          "alerts": "Related alerts",
+          "opportunities": "Associated opportunities",
+          "viewDetails": "View details ->",
+          "viewAlerts": "View all alerts ->",
+          "viewOpportunities": "View opportunities ->"
+        },
+        "drawer": {
+          "thresholdDirection": "Threshold",
+          "thresholdValue": "Threshold value",
+          "direction": {
+            "gt": "Above",
+            "lt": "Below"
+          },
+          "window": "Window",
+          "window1h": "Over 1 hour",
+          "window24h": "Over 24 hours",
+          "frequency": "Notification frequency",
+          "frequencyInstant": "Instant",
+          "frequencyHourly": "Hourly digest",
+          "frequencyDaily": "Daily digest",
+          "notifyDelta": "Notify me when delta exceeds +X%",
+          "note": "Comment",
+          "submit": "Create alert"
+        },
+        "loadingTitle": "Loading indicator",
+        "loadingBody": "Preparing pricing and grid context.",
+        "notFoundTitle": "Indicator not found",
+        "notFoundBody": "This indicator does not exist or is no longer available.",
+        "backToFeed": "Back to feed",
+        "retry": "Retry",
+        "justNow": "just now",
+        "minutesAgo": "{{ count }} min ago",
+        "hoursAgo": "{{ count }} h ago",
+        "demo": {
+          "province": "Ontario",
+          "sector": "Electricity",
+          "kind": "Spot price",
+          "completedAt": "Sunday 11:00",
+          "factorDemand": "High demand",
+          "factorWeather": "Weather pressure (cold wave)",
+          "factorGeneration": "Generation constraints",
+          "statReserveMargin": "Reserve margin",
+          "statCongestion": "Outaouais congestion",
+          "statForecast": "Late afternoon forecast",
+          "forecastHigh": "Elevated",
+          "relatedAlert1": "Ice storm risk on Ontario transmission lines",
+          "relatedAlert2": "Heavy snowfall alert",
+          "relatedAlertRegion2": "Quebec",
+          "relatedOpportunity1": "Short-term import of 300 MW",
+          "relatedOpportunityRoute1": "Quebec -> Ontario",
+          "relatedOpportunity2": "Surplus hydro blocks for winter peaks",
+          "relatedOpportunityRoute2": "Quebec -> Ontario"
+        }
+      }
     },
     "analytics": {
       "pageLoaded": "Feed page loaded",

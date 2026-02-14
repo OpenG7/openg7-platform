@@ -94,6 +94,7 @@ describe('AuthService', () => {
     service.login({ email: 'a@a.com', password: '1234' }).subscribe();
     const req = http.expectOne(STRAPI_ROUTES.auth.login);
     expect(req.request.body).toEqual({ identifier: 'a@a.com', password: '1234' });
+    expect(req.request.withCredentials).toBeFalse();
     const user = { id: '1', email: 'a@a.com', roles: [] };
     req.flush({ jwt: 'abc.def.ghi', user });
     await flushAsync();
@@ -133,6 +134,7 @@ describe('AuthService', () => {
 
     const req = http.expectOne(STRAPI_ROUTES.auth.register);
     expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBeFalse();
     req.flush({
       user: {
         id: 3,
@@ -322,6 +324,7 @@ describe('AuthService', () => {
     const req = http.expectOne(STRAPI_ROUTES.auth.forgotPassword);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ email: 'user@example.com' });
+    expect(req.request.withCredentials).toBeFalse();
 
     req.flush(null);
 
@@ -343,6 +346,7 @@ describe('AuthService', () => {
     const req = http.expectOne(STRAPI_ROUTES.auth.sendEmailConfirmation);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(payload);
+    expect(req.request.withCredentials).toBeFalse();
 
     req.flush({ email: payload.email, sent: true });
 
@@ -527,6 +531,7 @@ describe('AuthService', () => {
     const req = http.expectOne(STRAPI_ROUTES.auth.resetPassword);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ token: 'abc', password: 'Secret123' });
+    expect(req.request.withCredentials).toBeFalse();
 
     req.flush(null);
 

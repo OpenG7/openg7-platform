@@ -1,0 +1,23 @@
+<section class="indicator-key-data" data-og7="indicator-key-data">
+  <article class="indicator-key-data__card">
+    <h3>{{ 'feed.indicator.detail.keyData.title' | translate }}</h3>
+    <div class="indicator-key-data__main-value">
+      <span>{{ 'feed.indicator.detail.keyData.currentPrice' | translate }}</span>
+      <strong>{{ currentValueLabel() }}</strong>
+      <small>{{ variationLabel() }}</small>
+    </div>
+
+    <h4>{{ 'feed.indicator.detail.keyData.factors' | translate }}</h4>
+    <ul>
+      <li *ngFor="let factor of factors()">{{ factor }}</li>
+    </ul>
+  </article>
+
+  <article class="indicator-key-data__card">
+    <h3>{{ miniStatLabel() }}</h3>
+    <strong>{{ miniStatDelta() }}</strong>
+    <svg viewBox="0 0 220 72" preserveAspectRatio="none" aria-hidden="true">
+      <polyline [attr.points]="sparklinePoints(miniStatSeries())"></polyline>
+    </svg>
+  </article>
+</section>

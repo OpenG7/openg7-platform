@@ -1,0 +1,47 @@
+﻿<section class="opportunity-qna" data-og7="opportunity-qna">
+  <div class="opportunity-qna__tabs" role="tablist" [attr.aria-label]="'feed.opportunity.detail.conversation' | translate">
+    <button
+      *ngFor="let tab of tabs"
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTab() === tab"
+      [class.is-active]="activeTab() === tab"
+      [attr.data-og7-id]="'opportunity-tab-' + tab"
+      (click)="selectTab(tab)"
+    >
+      {{ ('feed.opportunity.detail.tabs.' + tab) | translate }}
+    </button>
+  </div>
+
+  <ul class="opportunity-qna__list" *ngIf="filteredMessages().length; else emptyState">
+    <li *ngFor="let message of filteredMessages(); trackBy: trackMessage">
+      <header>
+        <strong>{{ message.author }}</strong>
+        <time>{{ message.createdAt }}</time>
+      </header>
+      <p>{{ message.content }}</p>
+    </li>
+  </ul>
+
+  <ng-template #emptyState>
+    <p class="opportunity-qna__empty">{{ 'feed.opportunity.detail.emptyTab' | translate }}</p>
+  </ng-template>
+
+  <label class="opportunity-qna__composer" for="opportunity-qna-composer">
+    <span>{{ 'feed.opportunity.detail.composePrompt' | translate }}</span>
+    <textarea
+      id="opportunity-qna-composer"
+      [value]="draft()"
+      [placeholder]="'feed.opportunity.detail.composePlaceholder' | translate"
+      (input)="updateDraft($any($event.target).value || '')"
+      (keydown)="onComposerKeydown($event)"
+    ></textarea>
+  </label>
+
+  <div class="opportunity-qna__actions">
+    <button type="button" (click)="handleSubmit()" data-og7="action" data-og7-id="opportunity-send-reply">
+      {{ 'feed.opportunity.detail.sendReply' | translate }}
+    </button>
+    <span>{{ 'feed.opportunity.detail.shortcut.reply' | translate }}</span>
+  </div>
+</section>

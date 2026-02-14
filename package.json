@@ -32,6 +32,7 @@
     "build:web": "yarn workspace @openg7/web build",
     "build:cms": "yarn workspace @openg7/strapi build",
     "build:all": "yarn build:web --optimization=false && yarn build:cms",
+    "generate:sitemap": "yarn workspace @openg7/web generate:sitemap",
     "generate:runtime-config": "yarn workspace @openg7/web generate:runtime-config",
     "validate:preprod-runtime-config": "yarn workspace @openg7/web validate:preprod-config",
     "docs": "typedoc --options typedoc.core.json",

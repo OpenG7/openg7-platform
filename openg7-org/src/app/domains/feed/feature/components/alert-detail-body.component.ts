@@ -1,0 +1,25 @@
+﻿import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { AlertSourceEntry, AlertTimelineEntry, AlertUpdateEntry } from './alert-detail.models';
+
+@Component({
+  selector: 'og7-alert-detail-body',
+  standalone: true,
+  imports: [CommonModule, TranslateModule],
+  templateUrl: './alert-detail-body.component.html',
+  styleUrl: './alert-detail-body.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AlertDetailBodyComponent {
+  readonly summaryHeadline = input.required<string>();
+  readonly summaryPoints = input<readonly string[]>([]);
+  readonly impactPoints = input<readonly string[]>([]);
+  readonly zones = input<readonly string[]>([]);
+  readonly infrastructures = input<readonly string[]>([]);
+  readonly timeline = input<readonly AlertTimelineEntry[]>([]);
+  readonly updates = input<readonly AlertUpdateEntry[]>([]);
+  readonly recommendations = input<readonly string[]>([]);
+  readonly sources = input<readonly AlertSourceEntry[]>([]);
+}

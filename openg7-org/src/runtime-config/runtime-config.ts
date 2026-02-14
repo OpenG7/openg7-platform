@@ -134,7 +134,10 @@ function parseFeatureFlags(value: unknown, fallback: FeatureFlags): FeatureFlags
   }
 
   if (isRecord(value)) {
-    return value as FeatureFlags;
+    return Object.entries(value).reduce<FeatureFlags>((acc, [flagKey, flagValue]) => {
+      acc[flagKey] = coerceBoolean(flagValue);
+      return acc;
+    }, { ...fallback });
   }
 
   if (typeof value === 'string') {

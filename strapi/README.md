@@ -27,6 +27,7 @@ The seed process expects several environment variables to be defined before runn
 | --- | --- |
 | `STRAPI_ADMIN_EMAIL` | Email address for the initial admin user. Used when `STRAPI_SEED_ADMIN_ALLOWED=true`. |
 | `STRAPI_ADMIN_PASSWORD` | Strong password for the initial admin user. |
+| `STRAPI_WEB_ADMIN_ROLE` | Optional. Users-permissions role assigned to the mirrored web account for `STRAPI_ADMIN_EMAIL` (default: `Owner`). |
 | `STRAPI_SEED_ADMIN_ALLOWED` | Must be `true` to allow creation of the bootstrap admin account. |
 | `STRAPI_API_READONLY_TOKEN` | Token string that will be used to create the read-only API access key. |
 | `STRAPI_SEED_AUTO` | Optional flag. Set to `false` to skip automatic seeding from bootstrap, `true` to force it. |
@@ -112,6 +113,11 @@ The seed files located in `strapi/src/seed/` initialise:
 - Additional demo data such as national projects, statistics, and permissions.
 
 All seeders are idempotent, making them safe to re-run during development or integration testing.
+
+The admin seed now provisions both:
+- the Strapi Admin panel account (`admin::user`), and
+- a mirrored Content API account (`plugin::users-permissions.user`) for the same email/password,
+so `contact@openg7.org` can authenticate from `@openg7/web` via `POST /api/auth/local`.
 
 ## Runtime APIs delivered in this sprint
 

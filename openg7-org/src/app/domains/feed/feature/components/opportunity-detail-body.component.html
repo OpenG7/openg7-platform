@@ -1,0 +1,59 @@
+﻿<section class="opportunity-body" data-og7="opportunity-detail-body">
+  <article class="opportunity-body__card">
+    <h2>{{ 'feed.opportunity.detail.summary' | translate }}</h2>
+    <p>{{ summaryHeadline() }}</p>
+    <ul>
+      <li>
+        <span>{{ 'feed.opportunity.detail.period' | translate }}</span>
+        <strong>{{ periodLabel() }}</strong>
+      </li>
+      <li>
+        <span>{{ 'feed.opportunity.detail.deliveryPoint' | translate }}</span>
+        <strong>{{ deliveryPoint() }}</strong>
+      </li>
+      <li>
+        <span>{{ 'feed.opportunity.detail.pricingType' | translate }}</span>
+        <strong>{{ pricingType() }}</strong>
+      </li>
+    </ul>
+  </article>
+
+  <article class="opportunity-body__card">
+    <h2>{{ 'feed.opportunity.detail.specs' | translate }}</h2>
+    <ul>
+      <li *ngFor="let row of specs()">
+        <span>{{ row.labelKey | translate }}</span>
+        <strong>{{ row.value }}</strong>
+      </li>
+    </ul>
+  </article>
+
+  <article class="opportunity-body__card">
+    <h2>{{ 'feed.opportunity.detail.terms' | translate }}</h2>
+    <ul>
+      <li *ngFor="let row of terms()">
+        <span>{{ row.labelKey | translate }}</span>
+        <strong>{{ row.value }}</strong>
+      </li>
+    </ul>
+  </article>
+
+  <article class="opportunity-body__card">
+    <h2>{{ 'feed.opportunity.detail.documents' | translate }}</h2>
+    <ul class="opportunity-body__documents">
+      <li *ngFor="let doc of documents()">
+        <a [href]="doc.href" rel="noopener" target="_blank">
+          <span>{{ doc.label }}</span>
+          <small>{{ ('feed.opportunity.detail.docType.' + doc.kind) | translate }}</small>
+        </a>
+      </li>
+    </ul>
+  </article>
+
+  <og7-opportunity-qna
+    [messages]="qnaMessages()"
+    [activeTab]="qnaTab()"
+    (activeTabChange)="qnaTabChange.emit($event)"
+    (submitReply)="qnaSubmitReply.emit($event)"
+  ></og7-opportunity-qna>
+</section>
