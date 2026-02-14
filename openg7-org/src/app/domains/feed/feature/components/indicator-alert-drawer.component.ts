@@ -1,0 +1,76 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, HostListener, input, output } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { IndicatorAlertDraft } from './indicator-detail.models';
+
+interface IndicatorAlertFormModel {
+  readonly thresholdDirection: FormControl<'gt' | 'lt'>;
+  readonly thresholdValue: FormControl<number>;
+  readonly window: FormControl<'1h' | '24h'>;
+  readonly frequency: FormControl<'instant' | 'hourly' | 'daily'>;
+  readonly notifyDelta: FormControl<boolean>;
+  readonly note: FormControl<string>;
+}
+
+@Component({
+  selector: 'og7-indicator-alert-drawer',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  templateUrl: './indicator-alert-drawer.component.html',
+  styleUrl: './indicator-alert-drawer.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class IndicatorAlertDrawerComponent {
+  readonly open = input(false);
+  readonly indicatorTitle = input<string>('');
+
+  readonly closed = output<void>();
+  readonly submitted = output<IndicatorAlertDraft>();
+
+  protected readonly form = new FormGroup<IndicatorAlertFormModel>({
+    thresholdDirection: new FormControl<'gt' | 'lt'>('gt', { nonNullable: true }),
+    thresholdValue: new FormControl(12, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0), Validators.max(500)],
+    }),
+    window: new FormControl<'1h' | '24h'>('1h', { nonNullable: true }),
+    frequency: new FormControl<'instant' | 'hourly' | 'daily'>('instant', { nonNullable: true }),
+    notifyDelta: new FormControl(true, { nonNullable: true }),
+    note: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(400)] }),
+  });
+
+  @HostListener('document:keydown', ['$event'])
+  protected onKeydown(event: KeyboardEvent): void {
+    if (!this.open()) {
+      return;
+    }
+    if (event.key.toLowerCase() !== 'escape') {
+      return;
+    }
+    event.preventDefault();
+    this.closed.emit();
+  }
+
+  protected onBackdropClick(): void {
+    this.closed.emit();
+  }
+
+  protected onSubmit(): void {
+    this.form.markAllAsTouched();
+    if (this.form.invalid) {
+      return;
+    }
+    const value = this.form.getRawValue();
+    this.submitted.emit({
+      thresholdDirection: value.thresholdDirection,
+      thresholdValue: value.thresholdValue,
+      window: value.window,
+      frequency: value.frequency,
+      notifyDelta: value.notifyDelta,
+      note: value.note.trim(),
+    });
+    this.form.markAsPristine();
+  }
+}

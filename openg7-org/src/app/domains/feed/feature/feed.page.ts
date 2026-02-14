@@ -83,8 +83,14 @@ export class FeedPage {
   }
 
   openItem(itemId: string): void {
-    this.feed.openDrawer(itemId);
-    void this.router.navigate([itemId], {
+    const item = this.items().find(entry => entry.id === itemId);
+    const routeSegment =
+      item?.type === 'ALERT'
+        ? 'alerts'
+        : item?.type === 'INDICATOR'
+          ? 'indicators'
+          : 'opportunities';
+    void this.router.navigate([routeSegment, itemId], {
       relativeTo: this.route,
       queryParamsHandling: 'preserve',
     });
@@ -92,7 +98,7 @@ export class FeedPage {
 
   closeItem(): void {
     this.feed.openDrawer(null);
-    void this.router.navigate(['../'], {
+    void this.router.navigate(['./'], {
       relativeTo: this.route,
       queryParamsHandling: 'preserve',
     });

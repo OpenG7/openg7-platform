@@ -1,5 +1,11 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  ResolveFn,
+  Routes,
+  UrlMatchResult,
+  UrlSegment,
+} from '@angular/router';
 import { FeedActions } from '@app/store/feed/feed.actions';
 import { selectFeedError, selectFeedHydrated } from '@app/store/feed/feed.selectors';
 import { Store } from '@ngrx/store';
@@ -21,6 +27,8 @@ const TYPE_OPTIONS = new Set<FeedItemType>([
   'INDICATOR',
 ]);
 const MODE_OPTIONS = new Set<FlowMode>(['EXPORT', 'IMPORT', 'BOTH']);
+const LEGACY_ALERT_PREFIXES = ['alert-', 'alerte-'] as const;
+const LEGACY_INDICATOR_PREFIXES = ['indicator-', 'indicateur-'] as const;
 
 const setupFeedResolver: ResolveFn<boolean> = async route => {
   const store = inject(Store);
@@ -51,13 +59,6 @@ const setupFeedResolver: ResolveFn<boolean> = async route => {
   return true;
 };
 
-const drawerResolver: ResolveFn<string | null> = route => {
-  const feed = inject(FeedRealtimeService);
-  const itemId = route.paramMap.get('itemId');
-  feed.openDrawer(itemId);
-  return itemId;
-};
-
 export const routes: Routes = [
   {
     path: '',
@@ -66,13 +67,47 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        resolve: { drawer: drawerResolver },
         loadComponent: () => import('./feed.page').then(m => m.FeedPage),
       },
       {
+        path: 'opportunities/:itemId',
+        loadComponent: () =>
+          import('./pages/feed-opportunity-detail.page').then(m => m.FeedOpportunityDetailPage),
+      },
+      {
+        path: 'opportunity/:itemId',
+        loadComponent: () =>
+          import('./pages/feed-opportunity-detail.page').then(m => m.FeedOpportunityDetailPage),
+      },
+      {
+        path: 'alerts/:itemId',
+        loadComponent: () =>
+          import('./pages/feed-alert-detail.page').then(m => m.FeedAlertDetailPage),
+      },
+      {
+        matcher: createLegacyPrefixedItemMatcher(LEGACY_ALERT_PREFIXES),
+        loadComponent: () =>
+          import('./pages/feed-alert-detail.page').then(m => m.FeedAlertDetailPage),
+      },
+      {
+        path: 'indicators/:itemId',
+        loadComponent: () =>
+          import('./pages/feed-indicator-detail.page').then(m => m.FeedIndicatorDetailPage),
+      },
+      {
+        matcher: createLegacyPrefixedItemMatcher(LEGACY_INDICATOR_PREFIXES),
+        loadComponent: () =>
+          import('./pages/feed-indicator-detail.page').then(m => m.FeedIndicatorDetailPage),
+      },
+      {
+        path: 'indicator/:itemId',
+        loadComponent: () =>
+          import('./pages/feed-indicator-detail.page').then(m => m.FeedIndicatorDetailPage),
+      },
+      {
         path: ':itemId',
-        resolve: { drawer: drawerResolver },
-        loadComponent: () => import('./feed.page').then(m => m.FeedPage),
+        loadComponent: () =>
+          import('./pages/feed-opportunity-detail.page').then(m => m.FeedOpportunityDetailPage),
       },
     ],
   },
@@ -119,4 +154,25 @@ function normalizeString(value: MaybeString): string | undefined {
   }
   const trimmed = value.trim();
   return trimmed.length ? trimmed : undefined;
+}
+
+function createLegacyPrefixedItemMatcher(prefixes: readonly string[]) {
+  return (segments: UrlSegment[]): UrlMatchResult | null => {
+    if (segments.length !== 1) {
+      return null;
+    }
+
+    const [segment] = segments;
+    const path = segment.path.toLowerCase();
+    if (!prefixes.some(prefix => path.startsWith(prefix))) {
+      return null;
+    }
+
+    return {
+      consumed: [segment],
+      posParams: {
+        itemId: segment,
+      },
+    };
+  };
 }

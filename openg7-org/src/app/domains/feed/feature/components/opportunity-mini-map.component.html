@@ -1,0 +1,19 @@
+﻿<section class="opportunity-mini-map" data-og7="opportunity-mini-map">
+  <header class="opportunity-mini-map__header">
+    <h3>{{ 'feed.opportunity.detail.overviewTitle' | translate }}</h3>
+    <span class="opportunity-mini-map__status" [class.opportunity-mini-map__status--offline]="!connected()">
+      {{ connected() ? ('feed.opportunity.detail.connected' | translate) : ('feed.opportunity.detail.offline' | translate) }}
+    </span>
+  </header>
+
+  <div class="opportunity-mini-map__visual" aria-hidden="true">
+    <div class="opportunity-mini-map__node">{{ fromLabel() }}</div>
+    <div class="opportunity-mini-map__line">
+      <span></span>
+      <strong>{{ capacityMw() }} MW</strong>
+    </div>
+    <div class="opportunity-mini-map__node">{{ toLabel() }}</div>
+  </div>
+
+  <p class="opportunity-mini-map__update">{{ 'feed.opportunity.detail.lastUpdate' | translate:{ value: lastUpdatedLabel() } }}</p>
+</section>

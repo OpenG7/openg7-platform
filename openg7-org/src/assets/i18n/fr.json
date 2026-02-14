@@ -697,6 +697,345 @@
       "connectionLost": "Connexion au fil perdue. Reconnexion en cours.",
       "connectionRestored": "Connexion au fil retablie."
     },
+    "opportunity": {
+      "detail": {
+        "title": "Detail d'opportunite",
+        "breadcrumbOpportunities": "Opportunites",
+        "breadcrumbCurrent": "Import 300 MW",
+        "status": "Statut",
+        "statusOpen": "Ouvert",
+        "urgency": "Urgence",
+        "urgencyWinterPeak": "Hiver / pic",
+        "visibility": "Visibilite",
+        "visibilityPublic": "Public",
+        "visibilityNetwork": "Reseau",
+        "shortWindow": "Fenetre courte",
+        "energy": "Energie",
+        "summary": "Resume",
+        "specs": "Specifications",
+        "terms": "Modalites",
+        "documents": "Documents et liens",
+        "conversation": "Conversation et reponses",
+        "period": "Periode",
+        "deliveryPoint": "Point de livraison",
+        "pricingType": "Type de prix",
+        "overviewTitle": "Apercu",
+        "connected": "Connecte",
+        "offline": "Hors ligne",
+        "lastUpdate": "Derniere mise a jour : {{ value }}",
+        "relatedIndicators": "Indicateurs pertinents",
+        "relatedAlerts": "Alertes liees",
+        "viewAllAlerts": "Voir toutes les alertes",
+        "composePrompt": "Poser une question ou proposer une offre",
+        "composePlaceholder": "Saisissez votre message...",
+        "sendReply": "Envoyer",
+        "emptyTab": "Aucune entree dans cet onglet pour le moment.",
+        "tabs": {
+          "questions": "Questions",
+          "offers": "Offres recues",
+          "history": "Historique"
+        },
+        "shortcut": {
+          "reply": "Shift+Enter pour envoyer"
+        },
+        "docType": {
+          "pdf": "PDF",
+          "link": "Lien"
+        },
+        "doc": {
+          "termSheet": "Term sheet",
+          "operator": "Reference operateur reseau",
+          "connectionDiagram": "Schema d'interconnexion"
+        },
+        "spec": {
+          "capacity": "Puissance",
+          "duration": "Duree",
+          "ramp": "Ramp-up / ramp-down",
+          "reliability": "Fiabilite attendue",
+          "energy": "Energie",
+          "constraints": "Contraintes"
+        },
+        "term": {
+          "contract": "Contrat",
+          "currency": "Reglement",
+          "conditions": "Conditions"
+        },
+        "pricing": {
+          "spot": "Spot",
+          "indexed": "Indexe",
+          "fixed": "Fixe"
+        },
+        "offer": {
+          "capacity": "Capacite proposee",
+          "start": "Date de debut",
+          "end": "Date de fin",
+          "pricing": "Modalite de prix",
+          "comment": "Commentaire",
+          "attachment": "Piece jointe",
+          "send": "Envoyer l'offre",
+          "sending": "Envoi..."
+        },
+        "cta": {
+          "makeOffer": "Proposer une offre",
+          "save": "Enregistrer",
+          "saved": "Enregistre",
+          "share": "Partager",
+          "duplicate": "Dupliquer",
+          "archive": "Archiver",
+          "report": "Signaler"
+        },
+        "sync": {
+          "offline": "Hors ligne - sauvegarde locale",
+          "saved-local": "Sauvegarde locale",
+          "syncing": "Synchronisation...",
+          "synced": "Synchronise"
+        },
+        "justNow": "a l'instant",
+        "minutesAgo": "il y a {{ count }} min",
+        "hoursAgo": "il y a {{ count }} h",
+        "loadingTitle": "Chargement de l'opportunite",
+        "loadingBody": "Preparation du contexte de decision.",
+        "notFoundTitle": "Opportunite introuvable",
+        "notFoundBody": "Cette opportunite n'existe pas ou n'est plus disponible.",
+        "backToFeed": "Retour au fil",
+        "demo": {
+          "period": "15 janv. au 15 fev.",
+          "deliveryPoint": "Interconnexion Outaouais / Hawthorne",
+          "pricingType": "Spot / indexe / fixe",
+          "duration": "4 semaines",
+          "ramp": "+/-50 MW / 15 min",
+          "reliability": "99.5%",
+          "energyMix": "Hydro / Mix / peu importe",
+          "constraints": "N-1, congestion, capacite de ligne",
+          "contract": "Contrat court terme",
+          "conditions": "Depot, penalites, garanties",
+          "indicatorSpotPrice": "Prix spot electricite",
+          "indicatorReserveMargin": "Marge de reserve estimee",
+          "indicatorCongestion": "Estimation congestion",
+          "question1": "Le profil nomine supporte-t-il des rampes de 15 minutes ?",
+          "offer1": "Nous pouvons livrer 180 MW avec equilibration hydraulique.",
+          "history1": "Opportunite publiee et diffusee aux partenaires de confiance.",
+          "alertIceStormTitle": "Risque de verglas sur les lignes Ontario",
+          "alertIceStormDetail": "Probabilite de givrage en hausse sur les corridors nord-est dans 6-12h.",
+          "alertSmokeTitle": "Signal fumee de feux de foret",
+          "alertSmokeDetail": "Baisse de visibilite prevue sur le corridor Ottawa."
+        }
+      }
+    },
+    "alert": {
+      "detail": {
+        "title": "Detail d'alerte",
+        "breadcrumbAlerts": "Alertes",
+        "breadcrumbCurrent": "Verglas sur lignes Ontario",
+        "weather": "Meteo",
+        "gridNetwork": "Reseau electrique",
+        "ontario": "Ontario",
+        "quebec": "Quebec",
+        "routeUnknown": "Corridor interprovincial",
+        "badges": {
+          "severity": "Severite",
+          "confidence": "Confiance",
+          "window": "Fenetre"
+        },
+        "severity": {
+          "low": "Faible",
+          "medium": "Moyenne",
+          "high": "Elevee"
+        },
+        "confidence": {
+          "possible": "Possible",
+          "probable": "Probable",
+          "high": "Elevee"
+        },
+        "windows": {
+          "short": "12-36h",
+          "medium": "24-48h",
+          "long": "48-72h"
+        },
+        "cta": {
+          "subscribe": "S'abonner",
+          "subscribed": "Abonne",
+          "share": "Partager",
+          "reportUpdate": "Signaler une mise a jour",
+          "createOpportunity": "Creer une opportunite liee"
+        },
+        "lastUpdate": "Derniere mise a jour : {{ value }}",
+        "sections": {
+          "summary": "Resume et impact estime",
+          "impact": "Impacts potentiels",
+          "zones": "Zones et infrastructures touchees",
+          "regions": "Zones concernees",
+          "infrastructure": "Infrastructures reseau",
+          "timeline": "Chronologie",
+          "updates": "Historique des mises a jour",
+          "recommendations": "Recommandations et mesures",
+          "sources": "Sources et fiabilite"
+        },
+        "timeline": {
+          "start": "Debut estime",
+          "peak": "Pic prevu",
+          "recovery": "Retour a la normale"
+        },
+        "relatedIndicators": "Indicateurs pertinents",
+        "relatedAlerts": "Alertes liees",
+        "relatedOpportunities": "Opportunites associees",
+        "viewAllAlerts": "Voir toutes les alertes",
+        "justNow": "a l'instant",
+        "minutesAgo": "il y a {{ count }} min",
+        "hoursAgo": "il y a {{ count }} h",
+        "loadingTitle": "Chargement de l'alerte",
+        "loadingBody": "Preparation du contexte meteo et reseau.",
+        "notFoundTitle": "Alerte introuvable",
+        "notFoundBody": "Cette alerte n'existe pas ou n'est plus disponible.",
+        "backToFeed": "Retour au fil",
+        "demo": {
+          "summaryPoint1": "Verglas important attendu sur les corridors principaux.",
+          "summaryPoint2": "Risque eleve d'accumulation de glace superieure a 15 mm.",
+          "impactPoint1": "Risque de coupures et limitation de capacite dispatchable.",
+          "impactPoint2": "Derating de lignes et baisse des transferts interconnexions.",
+          "impactPoint3": "Retards de remise en service si l'acces routier se degrade.",
+          "zone1": "Toronto - GTA",
+          "zone2": "Ottawa - Kingston",
+          "zone3": "Bruce - Niagara",
+          "infrastructure1": "Corridor 500 kV colonne est Ontario",
+          "infrastructure2": "Surveillance interconnexion Outaouais-Hawthorne",
+          "infrastructure3": "Postes urbains sous vigilance de charge",
+          "timelineStart": "Cet apres-midi",
+          "timelinePeak": "Nuit du 22 au 23 janvier",
+          "timelineRecovery": "Matin du 23 janvier",
+          "update1": "Confiance prevision relevee apres dernier passage radar.",
+          "update2": "Equipes Hydro pre-positionnees sur postes prioritaires.",
+          "update2When": "il y a 48 min",
+          "update3": "Operateur reseau: avis congestion emis sur zone est.",
+          "update3When": "il y a 1 h",
+          "reco1": "Inspecter les lignes critiques avant chute de temperature.",
+          "reco2": "Preparer equipes mobiles de reparation et transformateurs secours.",
+          "reco3": "Activer generateurs de secours pour operations sensibles.",
+          "sourceEnvironmentCanada": "Environnement Canada",
+          "sourceHydroOne": "Bulletin operations Hydro One",
+          "sourceIeso": "Avis systeme IESO",
+          "indicatorSpotPrice": "Prix spot electricite",
+          "indicatorReserveMargin": "Marge de reserve estimee",
+          "indicatorOutages": "Pannes signalees",
+          "outageValue": "23 actives",
+          "relatedAlert1": "Alerte vents violents",
+          "relatedAlert2": "Alerte fortes chutes de neige",
+          "relatedOpportunity1": "Import court terme de 300 MW",
+          "relatedOpportunityRoute1": "Quebec -> Ontario",
+          "relatedOpportunity2": "Equipes specialisees de deglacage",
+          "relatedOpportunityRoute2": "Ontario -> Ontario"
+        }
+      }
+    },
+    "indicator": {
+      "detail": {
+        "title": "Detail indicateur",
+        "breadcrumbIndicators": "Indicateurs",
+        "breadcrumbCurrent": "Electricite Ontario",
+        "actions": {
+          "subscribe": "S'abonner",
+          "subscribed": "Abonne",
+          "share": "Partager",
+          "createAlert": "Creer une alerte"
+        },
+        "connection": {
+          "online": "Connecte",
+          "offline": "Hors ligne",
+          "degraded": "Synchronisation"
+        },
+        "offline": "Mode hors ligne actif. Derniere valeur connue affichee.",
+        "lastUpdate": "Derniere mise a jour : {{ value }}",
+        "chips": {
+          "windowHours": "{{ value }}h"
+        },
+        "granularity": {
+          "hour": "Prix spot / horaire",
+          "15m": "15 min",
+          "day": "Journalier"
+        },
+        "unit": "c/kWh",
+        "chart": {
+          "title": "Sur cette periode : {{ deltaPct }} {{ deltaAbs }} ({{ from }} -> {{ to }})",
+          "completedAt": "Termine : {{ value }} · {{ level }}",
+          "empty": "Donnees insuffisantes pour ce filtre.",
+          "viewTable": "Voir en tableau",
+          "hideTable": "Masquer le tableau",
+          "summary": "Resume : min {{ min }}, max {{ max }}, dernier {{ last }}, variation {{ delta }}.",
+          "tableCaption": "Points de donnees de l'indicateur",
+          "tableTime": "Horodatage",
+          "tableValue": "Valeur",
+          "level": {
+            "normal": "Niveau normal",
+            "high": "Niveau eleve",
+            "critical": "Niveau critique"
+          }
+        },
+        "stats": {
+          "title": "Indicateurs pertinents",
+          "viewDetails": "Voir details ->"
+        },
+        "keyData": {
+          "title": "Donnees cles",
+          "currentPrice": "Prix actuel",
+          "factors": "Facteurs d'augmentation",
+          "secondaryStat": "Statistiques (actuel)"
+        },
+        "related": {
+          "alerts": "Alertes liees",
+          "opportunities": "Opportunites associees",
+          "viewDetails": "Voir details ->",
+          "viewAlerts": "Voir toutes les alertes ->",
+          "viewOpportunities": "Voir les opportunites ->"
+        },
+        "drawer": {
+          "thresholdDirection": "Seuil",
+          "thresholdValue": "Valeur du seuil",
+          "direction": {
+            "gt": "Superieur a",
+            "lt": "Inferieur a"
+          },
+          "window": "Fenetre",
+          "window1h": "Sur 1 heure",
+          "window24h": "Sur 24 heures",
+          "frequency": "Frequence de notification",
+          "frequencyInstant": "Instantane",
+          "frequencyHourly": "Resume horaire",
+          "frequencyDaily": "Resume quotidien",
+          "notifyDelta": "Me notifier si depasse +X%",
+          "note": "Commentaire",
+          "submit": "Creer l'alerte"
+        },
+        "loadingTitle": "Chargement de l'indicateur",
+        "loadingBody": "Preparation du contexte prix et reseau.",
+        "notFoundTitle": "Indicateur introuvable",
+        "notFoundBody": "Cet indicateur n'existe pas ou n'est plus disponible.",
+        "backToFeed": "Retour au fil",
+        "retry": "Reessayer",
+        "justNow": "a l'instant",
+        "minutesAgo": "il y a {{ count }} min",
+        "hoursAgo": "il y a {{ count }} h",
+        "demo": {
+          "province": "Ontario",
+          "sector": "Electricite",
+          "kind": "Prix spot",
+          "completedAt": "dimanche 11:00",
+          "factorDemand": "Demande elevee",
+          "factorWeather": "Meteo (vague de froid)",
+          "factorGeneration": "Indisponibilites de production",
+          "statReserveMargin": "Marge de reserve",
+          "statCongestion": "Congestion Outaouais",
+          "statForecast": "Prevision fin d'apres-midi",
+          "forecastHigh": "Eleve",
+          "relatedAlert1": "Risque de verglas sur les lignes Ontario",
+          "relatedAlert2": "Alerte fortes chutes de neige",
+          "relatedAlertRegion2": "Quebec",
+          "relatedOpportunity1": "Import court terme de 300 MW",
+          "relatedOpportunityRoute1": "Quebec -> Ontario",
+          "relatedOpportunity2": "Blocs hydro excedentaires pour pointes hivernales",
+          "relatedOpportunityRoute2": "Quebec -> Ontario"
+        }
+      }
+    },
     "analytics": {
       "pageLoaded": "Chargement de la page du fil",
       "itemPublish": "Element publie dans le fil",

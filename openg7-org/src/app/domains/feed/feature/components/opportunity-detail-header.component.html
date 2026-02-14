@@ -1,0 +1,95 @@
+﻿<header class="opportunity-header" [class.opportunity-header--compact]="compact()" data-og7="opportunity-detail-header">
+  <div class="opportunity-header__breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/feed">{{ 'feed.title' | translate }}</a>
+    <span>/</span>
+    <a routerLink="/feed" [queryParams]="{ type: 'REQUEST' }">{{ 'feed.opportunity.detail.breadcrumbOpportunities' | translate }}</a>
+    <span>/</span>
+    <strong>{{ 'feed.opportunity.detail.breadcrumbCurrent' | translate }}</strong>
+  </div>
+
+  <div class="opportunity-header__main">
+    <div class="opportunity-header__title-wrap">
+      <h1>{{ title() }}</h1>
+      <p>{{ routeLabel() }} · {{ subtitle() }}</p>
+      <div class="opportunity-header__badges">
+        <span class="badge badge--open">{{ 'feed.opportunity.detail.status' | translate }}: {{ statusLabel() }}</span>
+        <span *ngIf="urgencyLabel() as urgency" class="badge badge--warning">{{ 'feed.opportunity.detail.urgency' | translate }}: {{ urgency }}</span>
+        <span class="badge">{{ 'feed.opportunity.detail.visibility' | translate }}: {{ visibilityLabel() }}</span>
+      </div>
+      <div class="opportunity-header__chips">
+        <button
+          *ngFor="let tag of tags(); trackBy: trackTag"
+          type="button"
+          (click)="tagClick.emit(tag)"
+          data-og7="action"
+          [attr.data-og7-id]="'opportunity-chip-' + (tag | lowercase)"
+        >
+          {{ tag }}
+        </button>
+      </div>
+    </div>
+
+    <div class="opportunity-header__actions">
+      <button
+        type="button"
+        class="opportunity-header__action opportunity-header__action--primary"
+        (click)="makeOffer.emit()"
+        data-og7="action"
+        data-og7-id="opportunity-make-offer"
+      >
+        {{ 'feed.opportunity.detail.cta.makeOffer' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="opportunity-header__action"
+        (click)="toggleSave.emit()"
+        data-og7="action"
+        data-og7-id="opportunity-save"
+      >
+        {{ saved() ? ('feed.opportunity.detail.cta.saved' | translate) : ('feed.opportunity.detail.cta.save' | translate) }}
+      </button>
+
+      <button
+        type="button"
+        class="opportunity-header__action"
+        (click)="share.emit()"
+        data-og7="action"
+        data-og7-id="opportunity-share"
+      >
+        {{ 'feed.opportunity.detail.cta.share' | translate }}
+      </button>
+
+      <button
+        *ngIf="ownerMode()"
+        type="button"
+        class="opportunity-header__action"
+        (click)="duplicate.emit()"
+      >
+        {{ 'feed.opportunity.detail.cta.duplicate' | translate }}
+      </button>
+
+      <button
+        *ngIf="ownerMode()"
+        type="button"
+        class="opportunity-header__action"
+        (click)="archive.emit()"
+      >
+        {{ 'feed.opportunity.detail.cta.archive' | translate }}
+      </button>
+
+      <button
+        *ngIf="!ownerMode()"
+        type="button"
+        class="opportunity-header__action"
+        (click)="report.emit()"
+      >
+        {{ 'feed.opportunity.detail.cta.report' | translate }}
+      </button>
+
+      <span class="opportunity-header__sync" [attr.data-og7-state]="syncState()">
+        {{ ('feed.opportunity.detail.sync.' + syncState()) | translate }}
+      </span>
+    </div>
+  </div>
+</header>

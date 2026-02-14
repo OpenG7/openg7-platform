@@ -1,0 +1,125 @@
+﻿:host {
+  display: block;
+}
+
+.opportunity-qna {
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.38);
+  padding: 1rem;
+  display: grid;
+  gap: 0.95rem;
+}
+
+.opportunity-qna__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.opportunity-qna__tabs button {
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.45);
+  color: #e2e8f0;
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.opportunity-qna__tabs button.is-active {
+  border-color: rgba(94, 234, 212, 0.7);
+  background: rgba(13, 148, 136, 0.3);
+}
+
+.opportunity-qna__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.opportunity-qna__list li {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  background: rgba(2, 6, 23, 0.32);
+}
+
+.opportunity-qna__list header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.82rem;
+}
+
+.opportunity-qna__list time {
+  color: rgba(203, 213, 225, 0.7);
+}
+
+.opportunity-qna__list p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.opportunity-qna__empty {
+  margin: 0;
+  color: rgba(203, 213, 225, 0.8);
+  font-size: 0.9rem;
+}
+
+.opportunity-qna__composer {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.opportunity-qna__composer span {
+  font-size: 0.82rem;
+  color: rgba(203, 213, 225, 0.9);
+}
+
+.opportunity-qna__composer textarea {
+  min-height: 78px;
+  resize: vertical;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(2, 6, 23, 0.45);
+  color: #f8fafc;
+  padding: 0.65rem 0.75rem;
+}
+
+.opportunity-qna__composer textarea:focus {
+  outline: 2px solid rgba(45, 212, 191, 0.85);
+  outline-offset: 2px;
+}
+
+.opportunity-qna__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.opportunity-qna__actions button {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0891b2, #14b8a6);
+  color: #f8fafc;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.opportunity-qna__actions span {
+  font-size: 0.78rem;
+  color: rgba(203, 213, 225, 0.72);
+}
+
+@media (max-width: 640px) {
+  .opportunity-qna__actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

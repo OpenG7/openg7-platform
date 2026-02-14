@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.indicator-related-list {
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.42);
+  padding: 1rem;
+  color: #e2e8f0;
+  display: grid;
+  gap: 0.72rem;
+}
+
+.indicator-related-list h3 {
+  margin: 0;
+  font-size: 1.04rem;
+}
+
+.indicator-related-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.indicator-related-list li {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  padding-bottom: 0.52rem;
+}
+
+.indicator-related-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.indicator-related-list li button {
+  border: none;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: inherit;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 5.6rem;
+  gap: 0.5rem;
+  cursor: pointer;
+  align-items: end;
+}
+
+.indicator-related-list strong {
+  display: block;
+  font-size: 0.96rem;
+}
+
+.indicator-related-list small {
+  color: rgba(203, 213, 225, 0.72);
+}
+
+.indicator-related-list svg {
+  width: 100%;
+  height: 1.8rem;
+}
+
+.indicator-related-list svg polyline {
+  fill: none;
+  stroke: rgba(94, 234, 212, 0.95);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.indicator-related-list__footer {
+  border-radius: 0.72rem;
+  border: 1px solid rgba(148, 163, 184, 0.36);
+  background: rgba(15, 23, 42, 0.56);
+  color: #cbd5e1;
+  padding: 0.42rem 0.64rem;
+  cursor: pointer;
+  justify-self: start;
+}

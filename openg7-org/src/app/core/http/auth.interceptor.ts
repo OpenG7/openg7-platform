@@ -13,6 +13,10 @@ import { TokenStorageService } from '../security/token-storage.service';
  * @returns Observable producing the HTTP event stream with optional Authorization header.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  if (isAuthEndpoint(req.url)) {
+    return next(req);
+  }
+
   if (req.headers.has('Authorization')) {
     return next(req);
   }
@@ -32,3 +36,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+
+function isAuthEndpoint(url: string): boolean {
+  if (!url) {
+    return false;
+  }
+
+  if (/^\/api\/auth(?:\/|$)/.test(url)) {
+    return true;
+  }
+
+  try {
+    const normalized = new URL(url, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+    return /^\/api\/auth(?:\/|$)/.test(normalized.pathname);
+  } catch {
+    return false;
+  }
+}

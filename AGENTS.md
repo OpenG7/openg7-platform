@@ -67,6 +67,24 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Flux & social | og7-feed-post-drawer | og7-feed-post-drawer | Og7FeedPostDrawerComponent | openg7-org/src/app/domains/feed/feature/og7-feed-post-drawer/og7-feed-post-drawer.component.ts | ok |  |
 | Flux & social | og7-feed-replies | og7-feed-replies | Og7FeedRepliesComponent | openg7-org/src/app/domains/feed/feature/og7-feed-replies/og7-feed-replies.component.ts | ok |  |
 | Flux & social | og7-feed-stream | og7-feed-stream | Og7FeedStreamComponent | openg7-org/src/app/domains/feed/feature/og7-feed-stream/og7-feed-stream.component.ts | ok |  |
+| Flux & social | og7-feed-opportunity-detail-page | og7-feed-opportunity-detail-page | FeedOpportunityDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.ts | ok | Page detail opportunite post-clic feed. |
+| Flux & social | og7-opportunity-detail-header | og7-opportunity-detail-header | OpportunityDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-detail-header.component.ts | ok | Header sticky + actions + badges. |
+| Flux & social | og7-opportunity-detail-body | og7-opportunity-detail-body | OpportunityDetailBodyComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-detail-body.component.ts | ok | Cartes resume/specs/modalites/docs. |
+| Flux & social | og7-opportunity-qna | og7-opportunity-qna | OpportunityQnaComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-qna.component.ts | ok | Onglets Questions/Offres/Historique + composeur. |
+| Flux & social | og7-opportunity-context-aside | og7-opportunity-context-aside | OpportunityContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-context-aside.component.ts | ok | Contexte temps reel (apercu/indicateurs/alertes). |
+| Flux & social | og7-feed-opportunity-mini-map | og7-feed-opportunity-mini-map | OpportunityMiniMapComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-mini-map.component.ts | ok | Mini-map corridor Quebec -> Ontario. |
+| Flux & social | og7-opportunity-offer-drawer | og7-opportunity-offer-drawer | OpportunityOfferDrawerComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-offer-drawer.component.ts | ok | Drawer formulaire proposer une offre. |
+| Flux & social | og7-feed-alert-detail-page | og7-feed-alert-detail-page | FeedAlertDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.ts | ok | Page detail alerte post-clic feed. |
+| Flux & social | og7-alert-detail-header | og7-alert-detail-header | AlertDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-header.component.ts | ok | Header sticky severite + confiance + fenetre + CTA alertes. |
+| Flux & social | og7-alert-detail-body | og7-alert-detail-body | AlertDetailBodyComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-body.component.ts | ok | Resume impact, zones, chronologie, recommandations, sources. |
+| Flux & social | og7-alert-context-aside | og7-alert-context-aside | AlertContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/alert-context-aside.component.ts | ok | Indicateurs, alertes liees, opportunites associees. |
+| Flux & social | og7-feed-indicator-detail-page | og7-feed-indicator-detail-page | FeedIndicatorDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.ts | ok | Page detail indicateur post-clic feed. |
+| Flux & social | og7-indicator-hero | og7-indicator-hero | IndicatorHeroComponent | openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.ts | ok | Header sticky indicateur (breadcrumb, actions, chips). |
+| Flux & social | og7-indicator-chart | og7-indicator-chart | IndicatorChartComponent | openg7-org/src/app/domains/feed/feature/components/indicator-chart.component.ts | ok | Courbe principale avec tooltip + mode tableau. |
+| Flux & social | og7-indicator-stats-aside | og7-indicator-stats-aside | IndicatorStatsAsideComponent | openg7-org/src/app/domains/feed/feature/components/indicator-stats-aside.component.ts | ok | Colonne contexte stats temps reel. |
+| Flux & social | og7-indicator-key-data | og7-indicator-key-data | IndicatorKeyDataComponent | openg7-org/src/app/domains/feed/feature/components/indicator-key-data.component.ts | ok | Carte donnees cles + facteurs d'augmentation. |
+| Flux & social | og7-indicator-related-list | og7-indicator-related-list | IndicatorRelatedListComponent | openg7-org/src/app/domains/feed/feature/components/indicator-related-list.component.ts | ok | Listes liees alertes/opportunites avec sparklines. |
+| Flux & social | og7-indicator-alert-drawer | og7-indicator-alert-drawer | IndicatorAlertDrawerComponent | openg7-org/src/app/domains/feed/feature/components/indicator-alert-drawer.component.ts | ok | Drawer creation alerte depuis un indicateur. |
 | Importation & supply chain | og7-importation-collaboration-hub | og7-importation-collaboration-hub | ImportationCollaborationHubComponent | openg7-org/src/app/domains/importation/components/collaboration-hub/importation-collaboration-hub.component.ts | ok |  |
 | Importation & supply chain | og7-importation-commodity-section | og7-importation-commodity-section | ImportationCommoditySectionComponent | openg7-org/src/app/domains/importation/components/commodity-section/importation-commodity-section.component.ts | ok |  |
 | Importation & supply chain | og7-importation-knowledge-section | og7-importation-knowledge-section | ImportationKnowledgeSectionComponent | openg7-org/src/app/domains/importation/components/knowledge-section/importation-knowledge-section.component.ts | ok |  |
@@ -119,6 +137,37 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Layout / nav / a11y | [data-og7-id="alerts"] | SiteHeaderComponent | openg7-org/src/app/shared/components/layout/site-header/site-header.component.html | ok | Lien menu profil vers /alerts (desktop + mobile). |
 | Commerce & entreprises | [data-og7="company-table"] | CompanyTableComponent | openg7-org/src/app/shared/components/company/company-table.component.ts | ok |  |
 | Commerce & entreprises | [data-og7="company-detail"] | CompanyDetailComponent | openg7-org/src/app/shared/components/company/company-detail.component.ts | ok |  |
+| Flux & social | [data-og7="opportunity-detail-page"] | FeedOpportunityDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.html | ok | Conteneur detail opportunite. |
+| Flux & social | [data-og7="opportunity-detail-header"] | OpportunityDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-detail-header.component.html | ok | Header sticky + actions detail. |
+| Flux & social | [data-og7="opportunity-detail-body"] | OpportunityDetailBodyComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-detail-body.component.html | ok | Resume/specs/modalites/documents. |
+| Flux & social | [data-og7="opportunity-qna"] | OpportunityQnaComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-qna.component.html | ok | Onglets Q/R + composeur. |
+| Flux & social | [data-og7="opportunity-context-aside"] | OpportunityContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-context-aside.component.html | ok | Contexte temps reel. |
+| Flux & social | [data-og7="opportunity-mini-map"] | OpportunityMiniMapComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-mini-map.component.html | ok | Mini-carte corridor. |
+| Flux & social | [data-og7="opportunity-offer-drawer"] | OpportunityOfferDrawerComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-offer-drawer.component.html | ok | Drawer proposer une offre. |
+| Flux & social | [data-og7="action"][data-og7-id="opportunity-make-offer"] | OpportunityDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-detail-header.component.html | ok | CTA principal proposer une offre. |
+| Flux & social | [data-og7="action"][data-og7-id="opportunity-offer-submit"] | OpportunityOfferDrawerComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-offer-drawer.component.html | ok | Soumission offre rapide. |
+| Flux & social | [data-og7="alert-detail-page"] | FeedAlertDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.html | ok | Conteneur detail alerte. |
+| Flux & social | [data-og7="alert-detail-header"] | AlertDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-header.component.html | ok | Header alerte sticky. |
+| Flux & social | [data-og7="alert-detail-body"] | AlertDetailBodyComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-body.component.html | ok | Corps detail alerte (impact/zones/timeline/sources). |
+| Flux & social | [data-og7="alert-context-aside"] | AlertContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/alert-context-aside.component.html | ok | Aside alertes (indicateurs/lies/opportunites). |
+| Flux & social | [data-og7="alert-indicators"] | AlertContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/alert-context-aside.component.html | ok | Carte indicateurs pertinents cote alerte. |
+| Flux & social | [data-og7="alert-related-alerts"] | AlertContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/alert-context-aside.component.html | ok | Liste alertes liees. |
+| Flux & social | [data-og7="alert-related-opportunities"] | AlertContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/alert-context-aside.component.html | ok | Opportunites associees creees/suggerees. |
+| Flux & social | [data-og7="action"][data-og7-id="alert-subscribe"] | AlertDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-header.component.html | ok | CTA principal alertes: abonnement notifications. |
+| Flux & social | [data-og7="action"][data-og7-id="alert-share"] | AlertDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-header.component.html | ok | CTA partage alerte. |
+| Flux & social | [data-og7="action"][data-og7-id="alert-report-update"] | AlertDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-header.component.html | ok | CTA contribution utilisateur: signaler mise a jour. |
+| Flux & social | [data-og7="action"][data-og7-id="alert-create-opportunity"] | AlertDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-header.component.html | ok | CTA optionnel creation opportunite liee. |
+| Flux & social | [data-og7="indicator-detail-page"] | FeedIndicatorDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.html | ok | Conteneur detail indicateur. |
+| Flux & social | [data-og7="indicator-detail-header"] | IndicatorHeroComponent | openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.html | ok | Header sticky indicateur avec breadcrumbs/actions/chips. |
+| Flux & social | [data-og7="indicator-chart"] | IndicatorChartComponent | openg7-org/src/app/domains/feed/feature/components/indicator-chart.component.html | ok | Courbe principale (tooltip + resume a11y + vue tableau). |
+| Flux & social | [data-og7="indicator-key-data"] | IndicatorKeyDataComponent | openg7-org/src/app/domains/feed/feature/components/indicator-key-data.component.html | ok | Carte prix actuel + facteurs d'augmentation. |
+| Flux & social | [data-og7="indicator-stats-aside"] | IndicatorStatsAsideComponent | openg7-org/src/app/domains/feed/feature/components/indicator-stats-aside.component.html | ok | Bloc statistiques pertinents avec sparklines. |
+| Flux & social | [data-og7="indicator-related-alerts"] | FeedIndicatorDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.html | ok | Liste alertes liees a l'indicateur. |
+| Flux & social | [data-og7="indicator-related-opportunities"] | FeedIndicatorDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.html | ok | Liste opportunites associees a l'indicateur. |
+| Flux & social | [data-og7="indicator-alert-drawer"] | IndicatorAlertDrawerComponent | openg7-org/src/app/domains/feed/feature/components/indicator-alert-drawer.component.html | ok | Drawer creation d'alerte depuis un indicateur. |
+| Flux & social | [data-og7="action"][data-og7-id="indicator-subscribe"] | IndicatorHeroComponent | openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.html | ok | CTA abonnement indicateur (toggle optimistic). |
+| Flux & social | [data-og7="action"][data-og7-id="indicator-create-alert"] | IndicatorHeroComponent | openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.html | ok | CTA ouverture drawer de creation d'alerte. |
+| Flux & social | [data-og7="action"][data-og7-id="indicator-alert-submit"] | IndicatorAlertDrawerComponent | openg7-org/src/app/domains/feed/feature/components/indicator-alert-drawer.component.html | ok | Soumission rapide d'alerte sur seuil indicateur. |
 
 ### Convention de nommage (vérifiée)
 
@@ -1452,6 +1501,10 @@ Exécuter systématiquement les scripts de validation **avant** d’ouvrir une P
 
 _MAJ (enhanced) : 2025-09-13 10:15:00Z_
 
+### Recommandation shell (builds)
 
+- Pour lancer les commandes de build (`yarn build`, `npm run build`, `ng build`), privilegier **Bash** (Git Bash / WSL) plutot que PowerShell.
+- Raison : sur certains postes Windows, `npm.ps1` peut etre bloque par `ExecutionPolicy`, ce qui casse les builds en PowerShell.
+- Si vous restez en PowerShell, utilisez un contournement explicite (`cmd /c npm ...`) ou ajustez la policy localement selon vos regles de securite.
 
 

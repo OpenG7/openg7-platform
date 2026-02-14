@@ -45,7 +45,13 @@
       {{ 'feed.source' | translate }}: {{ item().source.label || ('feed.sourceUnknown' | translate) }}
     </div>
     <div class="feed-card__actions">
-      <button type="button" class="feed-card__action" (click)="handleOpen()">
+      <button
+        type="button"
+        class="feed-card__action"
+        data-og7="action"
+        data-og7-id="feed-open-item"
+        (click)="handleOpen()"
+      >
         {{ 'feed.cta.open' | translate }}
       </button>
       <button type="button" class="feed-card__action" (click)="handleSave()">

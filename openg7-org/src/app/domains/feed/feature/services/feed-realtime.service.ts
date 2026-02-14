@@ -11,8 +11,10 @@ import {
   inject,
   makeStateKey,
 } from '@angular/core';
+import { FEATURE_FLAGS } from '@app/core/config/environment.tokens';
 import { API_URL } from '@app/core/config/environment.tokens';
 import { injectNotificationStore } from '@app/core/observability/notification.store';
+import { selectCatalogFeedItems } from '@app/state/catalog/catalog.selectors';
 import {
   feedModeSig,
   feedSearchSig,
@@ -40,6 +42,7 @@ import {
 } from '@app/store/feed/feed.selectors';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 import {
   FeedComposerDraft,
@@ -54,10 +57,16 @@ const STREAM_ENDPOINT = '/api/feed/stream';
 const COLLECTION_ENDPOINT = '/api/feed';
 const TRANSFER_STATE_KEY = makeStateKey<FeedSnapshot>('OG7_FEED_SNAPSHOT');
 const MODERATION_TERMS = ['spam', 'fake', 'fraud'];
+const MOCK_PAGE_LIMIT = 20;
+const CATALOG_MOCK_PATH = 'assets/mocks/catalog.mock.json';
 
 interface ItemResponse {
   readonly data: FeedItem | FeedItem[];
   readonly cursor?: string | null;
+}
+
+interface CatalogMockResponse {
+  readonly feedItems?: readonly FeedItem[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -69,9 +78,13 @@ export class FeedRealtimeService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
   private readonly apiUrl = (inject(API_URL, { optional: true }) ?? '').replace(/\/$/, '');
+  private readonly featureFlags = inject(FEATURE_FLAGS, { optional: true });
   private readonly browser = isPlatformBrowser(this.platformId);
   private readonly notifications = injectNotificationStore();
   private readonly translate = inject(TranslateService);
+  private readonly useMockFeed = Boolean(
+    this.featureFlags?.['feedMocks'] ?? this.featureFlags?.['homeFeedMocks']
+  );
 
   private eventSource: EventSource | null = null;
   private socket: WebSocket | null = null;
@@ -80,7 +93,10 @@ export class FeedRealtimeService {
   private readonly seenEventIds: string[] = [];
   private connectionNotifiedDown = false;
   private lastFetchedFilters: FeedFilterState | null = null;
+  private mockFeedCache: readonly FeedItem[] | null = null;
+  private mockFeedRequest: Promise<readonly FeedItem[]> | null = null;
 
+  private readonly catalogFeedItemsSig = this.store.selectSignal(selectCatalogFeedItems);
   private readonly filtersSig = this.store.selectSignal(selectFeedFilters);
   private readonly cursorSig = this.store.selectSignal(selectFeedCursor);
   private readonly hydratedSig = this.store.selectSignal(selectFeedHydrated);
@@ -181,7 +197,12 @@ export class FeedRealtimeService {
     );
 
     if (this.browser) {
-      this.connect();
+      if (this.useMockFeed) {
+        this.store.dispatch(FeedActions.setConnectionStatus({ connected: true, reconnecting: false }));
+        this.store.dispatch(FeedActions.setConnectionError({ error: null }));
+      } else {
+        this.connect();
+      }
     }
 
     this.destroyRef.onDestroy(() => this.teardown());
@@ -283,6 +304,22 @@ export class FeedRealtimeService {
     const idempotencyKey = this.generateIdempotencyKey();
     const optimisticItem = this.buildOptimisticItem(normalized, idempotencyKey);
     this.store.dispatch(FeedActions.optimisticPublish({ draft: normalized, item: optimisticItem, idempotencyKey }));
+    if (this.useMockFeed) {
+      const confirmedItem: FeedItem = {
+        ...optimisticItem,
+        id: `mock-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        status: 'confirmed',
+        optimisticIdempotencyKey: undefined,
+      };
+      this.store.dispatch(FeedActions.publishSuccess({ tempId: optimisticItem.id, item: confirmedItem }));
+      this.mockFeedCache = [confirmedItem, ...(this.mockFeedCache ?? [])];
+      this.emitAnalytics('feed.item.publish', { itemId: confirmedItem.id, type: confirmedItem.type, source: 'mock' });
+      this.notifications.success(this.translate.instant('feed.notifications.publishSuccess'), {
+        source: 'feed',
+        metadata: { itemId: confirmedItem.id, type: confirmedItem.type, source: 'mock' },
+      });
+      return validation;
+    }
     const url = this.composeUrl(COLLECTION_ENDPOINT);
     const headers = new HttpHeaders({ 'Idempotency-Key': idempotencyKey });
     this.http.post<ItemResponse | FeedItem>(url, normalized, { headers }).subscribe({
@@ -311,7 +348,7 @@ export class FeedRealtimeService {
   }
 
   refreshConnection(): void {
-    if (!this.browser) {
+    if (!this.browser || this.useMockFeed) {
       return;
     }
     this.scheduleReconnect(0);
@@ -327,6 +364,14 @@ export class FeedRealtimeService {
       this.store.dispatch(
         FeedActions.loadPage({ cursor: cursor ?? null, append: Boolean(append) })
       );
+    }
+    if (this.useMockFeed) {
+      void this.resolveAndDispatchMockPage({
+        filters,
+        cursor: cursor ?? null,
+        append: Boolean(append),
+      });
+      return;
     }
     const url = this.composeUrl(COLLECTION_ENDPOINT);
     this.http
@@ -349,6 +394,44 @@ export class FeedRealtimeService {
           });
         },
       });
+  }
+
+  private async resolveAndDispatchMockPage(options: {
+    filters: FeedFilterState;
+    cursor: string | null;
+    append: boolean;
+  }): Promise<void> {
+    const { filters, cursor, append } = options;
+    try {
+      const allItems = await this.resolveMockFeedItems();
+      if (!this.equalFilters(filters, this.filtersSig())) {
+        return;
+      }
+
+      const filtered = this.filterMockItems(allItems, filters);
+      const offset = append ? this.parseMockCursor(cursor) : 0;
+      const items = filtered.slice(offset, offset + MOCK_PAGE_LIMIT);
+      const nextCursor =
+        offset + MOCK_PAGE_LIMIT < filtered.length ? String(offset + MOCK_PAGE_LIMIT) : null;
+
+      this.store.dispatch(
+        FeedActions.loadSuccess({
+          items,
+          cursor: nextCursor,
+          append,
+        })
+      );
+      this.emitAnalytics('feed.page.loaded', { count: items.length, cursor: nextCursor, source: 'mock' });
+    } catch (error) {
+      const message = this.extractError(error);
+      this.store.dispatch(FeedActions.loadFailure({ error: message }));
+      this.notifications.error(this.translate.instant('feed.notifications.loadError', { reason: message }), {
+        source: 'feed',
+        context: error,
+        metadata: { cursor, append, source: 'mock' },
+        deliver: { email: true },
+      });
+    }
   }
 
   private connect(): void {
@@ -540,16 +623,128 @@ export class FeedRealtimeService {
     return params;
   }
 
+  private async resolveMockFeedItems(): Promise<readonly FeedItem[]> {
+    const catalogItems = this.catalogFeedItemsSig();
+    if (catalogItems.length) {
+      this.mockFeedCache = this.normalizeArrayResponse(catalogItems);
+      return this.mockFeedCache;
+    }
+
+    if (this.mockFeedCache?.length) {
+      return this.mockFeedCache;
+    }
+
+    if (!this.browser) {
+      return [];
+    }
+
+    if (!this.mockFeedRequest) {
+      this.mockFeedRequest = firstValueFrom(this.http.get<CatalogMockResponse>(CATALOG_MOCK_PATH))
+        .then(payload => this.normalizeArrayResponse(payload?.feedItems ?? []))
+        .then(items => {
+          this.mockFeedCache = items;
+          return items;
+        })
+        .finally(() => {
+          this.mockFeedRequest = null;
+        });
+    }
+
+    return this.mockFeedRequest;
+  }
+
+  private filterMockItems(items: readonly FeedItem[], filters: FeedFilterState): FeedItem[] {
+    const search = filters.search.trim().toLowerCase();
+
+    return items
+      .filter(item => {
+        if (filters.type && item.type !== filters.type) {
+          return false;
+        }
+        if (filters.mode !== 'BOTH' && item.mode !== filters.mode) {
+          return false;
+        }
+        if (filters.sectorId && item.sectorId !== filters.sectorId) {
+          return false;
+        }
+        if (filters.fromProvinceId && item.fromProvinceId !== filters.fromProvinceId) {
+          return false;
+        }
+        if (filters.toProvinceId && item.toProvinceId !== filters.toProvinceId) {
+          return false;
+        }
+        if (!search) {
+          return true;
+        }
+
+        const haystack = [
+          item.title,
+          item.summary,
+          item.source?.label ?? '',
+          item.sectorId ?? '',
+          item.fromProvinceId ?? '',
+          item.toProvinceId ?? '',
+          ...(item.tags ?? []),
+        ]
+          .join(' ')
+          .toLowerCase();
+
+        return haystack.includes(search);
+      })
+      .sort((left, right) => this.compareMockItems(left, right, filters.sort));
+  }
+
+  private compareMockItems(left: FeedItem, right: FeedItem, sort: FeedFilterState['sort']): number {
+    if (sort !== 'NEWEST') {
+      const scoreDiff = this.mockSortScore(right, sort) - this.mockSortScore(left, sort);
+      if (scoreDiff !== 0) {
+        return scoreDiff;
+      }
+    }
+
+    const createdAtDiff = (right.createdAt ?? '').localeCompare(left.createdAt ?? '');
+    if (createdAtDiff !== 0) {
+      return createdAtDiff;
+    }
+    return (right.id ?? '').localeCompare(left.id ?? '');
+  }
+
+  private mockSortScore(item: FeedItem, sort: FeedFilterState['sort']): number {
+    if (sort === 'URGENCY') {
+      return item.urgency ?? 0;
+    }
+    if (sort === 'VOLUME') {
+      return item.volumeScore ?? item.quantity?.value ?? 0;
+    }
+    if (sort === 'CREDIBILITY') {
+      return item.credibility ?? 0;
+    }
+    return 0;
+  }
+
+  private parseMockCursor(value: string | null): number {
+    if (!value) {
+      return 0;
+    }
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      return 0;
+    }
+    return parsed;
+  }
+
   private composeUrl(path: string): string {
     const base = this.apiUrl || '';
     return `${base}${path}`;
   }
 
-  private normalizeArrayResponse(data: FeedItem | FeedItem[] | null | undefined): FeedItem[] {
+  private normalizeArrayResponse(data: FeedItem | readonly FeedItem[] | null | undefined): FeedItem[] {
     if (!data) {
       return [];
     }
-    return Array.isArray(data) ? data.map(item => this.normalizeItem(item)) : [this.normalizeItem(data)];
+    return Array.isArray(data)
+      ? data.map(item => this.normalizeItem(item))
+      : [this.normalizeItem(data as FeedItem)];
   }
 
   private normalizeItemResponse(response: ItemResponse | FeedItem): FeedItem {

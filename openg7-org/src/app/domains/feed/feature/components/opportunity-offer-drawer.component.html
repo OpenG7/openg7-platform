@@ -1,0 +1,58 @@
+﻿<div class="opportunity-offer-drawer" *ngIf="visible()" data-og7="opportunity-offer-drawer">
+  <button class="opportunity-offer-drawer__backdrop" type="button" (click)="onBackdropClick()" aria-hidden="true"></button>
+
+  <section class="opportunity-offer-drawer__panel" role="dialog" [attr.aria-modal]="true">
+    <header>
+      <h2>{{ 'feed.opportunity.detail.cta.makeOffer' | translate }}</h2>
+      <button type="button" (click)="closed.emit()" [attr.aria-label]="'feed.drawer.close' | translate">x</button>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label>
+        <span>{{ 'feed.opportunity.detail.offer.capacity' | translate }}</span>
+        <div class="opportunity-offer-drawer__field-row">
+          <input type="number" min="1" formControlName="capacityMw" />
+          <small>MW</small>
+        </div>
+      </label>
+
+      <div class="opportunity-offer-drawer__grid">
+        <label>
+          <span>{{ 'feed.opportunity.detail.offer.start' | translate }}</span>
+          <input type="date" formControlName="startDate" />
+        </label>
+        <label>
+          <span>{{ 'feed.opportunity.detail.offer.end' | translate }}</span>
+          <input type="date" formControlName="endDate" />
+        </label>
+      </div>
+
+      <label>
+        <span>{{ 'feed.opportunity.detail.offer.pricing' | translate }}</span>
+        <select formControlName="pricingModel">
+          <option value="spot">{{ 'feed.opportunity.detail.pricing.spot' | translate }}</option>
+          <option value="indexed">{{ 'feed.opportunity.detail.pricing.indexed' | translate }}</option>
+          <option value="fixed">{{ 'feed.opportunity.detail.pricing.fixed' | translate }}</option>
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'feed.opportunity.detail.offer.comment' | translate }}</span>
+        <textarea formControlName="comment" rows="4"></textarea>
+      </label>
+
+      <label>
+        <span>{{ 'feed.opportunity.detail.offer.attachment' | translate }}</span>
+        <input type="file" (change)="onAttachmentSelected($event)" />
+      </label>
+
+      <p class="opportunity-offer-drawer__attachment" *ngIf="form.controls.attachmentName.value">
+        {{ form.controls.attachmentName.value }}
+      </p>
+
+      <button type="submit" [disabled]="pending()" data-og7="action" data-og7-id="opportunity-offer-submit">
+        {{ pending() ? ('feed.opportunity.detail.offer.sending' | translate) : ('feed.opportunity.detail.offer.send' | translate) }}
+      </button>
+    </form>
+  </section>
+</div>

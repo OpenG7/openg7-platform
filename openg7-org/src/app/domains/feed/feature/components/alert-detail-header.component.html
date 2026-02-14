@@ -1,0 +1,64 @@
+﻿<header class="alert-detail-header" [class.alert-detail-header--compact]="compact()" data-og7="alert-detail-header">
+  <div class="alert-detail-header__breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/feed">{{ 'feed.title' | translate }}</a>
+    <span>/</span>
+    <a routerLink="/feed" [queryParams]="{ type: 'ALERT' }">{{ 'feed.alert.detail.breadcrumbAlerts' | translate }}</a>
+    <span>/</span>
+    <strong>{{ 'feed.alert.detail.breadcrumbCurrent' | translate }}</strong>
+  </div>
+
+  <div class="alert-detail-header__content">
+    <div class="alert-detail-header__main">
+      <h1>{{ title() }}</h1>
+      <p>{{ subtitle() }}</p>
+      <div class="alert-detail-header__badges">
+        <span class="badge badge--severity">{{ 'feed.alert.detail.badges.severity' | translate }}: {{ severityLabel() }}</span>
+        <span class="badge">{{ 'feed.alert.detail.badges.confidence' | translate }}: {{ confidenceLabel() }}</span>
+        <span class="badge">{{ 'feed.alert.detail.badges.window' | translate }}: {{ windowLabel() }}</span>
+      </div>
+    </div>
+
+    <div class="alert-detail-header__actions">
+      <button
+        type="button"
+        class="alert-detail-header__action alert-detail-header__action--primary"
+        data-og7="action"
+        data-og7-id="alert-subscribe"
+        (click)="toggleSubscribe.emit()"
+      >
+        {{ subscribed() ? ('feed.alert.detail.cta.subscribed' | translate) : ('feed.alert.detail.cta.subscribe' | translate) }}
+      </button>
+
+      <button
+        type="button"
+        class="alert-detail-header__action"
+        data-og7="action"
+        data-og7-id="alert-share"
+        (click)="share.emit()"
+      >
+        {{ 'feed.alert.detail.cta.share' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="alert-detail-header__action"
+        data-og7="action"
+        data-og7-id="alert-report-update"
+        (click)="reportUpdate.emit()"
+      >
+        {{ 'feed.alert.detail.cta.reportUpdate' | translate }}
+      </button>
+
+      <button
+        *ngIf="canCreateOpportunity()"
+        type="button"
+        class="alert-detail-header__action"
+        data-og7="action"
+        data-og7-id="alert-create-opportunity"
+        (click)="createOpportunity.emit()"
+      >
+        {{ 'feed.alert.detail.cta.createOpportunity' | translate }}
+      </button>
+    </div>
+  </div>
+</header>

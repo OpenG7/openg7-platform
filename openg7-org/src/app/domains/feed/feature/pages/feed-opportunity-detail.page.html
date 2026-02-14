@@ -1,0 +1,75 @@
+﻿<section class="feed-opportunity-detail" data-og7="opportunity-detail-page">
+  <ng-container *ngIf="detailVm() as detail; else emptyState">
+    <og7-opportunity-detail-header
+      [title]="detail.title"
+      [routeLabel]="detail.routeLabel"
+      [subtitle]="detail.subtitle"
+      [statusLabel]="detail.statusLabel"
+      [urgencyLabel]="detail.urgencyLabel"
+      [visibilityLabel]="detail.visibilityLabel"
+      [tags]="detail.tags"
+      [compact]="headerCompact()"
+      [saved]="saved()"
+      [syncState]="syncState()"
+      [ownerMode]="ownerMode()"
+      (makeOffer)="openOfferDrawer()"
+      (toggleSave)="handleSaveToggle()"
+      (share)="handleShare()"
+      (tagClick)="handleTagFilter($event)"
+      (report)="handleReport()"
+      (duplicate)="handleDuplicate()"
+      (archive)="handleArchive()"
+    ></og7-opportunity-detail-header>
+
+    <div class="feed-opportunity-detail__layout">
+      <og7-opportunity-detail-body
+        [summaryHeadline]="detail.summaryHeadline"
+        [periodLabel]="detail.periodLabel"
+        [deliveryPoint]="detail.deliveryPoint"
+        [pricingType]="detail.pricingType"
+        [specs]="detail.specs"
+        [terms]="detail.terms"
+        [documents]="detail.documents"
+        [qnaMessages]="qnaMessages()"
+        [qnaTab]="qnaTab()"
+        (qnaTabChange)="setQnaTab($event)"
+        (qnaSubmitReply)="handleQnaSubmit($event)"
+      ></og7-opportunity-detail-body>
+
+      <og7-opportunity-context-aside
+        [capacityMw]="detail.capacityMw"
+        [fromLabel]="detail.fromLabel"
+        [toLabel]="detail.toLabel"
+        [connected]="isConnected()"
+        [lastUpdatedLabel]="lastUpdatedLabel()"
+        [indicators]="detail.indicators"
+        [alerts]="detail.alerts"
+        (openAlerts)="openAlerts()"
+      ></og7-opportunity-context-aside>
+    </div>
+
+    <og7-opportunity-offer-drawer
+      [open]="offerDrawerOpen()"
+      [initialCapacityMw]="detail.capacityMw"
+      [initialStartDate]="(detail.item.createdAt | date:'yyyy-MM-dd') ?? ''"
+      [initialEndDate]="((detail.item.updatedAt || detail.item.createdAt) | date:'yyyy-MM-dd') ?? ''"
+      (closed)="closeOfferDrawer()"
+      (submitted)="handleOfferSubmitted($event)"
+    ></og7-opportunity-offer-drawer>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <article class="feed-opportunity-detail__empty" *ngIf="loading(); else missingState" data-og7="opportunity-detail-loading">
+      <h2>{{ 'feed.opportunity.detail.loadingTitle' | translate }}</h2>
+      <p>{{ 'feed.opportunity.detail.loadingBody' | translate }}</p>
+    </article>
+
+    <ng-template #missingState>
+      <article class="feed-opportunity-detail__empty" data-og7="opportunity-detail-missing">
+        <h2>{{ 'feed.opportunity.detail.notFoundTitle' | translate }}</h2>
+        <p>{{ error() || ('feed.opportunity.detail.notFoundBody' | translate) }}</p>
+        <a routerLink="/feed">{{ 'feed.opportunity.detail.backToFeed' | translate }}</a>
+      </article>
+    </ng-template>
+  </ng-template>
+</section>
