@@ -49,6 +49,7 @@ import {
   FeedComposerValidationResult,
   FeedFilterState,
   FeedItem,
+  FeedPublishOutcome,
   FeedRealtimeEnvelope,
   FeedSnapshot,
 } from '../models/feed.models';
@@ -67,6 +68,12 @@ interface ItemResponse {
 
 interface CatalogMockResponse {
   readonly feedItems?: readonly FeedItem[];
+}
+
+interface PublishContext {
+  readonly normalizedDraft: FeedComposerDraft;
+  readonly idempotencyKey: string;
+  readonly optimisticItem: FeedItem;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -237,6 +244,39 @@ export class FeedRealtimeService {
     this.refreshConnection();
   }
 
+  async findItemById(itemId: string): Promise<FeedItem | null> {
+    const normalizedId = itemId.trim();
+    if (!normalizedId) {
+      return null;
+    }
+
+    const existing = this.itemsSig().find(item => item.id === normalizedId);
+    if (existing) {
+      return this.normalizeItem(existing);
+    }
+
+    if (this.useMockFeed) {
+      return this.resolveMockItemById(normalizedId);
+    }
+
+    const encodedId = encodeURIComponent(normalizedId);
+    const url = this.composeUrl(`${COLLECTION_ENDPOINT}/${encodedId}`);
+
+    try {
+      const response = await firstValueFrom(this.http.get<ItemResponse | FeedItem>(url));
+      return this.normalizeItemResponse(response);
+    } catch (error) {
+      const status = error instanceof HttpErrorResponse ? error.status : null;
+      if (status === 0 || status === 401 || status === 403 || status === 404) {
+        const fallbackItem = await this.resolveMockItemById(normalizedId);
+        if (fallbackItem) {
+          return fallbackItem;
+        }
+      }
+      throw error;
+    }
+  }
+
   openDrawer(itemId: string | null): void {
     focusItemIdSig.set(itemId);
     this.store.dispatch(FeedActions.openDrawer({ itemId }));
@@ -299,52 +339,109 @@ export class FeedRealtimeService {
     if (!validation.valid) {
       return validation;
     }
-    this.markOnboardingSeen();
-    const normalized = this.normalizeDraft(draft);
-    const idempotencyKey = this.generateIdempotencyKey();
-    const optimisticItem = this.buildOptimisticItem(normalized, idempotencyKey);
-    this.store.dispatch(FeedActions.optimisticPublish({ draft: normalized, item: optimisticItem, idempotencyKey }));
+    const context = this.createPublishContext(draft);
+    this.store.dispatch(
+      FeedActions.optimisticPublish({
+        draft: context.normalizedDraft,
+        item: context.optimisticItem,
+        idempotencyKey: context.idempotencyKey,
+      })
+    );
     if (this.useMockFeed) {
-      const confirmedItem: FeedItem = {
-        ...optimisticItem,
-        id: `mock-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        status: 'confirmed',
-        optimisticIdempotencyKey: undefined,
-      };
-      this.store.dispatch(FeedActions.publishSuccess({ tempId: optimisticItem.id, item: confirmedItem }));
-      this.mockFeedCache = [confirmedItem, ...(this.mockFeedCache ?? [])];
-      this.emitAnalytics('feed.item.publish', { itemId: confirmedItem.id, type: confirmedItem.type, source: 'mock' });
-      this.notifications.success(this.translate.instant('feed.notifications.publishSuccess'), {
-        source: 'feed',
-        metadata: { itemId: confirmedItem.id, type: confirmedItem.type, source: 'mock' },
+      const confirmedItem = this.buildMockConfirmedItem(context.optimisticItem);
+      this.cacheMockItem(confirmedItem);
+      this.handlePublishSuccess({
+        tempId: context.optimisticItem.id,
+        item: confirmedItem,
+        source: 'mock',
       });
       return validation;
     }
     const url = this.composeUrl(COLLECTION_ENDPOINT);
-    const headers = new HttpHeaders({ 'Idempotency-Key': idempotencyKey });
-    this.http.post<ItemResponse | FeedItem>(url, normalized, { headers }).subscribe({
+    const headers = new HttpHeaders({ 'Idempotency-Key': context.idempotencyKey });
+    this.http.post<ItemResponse | FeedItem>(url, context.normalizedDraft, { headers }).subscribe({
       next: response => {
         const item = this.normalizeItemResponse(response);
-        this.store.dispatch(FeedActions.publishSuccess({ tempId: optimisticItem.id, item }));
-        this.emitAnalytics('feed.item.publish', { itemId: item.id, type: item.type });
-        this.notifications.success(this.translate.instant('feed.notifications.publishSuccess'), {
-          source: 'feed',
-          metadata: { itemId: item.id, type: item.type },
+        this.handlePublishSuccess({
+          tempId: context.optimisticItem.id,
+          item,
         });
       },
       error: error => {
         const message = this.extractError(error);
-        this.store.dispatch(FeedActions.publishFailure({ tempId: optimisticItem.id, error: message }));
-        this.emitAnalytics('feed.item.publish.failed', { reason: message });
-        this.notifications.error(this.translate.instant('feed.notifications.publishFailure', { reason: message }), {
-          source: 'feed',
+        this.handlePublishFailure({
+          tempId: context.optimisticItem.id,
+          error: message,
           context: error,
-          metadata: { reason: message },
-          deliver: { email: true },
         });
       },
     });
     return validation;
+  }
+
+  async publishDraft(draft: FeedComposerDraft): Promise<FeedPublishOutcome> {
+    const validation = this.validateDraft(draft);
+    if (!validation.valid) {
+      return {
+        status: 'validation-error',
+        validation,
+      };
+    }
+
+    const context = this.createPublishContext(draft);
+    this.store.dispatch(
+      FeedActions.optimisticPublish({
+        draft: context.normalizedDraft,
+        item: context.optimisticItem,
+        idempotencyKey: context.idempotencyKey,
+      })
+    );
+
+    if (this.useMockFeed) {
+      const confirmedItem = this.buildMockConfirmedItem(context.optimisticItem);
+      this.cacheMockItem(confirmedItem);
+      this.handlePublishSuccess({
+        tempId: context.optimisticItem.id,
+        item: confirmedItem,
+        source: 'mock',
+      });
+      return {
+        status: 'success',
+        validation,
+        item: confirmedItem,
+      };
+    }
+
+    const url = this.composeUrl(COLLECTION_ENDPOINT);
+    const headers = new HttpHeaders({ 'Idempotency-Key': context.idempotencyKey });
+
+    try {
+      const response = await firstValueFrom(
+        this.http.post<ItemResponse | FeedItem>(url, context.normalizedDraft, { headers })
+      );
+      const item = this.normalizeItemResponse(response);
+      this.handlePublishSuccess({
+        tempId: context.optimisticItem.id,
+        item,
+      });
+      return {
+        status: 'success',
+        validation,
+        item,
+      };
+    } catch (error) {
+      const message = this.extractError(error);
+      this.handlePublishFailure({
+        tempId: context.optimisticItem.id,
+        error: message,
+        context: error,
+      });
+      return {
+        status: 'request-error',
+        validation,
+        error: message,
+      };
+    }
   }
 
   refreshConnection(): void {
@@ -352,6 +449,71 @@ export class FeedRealtimeService {
       return;
     }
     this.scheduleReconnect(0);
+  }
+
+  private createPublishContext(draft: FeedComposerDraft): PublishContext {
+    this.markOnboardingSeen();
+    const normalizedDraft = this.normalizeDraft(draft);
+    const idempotencyKey = this.generateIdempotencyKey();
+    const optimisticItem = this.buildOptimisticItem(normalizedDraft, idempotencyKey);
+    return {
+      normalizedDraft,
+      idempotencyKey,
+      optimisticItem,
+    };
+  }
+
+  private buildMockConfirmedItem(item: FeedItem): FeedItem {
+    return {
+      ...item,
+      id: `mock-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      status: 'confirmed',
+      optimisticIdempotencyKey: undefined,
+    };
+  }
+
+  private cacheMockItem(item: FeedItem): void {
+    const existing = this.mockFeedCache ?? [];
+    const withoutDuplicate = existing.filter(entry => entry.id !== item.id);
+    this.mockFeedCache = [item, ...withoutDuplicate];
+  }
+
+  private handlePublishSuccess(options: {
+    tempId: string;
+    item: FeedItem;
+    source?: 'api' | 'mock';
+  }): void {
+    const { tempId, item, source = 'api' } = options;
+    this.store.dispatch(FeedActions.publishSuccess({ tempId, item }));
+    this.emitAnalytics('feed.item.publish', {
+      itemId: item.id,
+      type: item.type,
+      ...(source === 'mock' ? { source: 'mock' } : {}),
+    });
+    this.notifications.success(this.translate.instant('feed.notifications.publishSuccess'), {
+      source: 'feed',
+      metadata: {
+        itemId: item.id,
+        type: item.type,
+        ...(source === 'mock' ? { source: 'mock' } : {}),
+      },
+    });
+  }
+
+  private handlePublishFailure(options: {
+    tempId: string;
+    error: string;
+    context: unknown;
+  }): void {
+    const { tempId, error, context } = options;
+    this.store.dispatch(FeedActions.publishFailure({ tempId, error }));
+    this.emitAnalytics('feed.item.publish.failed', { reason: error });
+    this.notifications.error(this.translate.instant('feed.notifications.publishFailure', { reason: error }), {
+      source: 'feed',
+      context,
+      metadata: { reason: error },
+      deliver: { email: true },
+    });
   }
 
   private fetchPage(options: { cursor?: string | null; append?: boolean; replace?: boolean }): void {
@@ -651,6 +813,12 @@ export class FeedRealtimeService {
     }
 
     return this.mockFeedRequest;
+  }
+
+  private async resolveMockItemById(itemId: string): Promise<FeedItem | null> {
+    const items = await this.resolveMockFeedItems();
+    const item = items.find(entry => entry.id === itemId);
+    return item ? this.normalizeItem(item) : null;
   }
 
   private filterMockItems(items: readonly FeedItem[], filters: FeedFilterState): FeedItem[] {

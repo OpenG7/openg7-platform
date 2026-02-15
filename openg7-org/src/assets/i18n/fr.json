@@ -772,6 +772,13 @@
           "pricing": "Modalite de prix",
           "comment": "Commentaire",
           "attachment": "Piece jointe",
+          "retry": "Reessayer",
+          "generatedTitlePrefix": "Offre",
+          "status": {
+            "success": "Offre envoyee dans le fil.",
+            "offline": "Hors ligne : offre sauvegardee localement. Reessayez une fois reconnecte.",
+            "errorGeneric": "Impossible d'envoyer l'offre. Reessayez."
+          },
           "send": "Envoyer l'offre",
           "sending": "Envoi..."
         },

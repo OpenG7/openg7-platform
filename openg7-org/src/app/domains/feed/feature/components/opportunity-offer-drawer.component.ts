@@ -8,12 +8,11 @@ import {
   inject,
   input,
   output,
-  signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { OpportunityOfferPayload } from './opportunity-detail.models';
+import { OpportunityOfferPayload, OpportunityOfferSubmitState } from './opportunity-detail.models';
 
 @Component({
   selector: 'og7-opportunity-offer-drawer',
@@ -30,12 +29,20 @@ export class OpportunityOfferDrawerComponent {
   readonly initialCapacityMw = input(300);
   readonly initialStartDate = input<string | null>('');
   readonly initialEndDate = input<string | null>('');
+  readonly submitState = input<OpportunityOfferSubmitState>('idle');
+  readonly submitError = input<string | null>(null);
+  readonly retryEnabled = input(false);
 
   readonly closed = output<void>();
   readonly submitted = output<OpportunityOfferPayload>();
+  readonly retryRequested = output<void>();
 
-  protected readonly pending = signal(false);
   protected readonly visible = computed(() => this.open());
+  protected readonly submitting = computed(() => this.submitState() === 'submitting');
+  protected readonly showRetry = computed(() => {
+    const state = this.submitState();
+    return this.retryEnabled() && (state === 'error' || state === 'offline');
+  });
 
   protected readonly form = this.fb.nonNullable.group({
     capacityMw: [300, [Validators.required, Validators.min(1)]],
@@ -105,7 +112,6 @@ export class OpportunityOfferDrawerComponent {
       return;
     }
 
-    this.pending.set(true);
     const value = this.form.getRawValue();
     this.submitted.emit({
       capacityMw: value.capacityMw,
@@ -115,6 +121,5 @@ export class OpportunityOfferDrawerComponent {
       comment: value.comment.trim(),
       attachmentName: value.attachmentName.trim() || null,
     });
-    setTimeout(() => this.pending.set(false), 350);
   }
 }

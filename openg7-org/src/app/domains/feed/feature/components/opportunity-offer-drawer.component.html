@@ -50,9 +50,48 @@
         {{ form.controls.attachmentName.value }}
       </p>
 
-      <button type="submit" [disabled]="pending()" data-og7="action" data-og7-id="opportunity-offer-submit">
-        {{ pending() ? ('feed.opportunity.detail.offer.sending' | translate) : ('feed.opportunity.detail.offer.send' | translate) }}
-      </button>
+      <p
+        class="opportunity-offer-drawer__status opportunity-offer-drawer__status--success"
+        *ngIf="submitState() === 'success'"
+        data-og7="opportunity-offer-status"
+        data-og7-id="success"
+      >
+        {{ 'feed.opportunity.detail.offer.status.success' | translate }}
+      </p>
+      <p
+        class="opportunity-offer-drawer__status opportunity-offer-drawer__status--offline"
+        *ngIf="submitState() === 'offline'"
+        data-og7="opportunity-offer-status"
+        data-og7-id="offline"
+      >
+        {{ 'feed.opportunity.detail.offer.status.offline' | translate }}
+      </p>
+      <p
+        class="opportunity-offer-drawer__status opportunity-offer-drawer__status--error"
+        *ngIf="submitState() === 'error'"
+        data-og7="opportunity-offer-status"
+        data-og7-id="error"
+      >
+        {{ submitError() || ('feed.opportunity.detail.offer.status.errorGeneric' | translate) }}
+      </p>
+
+      <div class="opportunity-offer-drawer__actions">
+        <button
+          *ngIf="showRetry()"
+          class="opportunity-offer-drawer__retry"
+          type="button"
+          (click)="retryRequested.emit()"
+          [disabled]="submitting()"
+          data-og7="action"
+          data-og7-id="opportunity-offer-retry"
+        >
+          {{ 'feed.opportunity.detail.offer.retry' | translate }}
+        </button>
+
+        <button type="submit" [disabled]="submitting()" data-og7="action" data-og7-id="opportunity-offer-submit">
+          {{ submitting() ? ('feed.opportunity.detail.offer.sending' | translate) : ('feed.opportunity.detail.offer.send' | translate) }}
+        </button>
+      </div>
     </form>
   </section>
 </div>

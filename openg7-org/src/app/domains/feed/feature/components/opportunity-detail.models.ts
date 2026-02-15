@@ -48,6 +48,8 @@ export interface OpportunityOfferPayload {
   readonly attachmentName: string | null;
 }
 
+export type OpportunityOfferSubmitState = 'idle' | 'submitting' | 'success' | 'error' | 'offline';
+
 export interface OpportunityDetailVm {
   readonly item: FeedItem;
   readonly title: string;

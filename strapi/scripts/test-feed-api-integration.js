@@ -9,6 +9,7 @@ const TEST_DB_FILENAME = `db.feed.integration.${process.pid}.${Date.now()}.sqlit
 const TEST_PASSWORD = 'S3cureFeed!123';
 const FEED_AUTH_ACTIONS = [
   'api::feed.feed.index',
+  'api::feed.feed.findOne',
   'api::feed.feed.create',
   'api::feed.feed.highlights',
   'api::feed.feed.stream',
@@ -307,6 +308,10 @@ async function run() {
       body: JSON.stringify(buildFeedPayload(runId, 'UNAUTHORIZED')),
     });
     assertAuthFailure(unauthorizedCreate.status, 'POST /api/feed unauthenticated');
+    const unauthorizedFindOne = await requestJson(`${baseUrl}/api/feed/1`, {
+      method: 'GET',
+    });
+    assertAuthFailure(unauthorizedFindOne.status, 'GET /api/feed/:id unauthenticated');
 
     const unauthorizedStream = await fetch(`${baseUrl}/api/feed/stream`, {
       headers: { Accept: 'text/event-stream' },
@@ -331,6 +336,17 @@ async function run() {
       buildFeedPayload(runId, 'GAMMA', { mode: 'BOTH', quantity: { value: 99, unit: 'kg' } }),
       `feed-it-${runId}-gamma`
     );
+    const findOne = await requestJson(`${baseUrl}/api/feed/${encodeURIComponent(offerA.id)}`, {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+    assert.equal(findOne.status, 200, 'Expected /api/feed/:id read to succeed.');
+    assert.equal(findOne.body?.data?.id, offerA.id, 'Expected /api/feed/:id payload to match the requested item.');
+
+    const missing = await requestJson(`${baseUrl}/api/feed/999999999`, {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+    assert.equal(missing.status, 404, 'Expected /api/feed/:id to return 404 for unknown ids.');
+
     await seedFeedEntity(app, session.userId, runId, 'H-GOV-LABOR', {
       type: 'OFFER',
       sourceKind: 'GOV',

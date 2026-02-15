@@ -1,4 +1,5 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -23,12 +24,13 @@ import {
   OpportunityAlertItem,
   OpportunityDetailVm,
   OpportunityOfferPayload,
+  OpportunityOfferSubmitState,
   OpportunityQnaMessage,
   OpportunityQnaTab,
   OpportunitySyncState,
 } from '../components/opportunity-detail.models';
 import { OpportunityOfferDrawerComponent } from '../components/opportunity-offer-drawer.component';
-import { FeedItem } from '../models/feed.models';
+import { FeedComposerDraft, FeedItem } from '../models/feed.models';
 import { FeedRealtimeService } from '../services/feed-realtime.service';
 
 @Component({
@@ -61,12 +63,19 @@ export class FeedOpportunityDetailPage {
 
   private readonly localMessages = signal<readonly OpportunityQnaMessage[]>([]);
   private readonly syncTimers: ReturnType<typeof setTimeout>[] = [];
+  private readonly detailItem = signal<FeedItem | null>(null);
+  private readonly detailLoading = signal(false);
+  private readonly detailError = signal<string | null>(null);
+  private pendingOfferPayload: OpportunityOfferPayload | null = null;
+  private offerStatusTimer: ReturnType<typeof setTimeout> | null = null;
 
-  protected readonly loading = this.feed.loading;
-  protected readonly error = this.feed.error;
+  protected readonly loading = computed(() => this.detailLoading() || this.feed.loading());
+  protected readonly error = computed(() => this.detailError() ?? this.feed.error());
 
   protected readonly headerCompact = signal(false);
   protected readonly offerDrawerOpen = signal(false);
+  protected readonly offerSubmitState = signal<OpportunityOfferSubmitState>('idle');
+  protected readonly offerSubmitError = signal<string | null>(null);
   protected readonly saved = signal(false);
   protected readonly qnaTab = signal<OpportunityQnaTab>('questions');
   protected readonly syncState = signal<OpportunitySyncState>('synced');
@@ -95,6 +104,10 @@ export class FeedOpportunityDetailPage {
     if (!id) {
       return null;
     }
+    const resolved = this.detailItem();
+    if (resolved?.id === id) {
+      return resolved;
+    }
     return this.feed.items().find(item => item.id === id) ?? null;
   });
 
@@ -115,6 +128,16 @@ export class FeedOpportunityDetailPage {
   });
 
   protected readonly isConnected = computed(() => this.feed.connectionState.connected());
+  protected readonly offerRetryEnabled = computed(() => {
+    if (!this.pendingOfferPayload) {
+      return false;
+    }
+    const state = this.offerSubmitState();
+    if (state === 'error') {
+      return true;
+    }
+    return state === 'offline' && this.isConnected();
+  });
 
   protected readonly lastUpdatedLabel = computed(() => {
     const detail = this.detailVm();
@@ -127,11 +150,46 @@ export class FeedOpportunityDetailPage {
   protected readonly ownerMode = computed(() => this.detailVm()?.item.source.kind === 'USER');
 
   constructor() {
-    effect(() => {
-      if (!this.feed.hasHydrated()) {
-        this.feed.loadInitial();
-      }
-    });
+    effect(
+      onCleanup => {
+        const itemId = this.itemId();
+        this.detailItem.set(null);
+        this.detailError.set(null);
+
+        if (!itemId) {
+          this.detailLoading.set(false);
+          return;
+        }
+
+        let cancelled = false;
+        this.detailLoading.set(true);
+
+        void this.feed
+          .findItemById(itemId)
+          .then(item => {
+            if (cancelled) {
+              return;
+            }
+            this.detailItem.set(item);
+          })
+          .catch(error => {
+            if (cancelled) {
+              return;
+            }
+            this.detailError.set(this.resolveLoadError(error));
+          })
+          .finally(() => {
+            if (!cancelled) {
+              this.detailLoading.set(false);
+            }
+          });
+
+        onCleanup(() => {
+          cancelled = true;
+        });
+      },
+      { allowSignalWrites: true }
+    );
 
     effect(
       () => {
@@ -139,6 +197,7 @@ export class FeedOpportunityDetailPage {
         this.localMessages.set([]);
         this.qnaTab.set('questions');
         this.offerDrawerOpen.set(false);
+        this.resetOfferSubmitState();
         this.saved.set(false);
       },
       { allowSignalWrites: true }
@@ -157,7 +216,10 @@ export class FeedOpportunityDetailPage {
       { allowSignalWrites: true }
     );
 
-    this.destroyRef.onDestroy(() => this.clearSyncTimers());
+    this.destroyRef.onDestroy(() => {
+      this.clearSyncTimers();
+      this.clearOfferStatusTimer();
+    });
   }
 
   @HostListener('window:scroll')
@@ -182,7 +244,7 @@ export class FeedOpportunityDetailPage {
 
     if (key === 'escape' && this.offerDrawerOpen()) {
       event.preventDefault();
-      this.offerDrawerOpen.set(false);
+      this.closeOfferDrawer();
       return;
     }
 
@@ -197,11 +259,13 @@ export class FeedOpportunityDetailPage {
   }
 
   protected openOfferDrawer(): void {
+    this.resetOfferSubmitState();
     this.offerDrawerOpen.set(true);
   }
 
   protected closeOfferDrawer(): void {
     this.offerDrawerOpen.set(false);
+    this.resetOfferSubmitState();
   }
 
   protected handleSaveToggle(): void {
@@ -269,20 +333,15 @@ export class FeedOpportunityDetailPage {
   }
 
   protected handleOfferSubmitted(payload: OpportunityOfferPayload): void {
-    const message = `${payload.capacityMw} MW · ${payload.pricingModel} · ${payload.startDate} -> ${payload.endDate}`;
-    this.localMessages.update(entries => [
-      {
-        id: `offer-${Date.now()}`,
-        tab: 'offers',
-        author: this.translate.instant('feed.sourceYou'),
-        content: message,
-        createdAt: this.translate.instant('feed.opportunity.detail.justNow'),
-      },
-      ...entries,
-    ]);
-    this.qnaTab.set('offers');
-    this.offerDrawerOpen.set(false);
-    this.simulateSync();
+    this.pendingOfferPayload = payload;
+    void this.submitOfferPayload(payload);
+  }
+
+  protected handleOfferRetryRequested(): void {
+    if (!this.pendingOfferPayload) {
+      return;
+    }
+    void this.submitOfferPayload(this.pendingOfferPayload);
   }
 
   protected handleQnaSubmit(content: string): void {
@@ -302,6 +361,124 @@ export class FeedOpportunityDetailPage {
 
   protected setQnaTab(tab: OpportunityQnaTab): void {
     this.qnaTab.set(tab);
+  }
+
+  private async submitOfferPayload(payload: OpportunityOfferPayload): Promise<void> {
+    const detail = this.detailVm();
+    if (!detail || this.offerSubmitState() === 'submitting') {
+      return;
+    }
+
+    this.offerSubmitError.set(null);
+
+    if (!this.isConnected()) {
+      this.offerSubmitState.set('offline');
+      this.offerSubmitError.set(this.translate.instant('feed.error.offline'));
+      this.syncState.set('offline');
+      return;
+    }
+
+    this.offerSubmitState.set('submitting');
+    const draft = this.buildOfferDraft(detail, payload);
+    const outcome = await this.feed.publishDraft(draft);
+
+    if (outcome.status === 'validation-error') {
+      this.offerSubmitState.set('error');
+      this.offerSubmitError.set(this.resolveValidationMessage(outcome.validation.errors));
+      return;
+    }
+
+    if (outcome.status === 'request-error') {
+      this.offerSubmitState.set('error');
+      this.offerSubmitError.set(outcome.error ?? this.translate.instant('feed.error.generic'));
+      return;
+    }
+
+    const message = this.buildOfferMessage(payload);
+    this.localMessages.update(entries => [
+      {
+        id: `offer-${Date.now()}`,
+        tab: 'offers',
+        author: this.translate.instant('feed.sourceYou'),
+        content: message,
+        createdAt: this.translate.instant('feed.opportunity.detail.justNow'),
+      },
+      ...entries,
+    ]);
+    this.qnaTab.set('offers');
+    this.offerSubmitState.set('success');
+    this.offerSubmitError.set(null);
+    this.pendingOfferPayload = null;
+    this.simulateSync();
+    this.closeOfferDrawerAfterSuccess();
+  }
+
+  private buildOfferDraft(detail: OpportunityDetailVm, payload: OpportunityOfferPayload): FeedComposerDraft {
+    const sectorFallback = this.sectors()[0]?.id ?? null;
+    const titlePrefix = this.translate.instant('feed.opportunity.detail.offer.generatedTitlePrefix');
+    const title = `${titlePrefix}: ${detail.title}`.slice(0, 160);
+    const summaryLines = [
+      `${this.translate.instant('feed.opportunity.detail.offer.capacity')}: ${payload.capacityMw} MW`,
+      `${this.translate.instant('feed.opportunity.detail.offer.start')}: ${payload.startDate}`,
+      `${this.translate.instant('feed.opportunity.detail.offer.end')}: ${payload.endDate}`,
+      `${this.translate.instant('feed.opportunity.detail.offer.pricing')}: ${payload.pricingModel}`,
+      `${this.translate.instant('feed.opportunity.detail.offer.comment')}: ${payload.comment}`,
+      payload.attachmentName
+        ? `${this.translate.instant('feed.opportunity.detail.offer.attachment')}: ${payload.attachmentName}`
+        : null,
+    ].filter((line): line is string => Boolean(line));
+    const tags = new Set<string>(['offer', 'opportunity', ...(detail.item.tags ?? [])]);
+
+    return {
+      type: 'OFFER',
+      title,
+      summary: summaryLines.join(' | ').slice(0, 5000),
+      sectorId: detail.item.sectorId ?? sectorFallback,
+      fromProvinceId: detail.item.fromProvinceId ?? null,
+      toProvinceId: detail.item.toProvinceId ?? null,
+      mode: detail.item.mode ?? 'BOTH',
+      quantity: {
+        value: payload.capacityMw,
+        unit: 'MW',
+      },
+      tags: Array.from(tags).slice(0, 8),
+    };
+  }
+
+  private buildOfferMessage(payload: OpportunityOfferPayload): string {
+    return `${payload.capacityMw} MW | ${payload.pricingModel} | ${payload.startDate} -> ${payload.endDate}`;
+  }
+
+  private resolveValidationMessage(errors: readonly string[]): string {
+    const [firstError] = errors;
+    if (!firstError) {
+      return this.translate.instant('feed.error.generic');
+    }
+    const translated = this.translate.instant(firstError);
+    return translated === firstError ? this.translate.instant('feed.error.generic') : translated;
+  }
+
+  private closeOfferDrawerAfterSuccess(): void {
+    this.clearOfferStatusTimer();
+    this.offerStatusTimer = setTimeout(() => {
+      this.offerDrawerOpen.set(false);
+      this.offerSubmitState.set('idle');
+    }, 750);
+  }
+
+  private resetOfferSubmitState(): void {
+    this.clearOfferStatusTimer();
+    this.pendingOfferPayload = null;
+    this.offerSubmitState.set('idle');
+    this.offerSubmitError.set(null);
+  }
+
+  private clearOfferStatusTimer(): void {
+    if (!this.offerStatusTimer) {
+      return;
+    }
+    clearTimeout(this.offerStatusTimer);
+    this.offerStatusTimer = null;
   }
 
   private buildDetailVm(item: FeedItem): OpportunityDetailVm {
@@ -389,7 +566,7 @@ export class FeedOpportunityDetailPage {
       item,
       title: item.title,
       routeLabel,
-      subtitle: `${sectorLabel} · ${this.translate.instant('feed.mode.import')} · ${this.translate.instant('feed.opportunity.detail.shortWindow')}`,
+      subtitle: `${sectorLabel} | ${this.translate.instant('feed.mode.import')} | ${this.translate.instant('feed.opportunity.detail.shortWindow')}`,
       statusLabel: this.translate.instant('feed.opportunity.detail.statusOpen'),
       urgencyLabel,
       visibilityLabel,
@@ -555,5 +732,23 @@ export class FeedOpportunityDetailPage {
     }
     const id = this.itemId() ?? 'unknown';
     return `/feed/opportunities/${id}`;
+  }
+
+  private resolveLoadError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (typeof error.error === 'string' && error.error.trim().length) {
+        return error.error;
+      }
+      if (typeof error.error?.message === 'string' && error.error.message.length) {
+        return error.error.message;
+      }
+      if (typeof error.message === 'string' && error.message.length) {
+        return error.message;
+      }
+    }
+    if (error instanceof Error && error.message.length) {
+      return error.message;
+    }
+    return this.translate.instant('feed.error.generic');
   }
 }

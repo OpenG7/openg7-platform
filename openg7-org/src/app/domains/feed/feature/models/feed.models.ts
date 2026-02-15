@@ -93,6 +93,15 @@ export interface FeedComposerValidationResult {
   readonly warnings: readonly string[];
 }
 
+export type FeedPublishOutcomeStatus = 'success' | 'validation-error' | 'request-error';
+
+export interface FeedPublishOutcome {
+  readonly status: FeedPublishOutcomeStatus;
+  readonly validation: FeedComposerValidationResult;
+  readonly item?: FeedItem;
+  readonly error?: string;
+}
+
 export interface FeedRealtimeConnectionState {
   readonly connected: Signal<boolean>;
   readonly reconnecting: Signal<boolean>;
