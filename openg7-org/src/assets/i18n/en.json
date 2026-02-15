@@ -975,7 +975,8 @@
           "subscribed": "Subscribed",
           "share": "Share",
           "reportUpdate": "Report update",
-          "createOpportunity": "Create linked opportunity"
+          "createOpportunity": "Create linked opportunity",
+          "createOpportunityTitlePrefix": "Linked opportunity"
         },
         "lastUpdate": "Last update: {{ value }}",
         "sections": {

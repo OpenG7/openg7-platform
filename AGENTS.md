@@ -1541,7 +1541,8 @@ _MAJ (enhanced) : 2025-09-13 10:15:00Z_
 - `POST /api/feed` : `type`, `title`, `summary`, `sectorId`, `fromProvinceId`, `toProvinceId`, `mode`, `quantity.value`, `quantity.unit`, `tags`.
 - `BLUEPRINT-OP-19` (creer une alerte depuis un indicateur) publie via `POST /api/feed` avec mapping : `type=ALERT`, `title`, `summary`, `sectorId`, `fromProvinceId`, `toProvinceId`, `mode`, `tags`.
 - Header HTTP : `Idempotency-Key` (publication feed).
-- Navigation router (query params) : `type`, `mode`, `sector`, `q`.
+- Navigation router (query params) : `type`, `mode`, `sector`, `fromProvince`, `toProvince`, `q`.
+- `BLUEPRINT-OP-13` (creer opportunite liee depuis alerte) : `draftSource`, `draftAlertId`, `draftType`, `draftMode`, `draftSectorId`, `draftFromProvinceId`, `draftToProvinceId`, `draftTitle`, `draftSummary`, `draftTags`.
 - Share Web API : `title`, `text`, `url`.
 - Clipboard fallback : `url`.
 - Analytics feed (dataLayer/custom event) : `event`, `itemId`, `type`, `source`, `reason`, `count`, `cursor`.

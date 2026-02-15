@@ -3,9 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { selectProvinces, selectSectors } from '@app/state/catalog/catalog.selectors';
 import { feedModeSig, feedTypeSig, fromProvinceIdSig, sectorIdSig, toProvinceIdSig } from '@app/state/shared-feed-signals';
 import { Store } from '@ngrx/store';
@@ -25,6 +28,11 @@ import { FeedRealtimeService } from '../services/feed-realtime.service';
 export class Og7FeedComposerComponent {
   private readonly feed = inject(FeedRealtimeService);
   private readonly store = inject(Store);
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
+  private readonly appliedPrefillKey = signal<string | null>(null);
 
   protected readonly type = signal<FeedItemType | null>(feedTypeSig());
   protected readonly sectorId = signal<string | null>(sectorIdSig());
@@ -74,6 +82,28 @@ export class Og7FeedComposerComponent {
       this.summary().trim().length >= 10
     );
   });
+
+  constructor() {
+    effect(
+      () => {
+        const query = this.queryParamMap();
+        if (!query) {
+          return;
+        }
+        const source = this.normalizeQueryText(query.get('draftSource'));
+        if (source !== 'alert') {
+          return;
+        }
+        const prefillKey = this.buildPrefillKey(query);
+        if (prefillKey === this.appliedPrefillKey()) {
+          return;
+        }
+        this.appliedPrefillKey.set(prefillKey);
+        this.applyDraftPrefill(query);
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   protected handleSubmit(): void {
     if (!this.canSubmit()) {
@@ -142,5 +172,101 @@ export class Og7FeedComposerComponent {
     this.quantityValue.set('');
     this.quantityUnit.set('');
     this.tagsInput.set('');
+  }
+
+  private applyDraftPrefill(query: ParamMap): void {
+    const draftType = this.normalizeDraftType(query.get('draftType'));
+    if (draftType) {
+      this.type.set(draftType);
+    }
+
+    const draftMode = this.normalizeDraftMode(query.get('draftMode'));
+    if (draftMode) {
+      this.mode.set(draftMode);
+    }
+
+    const draftSectorId = this.normalizeQueryText(query.get('draftSectorId'));
+    if (draftSectorId) {
+      this.sectorId.set(draftSectorId);
+    }
+
+    const draftFromProvinceId = this.normalizeQueryText(query.get('draftFromProvinceId'));
+    if (draftFromProvinceId) {
+      this.fromProvinceId.set(draftFromProvinceId);
+    }
+
+    const draftToProvinceId = this.normalizeQueryText(query.get('draftToProvinceId'));
+    if (draftToProvinceId) {
+      this.toProvinceId.set(draftToProvinceId);
+    }
+
+    const draftTitle = this.normalizeQueryText(query.get('draftTitle'));
+    if (draftTitle) {
+      this.title.set(draftTitle.slice(0, 160));
+    }
+
+    const draftSummary = this.normalizeQueryText(query.get('draftSummary'));
+    if (draftSummary) {
+      this.summary.set(draftSummary.slice(0, 5000));
+    }
+
+    const draftTags = this.normalizeDraftTags(query.get('draftTags'));
+    if (draftTags) {
+      this.tagsInput.set(draftTags);
+    }
+  }
+
+  private buildPrefillKey(query: ParamMap): string {
+    const keys = [
+      'draftSource',
+      'draftAlertId',
+      'draftType',
+      'draftMode',
+      'draftSectorId',
+      'draftFromProvinceId',
+      'draftToProvinceId',
+      'draftTitle',
+      'draftSummary',
+      'draftTags',
+    ];
+    return keys.map(key => query.get(key) ?? '').join('|');
+  }
+
+  private normalizeQueryText(value: string | null): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : null;
+  }
+
+  private normalizeDraftType(value: string | null): FeedItemType | null {
+    const normalized = this.normalizeQueryText(value)?.toUpperCase() ?? null;
+    if (!normalized) {
+      return null;
+    }
+    return this.typeOptions.includes(normalized as FeedItemType) ? (normalized as FeedItemType) : null;
+  }
+
+  private normalizeDraftMode(value: string | null): FlowMode | null {
+    const normalized = this.normalizeQueryText(value)?.toUpperCase() ?? null;
+    if (!normalized) {
+      return null;
+    }
+    return this.modeOptions.includes(normalized as FlowMode) ? (normalized as FlowMode) : null;
+  }
+
+  private normalizeDraftTags(value: string | null): string | null {
+    const raw = this.normalizeQueryText(value);
+    if (!raw) {
+      return null;
+    }
+    const normalized = raw
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(Boolean)
+      .slice(0, 8)
+      .join(', ');
+    return normalized.length ? normalized : null;
   }
 }

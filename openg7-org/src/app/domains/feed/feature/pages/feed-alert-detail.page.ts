@@ -208,13 +208,37 @@ export class FeedAlertDetailPage {
     if (!detail) {
       return;
     }
+    const inferredMode =
+      detail.item.fromProvinceId &&
+      detail.item.toProvinceId &&
+      detail.item.fromProvinceId !== detail.item.toProvinceId
+        ? 'IMPORT'
+        : 'BOTH';
+    const fallbackToProvinceId = detail.item.toProvinceId ?? detail.item.fromProvinceId ?? null;
+    const draftTitlePrefix = this.translate.instant('feed.alert.detail.cta.createOpportunityTitlePrefix');
+    const draftTitle = `${draftTitlePrefix}: ${detail.title}`.slice(0, 160);
+    const draftSummary = detail.summaryHeadline.slice(0, 5000);
+    const draftTags = this.buildLinkedOpportunityTags(detail.item).join(',');
+
     void this.router.navigate(['/feed'], {
       queryParams: {
         type: 'REQUEST',
-        mode: 'IMPORT',
+        mode: inferredMode,
+        sector: detail.item.sectorId ?? null,
+        fromProvince: detail.item.fromProvinceId ?? null,
+        toProvince: fallbackToProvinceId,
         q: detail.title,
+        draftSource: 'alert',
+        draftAlertId: detail.item.id,
+        draftType: 'REQUEST',
+        draftMode: inferredMode,
+        draftSectorId: detail.item.sectorId ?? null,
+        draftFromProvinceId: detail.item.fromProvinceId ?? null,
+        draftToProvinceId: fallbackToProvinceId,
+        draftTitle,
+        draftSummary,
+        draftTags: draftTags || null,
       },
-      queryParamsHandling: 'merge',
     });
   }
 
@@ -449,6 +473,26 @@ export class FeedAlertDetailPage {
       return from;
     }
     return this.translate.instant('feed.alert.detail.routeUnknown');
+  }
+
+  private buildLinkedOpportunityTags(item: FeedItem): readonly string[] {
+    const tags = new Set<string>(['linked-alert', 'request']);
+    for (const tag of item.tags ?? []) {
+      const normalized = this.toKebabTag(tag);
+      if (normalized) {
+        tags.add(normalized);
+      }
+    }
+    return Array.from(tags).slice(0, 8);
+  }
+
+  private toKebabTag(value: string): string | null {
+    const normalized = value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    return normalized.length ? normalized : null;
   }
 
   private resolveProvinceLabel(id: string | null | undefined): string | null {

@@ -864,7 +864,8 @@
           "subscribed": "Abonne",
           "share": "Partager",
           "reportUpdate": "Signaler une mise a jour",
-          "createOpportunity": "Creer une opportunite liee"
+          "createOpportunity": "Creer une opportunite liee",
+          "createOpportunityTitlePrefix": "Opportunite liee"
         },
         "lastUpdate": "Derniere mise a jour : {{ value }}",
         "sections": {
