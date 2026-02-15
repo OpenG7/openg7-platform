@@ -22,6 +22,6 @@ export class AlertContextAsideComponent {
   readonly relatedOpportunities = input<readonly AlertRelatedOpportunityEntry[]>([]);
 
   readonly openRelatedAlert = output<string>();
-  readonly openRelatedOpportunity = output<string | null>();
+  readonly openRelatedOpportunity = output<string>();
   readonly openAllAlerts = output<void>();
 }

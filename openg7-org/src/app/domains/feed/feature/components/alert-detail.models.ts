@@ -35,7 +35,7 @@ export interface AlertRelatedAlertEntry {
 }
 
 export interface AlertRelatedOpportunityEntry {
-  readonly id: string | null;
+  readonly id: string;
   readonly title: string;
   readonly routeLabel: string;
 }

@@ -246,14 +246,7 @@ export class FeedAlertDetailPage {
     void this.router.navigate(['/feed', 'alerts', alertId]);
   }
 
-  protected openRelatedOpportunity(opportunityId: string | null): void {
-    if (!opportunityId) {
-      void this.router.navigate(['/feed'], {
-        queryParams: { type: 'REQUEST' },
-        queryParamsHandling: 'merge',
-      });
-      return;
-    }
+  protected openRelatedOpportunity(opportunityId: string): void {
     void this.router.navigate(['/feed', 'opportunities', opportunityId]);
   }
 
@@ -448,12 +441,12 @@ export class FeedAlertDetailPage {
 
     return [
       {
-        id: null,
+        id: 'request-001',
         title: this.translate.instant('feed.alert.detail.demo.relatedOpportunity1'),
         routeLabel: this.translate.instant('feed.alert.detail.demo.relatedOpportunityRoute1'),
       },
       {
-        id: null,
+        id: 'offer-001',
         title: this.translate.instant('feed.alert.detail.demo.relatedOpportunity2'),
         routeLabel: this.translate.instant('feed.alert.detail.demo.relatedOpportunityRoute2'),
       },
