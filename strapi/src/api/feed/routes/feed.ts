@@ -24,5 +24,11 @@ export default {
       handler: 'feed.stream',
       config: {},
     },
+    {
+      method: 'GET',
+      path: '/feed/:id',
+      handler: 'feed.findOne',
+      config: {},
+    },
   ],
 };

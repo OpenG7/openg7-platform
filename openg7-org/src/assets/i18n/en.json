@@ -883,6 +883,13 @@
           "pricing": "Pricing model",
           "comment": "Comment",
           "attachment": "Attachment",
+          "retry": "Retry",
+          "generatedTitlePrefix": "Offer",
+          "status": {
+            "success": "Offer sent to feed.",
+            "offline": "Offline: offer saved locally. Retry when connected.",
+            "errorGeneric": "Unable to send offer. Try again."
+          },
           "send": "Send offer",
           "sending": "Sending..."
         },

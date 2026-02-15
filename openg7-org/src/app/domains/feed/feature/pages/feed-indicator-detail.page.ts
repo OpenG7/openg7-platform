@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -63,8 +64,12 @@ export class FeedIndicatorDetailPage {
     initialValue: this.route.snapshot.paramMap.get('itemId'),
   });
 
-  protected readonly loading = this.feed.loading;
-  protected readonly error = this.feed.error;
+  private readonly detailItem = signal<FeedItem | null>(null);
+  private readonly detailLoading = signal(false);
+  private readonly detailError = signal<string | null>(null);
+
+  protected readonly loading = computed(() => this.detailLoading() || this.feed.loading());
+  protected readonly error = computed(() => this.detailError() ?? this.feed.error());
 
   protected readonly timeframe = signal<IndicatorTimeframe>('72h');
   protected readonly granularity = signal<IndicatorGranularity>('hour');
@@ -95,6 +100,10 @@ export class FeedIndicatorDetailPage {
     const id = this.itemId();
     if (!id) {
       return null;
+    }
+    const resolved = this.detailItem();
+    if (resolved?.id === id) {
+      return resolved;
     }
     return this.feed.items().find(item => item.id === id) ?? null;
   });
@@ -216,11 +225,46 @@ export class FeedIndicatorDetailPage {
   });
 
   constructor() {
-    effect(() => {
-      if (!this.feed.hasHydrated()) {
-        this.feed.loadInitial();
-      }
-    });
+    effect(
+      onCleanup => {
+        const itemId = this.itemId();
+        this.detailItem.set(null);
+        this.detailError.set(null);
+
+        if (!itemId) {
+          this.detailLoading.set(false);
+          return;
+        }
+
+        let cancelled = false;
+        this.detailLoading.set(true);
+
+        void this.feed
+          .findItemById(itemId)
+          .then(item => {
+            if (cancelled) {
+              return;
+            }
+            this.detailItem.set(item);
+          })
+          .catch(error => {
+            if (cancelled) {
+              return;
+            }
+            this.detailError.set(this.resolveLoadError(error));
+          })
+          .finally(() => {
+            if (!cancelled) {
+              this.detailLoading.set(false);
+            }
+          });
+
+        onCleanup(() => {
+          cancelled = true;
+        });
+      },
+      { allowSignalWrites: true }
+    );
 
     effect(
       () => {
@@ -695,5 +739,23 @@ export class FeedIndicatorDetailPage {
     }
     const id = this.itemId() ?? 'unknown';
     return `/feed/indicators/${id}`;
+  }
+
+  private resolveLoadError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (typeof error.error === 'string' && error.error.trim().length) {
+        return error.error;
+      }
+      if (typeof error.error?.message === 'string' && error.error.message.length) {
+        return error.error.message;
+      }
+      if (typeof error.message === 'string' && error.message.length) {
+        return error.message;
+      }
+    }
+    if (error instanceof Error && error.message.length) {
+      return error.message;
+    }
+    return this.translate.instant('feed.error.generic');
   }
 }

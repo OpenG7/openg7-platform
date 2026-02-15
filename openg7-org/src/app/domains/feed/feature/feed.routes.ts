@@ -62,11 +62,11 @@ const setupFeedResolver: ResolveFn<boolean> = async route => {
 export const routes: Routes = [
   {
     path: '',
-    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
-    resolve: { setup: setupFeedResolver },
     children: [
       {
         path: '',
+        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+        resolve: { setup: setupFeedResolver },
         loadComponent: () => import('./feed.page').then(m => m.FeedPage),
       },
       {

@@ -53,8 +53,12 @@
       [initialCapacityMw]="detail.capacityMw"
       [initialStartDate]="(detail.item.createdAt | date:'yyyy-MM-dd') ?? ''"
       [initialEndDate]="((detail.item.updatedAt || detail.item.createdAt) | date:'yyyy-MM-dd') ?? ''"
+      [submitState]="offerSubmitState()"
+      [submitError]="offerSubmitError()"
+      [retryEnabled]="offerRetryEnabled()"
       (closed)="closeOfferDrawer()"
       (submitted)="handleOfferSubmitted($event)"
+      (retryRequested)="handleOfferRetryRequested()"
     ></og7-opportunity-offer-drawer>
   </ng-container>
 

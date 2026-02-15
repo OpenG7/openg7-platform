@@ -976,6 +976,42 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     };
   },
 
+  async findOne(ctx: Record<string, unknown>) {
+    const currentUser = await resolveCurrentUser(strapi, ctx);
+    if (!currentUser) {
+      return (ctx as any).unauthorized();
+    }
+
+    const params = (ctx.params ?? {}) as Record<string, unknown>;
+    const rawId = normalizeString(params.id, 80);
+    if (!rawId) {
+      return (ctx as any).badRequest('id is required.');
+    }
+
+    const normalizedId = normalizeId(rawId);
+    if (normalizedId == null) {
+      return (ctx as any).badRequest('id is invalid.');
+    }
+
+    const entity = normalizeFindManyResult(
+      await strapi.entityService.findMany(FEED_UID, {
+        filters: {
+          id: normalizedId,
+          status: 'confirmed',
+        },
+        limit: 1,
+      })
+    )[0] as Record<string, unknown> | undefined;
+
+    if (!entity) {
+      return (ctx as any).notFound('Feed item not found.');
+    }
+
+    (ctx as any).body = {
+      data: mapFeedEntity(entity),
+    };
+  },
+
   async highlights(ctx: Record<string, unknown>) {
     const query =
       ctx.request && typeof ctx.request === 'object'

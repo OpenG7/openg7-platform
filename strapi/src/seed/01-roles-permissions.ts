@@ -40,6 +40,7 @@ export default async () => {
     },
     'api::feed.feed': {
       index: true,
+      findOne: true,
       create: true,
       stream: true,
     },

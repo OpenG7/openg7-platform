@@ -1507,4 +1507,70 @@ _MAJ (enhanced) : 2025-09-13 10:15:00Z_
 - Raison : sur certains postes Windows, `npm.ps1` peut etre bloque par `ExecutionPolicy`, ce qui casse les builds en PowerShell.
 - Si vous restez en PowerShell, utilisez un contournement explicite (`cmd /c npm ...`) ou ajustez la policy localement selon vos regles de securite.
 
+## BLUEPRINT - Operations UI Feed (tuile -> page detail)
 
+- `BLUEPRINT-OP-01` Ouvrir le flux Feed : clic gauche sur le menu principal `Feed` -> verifier la route `/feed` et le stream des tuiles.
+- `BLUEPRINT-OP-02` Ouvrir un detail Opportunite depuis une tuile : clic gauche sur une tuile de type opportunite (ex. `Short-term import of 300 MW`) -> verifier la route `/feed/opportunities/:id`.
+- `BLUEPRINT-OP-03` Revenir de la page detail Opportunite vers la liste Feed : clic gauche sur le breadcrumb `Feed` dans le header sticky -> verifier retour `/feed`.
+- `BLUEPRINT-OP-04` Proposer une offre depuis une Opportunite : clic gauche sur `Proposer une offre` -> dans le drawer, clic gauche dans chaque champ (`capacite`, `periode`, `prix/modalite`, `commentaire`, `piece jointe`) -> clic gauche sur `Envoyer`.
+- `BLUEPRINT-OP-05` Enregistrer une Opportunite : clic gauche sur `Enregistrer` dans le header detail -> verifier changement d etat visuel (saved/sync).
+- `BLUEPRINT-OP-06` Partager une Opportunite : clic gauche sur `Partager` dans le header detail -> verifier ouverture du share natif ou copie lien.
+- `BLUEPRINT-OP-07` Changer d onglet Q/R sur Opportunite : clic gauche sur `Questions` ou `Offres recues` ou `Historique` -> verifier le contenu associe.
+- `BLUEPRINT-OP-08` Ouvrir une alerte liee depuis l aside Opportunite : clic gauche sur une entree `Alerte` de la colonne droite -> verifier la route `/feed/alerts/:id`.
+- `BLUEPRINT-OP-09` Ouvrir un detail Alerte depuis une tuile : clic gauche sur une tuile de type alerte (ex. `Ice storm risk on Ontario transmission lines`) -> verifier la route `/feed/alerts/:id`.
+- `BLUEPRINT-OP-10` S abonner a une Alerte : clic gauche sur `S abonner` dans le header detail alerte -> verifier etat subscribed.
+- `BLUEPRINT-OP-11` Partager une Alerte : clic gauche sur `Partager` -> verifier ouverture du share natif ou copie lien.
+- `BLUEPRINT-OP-12` Signaler une mise a jour sur Alerte : clic gauche sur `Signaler une mise a jour` -> verifier retour d etat utilisateur.
+- `BLUEPRINT-OP-13` Creer une opportunite liee depuis une Alerte : clic gauche sur `Creer une opportunite liee` (si visible) -> verifier navigation vers `/feed` avec query params pre-remplis.
+- `BLUEPRINT-OP-14` Ouvrir une opportunite associee depuis l aside Alerte : clic gauche sur une entree de la carte `Opportunites associees` -> verifier `/feed/opportunities/:id`.
+- `BLUEPRINT-OP-15` Ouvrir un detail Indicateur depuis une tuile : clic gauche sur une tuile de type indicateur (ex. `Spot electricity price up 12 percent`) -> verifier `/feed/indicators/:id`.
+- `BLUEPRINT-OP-16` Changer la fenetre temporelle d un indicateur : clic gauche sur une chip `24h`, `72h` ou `7d` -> verifier rerender du chart.
+- `BLUEPRINT-OP-17` Changer la granularite d un indicateur : clic gauche sur la chip/controle de granularite (`hour`, `15m`, `day`) -> verifier rerender serie.
+- `BLUEPRINT-OP-18` S abonner a un indicateur : clic gauche sur `S abonner` dans le hero indicateur -> verifier etat subscribed.
+- `BLUEPRINT-OP-19` Creer une alerte depuis un indicateur : clic gauche sur `Creer une alerte` -> dans le drawer, clic gauche sur les champs (`seuil`, `fenetre`, `frequence`) -> clic gauche sur `Creer/Envoyer`.
+- `BLUEPRINT-OP-20` Ouvrir une alerte liee depuis la liste associee indicateur : clic gauche sur une entree `Alertes liees` -> verifier `/feed/alerts/:id`.
+- `BLUEPRINT-OP-21` Ouvrir une opportunite liee depuis la liste associee indicateur : clic gauche sur une entree `Opportunites associees` -> verifier `/feed/opportunities/:id`.
+- `BLUEPRINT-OP-22` Utiliser le fallback detail par id si la collection feed est indisponible : saisir directement une URL detail (`/feed/alerts/:id`, `/feed/opportunities/:id`, `/feed/indicators/:id`) dans la barre d adresse + Entrer -> verifier chargement du detail sans passer par la liste.
+
+## BLUEPRINT Data Outputs (mission-aligned)
+
+### AS-IS - Proprietes expediées aujourd hui
+
+- `GET /api/feed/:id` : `id` (path param).
+- `GET /api/feed` : `cursor`, `fromProvince`, `toProvince`, `sector`, `type`, `mode`, `sort`, `q`.
+- `POST /api/feed` : `type`, `title`, `summary`, `sectorId`, `fromProvinceId`, `toProvinceId`, `mode`, `quantity.value`, `quantity.unit`, `tags`.
+- Header HTTP : `Idempotency-Key` (publication feed).
+- Navigation router (query params) : `type`, `mode`, `sector`, `q`.
+- Share Web API : `title`, `text`, `url`.
+- Clipboard fallback : `url`.
+- Analytics feed (dataLayer/custom event) : `event`, `itemId`, `type`, `source`, `reason`, `count`, `cursor`.
+- Analytics endpoint (si configure) : `event`, `detail`, `priority`, `timestamp`.
+- Notification webhook/email (si active) : `notification.id`, `notification.type`, `notification.title`, `notification.message`, `notification.source`, `notification.createdAt`, `notification.metadata`, `recipient`.
+- Events UI locaux (non persistes backend) :
+- `OpportunityOfferPayload` : `capacityMw`, `startDate`, `endDate`, `pricingModel`, `comment`, `attachmentName`.
+- `IndicatorAlertDraft` : `thresholdDirection`, `thresholdValue`, `window`, `frequency`, `notifyDelta`, `note`.
+- Q/R opportunite : `content` (soumis localement).
+
+### TO-BE - Proprietes a ajouter pour couvrir totalement mission + blueprints
+
+- Persister la soumission d offre opportunite :
+- `opportunityId`, `capacityMw`, `startDate`, `endDate`, `pricingModel`, `comment`, `attachmentId`, `attachmentName`, `submittedAt`.
+- Persister la creation d alerte indicateur :
+- `indicatorId`, `thresholdDirection`, `thresholdValue`, `window`, `frequency`, `notifyDelta`, `note`, `createdAt`.
+- Persister les actions header/detail aujourd hui locales :
+- `targetType`, `targetId`, `action`, `status`, `timestamp`, `actorId`.
+- Couvre : `save`, `subscribe`, `reportUpdate`, `archive`, `duplicate`.
+- Persister le flux Q/R opportunite :
+- `opportunityId`, `tab`, `content`, `authorId`, `authorLabel`, `createdAt`, `replyToMessageId`.
+- Telemetrie blueprint explicite (trace operationnelle) :
+- `blueprintOpId`, `sourceRoute`, `targetRoute`, `targetType`, `targetId`, `result`, `latencyMs`, `errorCode`, `connectionState`, `occurredAt`.
+- Etat reseau/synchro utilisateur sur actions critiques :
+- `syncState`, `retryCount`, `queuedOffline`, `lastSyncAt`.
+- Correlation transversale UI/API :
+- `correlationId`, `idempotencyKey`, `sessionId`.
+- Conformite minimale (audit fonctionnel) :
+- `consentVersion`, `policyVersion`, `locale`, `timezone`.
+
+### Regle d evolution
+
+- Toute nouvelle action BLUEPRINT qui envoie des donnees doit declarer explicitement ses proprietes de sortie dans cette section avant merge.
