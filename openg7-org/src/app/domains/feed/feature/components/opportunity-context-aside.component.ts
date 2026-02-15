@@ -22,5 +22,6 @@ export class OpportunityContextAsideComponent {
   readonly indicators = input<readonly OpportunityIndicator[]>([]);
   readonly alerts = input<readonly OpportunityAlertItem[]>([]);
 
+  readonly openAlert = output<string>();
   readonly openAlerts = output<void>();
 }

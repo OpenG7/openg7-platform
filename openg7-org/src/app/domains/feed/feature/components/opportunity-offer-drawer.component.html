@@ -11,7 +11,13 @@
       <label>
         <span>{{ 'feed.opportunity.detail.offer.capacity' | translate }}</span>
         <div class="opportunity-offer-drawer__field-row">
-          <input type="number" min="1" formControlName="capacityMw" />
+          <input
+            type="number"
+            min="1"
+            formControlName="capacityMw"
+            data-og7="opportunity-offer-field"
+            data-og7-id="capacity"
+          />
           <small>MW</small>
         </div>
       </label>
@@ -19,17 +25,27 @@
       <div class="opportunity-offer-drawer__grid">
         <label>
           <span>{{ 'feed.opportunity.detail.offer.start' | translate }}</span>
-          <input type="date" formControlName="startDate" />
+          <input
+            type="date"
+            formControlName="startDate"
+            data-og7="opportunity-offer-field"
+            data-og7-id="start-date"
+          />
         </label>
         <label>
           <span>{{ 'feed.opportunity.detail.offer.end' | translate }}</span>
-          <input type="date" formControlName="endDate" />
+          <input
+            type="date"
+            formControlName="endDate"
+            data-og7="opportunity-offer-field"
+            data-og7-id="end-date"
+          />
         </label>
       </div>
 
       <label>
         <span>{{ 'feed.opportunity.detail.offer.pricing' | translate }}</span>
-        <select formControlName="pricingModel">
+        <select formControlName="pricingModel" data-og7="opportunity-offer-field" data-og7-id="pricing-model">
           <option value="spot">{{ 'feed.opportunity.detail.pricing.spot' | translate }}</option>
           <option value="indexed">{{ 'feed.opportunity.detail.pricing.indexed' | translate }}</option>
           <option value="fixed">{{ 'feed.opportunity.detail.pricing.fixed' | translate }}</option>
@@ -38,12 +54,17 @@
 
       <label>
         <span>{{ 'feed.opportunity.detail.offer.comment' | translate }}</span>
-        <textarea formControlName="comment" rows="4"></textarea>
+        <textarea formControlName="comment" rows="4" data-og7="opportunity-offer-field" data-og7-id="comment"></textarea>
       </label>
 
       <label>
         <span>{{ 'feed.opportunity.detail.offer.attachment' | translate }}</span>
-        <input type="file" (change)="onAttachmentSelected($event)" />
+        <input
+          type="file"
+          (change)="onAttachmentSelected($event)"
+          data-og7="opportunity-offer-field"
+          data-og7-id="attachment"
+        />
       </label>
 
       <p class="opportunity-offer-drawer__attachment" *ngIf="form.controls.attachmentName.value">

@@ -102,46 +102,43 @@ export class FeedAlertDetailPage {
   });
 
   constructor() {
-    effect(
-      onCleanup => {
-        const itemId = this.itemId();
-        this.detailItem.set(null);
-        this.detailError.set(null);
+    effect(onCleanup => {
+      const itemId = this.itemId();
+      this.detailItem.set(null);
+      this.detailError.set(null);
 
-        if (!itemId) {
-          this.detailLoading.set(false);
-          return;
-        }
+      if (!itemId) {
+        this.detailLoading.set(false);
+        return;
+      }
 
-        let cancelled = false;
-        this.detailLoading.set(true);
+      let cancelled = false;
+      this.detailLoading.set(true);
 
-        void this.feed
-          .findItemById(itemId)
-          .then(item => {
-            if (cancelled) {
-              return;
-            }
-            this.detailItem.set(item);
-          })
-          .catch(error => {
-            if (cancelled) {
-              return;
-            }
-            this.detailError.set(this.resolveLoadError(error));
-          })
-          .finally(() => {
-            if (!cancelled) {
-              this.detailLoading.set(false);
-            }
-          });
-
-        onCleanup(() => {
-          cancelled = true;
+      void this.feed
+        .findItemById(itemId)
+        .then(item => {
+          if (cancelled) {
+            return;
+          }
+          this.detailItem.set(item);
+        })
+        .catch(error => {
+          if (cancelled) {
+            return;
+          }
+          this.detailError.set(this.resolveLoadError(error));
+        })
+        .finally(() => {
+          if (!cancelled) {
+            this.detailLoading.set(false);
+          }
         });
-      },
-      { allowSignalWrites: true }
-    );
+
+      onCleanup(() => {
+        cancelled = true;
+      });
+    });
   }
 
   @HostListener('window:scroll')

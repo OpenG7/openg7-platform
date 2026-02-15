@@ -23,9 +23,16 @@
   <section class="opportunity-aside__card" data-og7="opportunity-alerts">
     <h3>{{ 'feed.opportunity.detail.relatedAlerts' | translate }}</h3>
     <ul>
-      <li *ngFor="let alert of alerts()">
-        <strong [class]="'alert alert--' + alert.severity">{{ alert.title }}</strong>
-        <p>{{ alert.detail }}</p>
+      <li *ngFor="let alert of alerts(); let index = index">
+        <button
+          type="button"
+          data-og7="action"
+          [attr.data-og7-id]="'opportunity-alert-open-' + index"
+          (click)="openAlert.emit(alert.id)"
+        >
+          <strong [class]="'alert alert--' + alert.severity">{{ alert.title }}</strong>
+          <p>{{ alert.detail }}</p>
+        </button>
       </li>
     </ul>
     <button type="button" (click)="openAlerts.emit()" data-og7="action" data-og7-id="opportunity-open-alerts">
