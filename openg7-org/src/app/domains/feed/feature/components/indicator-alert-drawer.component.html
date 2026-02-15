@@ -5,7 +5,7 @@
     <header>
       <h2>{{ 'feed.indicator.detail.actions.createAlert' | translate }}</h2>
       <small *ngIf="indicatorTitle()">{{ indicatorTitle() }}</small>
-      <button type="button" aria-label="Close" (click)="closed.emit()">x</button>
+      <button type="button" [attr.aria-label]="'feed.drawer.close' | translate" (click)="closed.emit()">x</button>
     </header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -54,9 +54,47 @@
         <textarea rows="4" formControlName="note"></textarea>
       </label>
 
-      <button type="submit" data-og7="action" data-og7-id="indicator-alert-submit">
-        {{ 'feed.indicator.detail.drawer.submit' | translate }}
-      </button>
+      <p
+        class="indicator-alert-drawer__status indicator-alert-drawer__status--success"
+        *ngIf="submitState() === 'success'"
+        data-og7="indicator-alert-status"
+        data-og7-id="success"
+      >
+        {{ 'feed.indicator.detail.drawer.status.success' | translate }}
+      </p>
+      <p
+        class="indicator-alert-drawer__status indicator-alert-drawer__status--offline"
+        *ngIf="submitState() === 'offline'"
+        data-og7="indicator-alert-status"
+        data-og7-id="offline"
+      >
+        {{ 'feed.indicator.detail.drawer.status.offline' | translate }}
+      </p>
+      <p
+        class="indicator-alert-drawer__status indicator-alert-drawer__status--error"
+        *ngIf="submitState() === 'error'"
+        data-og7="indicator-alert-status"
+        data-og7-id="error"
+      >
+        {{ submitError() || ('feed.indicator.detail.drawer.status.errorGeneric' | translate) }}
+      </p>
+
+      <div class="indicator-alert-drawer__actions">
+        <button
+          *ngIf="showRetry()"
+          type="button"
+          class="indicator-alert-drawer__retry"
+          [disabled]="submitting()"
+          (click)="retryRequested.emit()"
+          data-og7="action"
+          data-og7-id="indicator-alert-retry"
+        >
+          {{ 'feed.indicator.detail.drawer.retry' | translate }}
+        </button>
+        <button type="submit" [disabled]="submitting()" data-og7="action" data-og7-id="indicator-alert-submit">
+          {{ submitting() ? ('feed.indicator.detail.drawer.submitting' | translate) : ('feed.indicator.detail.drawer.submit' | translate) }}
+        </button>
+      </div>
     </form>
   </section>
 </div>

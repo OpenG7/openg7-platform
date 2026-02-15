@@ -1539,6 +1539,7 @@ _MAJ (enhanced) : 2025-09-13 10:15:00Z_
 - `GET /api/feed/:id` : `id` (path param).
 - `GET /api/feed` : `cursor`, `fromProvince`, `toProvince`, `sector`, `type`, `mode`, `sort`, `q`.
 - `POST /api/feed` : `type`, `title`, `summary`, `sectorId`, `fromProvinceId`, `toProvinceId`, `mode`, `quantity.value`, `quantity.unit`, `tags`.
+- `BLUEPRINT-OP-19` (creer une alerte depuis un indicateur) publie via `POST /api/feed` avec mapping : `type=ALERT`, `title`, `summary`, `sectorId`, `fromProvinceId`, `toProvinceId`, `mode`, `tags`.
 - Header HTTP : `Idempotency-Key` (publication feed).
 - Navigation router (query params) : `type`, `mode`, `sector`, `q`.
 - Share Web API : `title`, `text`, `url`.
@@ -1555,8 +1556,8 @@ _MAJ (enhanced) : 2025-09-13 10:15:00Z_
 
 - Persister la soumission d offre opportunite :
 - `opportunityId`, `capacityMw`, `startDate`, `endDate`, `pricingModel`, `comment`, `attachmentId`, `attachmentName`, `submittedAt`.
-- Persister la creation d alerte indicateur :
-- `indicatorId`, `thresholdDirection`, `thresholdValue`, `window`, `frequency`, `notifyDelta`, `note`, `createdAt`.
+- Durcir la persistance de creation d alerte indicateur (au-dela du mapping `POST /api/feed`) :
+- `indicatorId`, `thresholdDirection`, `thresholdValue`, `window`, `frequency`, `notifyDelta`, `note`, `createdAt`, `deliveryChannels`.
 - Persister les actions header/detail aujourd hui locales :
 - `targetType`, `targetId`, `action`, `status`, `timestamp`, `actorId`.
 - Couvre : `save`, `subscribe`, `reportUpdate`, `archive`, `duplicate`.

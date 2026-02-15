@@ -63,3 +63,5 @@ export interface IndicatorAlertDraft {
   readonly notifyDelta: boolean;
   readonly note: string;
 }
+
+export type IndicatorAlertSubmitState = 'idle' | 'submitting' | 'success' | 'error' | 'offline';

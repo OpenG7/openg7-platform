@@ -1,9 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  computed,
+  effect,
+  input,
+  output,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IndicatorAlertDraft } from './indicator-detail.models';
+import { IndicatorAlertDraft, IndicatorAlertSubmitState } from './indicator-detail.models';
 
 interface IndicatorAlertFormModel {
   readonly thresholdDirection: FormControl<'gt' | 'lt'>;
@@ -25,9 +33,19 @@ interface IndicatorAlertFormModel {
 export class IndicatorAlertDrawerComponent {
   readonly open = input(false);
   readonly indicatorTitle = input<string>('');
+  readonly submitState = input<IndicatorAlertSubmitState>('idle');
+  readonly submitError = input<string | null>(null);
+  readonly retryEnabled = input(false);
 
   readonly closed = output<void>();
   readonly submitted = output<IndicatorAlertDraft>();
+  readonly retryRequested = output<void>();
+
+  protected readonly submitting = computed(() => this.submitState() === 'submitting');
+  protected readonly showRetry = computed(() => {
+    const state = this.submitState();
+    return this.retryEnabled() && (state === 'error' || state === 'offline');
+  });
 
   protected readonly form = new FormGroup<IndicatorAlertFormModel>({
     thresholdDirection: new FormControl<'gt' | 'lt'>('gt', { nonNullable: true }),
@@ -40,6 +58,38 @@ export class IndicatorAlertDrawerComponent {
     notifyDelta: new FormControl(true, { nonNullable: true }),
     note: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(400)] }),
   });
+
+  constructor() {
+    effect(() => {
+      if (typeof document === 'undefined') {
+        return;
+      }
+      if (this.open()) {
+        document.body.classList.add('og7-indicator-alert-open');
+      } else {
+        document.body.classList.remove('og7-indicator-alert-open');
+      }
+    });
+
+    effect(
+      () => {
+        if (!this.open()) {
+          return;
+        }
+        this.form.reset({
+          thresholdDirection: 'gt',
+          thresholdValue: 12,
+          window: '1h',
+          frequency: 'instant',
+          notifyDelta: true,
+          note: '',
+        });
+        this.form.markAsPristine();
+        this.form.markAsUntouched();
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   @HostListener('document:keydown', ['$event'])
   protected onKeydown(event: KeyboardEvent): void {
@@ -71,6 +121,5 @@ export class IndicatorAlertDrawerComponent {
       notifyDelta: value.notifyDelta,
       note: value.note.trim(),
     });
-    this.form.markAsPristine();
   }
 }

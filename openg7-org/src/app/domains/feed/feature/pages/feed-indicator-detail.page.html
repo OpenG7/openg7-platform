@@ -78,8 +78,12 @@
     <og7-indicator-alert-drawer
       [open]="drawerOpen()"
       [indicatorTitle]="detail.title"
+      [submitState]="alertSubmitState()"
+      [submitError]="alertSubmitError()"
+      [retryEnabled]="alertRetryEnabled()"
       (closed)="closeAlertDrawer()"
       (submitted)="onAlertDraftSubmitted($event)"
+      (retryRequested)="onAlertDraftRetryRequested()"
     ></og7-indicator-alert-drawer>
   </ng-container>
 

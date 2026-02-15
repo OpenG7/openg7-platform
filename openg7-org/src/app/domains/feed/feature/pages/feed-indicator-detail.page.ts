@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   HostListener,
   computed,
   effect,
@@ -20,6 +21,7 @@ import { IndicatorAlertDrawerComponent } from '../components/indicator-alert-dra
 import { IndicatorChartComponent } from '../components/indicator-chart.component';
 import {
   IndicatorAlertDraft,
+  IndicatorAlertSubmitState,
   IndicatorConnectionState,
   IndicatorDetailVm,
   IndicatorGranularity,
@@ -32,7 +34,7 @@ import { IndicatorHeroComponent } from '../components/indicator-hero.component';
 import { IndicatorKeyDataComponent } from '../components/indicator-key-data.component';
 import { IndicatorRelatedListComponent } from '../components/indicator-related-list.component';
 import { IndicatorStatsAsideComponent } from '../components/indicator-stats-aside.component';
-import { FeedItem } from '../models/feed.models';
+import { FeedComposerDraft, FeedItem } from '../models/feed.models';
 import { FeedRealtimeService } from '../services/feed-realtime.service';
 
 @Component({
@@ -59,6 +61,7 @@ export class FeedIndicatorDetailPage {
   private readonly feed = inject(FeedRealtimeService);
   private readonly store = inject(Store);
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly itemId = toSignal(this.route.paramMap.pipe(map(params => params.get('itemId'))), {
     initialValue: this.route.snapshot.paramMap.get('itemId'),
@@ -67,6 +70,8 @@ export class FeedIndicatorDetailPage {
   private readonly detailItem = signal<FeedItem | null>(null);
   private readonly detailLoading = signal(false);
   private readonly detailError = signal<string | null>(null);
+  private pendingAlertDraft: IndicatorAlertDraft | null = null;
+  private alertStatusTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly loading = computed(() => this.detailLoading() || this.feed.loading());
   protected readonly error = computed(() => this.detailError() ?? this.feed.error());
@@ -76,6 +81,8 @@ export class FeedIndicatorDetailPage {
   protected readonly subscribed = signal(false);
   protected readonly headerCompact = signal(false);
   protected readonly drawerOpen = signal(false);
+  protected readonly alertSubmitState = signal<IndicatorAlertSubmitState>('idle');
+  protected readonly alertSubmitError = signal<string | null>(null);
 
   protected readonly provinces = this.store.selectSignal(selectProvinces);
   protected readonly sectors = this.store.selectSignal(selectSectors);
@@ -124,6 +131,16 @@ export class FeedIndicatorDetailPage {
       return 'degraded';
     }
     return 'online';
+  });
+  protected readonly alertRetryEnabled = computed(() => {
+    if (!this.pendingAlertDraft) {
+      return false;
+    }
+    const state = this.alertSubmitState();
+    if (state === 'error') {
+      return true;
+    }
+    return state === 'offline' && this.feed.connectionState.connected();
   });
 
   protected readonly series = computed(() => {
@@ -273,9 +290,12 @@ export class FeedIndicatorDetailPage {
         this.granularity.set('hour');
         this.subscribed.set(false);
         this.drawerOpen.set(false);
+        this.resetAlertSubmitState();
       },
       { allowSignalWrites: true }
     );
+
+    this.destroyRef.onDestroy(() => this.clearAlertStatusTimer());
   }
 
   @HostListener('window:scroll')
@@ -295,7 +315,7 @@ export class FeedIndicatorDetailPage {
     const key = event.key.toLowerCase();
     if (key === 'escape' && this.drawerOpen()) {
       event.preventDefault();
-      this.drawerOpen.set(false);
+      this.closeAlertDrawer();
       return;
     }
 
@@ -329,16 +349,126 @@ export class FeedIndicatorDetailPage {
   }
 
   protected openAlertDrawer(): void {
+    this.resetAlertSubmitState();
     this.drawerOpen.set(true);
   }
 
   protected closeAlertDrawer(): void {
     this.drawerOpen.set(false);
+    this.resetAlertSubmitState();
   }
 
-  protected onAlertDraftSubmitted(_draft: IndicatorAlertDraft): void {
+  protected onAlertDraftSubmitted(draft: IndicatorAlertDraft): void {
+    this.pendingAlertDraft = draft;
+    void this.submitAlertDraft(draft);
+  }
+
+  protected onAlertDraftRetryRequested(): void {
+    if (!this.pendingAlertDraft) {
+      return;
+    }
+    void this.submitAlertDraft(this.pendingAlertDraft);
+  }
+
+  private async submitAlertDraft(draft: IndicatorAlertDraft): Promise<void> {
+    const detail = this.detailVm();
+    if (!detail || this.alertSubmitState() === 'submitting') {
+      return;
+    }
+
+    this.alertSubmitError.set(null);
+
+    if (!this.feed.connectionState.connected()) {
+      this.alertSubmitState.set('offline');
+      this.alertSubmitError.set(this.translate.instant('feed.error.offline'));
+      return;
+    }
+
+    this.alertSubmitState.set('submitting');
+    const composerDraft = this.buildAlertComposerDraft(detail, draft);
+    const outcome = await this.feed.publishDraft(composerDraft);
+
+    if (outcome.status === 'validation-error') {
+      this.alertSubmitState.set('error');
+      this.alertSubmitError.set(this.resolveValidationMessage(outcome.validation.errors));
+      return;
+    }
+
+    if (outcome.status === 'request-error') {
+      this.alertSubmitState.set('error');
+      this.alertSubmitError.set(outcome.error ?? this.translate.instant('feed.error.generic'));
+      return;
+    }
+
+    this.alertSubmitState.set('success');
+    this.alertSubmitError.set(null);
+    this.pendingAlertDraft = null;
     this.subscribed.set(true);
-    this.drawerOpen.set(false);
+    this.closeAlertDrawerAfterSuccess();
+  }
+
+  private buildAlertComposerDraft(detail: IndicatorDetailVm, draft: IndicatorAlertDraft): FeedComposerDraft {
+    const sectorFallback = this.sectors()[0]?.id ?? null;
+    const titlePrefix = this.translate.instant('feed.indicator.detail.drawer.generatedTitlePrefix');
+    const title = `${titlePrefix}: ${detail.title}`.slice(0, 160);
+    const directionLabel = this.translate.instant(
+      `feed.indicator.detail.drawer.direction.${draft.thresholdDirection}`
+    );
+    const windowLabel = this.translate.instant(`feed.indicator.detail.drawer.window${draft.window}`);
+    const frequencyLabel = this.translate.instant(
+      `feed.indicator.detail.drawer.frequency${this.toTitleCase(draft.frequency)}`
+    );
+    const summaryLines = [
+      `${this.translate.instant('feed.indicator.detail.drawer.thresholdDirection')}: ${directionLabel}`,
+      `${this.translate.instant('feed.indicator.detail.drawer.thresholdValue')}: ${draft.thresholdValue}%`,
+      `${this.translate.instant('feed.indicator.detail.drawer.window')}: ${windowLabel}`,
+      `${this.translate.instant('feed.indicator.detail.drawer.frequency')}: ${frequencyLabel}`,
+      `${this.translate.instant('feed.indicator.detail.drawer.notifyDelta')}: ${draft.notifyDelta ? 'on' : 'off'}`,
+      draft.note ? `${this.translate.instant('feed.indicator.detail.drawer.note')}: ${draft.note}` : null,
+    ].filter((line): line is string => Boolean(line));
+
+    return {
+      type: 'ALERT',
+      title,
+      summary: summaryLines.join(' | ').slice(0, 5000),
+      sectorId: detail.item.sectorId ?? sectorFallback,
+      fromProvinceId: detail.item.fromProvinceId ?? null,
+      toProvinceId: detail.item.toProvinceId ?? null,
+      mode: detail.item.mode ?? 'BOTH',
+      tags: ['indicator-alert', draft.window, draft.frequency],
+    };
+  }
+
+  private resolveValidationMessage(errors: readonly string[]): string {
+    const [firstError] = errors;
+    if (!firstError) {
+      return this.translate.instant('feed.error.generic');
+    }
+    const translated = this.translate.instant(firstError);
+    return translated === firstError ? this.translate.instant('feed.error.generic') : translated;
+  }
+
+  private closeAlertDrawerAfterSuccess(): void {
+    this.clearAlertStatusTimer();
+    this.alertStatusTimer = setTimeout(() => {
+      this.drawerOpen.set(false);
+      this.alertSubmitState.set('idle');
+    }, 750);
+  }
+
+  private resetAlertSubmitState(): void {
+    this.clearAlertStatusTimer();
+    this.pendingAlertDraft = null;
+    this.alertSubmitState.set('idle');
+    this.alertSubmitError.set(null);
+  }
+
+  private clearAlertStatusTimer(): void {
+    if (!this.alertStatusTimer) {
+      return;
+    }
+    clearTimeout(this.alertStatusTimer);
+    this.alertStatusTimer = null;
   }
 
   protected openStatsDetails(): void {
@@ -724,6 +854,10 @@ export class FeedIndicatorDetailPage {
 
   private formatNumber(value: number): string {
     return value.toFixed(1).replace(/\.0$/, '');
+  }
+
+  private toTitleCase(value: string): string {
+    return value.slice(0, 1).toUpperCase() + value.slice(1).toLowerCase();
   }
 
   private isEditingTarget(target: EventTarget | null): boolean {

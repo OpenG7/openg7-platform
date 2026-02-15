@@ -1010,6 +1010,14 @@
           "frequencyDaily": "Resume quotidien",
           "notifyDelta": "Me notifier si depasse +X%",
           "note": "Commentaire",
+          "generatedTitlePrefix": "Alerte indicateur",
+          "retry": "Reessayer",
+          "submitting": "Creation...",
+          "status": {
+            "success": "Alerte creee et liee a cet indicateur.",
+            "offline": "Hors ligne : alerte sauvegardee localement. Reessayez une fois reconnecte.",
+            "errorGeneric": "Impossible de creer l'alerte. Reessayez."
+          },
           "submit": "Creer l'alerte"
         },
         "loadingTitle": "Chargement de l'indicateur",
