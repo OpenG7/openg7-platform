@@ -975,7 +975,8 @@
           "subscribed": "Subscribed",
           "share": "Share",
           "reportUpdate": "Report update",
-          "createOpportunity": "Create linked opportunity"
+          "createOpportunity": "Create linked opportunity",
+          "createOpportunityTitlePrefix": "Linked opportunity"
         },
         "lastUpdate": "Last update: {{ value }}",
         "sections": {
@@ -1040,8 +1041,8 @@
           "relatedAlert2": "Heavy snowfall alert",
           "relatedOpportunity1": "Short-term import of 300 MW",
           "relatedOpportunityRoute1": "Quebec -> Ontario",
-          "relatedOpportunity2": "Emergency de-icing support crews",
-          "relatedOpportunityRoute2": "Ontario -> Ontario"
+          "relatedOpportunity2": "Surplus hydro blocks for winter peaks",
+          "relatedOpportunityRoute2": "Quebec -> Ontario"
         }
       }
     },
@@ -3148,7 +3149,8 @@
       "stepsTitle": "Supply journey stages",
       "viewSheet": "View profile",
       "connect": "Request intro",
-      "save": "Save"
+      "save": "Save",
+      "saved": "Saved"
     },
     "miniMap": {
       "prototypeLabel": "Logistics mini-map",

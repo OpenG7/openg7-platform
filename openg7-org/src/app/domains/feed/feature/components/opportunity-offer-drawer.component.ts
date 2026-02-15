@@ -65,24 +65,21 @@ export class OpportunityOfferDrawerComponent {
       }
     });
 
-    effect(
-      () => {
-        if (!this.visible()) {
-          return;
-        }
-        this.form.patchValue({
-          capacityMw: this.initialCapacityMw(),
-          startDate: this.initialStartDate() ?? '',
-          endDate: this.initialEndDate() ?? '',
-          pricingModel: 'spot',
-          comment: '',
-          attachmentName: '',
-        });
-        this.form.markAsPristine();
-        this.form.markAsUntouched();
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      if (!this.visible()) {
+        return;
+      }
+      this.form.patchValue({
+        capacityMw: this.initialCapacityMw(),
+        startDate: this.initialStartDate() ?? '',
+        endDate: this.initialEndDate() ?? '',
+        pricingModel: 'spot',
+        comment: '',
+        attachmentName: '',
+      });
+      this.form.markAsPristine();
+      this.form.markAsUntouched();
+    });
   }
 
   @HostListener('document:keydown.escape')

@@ -146,6 +146,8 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Flux & social | [data-og7="opportunity-offer-drawer"] | OpportunityOfferDrawerComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-offer-drawer.component.html | ok | Drawer proposer une offre. |
 | Flux & social | [data-og7="action"][data-og7-id="opportunity-make-offer"] | OpportunityDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-detail-header.component.html | ok | CTA principal proposer une offre. |
 | Flux & social | [data-og7="action"][data-og7-id="opportunity-offer-submit"] | OpportunityOfferDrawerComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-offer-drawer.component.html | ok | Soumission offre rapide. |
+| Flux & social | [data-og7="opportunity-offer-field"][data-og7-id="capacity|start-date|end-date|pricing-model|comment|attachment"] | OpportunityOfferDrawerComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-offer-drawer.component.html | ok | Hooks de champs pour BLUEPRINT-OP-04 (proposer une offre). |
+| Flux & social | [data-og7="action"][data-og7-id="opportunity-alert-open-*"] | OpportunityContextAsideComponent | openg7-org/src/app/domains/feed/feature/components/opportunity-context-aside.component.html | ok | Ouverture d'une alerte liee depuis l'aside opportunite (BLUEPRINT-OP-08). |
 | Flux & social | [data-og7="alert-detail-page"] | FeedAlertDetailPage | openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.html | ok | Conteneur detail alerte. |
 | Flux & social | [data-og7="alert-detail-header"] | AlertDetailHeaderComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-header.component.html | ok | Header alerte sticky. |
 | Flux & social | [data-og7="alert-detail-body"] | AlertDetailBodyComponent | openg7-org/src/app/domains/feed/feature/components/alert-detail-body.component.html | ok | Corps detail alerte (impact/zones/timeline/sources). |
@@ -168,6 +170,7 @@ Tous les composants sont **standalone**, **signal-first**, prêts i18n (`@ngx-tr
 | Flux & social | [data-og7="action"][data-og7-id="indicator-subscribe"] | IndicatorHeroComponent | openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.html | ok | CTA abonnement indicateur (toggle optimistic). |
 | Flux & social | [data-og7="action"][data-og7-id="indicator-create-alert"] | IndicatorHeroComponent | openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.html | ok | CTA ouverture drawer de creation d'alerte. |
 | Flux & social | [data-og7="action"][data-og7-id="indicator-alert-submit"] | IndicatorAlertDrawerComponent | openg7-org/src/app/domains/feed/feature/components/indicator-alert-drawer.component.html | ok | Soumission rapide d'alerte sur seuil indicateur. |
+| Flux & social | [data-og7="indicator-alert-field"][data-og7-id="threshold-direction|threshold-value|window|frequency|notify-delta|note"] | IndicatorAlertDrawerComponent | openg7-org/src/app/domains/feed/feature/components/indicator-alert-drawer.component.html | ok | Hooks de champs pour BLUEPRINT-OP-19 (creation d'alerte indicateur). |
 
 ### Convention de nommage (vérifiée)
 
@@ -1532,6 +1535,33 @@ _MAJ (enhanced) : 2025-09-13 10:15:00Z_
 - `BLUEPRINT-OP-21` Ouvrir une opportunite liee depuis la liste associee indicateur : clic gauche sur une entree `Opportunites associees` -> verifier `/feed/opportunities/:id`.
 - `BLUEPRINT-OP-22` Utiliser le fallback detail par id si la collection feed est indisponible : saisir directement une URL detail (`/feed/alerts/:id`, `/feed/opportunities/:id`, `/feed/indicators/:id`) dans la barre d adresse + Entrer -> verifier chargement du detail sans passer par la liste.
 
+## BLUEPRINT Traceability Matrix (Tests)
+
+| BLUEPRINT | Coverage | Specs |
+|-----------|----------|-------|
+| `BLUEPRINT-OP-01` | Feed open + stream hydration | `openg7-org/src/app/domains/feed/feature/feed.page.spec.ts` |
+| `BLUEPRINT-OP-02` | Tile -> opportunity detail route | `openg7-org/src/app/domains/feed/feature/feed.page.spec.ts` |
+| `BLUEPRINT-OP-03` | Opportunity breadcrumb -> `/feed` | `openg7-org/src/app/domains/feed/feature/components/opportunity-detail-header.component.spec.ts` |
+| `BLUEPRINT-OP-04` | Offer drawer fields + submit flow | `openg7-org/src/app/domains/feed/feature/components/opportunity-offer-drawer.component.spec.ts`, `openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.spec.ts` |
+| `BLUEPRINT-OP-05` | Opportunity save state toggle | `openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.spec.ts` |
+| `BLUEPRINT-OP-06` | Opportunity share action | `openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.spec.ts` |
+| `BLUEPRINT-OP-07` | Q/R tabs + reply submit | `openg7-org/src/app/domains/feed/feature/components/opportunity-qna.component.spec.ts`, `openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.spec.ts` |
+| `BLUEPRINT-OP-08` | Opportunity aside alert -> alert detail | `openg7-org/src/app/domains/feed/feature/components/opportunity-context-aside.component.spec.ts`, `openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.spec.ts` |
+| `BLUEPRINT-OP-09` | Tile -> alert detail route | `openg7-org/src/app/domains/feed/feature/feed.page.spec.ts` |
+| `BLUEPRINT-OP-10` | Alert subscribe toggle | `openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.spec.ts` |
+| `BLUEPRINT-OP-11` | Alert share action | `openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.spec.ts` |
+| `BLUEPRINT-OP-12` | Alert report update action | `openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.spec.ts` |
+| `BLUEPRINT-OP-13` | Create linked opportunity query params | `openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.spec.ts` |
+| `BLUEPRINT-OP-14` | Alert aside opportunity -> detail | `openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.spec.ts` |
+| `BLUEPRINT-OP-15` | Tile -> indicator detail route | `openg7-org/src/app/domains/feed/feature/feed.page.spec.ts` |
+| `BLUEPRINT-OP-16` | Indicator timeframe change -> rerender | `openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.spec.ts` |
+| `BLUEPRINT-OP-17` | Indicator granularity change -> rerender | `openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.spec.ts` |
+| `BLUEPRINT-OP-18` | Indicator subscribe action/state | `openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.spec.ts`, `openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.spec.ts` |
+| `BLUEPRINT-OP-19` | Indicator create alert drawer + mapped publish + retry | `openg7-org/src/app/domains/feed/feature/components/indicator-alert-drawer.component.spec.ts`, `openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.spec.ts`, `openg7-org/src/app/domains/feed/feature/components/indicator-hero.component.spec.ts` |
+| `BLUEPRINT-OP-20` | Indicator related alert -> detail | `openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.spec.ts` |
+| `BLUEPRINT-OP-21` | Indicator related opportunity -> detail | `openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.spec.ts` |
+| `BLUEPRINT-OP-22` | Direct URL fallback by id (opportunity/alert/indicator) | `openg7-org/src/app/domains/feed/feature/pages/feed-opportunity-detail.page.spec.ts`, `openg7-org/src/app/domains/feed/feature/pages/feed-alert-detail.page.spec.ts`, `openg7-org/src/app/domains/feed/feature/pages/feed-indicator-detail.page.spec.ts` |
+
 ## BLUEPRINT Data Outputs (mission-aligned)
 
 ### AS-IS - Proprietes expediées aujourd hui
@@ -1541,7 +1571,8 @@ _MAJ (enhanced) : 2025-09-13 10:15:00Z_
 - `POST /api/feed` : `type`, `title`, `summary`, `sectorId`, `fromProvinceId`, `toProvinceId`, `mode`, `quantity.value`, `quantity.unit`, `tags`.
 - `BLUEPRINT-OP-19` (creer une alerte depuis un indicateur) publie via `POST /api/feed` avec mapping : `type=ALERT`, `title`, `summary`, `sectorId`, `fromProvinceId`, `toProvinceId`, `mode`, `tags`.
 - Header HTTP : `Idempotency-Key` (publication feed).
-- Navigation router (query params) : `type`, `mode`, `sector`, `q`.
+- Navigation router (query params) : `type`, `mode`, `sector`, `fromProvince`, `toProvince`, `q`.
+- `BLUEPRINT-OP-13` (creer opportunite liee depuis alerte) : `draftSource`, `draftAlertId`, `draftType`, `draftMode`, `draftSectorId`, `draftFromProvinceId`, `draftToProvinceId`, `draftTitle`, `draftSummary`, `draftTags`.
 - Share Web API : `title`, `text`, `url`.
 - Clipboard fallback : `url`.
 - Analytics feed (dataLayer/custom event) : `event`, `itemId`, `type`, `source`, `reason`, `count`, `cursor`.

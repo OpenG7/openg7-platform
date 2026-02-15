@@ -71,24 +71,21 @@ export class IndicatorAlertDrawerComponent {
       }
     });
 
-    effect(
-      () => {
-        if (!this.open()) {
-          return;
-        }
-        this.form.reset({
-          thresholdDirection: 'gt',
-          thresholdValue: 12,
-          window: '1h',
-          frequency: 'instant',
-          notifyDelta: true,
-          note: '',
-        });
-        this.form.markAsPristine();
-        this.form.markAsUntouched();
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      if (!this.open()) {
+        return;
+      }
+      this.form.reset({
+        thresholdDirection: 'gt',
+        thresholdValue: 12,
+        window: '1h',
+        frequency: 'instant',
+        notifyDelta: true,
+        note: '',
+      });
+      this.form.markAsPristine();
+      this.form.markAsUntouched();
+    });
   }
 
   @HostListener('document:keydown', ['$event'])

@@ -44,6 +44,7 @@
         [lastUpdatedLabel]="lastUpdatedLabel()"
         [indicators]="detail.indicators"
         [alerts]="detail.alerts"
+        (openAlert)="openRelatedAlert($event)"
         (openAlerts)="openAlerts()"
       ></og7-opportunity-context-aside>
     </div>

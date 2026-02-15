@@ -864,7 +864,8 @@
           "subscribed": "Abonne",
           "share": "Partager",
           "reportUpdate": "Signaler une mise a jour",
-          "createOpportunity": "Creer une opportunite liee"
+          "createOpportunity": "Creer une opportunite liee",
+          "createOpportunityTitlePrefix": "Opportunite liee"
         },
         "lastUpdate": "Derniere mise a jour : {{ value }}",
         "sections": {
@@ -929,8 +930,8 @@
           "relatedAlert2": "Alerte fortes chutes de neige",
           "relatedOpportunity1": "Import court terme de 300 MW",
           "relatedOpportunityRoute1": "Quebec -> Ontario",
-          "relatedOpportunity2": "Equipes specialisees de deglacage",
-          "relatedOpportunityRoute2": "Ontario -> Ontario"
+          "relatedOpportunity2": "Blocs hydro excedentaires pour pointes hivernales",
+          "relatedOpportunityRoute2": "Quebec -> Ontario"
         }
       }
     },
@@ -3048,7 +3049,8 @@
       "stepsTitle": "Étapes du parcours",
       "viewSheet": "Voir la fiche",
       "connect": "Mettre en relation",
-      "save": "Sauvegarder"
+      "save": "Sauvegarder",
+      "saved": "Enregistre"
     },
     "miniMap": {
       "prototypeLabel": "Mini-carte logistique",

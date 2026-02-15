@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { FavoritesService } from '@app/core/favorites.service';
 import { PartnerSelection } from '@app/core/models/partner-selection';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -59,6 +60,8 @@ export interface OpportunityTimelineVm {
  * @returns OpportunityTimelineComponent gérée par le framework.
  */
 export class OpportunityTimelineComponent {
+  private readonly favorites = inject(FavoritesService);
+
   readonly vm = input.required<OpportunityTimelineVm>();
   readonly viewSheet = output<OpportunityViewSheetPayload>();
   readonly connect = output<string>();
@@ -107,6 +110,8 @@ export class OpportunityTimelineComponent {
     }
     return new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(tons) + ' tCO₂e';
   });
+  readonly favoriteKey = computed(() => `opportunity:${this.vm().matchId}`);
+  readonly saved = computed(() => this.favorites.list().includes(this.favoriteKey()));
 
   protected emitViewSheet(): void {
     const vm = this.vm();
@@ -115,5 +120,14 @@ export class OpportunityTimelineComponent {
 
   protected emitConnect(): void {
     this.connect.emit(this.vm().matchId);
+  }
+
+  protected toggleSave(): void {
+    const key = this.favoriteKey();
+    if (this.saved()) {
+      this.favorites.remove(key);
+      return;
+    }
+    this.favorites.add(key);
   }
 }

@@ -11,7 +11,11 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <label>
         <span>{{ 'feed.indicator.detail.drawer.thresholdDirection' | translate }}</span>
-        <select formControlName="thresholdDirection">
+        <select
+          formControlName="thresholdDirection"
+          data-og7="indicator-alert-field"
+          data-og7-id="threshold-direction"
+        >
           <option value="gt">{{ 'feed.indicator.detail.drawer.direction.gt' | translate }}</option>
           <option value="lt">{{ 'feed.indicator.detail.drawer.direction.lt' | translate }}</option>
         </select>
@@ -20,7 +24,14 @@
       <label>
         <span>{{ 'feed.indicator.detail.drawer.thresholdValue' | translate }}</span>
         <div class="indicator-alert-drawer__field-row">
-          <input type="number" min="0" max="500" formControlName="thresholdValue" />
+          <input
+            type="number"
+            min="0"
+            max="500"
+            formControlName="thresholdValue"
+            data-og7="indicator-alert-field"
+            data-og7-id="threshold-value"
+          />
           <small>%</small>
         </div>
       </label>
@@ -28,7 +39,7 @@
       <div class="indicator-alert-drawer__grid">
         <label>
           <span>{{ 'feed.indicator.detail.drawer.window' | translate }}</span>
-          <select formControlName="window">
+          <select formControlName="window" data-og7="indicator-alert-field" data-og7-id="window">
             <option value="1h">{{ 'feed.indicator.detail.drawer.window1h' | translate }}</option>
             <option value="24h">{{ 'feed.indicator.detail.drawer.window24h' | translate }}</option>
           </select>
@@ -36,7 +47,7 @@
 
         <label>
           <span>{{ 'feed.indicator.detail.drawer.frequency' | translate }}</span>
-          <select formControlName="frequency">
+          <select formControlName="frequency" data-og7="indicator-alert-field" data-og7-id="frequency">
             <option value="instant">{{ 'feed.indicator.detail.drawer.frequencyInstant' | translate }}</option>
             <option value="hourly">{{ 'feed.indicator.detail.drawer.frequencyHourly' | translate }}</option>
             <option value="daily">{{ 'feed.indicator.detail.drawer.frequencyDaily' | translate }}</option>
@@ -45,13 +56,18 @@
       </div>
 
       <label class="indicator-alert-drawer__toggle">
-        <input type="checkbox" formControlName="notifyDelta" />
+        <input
+          type="checkbox"
+          formControlName="notifyDelta"
+          data-og7="indicator-alert-field"
+          data-og7-id="notify-delta"
+        />
         <span>{{ 'feed.indicator.detail.drawer.notifyDelta' | translate }}</span>
       </label>
 
       <label>
         <span>{{ 'feed.indicator.detail.drawer.note' | translate }}</span>
-        <textarea rows="4" formControlName="note"></textarea>
+        <textarea rows="4" formControlName="note" data-og7="indicator-alert-field" data-og7-id="note"></textarea>
       </label>
 
       <p

@@ -242,58 +242,52 @@ export class FeedIndicatorDetailPage {
   });
 
   constructor() {
-    effect(
-      onCleanup => {
-        const itemId = this.itemId();
-        this.detailItem.set(null);
-        this.detailError.set(null);
+    effect(onCleanup => {
+      const itemId = this.itemId();
+      this.detailItem.set(null);
+      this.detailError.set(null);
 
-        if (!itemId) {
-          this.detailLoading.set(false);
-          return;
-        }
+      if (!itemId) {
+        this.detailLoading.set(false);
+        return;
+      }
 
-        let cancelled = false;
-        this.detailLoading.set(true);
+      let cancelled = false;
+      this.detailLoading.set(true);
 
-        void this.feed
-          .findItemById(itemId)
-          .then(item => {
-            if (cancelled) {
-              return;
-            }
-            this.detailItem.set(item);
-          })
-          .catch(error => {
-            if (cancelled) {
-              return;
-            }
-            this.detailError.set(this.resolveLoadError(error));
-          })
-          .finally(() => {
-            if (!cancelled) {
-              this.detailLoading.set(false);
-            }
-          });
-
-        onCleanup(() => {
-          cancelled = true;
+      void this.feed
+        .findItemById(itemId)
+        .then(item => {
+          if (cancelled) {
+            return;
+          }
+          this.detailItem.set(item);
+        })
+        .catch(error => {
+          if (cancelled) {
+            return;
+          }
+          this.detailError.set(this.resolveLoadError(error));
+        })
+        .finally(() => {
+          if (!cancelled) {
+            this.detailLoading.set(false);
+          }
         });
-      },
-      { allowSignalWrites: true }
-    );
 
-    effect(
-      () => {
-        this.itemId();
-        this.timeframe.set('72h');
-        this.granularity.set('hour');
-        this.subscribed.set(false);
-        this.drawerOpen.set(false);
-        this.resetAlertSubmitState();
-      },
-      { allowSignalWrites: true }
-    );
+      onCleanup(() => {
+        cancelled = true;
+      });
+    });
+
+    effect(() => {
+      this.itemId();
+      this.timeframe.set('72h');
+      this.granularity.set('hour');
+      this.subscribed.set(false);
+      this.drawerOpen.set(false);
+      this.resetAlertSubmitState();
+    });
 
     this.destroyRef.onDestroy(() => this.clearAlertStatusTimer());
   }

@@ -150,71 +150,62 @@ export class FeedOpportunityDetailPage {
   protected readonly ownerMode = computed(() => this.detailVm()?.item.source.kind === 'USER');
 
   constructor() {
-    effect(
-      onCleanup => {
-        const itemId = this.itemId();
-        this.detailItem.set(null);
-        this.detailError.set(null);
+    effect(onCleanup => {
+      const itemId = this.itemId();
+      this.detailItem.set(null);
+      this.detailError.set(null);
 
-        if (!itemId) {
-          this.detailLoading.set(false);
-          return;
-        }
+      if (!itemId) {
+        this.detailLoading.set(false);
+        return;
+      }
 
-        let cancelled = false;
-        this.detailLoading.set(true);
+      let cancelled = false;
+      this.detailLoading.set(true);
 
-        void this.feed
-          .findItemById(itemId)
-          .then(item => {
-            if (cancelled) {
-              return;
-            }
-            this.detailItem.set(item);
-          })
-          .catch(error => {
-            if (cancelled) {
-              return;
-            }
-            this.detailError.set(this.resolveLoadError(error));
-          })
-          .finally(() => {
-            if (!cancelled) {
-              this.detailLoading.set(false);
-            }
-          });
-
-        onCleanup(() => {
-          cancelled = true;
+      void this.feed
+        .findItemById(itemId)
+        .then(item => {
+          if (cancelled) {
+            return;
+          }
+          this.detailItem.set(item);
+        })
+        .catch(error => {
+          if (cancelled) {
+            return;
+          }
+          this.detailError.set(this.resolveLoadError(error));
+        })
+        .finally(() => {
+          if (!cancelled) {
+            this.detailLoading.set(false);
+          }
         });
-      },
-      { allowSignalWrites: true }
-    );
 
-    effect(
-      () => {
-        this.itemId();
-        this.localMessages.set([]);
-        this.qnaTab.set('questions');
-        this.offerDrawerOpen.set(false);
-        this.resetOfferSubmitState();
-        this.saved.set(false);
-      },
-      { allowSignalWrites: true }
-    );
+      onCleanup(() => {
+        cancelled = true;
+      });
+    });
 
-    effect(
-      () => {
-        if (!this.isConnected()) {
-          this.syncState.set('offline');
-          return;
-        }
-        if (this.syncState() === 'offline') {
-          this.syncState.set('synced');
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      this.itemId();
+      this.localMessages.set([]);
+      this.qnaTab.set('questions');
+      this.offerDrawerOpen.set(false);
+      this.resetOfferSubmitState();
+      this.saved.set(false);
+    });
+
+    effect(() => {
+      if (!this.isConnected()) {
+        this.syncState.set('offline');
+        return;
+      }
+      if (this.syncState() === 'offline') {
+        this.syncState.set('synced');
+      }
+    });
 
     this.destroyRef.onDestroy(() => {
       this.clearSyncTimers();
@@ -329,7 +320,14 @@ export class FeedOpportunityDetailPage {
   }
 
   protected openAlerts(): void {
-    void this.router.navigate(['/alerts']);
+    void this.router.navigate(['/feed'], {
+      queryParams: { type: 'ALERT' },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  protected openRelatedAlert(alertId: string): void {
+    void this.router.navigate(['/feed', 'alerts', alertId]);
   }
 
   protected handleOfferSubmitted(payload: OpportunityOfferPayload): void {
