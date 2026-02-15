@@ -117,18 +117,71 @@
   margin: 0;
 }
 
-.indicator-alert-drawer form > button {
-  margin-top: 0.22rem;
+.indicator-alert-drawer__status {
+  margin: 0;
+  border-radius: 0.66rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.48);
+  color: rgba(226, 232, 240, 0.94);
+  padding: 0.5rem 0.62rem;
+  font-size: 0.8rem;
+}
+
+.indicator-alert-drawer__status--success {
+  border-color: rgba(16, 185, 129, 0.44);
+  color: rgba(167, 243, 208, 0.98);
+}
+
+.indicator-alert-drawer__status--offline {
+  border-color: rgba(148, 163, 184, 0.36);
+}
+
+.indicator-alert-drawer__status--error {
+  border-color: rgba(248, 113, 113, 0.44);
+  color: rgba(254, 202, 202, 0.98);
+}
+
+.indicator-alert-drawer__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.indicator-alert-drawer__actions button {
+  border-radius: 0.75rem;
+  padding: 0.52rem 0.76rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.indicator-alert-drawer__retry {
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  background: rgba(30, 41, 59, 0.6);
+  color: #e2e8f0;
+}
+
+.indicator-alert-drawer__actions > button:last-child {
   border-radius: 0.75rem;
   border: 1px solid rgba(251, 191, 36, 0.56);
   background: linear-gradient(90deg, rgba(217, 119, 6, 0.74), rgba(245, 158, 11, 0.64));
   color: #fffbeb;
-  padding: 0.52rem 0.76rem;
-  cursor: pointer;
+}
+
+.indicator-alert-drawer__actions > button:only-child {
+  grid-column: 1 / -1;
+}
+
+.indicator-alert-drawer__actions button:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 @media (max-width: 560px) {
   .indicator-alert-drawer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .indicator-alert-drawer__actions {
     grid-template-columns: 1fr;
   }
 }

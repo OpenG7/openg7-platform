@@ -1121,6 +1121,14 @@
           "frequencyDaily": "Daily digest",
           "notifyDelta": "Notify me when delta exceeds +X%",
           "note": "Comment",
+          "generatedTitlePrefix": "Indicator alert",
+          "retry": "Retry",
+          "submitting": "Creating...",
+          "status": {
+            "success": "Alert created and linked to this indicator.",
+            "offline": "Offline: alert saved locally. Retry when connected.",
+            "errorGeneric": "Unable to create alert. Try again."
+          },
           "submit": "Create alert"
         },
         "loadingTitle": "Loading indicator",
