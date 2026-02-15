@@ -89,8 +89,13 @@
     >
       {{ 'opportunities.timeline.connect' | translate }}
     </button>
-    <button type="button" class="opportunity-tile__action opportunity-tile__action--ghost">
-      {{ 'opportunities.timeline.save' | translate }}
+    <button
+      type="button"
+      class="opportunity-tile__action opportunity-tile__action--ghost"
+      (click)="toggleSave()"
+      [attr.aria-pressed]="saved()"
+    >
+      {{ saved() ? ('opportunities.timeline.saved' | translate) : ('opportunities.timeline.save' | translate) }}
     </button>
   </footer>
 </article>

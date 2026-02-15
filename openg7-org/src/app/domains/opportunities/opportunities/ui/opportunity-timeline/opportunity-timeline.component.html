@@ -150,6 +150,13 @@
     <button type="button" class="opportunity-timeline__action-secondary" (click)="emitConnect()">
       {{ 'opportunities.timeline.connect' | translate }}
     </button>
-    <button type="button" class="opportunity-timeline__action-ghost">{{ 'opportunities.timeline.save' | translate }}</button>
+    <button
+      type="button"
+      class="opportunity-timeline__action-ghost"
+      (click)="toggleSave()"
+      [attr.aria-pressed]="saved()"
+    >
+      {{ saved() ? ('opportunities.timeline.saved' | translate) : ('opportunities.timeline.save' | translate) }}
+    </button>
   </footer>
 </article>

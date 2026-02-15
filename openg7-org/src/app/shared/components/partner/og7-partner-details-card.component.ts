@@ -207,11 +207,86 @@ export class Og7PartnerDetailsCardComponent {
     return trimmed;
   }
 
+  protected onDownload(entity: PartnerProfile): void {
+    this.download.emit(entity);
+
+    if (typeof document === 'undefined' || typeof URL === 'undefined' || typeof Blob === 'undefined') {
+      return;
+    }
+
+    try {
+      const fileName = `${this.slugify(entity.legalName || entity.displayName || 'partner')}.json`;
+      const blob = new Blob([JSON.stringify(entity, null, 2)], { type: 'application/json;charset=utf-8' });
+      const objectUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = objectUrl;
+      anchor.download = fileName;
+      anchor.rel = 'noopener';
+      anchor.click();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      // ignore fallback download failures
+    }
+  }
+
+  protected onShare(entity: PartnerProfile): void {
+    this.share.emit(entity);
+
+    if (typeof navigator === 'undefined') {
+      return;
+    }
+
+    const payload = this.sharePayload(entity);
+    if (typeof navigator.share === 'function') {
+      void navigator.share(payload).catch(() => {
+        this.copySharePayload(payload);
+      });
+      return;
+    }
+
+    this.copySharePayload(payload);
+  }
+
   private resolveLocale(lang: string | null | undefined): 'fr' | 'en' {
     if (!lang) {
       return 'en';
     }
     const value = lang.toLowerCase();
     return value.startsWith('fr') ? 'fr' : 'en';
+  }
+
+  private sharePayload(entity: PartnerProfile): ShareData {
+    const title = entity.displayName || entity.legalName;
+    const parts = [title, entity.sector ? this.translate.instant(`sectors.${entity.sector}`) : null].filter(Boolean);
+    const text = parts.join(' · ');
+    return {
+      title,
+      text: text || title,
+      url: entity.website || undefined,
+    };
+  }
+
+  private copySharePayload(payload: ShareData): void {
+    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      return;
+    }
+
+    const content = [payload.title, payload.text, payload.url].filter(Boolean).join(' · ');
+    if (!content) {
+      return;
+    }
+
+    void navigator.clipboard.writeText(content).catch(() => {
+      // ignore clipboard fallback errors
+    });
+  }
+
+  private slugify(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .toLowerCase();
   }
 }

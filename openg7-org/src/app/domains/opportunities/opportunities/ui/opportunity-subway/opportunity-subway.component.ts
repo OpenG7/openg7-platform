@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { FavoritesService } from '@app/core/favorites.service';
 import { PartnerSelection } from '@app/core/models/partner-selection';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -67,6 +68,8 @@ export interface OpportunitySubwayVm {
  * @returns OpportunitySubwayComponent gérée par le framework.
  */
 export class OpportunitySubwayComponent {
+  private readonly favorites = inject(FavoritesService);
+
   readonly vm = input.required<OpportunitySubwayVm>();
   readonly viewSheet = output<OpportunityViewSheetPayload>();
   readonly connect = output<string>();
@@ -117,6 +120,8 @@ export class OpportunitySubwayComponent {
   });
 
   readonly lines = computed(() => this.vm().lines);
+  readonly favoriteKey = computed(() => `opportunity:${this.vm().matchId}`);
+  readonly saved = computed(() => this.favorites.list().includes(this.favoriteKey()));
 
   protected emitViewSheet(): void {
     const vm = this.vm();
@@ -125,6 +130,15 @@ export class OpportunitySubwayComponent {
 
   protected emitConnect(): void {
     this.connect.emit(this.vm().matchId);
+  }
+
+  protected toggleSave(): void {
+    const key = this.favoriteKey();
+    if (this.saved()) {
+      this.favorites.remove(key);
+      return;
+    }
+    this.favorites.add(key);
   }
 }
 

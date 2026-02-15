@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { FavoritesService } from '@app/core/favorites.service';
 import { PartnerSelection } from '@app/core/models/partner-selection';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -38,6 +39,8 @@ export interface OpportunityTileVm {
  * @returns OpportunityTileComponent gérée par le framework.
  */
 export class OpportunityTileComponent {
+  private readonly favorites = inject(FavoritesService);
+
   readonly vm = input.required<OpportunityTileVm>();
   readonly viewSheet = output<OpportunityViewSheetPayload>();
   readonly connect = output<string>();
@@ -86,6 +89,8 @@ export class OpportunityTileComponent {
 
   readonly titleId = computed(() => `opportunity-tile-title-${this.vm().id}`);
   readonly scoreId = computed(() => `opportunity-tile-score-${this.vm().id}`);
+  readonly favoriteKey = computed(() => `opportunity:${this.vm().matchId}`);
+  readonly saved = computed(() => this.favorites.list().includes(this.favoriteKey()));
 
   protected emitViewSheet(): void {
     const vm = this.vm();
@@ -94,5 +99,14 @@ export class OpportunityTileComponent {
 
   protected emitConnect(): void {
     this.connect.emit(this.vm().matchId);
+  }
+
+  protected toggleSave(): void {
+    const key = this.favoriteKey();
+    if (this.saved()) {
+      this.favorites.remove(key);
+      return;
+    }
+    this.favorites.add(key);
   }
 }

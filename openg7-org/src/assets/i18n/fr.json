@@ -3049,7 +3049,8 @@
       "stepsTitle": "Étapes du parcours",
       "viewSheet": "Voir la fiche",
       "connect": "Mettre en relation",
-      "save": "Sauvegarder"
+      "save": "Sauvegarder",
+      "saved": "Enregistre"
     },
     "miniMap": {
       "prototypeLabel": "Mini-carte logistique",
