@@ -1,25 +1,22 @@
 <div class="mt-4 flex flex-col gap-3 sm:flex-row">
-  <button
-    type="button"
+  <a
     [routerLink]="['/feed']"
     class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-amber-300 via-amber-200 to-amber-100 px-5 py-2 text-sm font-semibold text-slate-900 shadow-[0_12px_30px_rgba(251,191,36,0.35)] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-200"
   >
     {{ 'home.feed.cta.exploreMap' | translate }}
-  </button>
-  <button
-    type="button"
+  </a>
+  <a
     [routerLink]="['/feed']"
     [queryParams]="{ type: 'REQUEST' }"
     class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-slate-900/60 px-5 py-2 text-sm font-semibold text-white/90 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
   >
     {{ 'home.feed.cta.publishRequest' | translate }}
-  </button>
-  <button
-    type="button"
+  </a>
+  <a
     [routerLink]="['/feed']"
     [queryParams]="{ type: 'OFFER' }"
     class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-slate-900/60 px-5 py-2 text-sm font-semibold text-white/90 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
   >
     {{ 'home.feed.cta.proposeOffer' | translate }}
-  </button>
+  </a>
 </div>

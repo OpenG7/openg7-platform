@@ -2,23 +2,21 @@ import './setup';
 import { expect, test } from '@playwright/test';
 
 test.describe('Home sections', () => {
-  test('renders hero, statistics, map and filters sections', async ({ page }) => {
+  test('renders hero and live feed sections', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.locator('[data-og7="hero"]')).toBeVisible();
-    await expect(page.locator('[data-og7="home-statistics"]')).toBeVisible();
-    await expect(page.locator('[data-og7="home-map"]')).toBeVisible();
-    await expect(page.locator('[data-og7="home-filters"]')).toBeVisible();
+    await expect(page.locator('[data-og7="hero"][data-og7-id="section"]')).toBeVisible();
+    await expect(page.locator('[data-og7="search-box"] input[type="search"]').first()).toBeVisible();
+    await expect(page.locator('[data-og7="corridors-realtime"]')).toBeVisible();
   });
 
-  test('filters section exposes form controls', async ({ page }) => {
+  test('feed controls expose scope tabs and filter chips', async ({ page }) => {
     await page.goto('/');
 
-    const tradeModeSelect = page.locator('[data-og7="filters"] select[data-og7-id="trade-mode"]');
-    await expect(tradeModeSelect).toBeVisible();
-    await expect(tradeModeSelect).toHaveValue('all');
+    const scopeTabs = page.locator('[role="tablist"] button[role="tab"]');
+    await expect(scopeTabs.first()).toBeVisible();
 
-    const sectorOptions = page.locator('[data-og7="filters"] button[role="option"]');
-    await expect(sectorOptions.first()).toBeVisible();
+    const filterChips = page.locator('og7-home-feed-section button[aria-pressed]');
+    await expect(filterChips.first()).toBeVisible();
   });
 });

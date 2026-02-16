@@ -1,5 +1,6 @@
 import './setup';
 import { expect, test } from '@playwright/test';
+import { loginAsAuthenticatedE2eUser, mockAuthenticatedSessionApis } from './helpers/auth-session';
 
 interface SavedSearchSeed {
   id: string;
@@ -37,40 +38,7 @@ test.describe('Alerts page', () => {
 
     const alerts: AlertRecord[] = [];
 
-    await page.route('**/api/auth/local', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          jwt: 'header.payload.signature',
-          user: {
-            id: 'e2e-user-1',
-            email: 'e2e.user@openg7.test',
-            roles: ['editor'],
-            firstName: 'E2E',
-            lastName: 'User',
-          },
-        }),
-      });
-    });
-
-    await page.route('**/api/users/me/profile', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'e2e-user-1',
-          email: 'e2e.user@openg7.test',
-          roles: ['editor'],
-          firstName: 'E2E',
-          lastName: 'User',
-          notificationPreferences: {
-            emailOptIn: false,
-            webhookUrl: null,
-          },
-        }),
-      });
-    });
+    await mockAuthenticatedSessionApis(page);
 
     await page.route('**/api/users/me/alerts**', async (route) => {
       const request = route.request();
@@ -239,12 +207,7 @@ test.describe('Alerts page', () => {
       });
     });
 
-    await page.goto('/login');
-
-    await page.locator('#auth-login-email').fill('e2e.user@openg7.test');
-    await page.locator('#auth-login-password').fill('StrongPass123!');
-    await page.locator('[data-og7="auth-login-submit"]').click();
-
+    await loginAsAuthenticatedE2eUser(page, '/profile');
     await expect(page).toHaveURL(/\/profile$/);
 
     await page.locator('[data-og7="profile"] > button').click();
