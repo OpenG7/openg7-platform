@@ -1,5 +1,6 @@
 import './setup';
 import { test, expect } from '@playwright/test';
+import { loginAsAuthenticatedE2eUser, mockAuthenticatedSessionApis } from './helpers/auth-session';
 
 test('login page renders', async ({ page }) => {
   await page.goto('/login');
@@ -31,10 +32,9 @@ test('reset password page renders', async ({ page }) => {
 });
 
 test('profile page renders with token', async ({ page }) => {
-  await page.addInitScript(() => {
-    sessionStorage.setItem('auth_token', 'test');
-  });
-  await page.goto('/profile');
+  await mockAuthenticatedSessionApis(page);
+  await loginAsAuthenticatedE2eUser(page, '/profile');
+  await expect(page).toHaveURL(/\/profile$/);
   await expect(page.locator('[data-og7="user-profile"]')).toBeVisible();
 });
 

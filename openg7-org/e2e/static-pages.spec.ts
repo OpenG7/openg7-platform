@@ -1,4 +1,4 @@
-ï»¿import './setup';
+import './setup';
 import { expect, test } from '@playwright/test';
 
 interface PageExpectation {
@@ -40,6 +40,15 @@ const staticPages: readonly PageExpectation[] = [
     headings: ['Legal notice', 'Mentions legales'],
   },
 ];
+const normalizeHeading = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[’']/g, '')
+    .replace(/[^a-zA-Z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 
 test.describe('Static informational pages', () => {
   for (const pageExpectation of staticPages) {
@@ -53,15 +62,15 @@ test.describe('Static informational pages', () => {
 
       const heading = container.locator('h1');
       await expect(heading).toBeVisible();
-      const text = (await heading.innerText()).trim();
-      const normalized = text.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+      const normalized = normalizeHeading((await heading.innerText()).trim());
 
       expect(
         pageExpectation.headings.some((expected) => {
-          const normalizedExpected = expected.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+          const normalizedExpected = normalizeHeading(expected);
           return normalized.includes(normalizedExpected);
         }),
       ).toBeTruthy();
     });
   }
 });
+
