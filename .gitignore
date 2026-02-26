@@ -35,6 +35,8 @@ Thumbs.db
 openg7-org/.angular/
 openg7-org/dist/
 openg7-org/coverage/
+openg7-org/test-results/
+openg7-org/playwright-report/
 openg7-org/public/runtime-config.js
 
 # --- Strapi CMS -------------------------------------------------------------

@@ -1,4 +1,6 @@
-﻿**Languages:** [English](#english) | [FranÃ§ais](#francais)
+**Languages:** [English](#english) | [Français](#francais)
+
+![OpenG7 Platform](docs/assets/banner-openg7-platform.png)
 
 ---
 
@@ -51,7 +53,7 @@ The dashboard provides a consolidated view of runtime health, backup visibility,
 
 Read `CONTRIBUTING.md` to understand the development workflow, the checks to run before opening a PR, and the secret management policy.  
 The code of conduct (`CODE_OF_CONDUCT.md`) applies to all community spaces.  
-A â€œfirst contributionâ€ guide is available in `docs/first-contribution.md`.
+A “first contribution” guide is available in `docs/first-contribution.md`.
 
 ### Public channels & support
 
@@ -72,30 +74,30 @@ A â€œfirst contributionâ€ guide is available in `docs/first-contributio
 
 ---
 
-## FranÃ§ais
+## Français
 
 # OpenG7
 
-Plateforme open source pour explorer et analyser les Ã©changes interprovinciaux (front Angular + CMS Strapi).  
-Ce monorepo regroupe le front-end, le CMS et les contrats dâ€™API partagÃ©s.
+Plateforme open source pour explorer et analyser les échanges interprovinciaux (front Angular + CMS Strapi).  
+Ce monorepo regroupe le front-end, le CMS et les contrats d’API partagés.
 
 ## Pour commencer
 
-1. Installez les dÃ©pendances : `yarn install`
+1. Installez les dépendances : `yarn install`
 2. Lancez Strapi : `yarn dev:cms` (API locale sur http://localhost:1337)
 3. Lancez le front Angular : `yarn dev:web` (UI sur http://localhost:4200)
-4. Besoin dâ€™un compte admin Strapi ? DÃ©finissez `STRAPI_ADMIN_EMAIL` / `STRAPI_ADMIN_PASSWORD` dans votre `.env` local, puis crÃ©ez-le via lâ€™Ã©cran dâ€™administration.
+4. Besoin d’un compte admin Strapi ? Définissez `STRAPI_ADMIN_EMAIL` / `STRAPI_ADMIN_PASSWORD` dans votre `.env` local, puis créez-le via l’écran d’administration.
 
-> Sous Windows, `Run-Installer-pwsh.cmd` exÃ©cute `install-dev-basics_robuste.ps1` pour prÃ©parer lâ€™environnement (PowerShell 5 en mode administrateur, installation/validation de Node.js LTS, Yarn, Git, encodage UTF-8), puis propose un petit menu pour lancer les principales commandes `yarn`.
+> Sous Windows, `Run-Installer-pwsh.cmd` exécute `install-dev-basics_robuste.ps1` pour préparer l’environnement (PowerShell 5 en mode administrateur, installation/validation de Node.js LTS, Yarn, Git, encodage UTF-8), puis propose un petit menu pour lancer les principales commandes `yarn`.
 
-Les guides dÃ©taillÃ©s sont dans `docs/` :
+Les guides détaillés sont dans `docs/` :
 - `docs/getting-started.md` : onboarding rapide et scripts utiles
-- `docs/frontend/` : architecture Angular signal-first, sÃ©lecteurs `[data-og7]`
+- `docs/frontend/` : architecture Angular signal-first, sélecteurs `[data-og7]`
 - `docs/strapi/` : conventions CMS et seeds idempotents
-- `docs/first-contribution.md` : checklist pour une premiÃ¨re PR
-- `docs/roadmap.md` : feuille de route publique et prioritÃ©s
+- `docs/first-contribution.md` : checklist pour une première PR
+- `docs/roadmap.md` : feuille de route publique et priorités
 
-## Tableau de bord Ops propriÃ©taire
+## Tableau de bord Ops propriétaire
 
 La plateforme inclut maintenant un tableau de bord d'exploitation pour owner/admin :
 
@@ -105,10 +107,10 @@ La plateforme inclut maintenant un tableau de bord d'exploitation pour owner/adm
   - `GET /api/admin/ops/backups`
   - `GET /api/admin/ops/imports`
   - `GET /api/admin/ops/security`
-- ContrÃ´le d'accÃ¨s : rÃ´les `Admin` ou `Owner` uniquement
-- Policy Strapi : `global::owner-admin-ops` (appliquÃ©e sur toutes les routes `/api/admin/ops/*`)
+- Contrôle d'accès : rôles `Admin` ou `Owner` uniquement
+- Policy Strapi : `global::owner-admin-ops` (appliquée sur toutes les routes `/api/admin/ops/*`)
 
-Ce tableau de bord centralise la santÃ© runtime, la visibilitÃ© des backups, le suivi des imports et les indicateurs de sÃ©curitÃ©.
+Ce tableau de bord centralise la santé runtime, la visibilité des backups, le suivi des imports et les indicateurs de sécurité.
 
 ## Ou vit le code?
 
@@ -119,23 +121,23 @@ Ce tableau de bord centralise la santÃ© runtime, la visibilitÃ© des backups,
 
 ## Contribuer
 
-Lisez `CONTRIBUTING.md` pour connaÃ®tre le flux de dÃ©veloppement, les vÃ©rifications Ã  exÃ©cuter avant une PR et la politique de gestion des secrets.  
-Le code de conduite (`CODE_OF_CONDUCT.md`) sâ€™applique Ã  tous les espaces communautaires.  
-Un guide Â« premiÃ¨re contribution Â» est disponible dans `docs/first-contribution.md`.
+Lisez `CONTRIBUTING.md` pour connaître le flux de développement, les vérifications à exécuter avant une PR et la politique de gestion des secrets.  
+Le code de conduite (`CODE_OF_CONDUCT.md`) s’applique à tous les espaces communautaires.  
+Un guide « première contribution » est disponible dans `docs/first-contribution.md`.
 
 ### Canaux publics & support
 
-- **Issues GitHub** : bugs, demandes de fonctionnalitÃ©s, documentation (modÃ¨les fournis, label `needs-triage` par dÃ©faut).
-- **Discussions GitHub** : questions gÃ©nÃ©rales ou idÃ©es exploratoires.
-- **Support & gouvernance** : consultez `SUPPORT.md` pour les temps de rÃ©ponse, lâ€™escalade et le processus de dÃ©cision.
+- **Issues GitHub** : bugs, demandes de fonctionnalités, documentation (modèles fournis, label `needs-triage` par défaut).
+- **Discussions GitHub** : questions générales ou idées exploratoires.
+- **Support & gouvernance** : consultez `SUPPORT.md` pour les temps de réponse, l’escalade et le processus de décision.
 
 ### Premiers pas communautaires
 
-- Des modÃ¨les dâ€™issues/PR sont fournis pour accÃ©lÃ©rer le tri et clarifier les attentes.
-- Les labels `good first issue` et `help wanted` signalent des sujets adaptÃ©s aux nouveaux arrivants.
-- Ajoutez des captures dâ€™Ã©cran pour toute Ã©volution UI perceptible et documentez les impacts de configuration ou de sÃ©curitÃ©.
+- Des modèles d’issues/PR sont fournis pour accélérer le tri et clarifier les attentes.
+- Les labels `good first issue` et `help wanted` signalent des sujets adaptés aux nouveaux arrivants.
+- Ajoutez des captures d’écran pour toute évolution UI perceptible et documentez les impacts de configuration ou de sécurité.
 
-## Licence et sÃ©curitÃ©
+## Licence et sécurité
 
 - Licence : MIT (`LICENSE`)
 - Divulgation responsable : voir `SECURITY.md` (contact : contact@openg7.org)
