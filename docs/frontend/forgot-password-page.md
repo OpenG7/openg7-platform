@@ -7,7 +7,7 @@ Cette capture a été réalisée avec `ng serve --host 0.0.0.0` sur le projet `o
 ## Reproduction rapide
 
 ```bash
-cd openg7-plateform/openg7-org
+cd openg7-nexus/openg7-org
 yarn start --host 0.0.0.0
 ```
 

@@ -1,50 +1,50 @@
-﻿capabilities:
+capabilities:
   evidence_capsules:
     canonical_repo: openg7-open-evidence
     provides:
       - evidence_capsule_schema
       - claim_to_evidence_mapping
     consumers:
-      - openg7-platform
+      - openg7-nexus
   audit_trail:
     canonical_repo: openg7-audit-ledger
     provides:
       - audit_event_schema
       - signed_hash_chain
     consumers:
-      - openg7-platform
+      - openg7-nexus
   attention_signals:
     canonical_repo: openg7-attention-metrics
     provides:
       - signal_definitions
       - aggregation_rules
     consumers:
-      - openg7-platform
+      - openg7-nexus
   friction_guardrails:
     canonical_repo: openg7-friction-engine
     provides:
       - friction_rules
       - resilience_modes
     consumers:
-      - openg7-platform
+      - openg7-nexus
   ranking_policy:
     canonical_repo: openg7-ranking-policy
     provides:
       - ranking_rules
       - provenance_requirements
     consumers:
-      - openg7-platform
+      - openg7-nexus
   privacy_methods:
     canonical_repo: openg7-privacy-lab
     provides:
       - minimization_patterns
       - privacy_checks
     consumers:
-      - openg7-platform
+      - openg7-nexus
   community_thermometer:
     canonical_repo: openg7-community-health-dashboard
     provides:
       - community_metrics
       - cohort_rollups
     consumers:
-      - openg7-platform
+      - openg7-nexus

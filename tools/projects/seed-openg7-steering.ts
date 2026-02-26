@@ -91,14 +91,14 @@ const PROJECT_CONFIG = {
 
 /**
  * Alias logiques -> vrai repo GitHub
- * Tous ces "sous-domaines" sont en réalité dans OpenG7/openg7-platform.
+ * Tous ces "sous-domaines" sont en réalité dans OpenG7/openg7-nexus.
  */
 const REPO_ALIAS_MAP: Record<string, string> = {
-  docs: 'openg7-platform',
-  '.github': 'openg7-platform',
-  'packages/contracts': 'openg7-platform',
-  infra: 'openg7-platform',
-  strapi: 'openg7-platform',
+  docs: 'openg7-nexus',
+  '.github': 'openg7-nexus',
+  'packages/contracts': 'openg7-nexus',
+  infra: 'openg7-nexus',
+  strapi: 'openg7-nexus',
 };
 
 function resolveRepoName(rawRepo: string): string {
@@ -112,7 +112,7 @@ function resolveRepoName(rawRepo: string): string {
     return REPO_ALIAS_MAP[normalized];
   }
 
-  // 2) Cas "openg7-platform/docs" ou similaire :
+  // 2) Cas "openg7-nexus/docs" ou similaire :
   if (normalized.includes('/')) {
     const [base] = normalized.split('/');
     if (REPO_ALIAS_MAP[base]) {

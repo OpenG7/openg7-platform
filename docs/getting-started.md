@@ -24,8 +24,8 @@ yarn --version  # doit afficher 4.9.4
 1. Cloner le dépôt puis se placer à la racine :
 
    ```bash
-   git clone git@github.com:openg7/openg7-plateform.git
-   cd openg7-plateform
+   git clone git@github.com:openg7/openg7-nexus.git
+   cd openg7-nexus
    ```
 
 2. Installer les dépendances partagées par les workspaces :
@@ -80,7 +80,7 @@ yarn --version  # doit afficher 4.9.4
 
 ```mermaid
 graph TD
-  root[Monorepo openg7-plateform]
+  root[Monorepo openg7-nexus]
   root --> front[openg7-org\nFront Angular\nProduct Experience squad]
   root --> next[strapi\nCMS Strapi v5\nData Platform squad]
   root --> contracts[packages/contracts\nContrats & codegen\nPlatform Enablement squad]
