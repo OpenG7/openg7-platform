@@ -1,6 +1,6 @@
 **Languages:** [English](#english) | [Français](#francais)
 
-![OpenG7 Platform](docs/assets/banner-openg7-platform.png)
+![OpenG7 Platform](docs/assets/banner-openg7-nexus.png)
 
 ---
 
@@ -44,7 +44,7 @@ The dashboard provides a consolidated view of runtime health, backup visibility,
 
 ## Where does code live?
 
-- Read CHARTER.md for the scope and non-goals of openg7-platform.
+- Read CHARTER.md for the scope and non-goals of openg7-nexus.
 - Use docs/ecosystem/ECOSYSTEM-MAP.md to find the canonical repo for a capability.
 - If something is shared across repos, create a shared @openg7/* package instead of copying.
 - Platform is orchestration/integration, not canonical domain logic.
@@ -114,7 +114,7 @@ Ce tableau de bord centralise la santé runtime, la visibilité des backups, le 
 
 ## Ou vit le code?
 
-- Lisez CHARTER.md pour la portee et les non-objectifs de openg7-platform.
+- Lisez CHARTER.md pour la portee et les non-objectifs de openg7-nexus.
 - Utilisez docs/ecosystem/ECOSYSTEM-MAP.md pour trouver le repo canonique.
 - Si c'est partage entre repos, creez un package @openg7/* au lieu de copier.
 - Platform = orchestration / integration, pas de logique canonique.

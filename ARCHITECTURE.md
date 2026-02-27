@@ -3,7 +3,7 @@
 <a id="english"></a>
 # OpenG7 Monorepo Architecture
 
-This document summarizes the technical organization of the `openg7-plateform` repository: Yarn workspaces, functional responsibilities, build flows, and dependencies between the Angular front-end, the Strapi CMS, and shared packages.
+This document summarizes the technical organization of the `openg7-nexus` repository: Yarn workspaces, functional responsibilities, build flows, and dependencies between the Angular front-end, the Strapi CMS, and shared packages.
 
 ## Workspaces and Responsibilities
 
@@ -41,7 +41,7 @@ For a guided discovery, the Mermaid diagram in the onboarding guide visually sho
 
 Architecture du monorepo OpenG7
 
-Ce document résume l'organisation technique du dépôt openg7-plateform : workspaces Yarn, responsabilités fonctionnelles, flux de build et dépendances entre le front Angular, le CMS Strapi et les packages partagés.
+Ce document résume l'organisation technique du dépôt openg7-nexus : workspaces Yarn, responsabilités fonctionnelles, flux de build et dépendances entre le front Angular, le CMS Strapi et les packages partagés.
 
 Workspaces et responsabilités
 
