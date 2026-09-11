@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,7 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import type {
   AdminQualityMatrixBucket,
@@ -21,6 +22,7 @@ const BUCKET_OPTIONS: ReadonlyArray<{ readonly value: AdminQualityMatrixBucket; 
   { value: 'proof-gap', label: 'Manque de preuve' },
   { value: 'product-gap', label: 'Lacune produit' },
   { value: 'scope-limit', label: 'Hors perimetre' },
+  { value: 'not-evaluated', label: 'admin.quality.reactor.categories.notEvaluated' },
 ];
 
 const PRIORITY_OPTIONS: ReadonlyArray<{ readonly value: AdminQualityMatrixPriority; readonly label: string }> = [
@@ -32,7 +34,7 @@ const PRIORITY_OPTIONS: ReadonlyArray<{ readonly value: AdminQualityMatrixPriori
 @Component({
   selector: 'og7-admin-quality-entry-edit',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (entry(); as e) {
@@ -113,7 +115,7 @@ const PRIORITY_OPTIONS: ReadonlyArray<{ readonly value: AdminQualityMatrixPriori
               (change)="onBucketChange($event)"
             >
               @for (opt of bucketOptions; track opt.value) {
-                <option [value]="opt.value">{{ opt.label }}</option>
+                <option [value]="opt.value">{{ opt.value === 'not-evaluated' ? (opt.label | translate) : opt.label }}</option>
               }
             </select>
           </div>
@@ -201,7 +203,7 @@ export class AdminQualityEntryEditComponent {
 
   protected readonly observedGap = signal('');
   protected readonly nextMove = signal('');
-  protected readonly managementBucket = signal<AdminQualityMatrixBucket>('proof-gap');
+  protected readonly managementBucket = signal<AdminQualityMatrixBucket>('not-evaluated');
   protected readonly needsProductWorkFirst = signal(false);
   protected readonly priority = signal<AdminQualityMatrixPriority>('moyenne');
   protected readonly reviewedAt = signal('');

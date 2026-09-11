@@ -412,6 +412,11 @@ async function openAdminQualityPage(page: Page): Promise<void> {
   );
 }
 
+async function selectRecalculationScope(page: Page, scope: RecalculationScope): Promise<void> {
+  await page.locator('[data-og7-id="admin-quality-recalculate-scope"]').click();
+  await page.locator(`[data-og7-id="admin-quality-recalculate-scope-${scope}"]`).click();
+}
+
 test.describe('Admin quality matrix recalculation', () => {
   test('filters the matrix to priority gaps from the quality reactor', async ({ page }) => {
     await mockAdminQualityPageApis(page, {
@@ -490,7 +495,7 @@ test.describe('Admin quality matrix recalculation', () => {
 
     await openAdminQualityPage(page);
 
-    await page.locator('[data-og7-id="admin-quality-recalculate-scope"]').selectOption('all');
+    await selectRecalculationScope(page, 'all');
     await page.locator('[data-og7-id="admin-quality-recalculate-matrix"]').click();
 
     expect(recalculateRequests).toEqual([{ scope: 'all', entryId: null }]);
@@ -516,9 +521,7 @@ test.describe('Admin quality matrix recalculation', () => {
 
     await openAdminQualityPage(page);
 
-    await page
-      .locator('[data-og7-id="admin-quality-recalculate-scope"]')
-      .selectOption('selected-entry');
+    await selectRecalculationScope(page, 'selected-entry');
     await page.locator('[data-og7-id="admin-quality-recalculate-matrix"]').click();
 
     expect(recalculateRequests).toEqual([
@@ -546,9 +549,7 @@ test.describe('Admin quality matrix recalculation', () => {
     await page
       .locator('[data-og7="admin-quality-coverage-matrix-row"][data-og7-id="trust-validation"]')
       .click();
-    await page
-      .locator('[data-og7-id="admin-quality-recalculate-scope"]')
-      .selectOption('selected-entry');
+    await selectRecalculationScope(page, 'selected-entry');
     await page.locator('[data-og7-id="admin-quality-recalculate-matrix"]').click();
 
     expect(recalculateRequests).toEqual([{ scope: 'selected-entry', entryId: 'trust-validation' }]);

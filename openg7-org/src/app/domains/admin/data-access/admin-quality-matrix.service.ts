@@ -2,7 +2,6 @@ import {
   HttpClient,
   HttpContext,
   HttpDownloadProgressEvent,
-  HttpErrorResponse,
   HttpEventType,
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
@@ -15,12 +14,17 @@ import type {
   AdminQualityChatEvent,
   AdminQualityChatMessage,
 } from '@openg7/admin-quality';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export type AdminQualityMatrixStatus = 'oui' | 'partiel' | 'non' | 'hors MVP';
 export type AdminQualityMatrixPriority = 'basse' | 'moyenne' | 'haute';
-export type AdminQualityMatrixBucket = 'covered' | 'proof-gap' | 'product-gap' | 'scope-limit';
+export type AdminQualityMatrixBucket =
+  | 'covered'
+  | 'proof-gap'
+  | 'product-gap'
+  | 'scope-limit'
+  | 'not-evaluated';
 export type AdminQualityMatrixSourceStatus = 'fresh' | 'stale' | 'fallback';
 export type AdminQualityMatrixSignalId =
   | 'summary'
@@ -358,19 +362,7 @@ export class AdminQualityMatrixService {
       .get<
         StrapiDataResponse<AdminQualityMatrixResponse>
       >(STRAPI_ROUTES.admin.qualityMatrix, this.silentOptions)
-      .pipe(
-        map((response) => this.normalizeSnapshot(response.data)),
-        catchError((error: unknown) => {
-          if (
-            error instanceof HttpErrorResponse &&
-            (error.status === 401 || error.status === 403)
-          ) {
-            return throwError(() => error);
-          }
-
-          return of(EMPTY_SNAPSHOT);
-        }),
-      );
+      .pipe(map((response) => this.normalizeSnapshot(response.data)));
   }
 
   recalculateMatrix(
@@ -584,7 +576,7 @@ export class AdminQualityMatrixService {
       reviewedAt:
         typeof entry.reviewedAt === 'string' && entry.reviewedAt.trim()
           ? entry.reviewedAt
-          : EMPTY_SNAPSHOT.generatedAt.slice(0, 10),
+          : '',
       repoSignalAt:
         typeof entry.repoSignalAt === 'string' && entry.repoSignalAt.trim()
           ? entry.repoSignalAt
@@ -1036,7 +1028,7 @@ export class AdminQualityMatrixService {
       bucket === 'product-gap' ||
       bucket === 'scope-limit'
       ? bucket
-      : 'proof-gap';
+      : 'not-evaluated';
   }
 
   private resolveSourceStatus(generatedAt: string): AdminQualityMatrixSourceStatus {

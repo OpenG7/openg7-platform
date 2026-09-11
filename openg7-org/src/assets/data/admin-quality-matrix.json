@@ -1,46 +1,39 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-05-17T00:00:00.000Z",
-  "globalImpactRules": [
-    {
-      "type": "path-prefix",
-      "prefixes": [
-        "AGENTS.md",
-        "openg7-org/src/app/core/api/",
-        "openg7-org/src/app/domains/admin/",
-        "package.json",
-        "packages/contracts/",
-        "packages/tooling/",
-        "strapi/src/api/admin-quality-matrix/"
-      ]
-    }
-  ],
+  "generatedAt": "2026-09-10T20:45:13.257Z",
   "entries": [
     {
-      "id": "public-discovery",
-      "domain": "Decouverte publique",
-      "need": "Comprendre la proposition de valeur, les secteurs, le pricing et les statistiques.",
+      "id": "account-data",
+      "domain": "Compte et donnees personnelles",
+      "need": "Gerer profil, mot de passe, email, sessions, favoris, export et persistance de session.",
       "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Comprendre la proposition de valeur, les secteurs, le pricing et les statistiques.",
+        "Le besoin metier reste exprime: Gerer profil, mot de passe, email, sessions, favoris, export et persistance de session.",
         "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
         "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
       ],
       "sourceRefs": [
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/use-case-audit.spec.ts"
+          "path": "openg7-org/e2e/use-case-audit-gap-coverage.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/resilience.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/saved-searches.spec.ts"
         }
       ],
       "impactRules": [
         {
           "type": "path-prefix",
           "prefixes": [
-            "docs/",
-            "index.html",
-            "openg7-org/src/app/domains/home/",
-            "openg7-org/src/app/shared/components/hero/",
-            "openg7-org/src/app/shared/components/layout/site-header",
-            "README.md"
+            "openg7-org/src/app/core/auth/",
+            "openg7-org/src/app/domains/account/",
+            "strapi/src/api/account-profile/",
+            "strapi/src/api/saved-search/",
+            "strapi/src/api/user-favorite/"
           ]
         }
       ],
@@ -53,10 +46,18 @@
       "priority": "basse",
       "managementBucket": "covered",
       "needsProductWorkFirst": false,
-      "observedGap": "Pas de manque critique dans le perimetre actuel de decouverte.",
-      "nextMove": "Maintenir la couverture smoke et la regression globale a chaque release.",
-      "evidence": ["e2e/use-case-audit.spec.ts"],
-      "reviewedAt": "2026-04-07"
+      "observedGap": "La couverture est forte sur les gestes critiques du compte et de la session.",
+      "nextMove": "Conserver la couverture actuelle et ajouter des regressions seulement si les politiques d'auth ou de session changent.",
+      "evidence": [
+        "e2e/use-case-audit-gap-coverage.spec.ts",
+        "e2e/resilience.spec.ts",
+        "e2e/saved-searches.spec.ts"
+      ],
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
       "id": "advanced-discovery",
@@ -119,7 +120,187 @@
         "e2e/feed-stacked-filters-drilldown.spec.ts",
         "e2e/map-to-feed-decision-chain.spec.ts"
       ],
-      "reviewedAt": "2026-05-17"
+      "reviewedAt": "2026-05-17",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
+    },
+    {
+      "id": "alerts-notifications",
+      "domain": "Alertes et notifications",
+      "need": "Recevoir des alertes, gerer le panneau, l'inbox et les preferences de notification.",
+      "acceptanceCriteria": [
+        "Le besoin metier reste exprime: Recevoir des alertes, gerer le panneau, l'inbox et les preferences de notification.",
+        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
+        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
+      ],
+      "sourceRefs": [
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/notification-panel.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/notification-preferences.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/quality-breadth-cross-surface-a11y-depth.spec.ts"
+        }
+      ],
+      "impactRules": [
+        {
+          "type": "path-prefix",
+          "prefixes": [
+            "openg7-org/src/app/domains/account/pages/alerts",
+            "openg7-org/src/app/shared/components/layout/notification-panel",
+            "strapi/src/api/user-alert/"
+          ]
+        }
+      ],
+      "confidence": "high",
+      "lastDiscoveredAt": "2026-04-07",
+      "summaryStatus": "partiel",
+      "businessStatus": "oui",
+      "implementationStatus": "oui",
+      "e2eStatus": "oui",
+      "priority": "moyenne",
+      "managementBucket": "not-evaluated",
+      "needsProductWorkFirst": false,
+      "observedGap": "Cloche header, inbox, actions de lecture et preferences sont prouves; le reste releve surtout de la profondeur.",
+      "nextMove": "Maintenir la matrice de preferences et l'accessibilite des interactions de notification lors des prochaines evolutions.",
+      "evidence": [
+        "e2e/notification-panel.spec.ts",
+        "e2e/notification-preferences.spec.ts",
+        "e2e/quality-breadth-cross-surface-a11y-depth.spec.ts"
+      ],
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
+    },
+    {
+      "id": "business-lifecycle",
+      "domain": "Cycle de vie des objets metier",
+      "need": "Creer, enrichir, archiver ou faire evoluer durablement opportunites, entreprises et partenaires.",
+      "acceptanceCriteria": [
+        "Le besoin metier reste exprime: Creer, enrichir, archiver ou faire evoluer durablement opportunites, entreprises et partenaires.",
+        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
+        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
+      ],
+      "sourceRefs": [
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/opportunity-archive-lifecycle.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/opportunity-enrichment-lifecycle.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/company-or-partner-enrichment-lifecycle.spec.ts"
+        }
+      ],
+      "impactRules": [
+        {
+          "type": "path-prefix",
+          "prefixes": [
+            "openg7-org/src/app/domains/partners/",
+            "openg7-org/src/app/shared/components/company/",
+            "openg7-org/src/app/shared/components/partner/",
+            "strapi/src/api/company/"
+          ]
+        }
+      ],
+      "confidence": "high",
+      "lastDiscoveredAt": "2026-04-07",
+      "summaryStatus": "partiel",
+      "businessStatus": "oui",
+      "implementationStatus": "partiel",
+      "e2eStatus": "partiel",
+      "priority": "haute",
+      "managementBucket": "product-gap",
+      "needsProductWorkFirst": true,
+      "observedGap": "L'archive d'opportunite, le reporting en file d'attente et un enrichissement trust plus riche sont prouves, mais d'autres cycles durables restent hors preuve forte.",
+      "nextMove": "Exposer un cycle durable supplementaire sur edition de company ou partner avant d'etendre la preuve.",
+      "evidence": [
+        "e2e/opportunity-archive-lifecycle.spec.ts",
+        "e2e/opportunity-enrichment-lifecycle.spec.ts",
+        "e2e/company-or-partner-enrichment-lifecycle.spec.ts"
+      ],
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
+    },
+    {
+      "id": "feed-signals",
+      "domain": "Feed et signaux metier",
+      "need": "Ouvrir des opportunites, alertes et indicateurs, publier depuis le feed, proposer une offre et suivre son statut.",
+      "acceptanceCriteria": [
+        "Le besoin metier reste exprime: Ouvrir des opportunites, alertes et indicateurs, publier depuis le feed, proposer une offre et suivre son statut.",
+        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
+        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
+      ],
+      "sourceRefs": [
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/feed-opportunity-detail.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/feed-alert-detail.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/feed-indicator-detail.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/feed-publish-panel.spec.ts"
+        },
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/opportunity-offer-flow.spec.ts"
+        }
+      ],
+      "impactRules": [
+        {
+          "type": "path-prefix",
+          "prefixes": [
+            "openg7-org/src/app/domains/feed/",
+            "strapi/src/api/feed/",
+            "strapi/src/api/hydrocarbon-signal/"
+          ]
+        }
+      ],
+      "confidence": "high",
+      "lastDiscoveredAt": "2026-04-07",
+      "summaryStatus": "non",
+      "businessStatus": "oui",
+      "implementationStatus": "oui",
+      "e2eStatus": "oui",
+      "priority": "moyenne",
+      "managementBucket": "not-evaluated",
+      "needsProductWorkFirst": false,
+      "observedGap": "Les gestes critiques sont prouves; le risque principal etait surtout la dispersion des preuves, pas l'absence de flux couverts.",
+      "nextMove": "Maintenir les preuves detail/publish/offer et les enrichir seulement si le workflow feed se ramifie.",
+      "evidence": [
+        "e2e/feed-opportunity-detail.spec.ts",
+        "e2e/feed-alert-detail.spec.ts",
+        "e2e/feed-indicator-detail.spec.ts",
+        "e2e/feed-publish-panel.spec.ts",
+        "e2e/opportunity-offer-flow.spec.ts"
+      ],
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
       "id": "geospatial",
@@ -173,51 +354,11 @@
         "e2e/map.spec.ts",
         "e2e/map-to-feed-decision-chain.spec.ts"
       ],
-      "reviewedAt": "2026-05-17"
-    },
-    {
-      "id": "onboarding-imports",
-      "domain": "Onboarding entreprise et imports",
-      "need": "S'inscrire, soumettre l'entreprise, lancer des imports manuels et bulk.",
-      "acceptanceCriteria": [
-        "Le besoin metier reste exprime: S'inscrire, soumettre l'entreprise, lancer des imports manuels et bulk.",
-        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
-        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
-      ],
-      "sourceRefs": [
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/use-case-audit.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/use-case-audit-gap-coverage.spec.ts"
-        }
-      ],
-      "impactRules": [
-        {
-          "type": "path-prefix",
-          "prefixes": [
-            "openg7-org/src/app/company-registration-form/",
-            "openg7-org/src/app/domains/auth/",
-            "openg7-org/src/app/import/",
-            "strapi/src/api/company-import/"
-          ]
-        }
-      ],
-      "confidence": "high",
-      "lastDiscoveredAt": "2026-04-07",
-      "summaryStatus": "oui",
-      "businessStatus": "oui",
-      "implementationStatus": "oui",
-      "e2eStatus": "oui",
-      "priority": "moyenne",
-      "managementBucket": "covered",
-      "needsProductWorkFirst": false,
-      "observedGap": "La couverture des flux critiques est solide dans l'etat actuel du produit.",
-      "nextMove": "Maintenir la preuve existante et ajouter seulement des regressions ciblees si les formulaires ou imports evoluent.",
-      "evidence": ["e2e/use-case-audit.spec.ts", "e2e/use-case-audit-gap-coverage.spec.ts"],
-      "reviewedAt": "2026-04-07"
+      "reviewedAt": "2026-05-17",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
       "id": "importation-analytics",
@@ -268,120 +409,11 @@
         "e2e/quality-breadth-importation-a11y-depth.spec.ts",
         "e2e/quality-breadth-importation-responsive.spec.ts"
       ],
-      "reviewedAt": "2026-04-07"
-    },
-    {
-      "id": "feed-signals",
-      "domain": "Feed et signaux metier",
-      "need": "Ouvrir des opportunites, alertes et indicateurs, publier depuis le feed, proposer une offre et suivre son statut.",
-      "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Ouvrir des opportunites, alertes et indicateurs, publier depuis le feed, proposer une offre et suivre son statut.",
-        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
-        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
-      ],
-      "sourceRefs": [
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/feed-opportunity-detail.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/feed-alert-detail.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/feed-indicator-detail.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/feed-publish-panel.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/opportunity-offer-flow.spec.ts"
-        }
-      ],
-      "impactRules": [
-        {
-          "type": "path-prefix",
-          "prefixes": [
-            "openg7-org/src/app/domains/feed/",
-            "strapi/src/api/feed/",
-            "strapi/src/api/hydrocarbon-signal/"
-          ]
-        }
-      ],
-      "confidence": "high",
-      "lastDiscoveredAt": "2026-04-07",
-      "summaryStatus": "non",
-      "businessStatus": "oui",
-      "implementationStatus": "oui",
-      "e2eStatus": "oui",
-      "priority": "moyenne",
-      "managementBucket": "covered",
-      "needsProductWorkFirst": false,
-      "observedGap": "Les gestes critiques sont prouves; le risque principal etait surtout la dispersion des preuves, pas l'absence de flux couverts.",
-      "nextMove": "Maintenir les preuves detail/publish/offer et les enrichir seulement si le workflow feed se ramifie.",
-      "evidence": [
-        "e2e/feed-opportunity-detail.spec.ts",
-        "e2e/feed-alert-detail.spec.ts",
-        "e2e/feed-indicator-detail.spec.ts",
-        "e2e/feed-publish-panel.spec.ts",
-        "e2e/opportunity-offer-flow.spec.ts"
-      ],
-      "reviewedAt": "2026-04-07"
-    },
-    {
-      "id": "business-lifecycle",
-      "domain": "Cycle de vie des objets metier",
-      "need": "Creer, enrichir, archiver ou faire evoluer durablement opportunites, entreprises et partenaires.",
-      "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Creer, enrichir, archiver ou faire evoluer durablement opportunites, entreprises et partenaires.",
-        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
-        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
-      ],
-      "sourceRefs": [
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/opportunity-archive-lifecycle.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/opportunity-enrichment-lifecycle.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/company-or-partner-enrichment-lifecycle.spec.ts"
-        }
-      ],
-      "impactRules": [
-        {
-          "type": "path-prefix",
-          "prefixes": [
-            "openg7-org/src/app/domains/partners/",
-            "openg7-org/src/app/shared/components/company/",
-            "openg7-org/src/app/shared/components/partner/",
-            "strapi/src/api/company/"
-          ]
-        }
-      ],
-      "confidence": "high",
-      "lastDiscoveredAt": "2026-04-07",
-      "summaryStatus": "partiel",
-      "businessStatus": "oui",
-      "implementationStatus": "partiel",
-      "e2eStatus": "partiel",
-      "priority": "haute",
-      "managementBucket": "product-gap",
-      "needsProductWorkFirst": true,
-      "observedGap": "L'archive d'opportunite, le reporting en file d'attente et un enrichissement trust plus riche sont prouves, mais d'autres cycles durables restent hors preuve forte.",
-      "nextMove": "Exposer un cycle durable supplementaire sur edition de company ou partner avant d'etendre la preuve.",
-      "evidence": [
-        "e2e/opportunity-archive-lifecycle.spec.ts",
-        "e2e/opportunity-enrichment-lifecycle.spec.ts",
-        "e2e/company-or-partner-enrichment-lifecycle.spec.ts"
-      ],
-      "reviewedAt": "2026-04-07"
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
       "id": "linkup-workflow",
@@ -427,91 +459,170 @@
         "e2e/linkup-workflow.spec.ts",
         "src/app/domains/matchmaking/pages/linkup-detail/og7-linkup-detail-page.component.spec.ts"
       ],
-      "reviewedAt": "2026-04-06"
+      "reviewedAt": "2026-04-06",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
-      "id": "alerts-notifications",
-      "domain": "Alertes et notifications",
-      "need": "Recevoir des alertes, gerer le panneau, l'inbox et les preferences de notification.",
+      "id": "observability",
+      "domain": "Observabilite et tracabilite",
+      "need": "Tracer les actions sensibles, la provenance, les imports et les changements importants.",
       "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Recevoir des alertes, gerer le panneau, l'inbox et les preferences de notification.",
+        "Le besoin metier reste exprime: Tracer les actions sensibles, la provenance, les imports et les changements importants.",
         "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
         "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
       ],
       "sourceRefs": [
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/notification-panel.spec.ts"
+          "path": "openg7-org/e2e/admin-ops-observability.spec.ts"
         },
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/notification-preferences.spec.ts"
+          "path": "openg7-org/e2e/admin-ops-provenance-trail.spec.ts"
+        }
+      ],
+      "impactRules": [],
+      "confidence": "high",
+      "lastDiscoveredAt": "2026-04-07",
+      "summaryStatus": "partiel",
+      "businessStatus": "oui",
+      "implementationStatus": "partiel",
+      "e2eStatus": "partiel",
+      "priority": "moyenne",
+      "managementBucket": "product-gap",
+      "needsProductWorkFirst": true,
+      "observedGap": "Une provenance visible sur /admin/ops est prouvee, mais les audit trails plus riches ne sont pas encore exposes en frontend.",
+      "nextMove": "Exposer un historique utilisateur-visible ou une trace d'action sensible avant d'ajouter de nouvelles preuves E2E.",
+      "evidence": [
+        "e2e/admin-ops-observability.spec.ts",
+        "e2e/admin-ops-provenance-trail.spec.ts"
+      ],
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
+    },
+    {
+      "id": "onboarding-imports",
+      "domain": "Onboarding entreprise et imports",
+      "need": "S'inscrire, soumettre l'entreprise, lancer des imports manuels et bulk.",
+      "acceptanceCriteria": [
+        "Le besoin metier reste exprime: S'inscrire, soumettre l'entreprise, lancer des imports manuels et bulk.",
+        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
+        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
+      ],
+      "sourceRefs": [
+        {
+          "type": "e2e",
+          "path": "openg7-org/e2e/use-case-audit.spec.ts"
         },
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/quality-breadth-cross-surface-a11y-depth.spec.ts"
+          "path": "openg7-org/e2e/use-case-audit-gap-coverage.spec.ts"
         }
       ],
       "impactRules": [
         {
           "type": "path-prefix",
           "prefixes": [
-            "openg7-org/src/app/domains/account/pages/alerts",
-            "openg7-org/src/app/shared/components/layout/notification-panel",
-            "strapi/src/api/user-alert/"
+            "openg7-org/src/app/company-registration-form/",
+            "openg7-org/src/app/domains/auth/",
+            "openg7-org/src/app/import/",
+            "strapi/src/api/company-import/"
           ]
         }
       ],
       "confidence": "high",
       "lastDiscoveredAt": "2026-04-07",
-      "summaryStatus": "partiel",
+      "summaryStatus": "oui",
       "businessStatus": "oui",
       "implementationStatus": "oui",
       "e2eStatus": "oui",
       "priority": "moyenne",
       "managementBucket": "covered",
       "needsProductWorkFirst": false,
-      "observedGap": "Cloche header, inbox, actions de lecture et preferences sont prouves; le reste releve surtout de la profondeur.",
-      "nextMove": "Maintenir la matrice de preferences et l'accessibilite des interactions de notification lors des prochaines evolutions.",
+      "observedGap": "La couverture des flux critiques est solide dans l'etat actuel du produit.",
+      "nextMove": "Maintenir la preuve existante et ajouter seulement des regressions ciblees si les formulaires ou imports evoluent.",
       "evidence": [
-        "e2e/notification-panel.spec.ts",
-        "e2e/notification-preferences.spec.ts",
-        "e2e/quality-breadth-cross-surface-a11y-depth.spec.ts"
+        "e2e/use-case-audit.spec.ts",
+        "e2e/use-case-audit-gap-coverage.spec.ts"
       ],
-      "reviewedAt": "2026-04-07"
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
-      "id": "account-data",
-      "domain": "Compte et donnees personnelles",
-      "need": "Gerer profil, mot de passe, email, sessions, favoris, export et persistance de session.",
+      "id": "openg7-depth",
+      "domain": "Valeur OpenG7 specifique",
+      "need": "Cartographier les corridors, capacites, dependances interprovinciales et priorites sectorielles.",
       "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Gerer profil, mot de passe, email, sessions, favoris, export et persistance de session.",
+        "Le besoin metier reste exprime: Cartographier les corridors, capacites, dependances interprovinciales et priorites sectorielles.",
         "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
         "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
       ],
       "sourceRefs": [
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/use-case-audit-gap-coverage.spec.ts"
+          "path": "openg7-org/e2e/hydrocarbon-business-journey.spec.ts"
         },
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/resilience.spec.ts"
-        },
+          "path": "openg7-org/e2e/hydrocarbon-feed-navigation.spec.ts"
+        }
+      ],
+      "impactRules": [],
+      "confidence": "high",
+      "lastDiscoveredAt": "2026-04-07",
+      "summaryStatus": "non",
+      "businessStatus": "oui",
+      "implementationStatus": "partiel",
+      "e2eStatus": "partiel",
+      "priority": "haute",
+      "managementBucket": "product-gap",
+      "needsProductWorkFirst": true,
+      "observedGap": "Les journeys hydrocarbures et corridors sont prouves, mais les dependances interprovinciales et la priorisation explicite des services essentiels restent fragmentees.",
+      "nextMove": "Exposer un parcours explicite de priorisation metier, puis le prouver comme flux de decision.",
+      "evidence": [
+        "e2e/hydrocarbon-business-journey.spec.ts",
+        "e2e/hydrocarbon-feed-navigation.spec.ts"
+      ],
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
+    },
+    {
+      "id": "public-discovery",
+      "domain": "Decouverte publique",
+      "need": "Comprendre la proposition de valeur, les secteurs, le pricing et les statistiques.",
+      "acceptanceCriteria": [
+        "Le besoin metier reste exprime: Comprendre la proposition de valeur, les secteurs, le pricing et les statistiques.",
+        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
+        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
+      ],
+      "sourceRefs": [
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/saved-searches.spec.ts"
+          "path": "openg7-org/e2e/use-case-audit.spec.ts"
         }
       ],
       "impactRules": [
         {
           "type": "path-prefix",
           "prefixes": [
-            "openg7-org/src/app/core/auth/",
-            "openg7-org/src/app/domains/account/",
-            "strapi/src/api/account-profile/",
-            "strapi/src/api/saved-search/",
-            "strapi/src/api/user-favorite/"
+            "docs/",
+            "index.html",
+            "openg7-org/src/app/domains/home/",
+            "openg7-org/src/app/shared/components/hero/",
+            "openg7-org/src/app/shared/components/layout/site-header",
+            "README.md"
           ]
         }
       ],
@@ -524,97 +635,16 @@
       "priority": "basse",
       "managementBucket": "covered",
       "needsProductWorkFirst": false,
-      "observedGap": "La couverture est forte sur les gestes critiques du compte et de la session.",
-      "nextMove": "Conserver la couverture actuelle et ajouter des regressions seulement si les politiques d'auth ou de session changent.",
+      "observedGap": "Pas de manque critique dans le perimetre actuel de decouverte.",
+      "nextMove": "Maintenir la couverture smoke et la regression globale a chaque release.",
       "evidence": [
-        "e2e/use-case-audit-gap-coverage.spec.ts",
-        "e2e/resilience.spec.ts",
-        "e2e/saved-searches.spec.ts"
+        "e2e/use-case-audit.spec.ts"
       ],
-      "reviewedAt": "2026-04-07"
-    },
-    {
-      "id": "rbac",
-      "domain": "Gouvernance, roles et permissions",
-      "need": "Appliquer une vraie matrice RBAC sur les pages, ressources et actions sensibles.",
-      "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Appliquer une vraie matrice RBAC sur les pages, ressources et actions sensibles.",
-        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
-        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
-      ],
-      "sourceRefs": [
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/rbac-access.spec.ts"
-        }
-      ],
-      "impactRules": [
-        {
-          "type": "path-prefix",
-          "prefixes": [
-            "openg7-org/src/app/core/auth/",
-            "strapi/src/extensions/users-permissions/",
-            "strapi/src/policies/",
-            "strapi/src/seed/01-roles-permissions"
-          ]
-        }
-      ],
-      "confidence": "high",
-      "lastDiscoveredAt": "2026-04-07",
-      "summaryStatus": "partiel",
-      "businessStatus": "oui",
-      "implementationStatus": "oui",
-      "e2eStatus": "oui",
-      "priority": "moyenne",
-      "managementBucket": "covered",
-      "needsProductWorkFirst": false,
-      "observedGap": "Les restrictions majeures par role sont prouvees. Les futurs risques viendront surtout de restrictions fines par ressource.",
-      "nextMove": "Maintenir la matrice actuelle et ajouter des preuves seulement si de nouveaux roles ou permissions granulaire apparaissent.",
-      "evidence": ["e2e/rbac-access.spec.ts"],
-      "reviewedAt": "2026-04-07"
-    },
-    {
-      "id": "trust-validation",
-      "domain": "Trust et validation",
-      "need": "Moderer, verifier, historiser les decisions de confiance et rendre le statut lisible.",
-      "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Moderer, verifier, historiser les decisions de confiance et rendre le statut lisible.",
-        "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
-        "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
-      ],
-      "sourceRefs": [
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/admin-trust-visibility.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/use-case-audit-gap-coverage.spec.ts"
-        }
-      ],
-      "impactRules": [
-        {
-          "type": "path-prefix",
-          "prefixes": [
-            "openg7-org/src/app/domains/admin/pages/admin-trust",
-            "openg7-org/src/app/shared/components/partner/",
-            "strapi/src/api/admin-quality-"
-          ]
-        }
-      ],
-      "confidence": "high",
-      "lastDiscoveredAt": "2026-04-07",
-      "summaryStatus": "oui",
-      "businessStatus": "oui",
-      "implementationStatus": "oui",
-      "e2eStatus": "oui",
-      "priority": "moyenne",
-      "managementBucket": "covered",
-      "needsProductWorkFirst": false,
-      "observedGap": "La file trust, les decisions formelles et la visibilite publique sont deja prouves de bout en bout.",
-      "nextMove": "Conserver cette preuve et n'etendre que si le workflow de moderation gagne de nouvelles branches visibles.",
-      "evidence": ["e2e/admin-trust-visibility.spec.ts", "e2e/use-case-audit-gap-coverage.spec.ts"],
-      "reviewedAt": "2026-04-07"
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
       "id": "quality-breadth",
@@ -661,78 +691,130 @@
         "e2e/quality-breadth-offline-queueing.spec.ts",
         "e2e/quality-breadth-cross-surface-a11y-depth.spec.ts"
       ],
-      "reviewedAt": "2026-04-07"
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
-      "id": "observability",
-      "domain": "Observabilite et tracabilite",
-      "need": "Tracer les actions sensibles, la provenance, les imports et les changements importants.",
+      "id": "rbac",
+      "domain": "Gouvernance, roles et permissions",
+      "need": "Appliquer une vraie matrice RBAC sur les pages, ressources et actions sensibles.",
       "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Tracer les actions sensibles, la provenance, les imports et les changements importants.",
+        "Le besoin metier reste exprime: Appliquer une vraie matrice RBAC sur les pages, ressources et actions sensibles.",
         "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
         "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
       ],
       "sourceRefs": [
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/admin-ops-observability.spec.ts"
-        },
-        {
-          "type": "e2e",
-          "path": "openg7-org/e2e/admin-ops-provenance-trail.spec.ts"
+          "path": "openg7-org/e2e/rbac-access.spec.ts"
         }
       ],
-      "impactRules": [],
+      "impactRules": [
+        {
+          "type": "path-prefix",
+          "prefixes": [
+            "openg7-org/src/app/core/auth/",
+            "strapi/src/extensions/users-permissions/",
+            "strapi/src/policies/",
+            "strapi/src/seed/01-roles-permissions"
+          ]
+        }
+      ],
       "confidence": "high",
       "lastDiscoveredAt": "2026-04-07",
       "summaryStatus": "partiel",
       "businessStatus": "oui",
-      "implementationStatus": "partiel",
-      "e2eStatus": "partiel",
+      "implementationStatus": "oui",
+      "e2eStatus": "oui",
       "priority": "moyenne",
-      "managementBucket": "product-gap",
-      "needsProductWorkFirst": true,
-      "observedGap": "Une provenance visible sur /admin/ops est prouvee, mais les audit trails plus riches ne sont pas encore exposes en frontend.",
-      "nextMove": "Exposer un historique utilisateur-visible ou une trace d'action sensible avant d'ajouter de nouvelles preuves E2E.",
-      "evidence": ["e2e/admin-ops-observability.spec.ts", "e2e/admin-ops-provenance-trail.spec.ts"],
-      "reviewedAt": "2026-04-07"
+      "managementBucket": "not-evaluated",
+      "needsProductWorkFirst": false,
+      "observedGap": "Les restrictions majeures par role sont prouvees. Les futurs risques viendront surtout de restrictions fines par ressource.",
+      "nextMove": "Maintenir la matrice actuelle et ajouter des preuves seulement si de nouveaux roles ou permissions granulaire apparaissent.",
+      "evidence": [
+        "e2e/rbac-access.spec.ts"
+      ],
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
     },
     {
-      "id": "openg7-depth",
-      "domain": "Valeur OpenG7 specifique",
-      "need": "Cartographier les corridors, capacites, dependances interprovinciales et priorites sectorielles.",
+      "id": "trust-validation",
+      "domain": "Trust et validation",
+      "need": "Moderer, verifier, historiser les decisions de confiance et rendre le statut lisible.",
       "acceptanceCriteria": [
-        "Le besoin metier reste exprime: Cartographier les corridors, capacites, dependances interprovinciales et priorites sectorielles.",
+        "Le besoin metier reste exprime: Moderer, verifier, historiser les decisions de confiance et rendre le statut lisible.",
         "Les changements de code relies a ce besoin resolvent cette entree via impactRules.",
         "Les preuves declarees dans evidence restent executables ou sont remplacees par une proposition agent explicite."
       ],
       "sourceRefs": [
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/hydrocarbon-business-journey.spec.ts"
+          "path": "openg7-org/e2e/admin-trust-visibility.spec.ts"
         },
         {
           "type": "e2e",
-          "path": "openg7-org/e2e/hydrocarbon-feed-navigation.spec.ts"
+          "path": "openg7-org/e2e/use-case-audit-gap-coverage.spec.ts"
         }
       ],
-      "impactRules": [],
+      "impactRules": [
+        {
+          "type": "path-prefix",
+          "prefixes": [
+            "openg7-org/src/app/domains/admin/pages/admin-trust",
+            "openg7-org/src/app/shared/components/partner/",
+            "strapi/src/api/admin-quality-"
+          ]
+        }
+      ],
       "confidence": "high",
       "lastDiscoveredAt": "2026-04-07",
-      "summaryStatus": "non",
+      "summaryStatus": "oui",
       "businessStatus": "oui",
-      "implementationStatus": "partiel",
-      "e2eStatus": "partiel",
-      "priority": "haute",
-      "managementBucket": "product-gap",
-      "needsProductWorkFirst": true,
-      "observedGap": "Les journeys hydrocarbures et corridors sont prouves, mais les dependances interprovinciales et la priorisation explicite des services essentiels restent fragmentees.",
-      "nextMove": "Exposer un parcours explicite de priorisation metier, puis le prouver comme flux de decision.",
+      "implementationStatus": "oui",
+      "e2eStatus": "oui",
+      "priority": "moyenne",
+      "managementBucket": "covered",
+      "needsProductWorkFirst": false,
+      "observedGap": "La file trust, les decisions formelles et la visibilite publique sont deja prouves de bout en bout.",
+      "nextMove": "Conserver cette preuve et n'etendre que si le workflow de moderation gagne de nouvelles branches visibles.",
       "evidence": [
-        "e2e/hydrocarbon-business-journey.spec.ts",
-        "e2e/hydrocarbon-feed-navigation.spec.ts"
+        "e2e/admin-trust-visibility.spec.ts",
+        "e2e/use-case-audit-gap-coverage.spec.ts"
       ],
-      "reviewedAt": "2026-04-07"
+      "reviewedAt": "2026-04-07",
+      "agentObservedGap": null,
+      "agentNextMove": null,
+      "agentNarrativeGeneratedAt": null,
+      "agentNarrativeModel": null
+    }
+  ],
+  "globalImpactRules": [
+    {
+      "type": "path-prefix",
+      "prefixes": [
+        "AGENTS.md",
+        "openg7-org/src/app/core/api/",
+        "openg7-org/src/app/domains/admin/",
+        "package.json",
+        "packages/admin-quality/",
+        "packages/contracts/",
+        "packages/tooling/",
+        "scripts/admin-quality-matrix-model.mjs",
+        "scripts/export-admin-quality-matrix.mjs",
+        "scripts/generate-admin-quality-impact-map.mjs",
+        "scripts/repair-admin-quality-classifications.mjs",
+        "scripts/resolve-admin-quality-matrix-impact.mjs",
+        "scripts/validate-admin-quality-matrix.mjs",
+        "strapi/src/api/admin-quality-matrix/",
+        "tools/admin-quality-matrix-global-rules.json",
+        "tools/admin-quality-matrix-impact-map.json"
+      ]
     }
   ]
 }

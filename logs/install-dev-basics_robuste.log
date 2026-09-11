@@ -1,0 +1,150 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260614004546
+Username: LADRAGONNE\saman
+RunAs User: LADRAGONNE\saman
+Configuration Name: 
+Machine: LADRAGONNE (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install-dev-basics_robuste.ps1
+Process ID: 8532
+PSVersion: 5.1.26100.8655
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.8655
+BuildVersion: 10.0.26100.8655
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Journal d'exécution : C:\GitHub\openg7-nexus\logs\install-dev-basics_robuste.log
+
+--- Déplacement dans le dossier racine du projet
+✅ Succès - Déplacement dans le dossier racine du projet
+    Répertoire courant positionné sur C:\GitHub\openg7-nexus.
+
+=== Élévation requise ===
+Relance du script avec des privilèges administrateur...
+
+Une fenêtre élevée va poursuivre l'installation. Appuyez sur une touche pour fermer cette fenêtre / Press any key to close this window...
+PS>TerminatingError(): "System error."
+**********************
+Windows PowerShell transcript end
+End time: 20260614004652
+**********************
+**********************
+Windows PowerShell transcript start
+Start time: 20260614004728
+Username: LADRAGONNE\saman
+RunAs User: LADRAGONNE\saman
+Configuration Name: 
+Machine: LADRAGONNE (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -file  C:\GitHub\openg7-nexus\install-dev-basics_robuste.ps1 
+Process ID: 2268
+PSVersion: 5.1.26100.8655
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.8655
+BuildVersion: 10.0.26100.8655
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Journal d'exécution : C:\GitHub\openg7-nexus\logs\install-dev-basics_robuste.log
+
+--- Déplacement dans le dossier racine du projet
+✅ Succès - Déplacement dans le dossier racine du projet
+    Répertoire courant positionné sur C:\GitHub\openg7-nexus.
+
+=== Élévation requise ===
+Relance du script avec des privilèges administrateur...
+
+Une fenêtre élevée va poursuivre l'installation. Appuyez sur une touche pour fermer cette fenêtre / Press any key to close this window...
+**********************
+Windows PowerShell transcript start
+Start time: 20260614004815
+Username: LADRAGONNE\saman
+RunAs User: LADRAGONNE\saman
+Configuration Name: 
+Machine: LADRAGONNE (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install-dev-basics_robuste.ps1
+Process ID: 19140
+PSVersion: 5.1.26100.8655
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.8655
+BuildVersion: 10.0.26100.8655
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Journal d'exécution : C:\GitHub\openg7-nexus\logs\install-dev-basics_robuste.log
+
+--- Déplacement dans le dossier racine du projet
+✅ Succès - Déplacement dans le dossier racine du projet
+    Répertoire courant positionné sur C:\GitHub\openg7-nexus.
+
+=== Élévation requise ===
+Relance du script avec des privilèges administrateur...
+
+Une fenêtre élevée va poursuivre l'installation. Appuyez sur une touche pour fermer cette fenêtre / Press any key to close this window...
+PS>TerminatingError(): "System error."
+**********************
+Windows PowerShell transcript end
+End time: 20260614004821
+**********************
+**********************
+Windows PowerShell transcript start
+Start time: 20260614005028
+Username: LADRAGONNE\saman
+RunAs User: LADRAGONNE\saman
+Configuration Name: 
+Machine: LADRAGONNE (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -file  C:\GitHub\openg7-nexus\install-dev-basics_robuste.ps1 
+Process ID: 19760
+PSVersion: 5.1.26100.8655
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.8655
+BuildVersion: 10.0.26100.8655
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Journal d'exécution : C:\GitHub\openg7-nexus\logs\install-dev-basics_robuste.log
+
+--- Déplacement dans le dossier racine du projet
+✅ Succès - Déplacement dans le dossier racine du projet
+    Répertoire courant positionné sur C:\GitHub\openg7-nexus.
+
+=== Élévation requise ===
+Relance du script avec des privilèges administrateur...
+
+Une fenêtre élevée va poursuivre l'installation. Appuyez sur une touche pour fermer cette fenêtre / Press any key to close this window...
+**********************
+Windows PowerShell transcript start
+Start time: 20260614005049
+Username: LADRAGONNE\saman
+RunAs User: LADRAGONNE\saman
+Configuration Name: 
+Machine: LADRAGONNE (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -file  C:\GitHub\openg7-nexus\install-dev-basics_robuste.ps1 
+Process ID: 21592
+PSVersion: 5.1.26100.8655
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.8655
+BuildVersion: 10.0.26100.8655
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Journal d'exécution : C:\GitHub\openg7-nexus\logs\install-dev-basics_robuste.log
+
+--- Déplacement dans le dossier racine du projet
+✅ Succès - Déplacement dans le dossier racine du projet
+    Répertoire courant positionné sur C:\GitHub\openg7-nexus.
+
+=== Élévation requise ===
+Relance du script avec des privilèges administrateur...
+
+Une fenêtre élevée va poursuivre l'installation. Appuyez sur une touche pour fermer cette fenêtre / Press any key to close this window...

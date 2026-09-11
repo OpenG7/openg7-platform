@@ -220,12 +220,22 @@
         }
       </div>
 
-      <p class="reactor-state-message">{{ reactorStateMessageKey() | translate }}</p>
+      <p class="reactor-state-message" role="status" aria-live="polite" aria-atomic="true">
+        {{
+          reactorStateMessageKey()
+            | translate: { count: refreshRequiredCount(), notEvaluatedCount: notEvaluatedCount() }
+        }}
+      </p>
 
       <dl class="reactor-metrics">
         <div>
           <dt>{{ 'admin.quality.reactor.metrics.trend' | translate }}</dt>
-          <dd [class]="trendTone().className">{{ trendTone().labelKey | translate }}</dd>
+          <dd
+            [class]="trendTone().className"
+            [attr.title]="'admin.quality.reactor.trends.unavailableReason' | translate"
+          >
+            {{ trendTone().labelKey | translate }}
+          </dd>
         </div>
         <div>
           <dt>{{ 'admin.quality.reactor.metrics.globalRisk' | translate }}</dt>
@@ -233,16 +243,20 @@
         </div>
         <div>
           <dt>{{ 'admin.quality.reactor.metrics.coherence' | translate }}</dt>
-          <dd data-og7-id="admin-quality-reactor-coherence">{{ coherencePercent() }} %</dd>
+          <dd data-og7-id="admin-quality-reactor-coherence">
+            {{ totalCount() > 0 ? coherencePercent() + ' %' : '—' }}
+          </dd>
         </div>
         <div>
           <dt>{{ 'admin.quality.reactor.metrics.completeness' | translate }}</dt>
-          <dd data-og7-id="admin-quality-reactor-completude">{{ completudePercent() }} %</dd>
+          <dd data-og7-id="admin-quality-reactor-completude">
+            {{ totalCount() > 0 ? completudePercent() + ' %' : '—' }}
+          </dd>
         </div>
         <div>
           <dt>{{ 'admin.quality.reactor.metrics.coverage' | translate }}</dt>
           <dd class="tone-cyan" data-og7-id="admin-quality-reactor-coverage">
-            {{ coveragePercent() }} %
+            {{ totalCount() > 0 ? coveragePercent() + ' %' : '—' }}
           </dd>
         </div>
       </dl>

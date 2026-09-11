@@ -65,18 +65,56 @@ jobs:
         run: yarn checklist:verify
       - name: Validate admin-quality impact map
         run: yarn validate:admin-quality-impact-map
+      - name: Validate admin-quality matrix
+        run: yarn validate:admin-quality-matrix
+      - name: Test admin-quality model, validation, impact and proof manifest
+        shell: bash
+        run: |
+          node --test \
+            scripts/__tests__/admin-quality-matrix-model.test.mjs \
+            scripts/__tests__/validate-admin-quality-matrix.test.mjs \
+            scripts/__tests__/resolve-admin-quality-matrix-impact.test.mjs \
+            scripts/__tests__/repair-admin-quality-classifications.test.mjs \
+            scripts/__tests__/generate-admin-quality-proof-manifest.test.mjs \
+            2>&1 | tee matrix-script-tests.log
       - name: Validate Playwright selectors
         run: yarn validate:selectors
       - name: Validate admin-quality matrix ingest
-        run: yarn --cwd strapi test:integration:admin-quality-matrix
+        shell: bash
+        run: yarn --cwd strapi test:integration:admin-quality-matrix 2>&1 | tee matrix-api-tests.log
       - name: Validate sitemap
         run: yarn workspace @openg7/web validate:sitemap
       - name: Prebuild web (contracts codegen + tests)
         run: yarn prebuild:web
+      - name: Test admin-quality reactor, freshness, coverage, page and matrix service
+        shell: bash
+        run: |
+          yarn workspace @openg7/web test \
+            --watch=false --browsers=ChromeHeadlessNoSandbox \
+            --include=src/app/domains/admin/pages/admin-quality-reactor.component.spec.ts \
+            --include=src/app/domains/admin/pages/admin-quality-review-freshness.spec.ts \
+            --include=src/app/domains/admin/pages/admin-quality-coverage-matrix.component.spec.ts \
+            --include=src/app/domains/admin/pages/admin-quality.page.spec.ts \
+            --include=src/app/domains/admin/data-access/admin-quality-matrix.service.spec.ts \
+            --progress=false 2>&1 | tee matrix-angular-tests.log
+      - name: Build admin-quality package
+        run: yarn build:admin-quality
       - name: Validate preprod runtime config
         run: yarn validate:preprod-runtime-config
       - name: Build web for preproduction
         run: yarn --cwd openg7-org build:preprod
+      - name: Upload admin-quality test reports
+        if: ${{ steps.changed.outputs.count != '0' }}
+        id: quality_reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: matrix-test-reports
+          path: |
+            impact.json
+            matrix-script-tests.log
+            matrix-api-tests.log
+            matrix-angular-tests.log
+          if-no-files-found: error
       - name: Generate admin-quality proof manifest
         if: ${{ steps.changed.outputs.count != '0' }}
         run: >-
@@ -84,18 +122,31 @@ jobs:
           --impact impact.json
           --output matrix-proof-manifest.json
           --status success
+          --artifact-url "${{ steps.quality_reports.outputs.artifact-url }}"
           --check "yarn lint"
           --check "yarn checklist:verify"
           --check "yarn validate:admin-quality-impact-map"
+          --check "yarn validate:admin-quality-matrix"
+          --check "node --test scripts/__tests__/admin-quality-matrix-model.test.mjs scripts/__tests__/validate-admin-quality-matrix.test.mjs scripts/__tests__/resolve-admin-quality-matrix-impact.test.mjs scripts/__tests__/repair-admin-quality-classifications.test.mjs scripts/__tests__/generate-admin-quality-proof-manifest.test.mjs"
           --check "yarn validate:selectors"
           --check "yarn --cwd strapi test:integration:admin-quality-matrix"
           --check "yarn workspace @openg7/web validate:sitemap"
           --check "yarn prebuild:web"
+          --check "yarn workspace @openg7/web test --watch=false --browsers=ChromeHeadlessNoSandbox --include=src/app/domains/admin/pages/admin-quality-reactor.component.spec.ts --include=src/app/domains/admin/pages/admin-quality-review-freshness.spec.ts --include=src/app/domains/admin/pages/admin-quality-coverage-matrix.component.spec.ts --include=src/app/domains/admin/pages/admin-quality.page.spec.ts --include=src/app/domains/admin/data-access/admin-quality-matrix.service.spec.ts --progress=false"
+          --check "yarn build:admin-quality"
           --check "yarn validate:preprod-runtime-config"
           --check "yarn --cwd openg7-org build:preprod"
           --spec "strapi/scripts/test-admin-quality-matrix-api-integration.js"
+          --spec "scripts/__tests__/admin-quality-matrix-model.test.mjs"
+          --spec "scripts/__tests__/validate-admin-quality-matrix.test.mjs"
+          --spec "scripts/__tests__/resolve-admin-quality-matrix-impact.test.mjs"
+          --spec "scripts/__tests__/repair-admin-quality-classifications.test.mjs"
+          --spec "scripts/__tests__/generate-admin-quality-proof-manifest.test.mjs"
           --spec "openg7-org/src/app/domains/admin/data-access/admin-quality-matrix.service.spec.ts"
           --spec "openg7-org/src/app/domains/admin/pages/admin-quality.page.spec.ts"
+          --spec "openg7-org/src/app/domains/admin/pages/admin-quality-reactor.component.spec.ts"
+          --spec "openg7-org/src/app/domains/admin/pages/admin-quality-review-freshness.spec.ts"
+          --spec "openg7-org/src/app/domains/admin/pages/admin-quality-coverage-matrix.component.spec.ts"
 
       - name: Upload admin-quality proof manifest
         if: ${{ steps.changed.outputs.count != '0' }}

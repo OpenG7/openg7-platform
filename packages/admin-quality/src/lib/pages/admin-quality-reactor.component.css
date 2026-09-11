@@ -273,8 +273,9 @@
   opacity: 0.64;
 }
 
-/* non-evaluated: least prominent, background context */
-.reactor-legend-item.signal-non-evaluated {
+/* Keep unknown values readable; subdue only their decorative signals. */
+.reactor-legend-item.signal-non-evaluated .reactor-legend-signal,
+.reactor-legend-item.signal-non-evaluated .reactor-legend-rail {
   opacity: 0.58;
 }
 
@@ -1098,6 +1099,10 @@
 
 .tone-cyan {
   color: #67e8f9 !important;
+}
+
+.tone-neutral {
+  color: #cbd5e1 !important;
 }
 
 .reactor-gap-button {

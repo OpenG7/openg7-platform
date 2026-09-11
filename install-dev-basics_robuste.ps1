@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 
 # Vérifie qu'on est bien sous Windows PowerShell (v5), pas pwsh
-if ($PSVersionTable.PSEdition -ne $null -and $PSVersionTable.PSEdition -ne 'Desktop') {
+if ($null -ne $PSVersionTable.PSEdition -and $PSVersionTable.PSEdition -ne 'Desktop') {
     Write-Error "Ce script doit être exécuté avec Windows PowerShell 5 (powershell.exe), pas pwsh."
 }
 
@@ -13,6 +13,13 @@ try {
 }
 catch {
     $currentExecutionPolicy = $null
+}
+
+try {
+    $executionPolicyList = Get-ExecutionPolicy -List
+}
+catch {
+    $executionPolicyList = $null
 }
 
 $policyRank = [ordered]@{
@@ -30,8 +37,23 @@ if ($currentExecutionPolicy -and $policyRank.Contains($currentExecutionPolicy)) 
     $needsPolicyUpdate = ($policyRank[$currentExecutionPolicy] -lt $policyRank['RemoteSigned'])
 }
 
-if ($needsPolicyUpdate) {
-    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
+$hasMoreSpecificPolicyOverride = $false
+if ($executionPolicyList) {
+    foreach ($scope in @('MachinePolicy', 'UserPolicy', 'Process')) {
+        if ($executionPolicyList.$scope -ne 'Undefined') {
+            $hasMoreSpecificPolicyOverride = $true
+            break
+        }
+    }
+}
+
+if ($needsPolicyUpdate -and -not $hasMoreSpecificPolicyOverride) {
+    try {
+        Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
+    }
+    catch {
+        Write-Host "Stratégie d'exécution non modifiable dans ce contexte ; le script continue."
+    }
 }
 
 # Console en UTF-8 (sans BOM)
@@ -507,6 +529,20 @@ function Invoke-CriticalStep {
 }
 
 $scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
+$logDirectory = Join-Path -Path $scriptDirectory -ChildPath 'logs'
+$logPath = Join-Path -Path $logDirectory -ChildPath 'install-dev-basics_robuste.log'
+
+try {
+    if (-not (Test-Path -LiteralPath $logDirectory)) {
+        New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
+    }
+
+    Start-Transcript -Path $logPath -Append | Out-Null
+    Write-Host "Journal d'exécution : $logPath"
+}
+catch {
+    Write-Host "⚠️ Journal d'exécution indisponible : $($_.Exception.Message)"
+}
 
 Invoke-CriticalStep -Description "Déplacement dans le dossier racine du projet" -Action {
     Set-Location -Path $scriptDirectory
@@ -569,16 +605,117 @@ Invoke-CriticalStep -Description "Vérification de Git" -Action {
     }
 }
 
+function Resolve-NodeExecutable {
+    $candidates = @()
+
+    $nodeCommand = Get-Command node -ErrorAction SilentlyContinue
+    if ($null -ne $nodeCommand -and -not [string]::IsNullOrWhiteSpace($nodeCommand.Source)) {
+        $candidates += $nodeCommand.Source
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($env:ProgramFiles)) {
+        $candidates += (Join-Path -Path $env:ProgramFiles -ChildPath 'nodejs\node.exe')
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace(${env:ProgramFiles(x86)})) {
+        $candidates += (Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath 'nodejs\node.exe')
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+        $candidates += (Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Programs\nodejs\node.exe')
+        $candidates += (Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\WinGet\Links\node.exe')
+        $candidates += (Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\WindowsApps\node.exe')
+    }
+
+    foreach ($candidate in ($candidates | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)) {
+        if (Test-Path -LiteralPath $candidate) {
+            return $candidate
+        }
+    }
+
+    return $null
+}
+
+function Use-NodeInCurrentSession {
+    $nodeExecutable = Resolve-NodeExecutable
+    if ([string]::IsNullOrWhiteSpace($nodeExecutable)) {
+        return $null
+    }
+
+    $nodeDirectory = Split-Path -Parent $nodeExecutable
+    if (-not [string]::IsNullOrWhiteSpace($nodeDirectory)) {
+        $sessionPathEntries = @()
+        if (-not [string]::IsNullOrWhiteSpace($env:Path)) {
+            $sessionPathEntries = $env:Path -split ';'
+        }
+
+        $nodePathAlreadyPresent = $false
+        foreach ($entry in $sessionPathEntries) {
+            if ([string]::IsNullOrWhiteSpace($entry)) {
+                continue
+            }
+
+            if ($entry.TrimEnd('\') -ieq $nodeDirectory.TrimEnd('\')) {
+                $nodePathAlreadyPresent = $true
+                break
+            }
+        }
+
+        if (-not $nodePathAlreadyPresent) {
+            if ([string]::IsNullOrWhiteSpace($env:Path)) {
+                $env:Path = $nodeDirectory
+            }
+            else {
+                $env:Path = $nodeDirectory + ';' + $env:Path.TrimStart(';')
+            }
+        }
+
+        $userPathValue = [Environment]::GetEnvironmentVariable('Path', 'User')
+        $userPathEntries = @()
+        if (-not [string]::IsNullOrWhiteSpace($userPathValue)) {
+            $userPathEntries = $userPathValue -split ';'
+        }
+
+        $nodeUserPathAlreadyPresent = $false
+        foreach ($entry in $userPathEntries) {
+            if ([string]::IsNullOrWhiteSpace($entry)) {
+                continue
+            }
+
+            if ($entry.TrimEnd('\') -ieq $nodeDirectory.TrimEnd('\')) {
+                $nodeUserPathAlreadyPresent = $true
+                break
+            }
+        }
+
+        if (-not $nodeUserPathAlreadyPresent) {
+            if ([string]::IsNullOrWhiteSpace($userPathValue)) {
+                [Environment]::SetEnvironmentVariable('Path', $nodeDirectory, 'User')
+            }
+            else {
+                [Environment]::SetEnvironmentVariable('Path', $userPathValue.TrimEnd(';') + ';' + $nodeDirectory, 'User')
+            }
+        }
+    }
+
+    return $nodeExecutable
+}
+
 Invoke-CriticalStep -Description "Installation ou mise à niveau de Node.js LTS" -Action {
     $detailMessages = @()
-    $nodeCommand = Get-Command node -ErrorAction SilentlyContinue
+    $nodeExecutable = Use-NodeInCurrentSession
     $status = 'Déjà installé'
 
-    if ($null -eq $nodeCommand) {
+    if ([string]::IsNullOrWhiteSpace($nodeExecutable)) {
         $detailMessages += "Node.js n'a pas été détecté sur le chemin système ; installation de la distribution LTS la plus récente."
         $status = 'Installé'
         winget install --exact --id OpenJS.NodeJS.LTS --silent --accept-source-agreements --accept-package-agreements
-        $installedVersion = node --version
+        $nodeExecutable = Use-NodeInCurrentSession
+        if ([string]::IsNullOrWhiteSpace($nodeExecutable)) {
+            throw "Node.js a été installé via winget, mais node.exe reste introuvable dans cette session. Fermez puis rouvrez PowerShell, ou vérifiez l'installation Node.js."
+        }
+
+        $installedVersion = & $nodeExecutable '--version'
         if ($installedVersion) {
             Write-Host "Node.js installé : $installedVersion"
             $detailMessages += "Node.js a été installé avec succès, la commande 'node --version' renvoie désormais $installedVersion."
@@ -589,7 +726,7 @@ Invoke-CriticalStep -Description "Installation ou mise à niveau de Node.js LTS"
         }
     }
     else {
-        $nodeVersionOutput = node --version
+        $nodeVersionOutput = & $nodeExecutable '--version'
         Write-Host "Node.js détecté : $nodeVersionOutput"
         $detailMessages += "Node.js est présent sur cette machine (node --version => $nodeVersionOutput)."
 
@@ -600,7 +737,12 @@ Invoke-CriticalStep -Description "Installation ou mise à niveau de Node.js LTS"
                 $detailMessages += "La version majeure actuelle ($majorVersion) est inférieure à la version LTS requise (>= 18) ; lancement d'une mise à niveau via winget."
                 $status = 'Mis à jour'
                 winget install --exact --id OpenJS.NodeJS.LTS --silent --accept-source-agreements --accept-package-agreements
-                $updatedVersion = node --version
+                $nodeExecutable = Use-NodeInCurrentSession
+                if ([string]::IsNullOrWhiteSpace($nodeExecutable)) {
+                    throw "Node.js a été mis à jour via winget, mais node.exe reste introuvable dans cette session."
+                }
+
+                $updatedVersion = & $nodeExecutable '--version'
                 if ($updatedVersion) {
                     Write-Host "Node.js mis à jour : $updatedVersion"
                     $detailMessages += "Après mise à niveau, 'node --version' renvoie $updatedVersion, confirmant l'alignement sur la LTS."
@@ -617,7 +759,12 @@ Invoke-CriticalStep -Description "Installation ou mise à niveau de Node.js LTS"
             $detailMessages += "La chaîne de version renvoyée ($nodeVersionOutput) ne peut être interprétée ; une mise à niveau winget vers la LTS officielle est déclenchée par précaution."
             $status = 'Mis à jour'
             winget install --exact --id OpenJS.NodeJS.LTS --silent --accept-source-agreements --accept-package-agreements
-            $normalizedVersion = node --version
+            $nodeExecutable = Use-NodeInCurrentSession
+            if ([string]::IsNullOrWhiteSpace($nodeExecutable)) {
+                throw "Node.js a été réinstallé via winget, mais node.exe reste introuvable dans cette session."
+            }
+
+            $normalizedVersion = & $nodeExecutable '--version'
             if ($normalizedVersion) {
                 Write-Host "Node.js normalisé : $normalizedVersion"
                 $detailMessages += "Après réinstallation, 'node --version' renvoie $normalizedVersion."
@@ -639,7 +786,7 @@ Invoke-CriticalStep -Description "Installation ou mise à niveau de Node.js LTS"
     }
 }
 
-function Normalize-PathValue {
+function Get-NormalizedPathValue {
     param([string]$PathValue)
 
     if ([string]::IsNullOrWhiteSpace($PathValue)) {
@@ -690,7 +837,7 @@ function Add-DirectoryToSessionPath {
         [Parameter(Mandatory = $true)][string]$DirectoryPath
     )
 
-    $normalizedDirectory = Normalize-PathValue -PathValue $DirectoryPath
+    $normalizedDirectory = Get-NormalizedPathValue -PathValue $DirectoryPath
     if ([string]::IsNullOrWhiteSpace($normalizedDirectory)) {
         return $false
     }
@@ -701,7 +848,7 @@ function Add-DirectoryToSessionPath {
     }
 
     foreach ($entry in $currentEntries) {
-        if ((Normalize-PathValue -PathValue $entry) -eq $normalizedDirectory) {
+        if ((Get-NormalizedPathValue -PathValue $entry) -eq $normalizedDirectory) {
             return $false
         }
     }
@@ -716,7 +863,66 @@ function Add-DirectoryToSessionPath {
     return $true
 }
 
-function Ensure-NpmGlobalBinInEnv {
+function Resolve-NpmExecutable {
+    $candidates = @()
+
+    if (-not [string]::IsNullOrWhiteSpace($env:ProgramFiles)) {
+        $candidates += (Join-Path -Path $env:ProgramFiles -ChildPath 'nodejs\npm.cmd')
+        $candidates += (Join-Path -Path $env:ProgramFiles -ChildPath 'nodejs\npm.exe')
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace(${env:ProgramFiles(x86)})) {
+        $candidates += (Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath 'nodejs\npm.cmd')
+        $candidates += (Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath 'nodejs\npm.exe')
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+        $candidates += (Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Programs\nodejs\npm.cmd')
+        $candidates += (Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Programs\nodejs\npm.exe')
+        $candidates += (Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\WinGet\Links\npm.cmd')
+        $candidates += (Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\WindowsApps\npm.exe')
+    }
+
+    $npmCommands = @(Get-Command npm -All -ErrorAction SilentlyContinue)
+    foreach ($npmCommand in $npmCommands) {
+        if ($null -ne $npmCommand -and -not [string]::IsNullOrWhiteSpace($npmCommand.Source)) {
+            $extension = [System.IO.Path]::GetExtension($npmCommand.Source)
+            if ($extension -ne '.ps1') {
+                $candidates += $npmCommand.Source
+            }
+        }
+    }
+
+    foreach ($candidate in ($candidates | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)) {
+        if (Test-Path -LiteralPath $candidate) {
+            return $candidate
+        }
+    }
+
+    return $null
+}
+
+function Invoke-NpmCommand {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    $npmExecutable = Resolve-NpmExecutable
+    if ([string]::IsNullOrWhiteSpace($npmExecutable)) {
+        throw "La commande 'npm' est introuvable ; impossible d'exécuter npm $($Arguments -join ' ')."
+    }
+
+    $commandOutput = & $npmExecutable @Arguments
+    $npmExitCode = $LASTEXITCODE
+    if ($npmExitCode -ne 0) {
+        throw "La commande npm $($Arguments -join ' ') s'est terminée avec le code $npmExitCode."
+    }
+
+    return $commandOutput
+}
+
+function Set-NpmGlobalBinInEnv {
     param(
         [switch]$OnlyIfAngularCliPresent
     )
@@ -724,31 +930,43 @@ function Ensure-NpmGlobalBinInEnv {
     $detailMessages = @()
     $status = 'Déjà installé'
 
-    $npmCommand = Get-Command npm -ErrorAction SilentlyContinue
-    if ($null -eq $npmCommand) {
+    $npmExecutable = Resolve-NpmExecutable
+    if ([string]::IsNullOrWhiteSpace($npmExecutable)) {
         throw "La commande 'npm' est introuvable ; impossible de déterminer le dossier global npm."
     }
 
+    $globalNpmPath = $null
+
     try {
-        $npmBinOutput = & npm 'bin' '-g' 2>$null
+        $npmBinOutput = & $npmExecutable 'bin' '-g' 2>$null
+        if ($LASTEXITCODE -eq 0 -and $null -ne $npmBinOutput -and $npmBinOutput.Count -gt 0) {
+            $globalNpmPath = [string]($npmBinOutput | Select-Object -First 1)
+            $globalNpmPath = $globalNpmPath.Trim()
+        }
     }
     catch {
-        throw "Impossible d'exécuter 'npm bin -g' : $($_.Exception.Message)"
+        # npm bin -g n'est pas disponible sur certaines versions de npm ; fallback ci-dessous.
     }
-
-    if ($null -eq $npmBinOutput -or $npmBinOutput.Count -eq 0) {
-        throw "La commande 'npm bin -g' n'a renvoyé aucun chemin."
-    }
-
-    $globalNpmPath = ($npmBinOutput | Select-Object -First 1)
-    $globalNpmPath = [string]$globalNpmPath
-    $globalNpmPath = $globalNpmPath.Trim()
 
     if ([string]::IsNullOrWhiteSpace($globalNpmPath)) {
-        throw "Le chemin renvoyé par 'npm bin -g' est vide."
+        try {
+            $npmPrefixOutput = & $npmExecutable 'config' 'get' 'prefix' '-g' 2>$null
+            if ($LASTEXITCODE -eq 0 -and $null -ne $npmPrefixOutput -and $npmPrefixOutput.Count -gt 0) {
+                $globalNpmPath = [string]($npmPrefixOutput | Select-Object -First 1)
+                $globalNpmPath = $globalNpmPath.Trim()
+                $detailMessages += "Le dossier global npm a été déterminé via 'npm config get prefix -g' (fallback)."
+            }
+        }
+        catch {
+            # Le throw explicite est géré juste après.
+        }
     }
 
-    $normalizedGlobalPath = Normalize-PathValue -PathValue $globalNpmPath
+    if ([string]::IsNullOrWhiteSpace($globalNpmPath)) {
+        throw "Impossible de déterminer le dossier npm global (npm bin -g / npm config get prefix -g)."
+    }
+
+    $normalizedGlobalPath = Get-NormalizedPathValue -PathValue $globalNpmPath
 
     if ([string]::IsNullOrWhiteSpace($normalizedGlobalPath)) {
         throw "Le dossier global npm obtenu n'est pas valide."
@@ -804,7 +1022,7 @@ function Ensure-NpmGlobalBinInEnv {
                 continue
             }
 
-            if ((Normalize-PathValue -PathValue $entry) -eq $normalizedGlobalPath) {
+            if ((Get-NormalizedPathValue -PathValue $entry) -eq $normalizedGlobalPath) {
                 $sessionContains = $true
                 break
             }
@@ -835,7 +1053,7 @@ function Ensure-NpmGlobalBinInEnv {
                 continue
             }
 
-            if ((Normalize-PathValue -PathValue $entry) -eq $normalizedGlobalPath) {
+            if ((Get-NormalizedPathValue -PathValue $entry) -eq $normalizedGlobalPath) {
                 $userContains = $true
                 break
             }
@@ -881,7 +1099,7 @@ function Ensure-NpmGlobalBinInEnv {
 }
 
 Invoke-CriticalStep -Description "Ajout du dossier npm global au PATH" -Action {
-    return Ensure-NpmGlobalBinInEnv -OnlyIfAngularCliPresent
+    return Set-NpmGlobalBinInEnv
 }
 
 Invoke-CriticalStep -Description "Installation ou mise à niveau de Yarn" -Action {
@@ -897,7 +1115,7 @@ Invoke-CriticalStep -Description "Installation ou mise à niveau de Yarn" -Actio
             $detailMessages += "La tentative d'exécuter 'yarn --version' a échoué : $($yarnVersionCheck.Error.Exception.Message)."
         }
 
-        npm install -g yarn
+        Invoke-NpmCommand -Arguments @('install', '-g', 'yarn') | Out-Null
 
         $postInstallCheck = Invoke-YarnVersionCheck
         if ($postInstallCheck.Success -and $postInstallCheck.Version) {
@@ -994,7 +1212,7 @@ Invoke-CriticalStep -Description "Installation de l'Angular CLI" -Action {
     if ($null -eq $angularCli) {
         Write-Host "Installation de @angular/cli via npm..."
         $detailMessages += "La commande 'ng' est absente ; installation globale de @angular/cli."
-        npm install -g @angular/cli
+        Invoke-NpmCommand -Arguments @('install', '-g', '@angular/cli') | Out-Null
         $ngVersionAfterInstall = ng version | Select-String -Pattern "Angular CLI" | Select-Object -First 1
         if ($ngVersionAfterInstall) {
             $versionText = $ngVersionAfterInstall.ToString().Trim()
@@ -1016,7 +1234,7 @@ Invoke-CriticalStep -Description "Installation de l'Angular CLI" -Action {
         else {
             $detailMessages += "Angular CLI semble présent mais 'ng version' n'a pas fourni de sortie exploitable ; réinstallation globale pour garantir la conformité."
             $status = 'Mis à jour'
-            npm install -g @angular/cli
+            Invoke-NpmCommand -Arguments @('install', '-g', '@angular/cli') | Out-Null
             $ngVersionAfterUpdate = ng version | Select-String -Pattern "Angular CLI" | Select-Object -First 1
             if ($ngVersionAfterUpdate) {
                 $versionText = $ngVersionAfterUpdate.ToString().Trim()
@@ -1029,7 +1247,7 @@ Invoke-CriticalStep -Description "Installation de l'Angular CLI" -Action {
         }
     }
 
-    $ensurePathResult = Ensure-NpmGlobalBinInEnv
+    $ensurePathResult = Set-NpmGlobalBinInEnv
     if ($ensurePathResult -and $ensurePathResult.Details) {
         $detailMessages += $ensurePathResult.Details
     }
@@ -1193,7 +1411,7 @@ if ($selectedValue -eq 'dev:web') {
         try {
             Push-Location -Path $angularProjectPath
             $locationPushed = $true
-            & npm 'run' 'dev:web'
+            Invoke-NpmCommand -Arguments @('run', 'dev:web') | Out-Null
             $serveExitCode = $LASTEXITCODE
         }
         finally {

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   AdminQualityMatrixEntry,
@@ -76,7 +77,7 @@ const COVERAGE_TONE_LEGEND: readonly CoverageToneLegendItem[] = [
 @Component({
   selector: 'og7-admin-quality-coverage-matrix',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
@@ -315,7 +316,7 @@ const COVERAGE_TONE_LEGEND: readonly CoverageToneLegendItem[] = [
                   class="inline-flex rounded-full border px-3 py-1 font-medium"
                   [ngClass]="focusBucketClasses(entry.managementBucket)"
                 >
-                  {{ focusBucketLabel(entry) }}
+                  {{ entry.managementBucket === 'not-evaluated' ? ('admin.quality.reactor.categories.notEvaluated' | translate) : focusBucketLabel(entry) }}
                 </span>
                 @if (delegationTrace(entry); as trace) {
                   <span
@@ -759,6 +760,7 @@ export class AdminQualityCoverageMatrixComponent {
       case 'product-gap':
         return 'border-violet-400/25 bg-violet-400/10 text-violet-100';
       case 'scope-limit':
+      case 'not-evaluated':
         return 'border-white/12 bg-white/5 text-slate-100';
       default:
         return 'border-amber-400/25 bg-amber-400/10 text-amber-100';

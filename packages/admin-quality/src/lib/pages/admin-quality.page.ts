@@ -7,16 +7,18 @@ import {
   DestroyRef,
   ElementRef,
   NgZone,
+  Injector,
   OnInit,
   ViewChild,
   computed,
+  afterNextRender,
   effect,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import {
@@ -50,6 +52,7 @@ import {
   AdminQualityMatrixStatus,
   AdminQualityMatrixStoredRecalculation,
   AdminQualityNeedProposalsSnapshot,
+  normalizeAdminQualityMatrixBucket,
 } from '../data-access/admin-quality-matrix.service';
 import { AdminQualityMissionDecisionRecord } from '../data-access/admin-quality-mission-decisions.service';
 import {
@@ -126,7 +129,12 @@ import {
   AdminQualityNeedProposalAction,
   AdminQualityNeedsProposalPanelComponent,
 } from './admin-quality-needs-proposal-panel.component';
+import {
+  countAdminQualityReactorCategories,
+  resolveAdminQualityReactorState,
+} from './admin-quality-reactor-state';
 import { AdminQualityReactorComponent } from './admin-quality-reactor.component';
+import { hasExpiredQualityReview } from './admin-quality-review-freshness';
 
 type FilterValue<T extends string> = 'all' | T;
 type AdminQualityLegacyInspectionSurface = 'delegation' | 'actions';
@@ -790,6 +798,8 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
   @ViewChild('proposalPanel') private proposalPanelRef?: AdminQualityNeedsProposalPanelComponent;
 
   readonly loading = signal(true);
+  private readonly renderInjector = inject(Injector);
+  readonly matrixLoading = signal(true);
   readonly error = signal<string | null>(null);
   readonly snapshot = signal<AdminQualityMatrixSnapshot | null>(null);
   readonly recalculatingMatrix = signal(false);
@@ -869,7 +879,17 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
   readonly matrixRecalculationScopeSelectOptions = MATRIX_RECALCULATION_SCOPE_SELECT_OPTIONS;
   readonly priorityFilterOptions = PRIORITY_FILTER_OPTIONS;
   readonly e2eFilterOptions = E2E_FILTER_OPTIONS;
-  readonly bucketFilterOptions = BUCKET_FILTER_OPTIONS;
+  private readonly translate = inject(TranslateService);
+
+  get bucketFilterOptions(): readonly AdminQualityComboboxOption[] {
+    return [
+      ...BUCKET_FILTER_OPTIONS,
+      {
+        value: 'not-evaluated',
+        label: this.translate.instant('admin.quality.reactor.categories.notEvaluated'),
+      },
+    ];
+  }
   readonly activeConsoleSurfaceOption = computed(
     () =>
       this.consoleSurfaceOptions.find((surface) => surface.id === this.activeConsoleSurface()) ??
@@ -1393,7 +1413,11 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
         if (this.selectedBucket() !== 'all' && entry.managementBucket !== this.selectedBucket()) {
           return false;
         }
-        if (this.priorityGapsOnly() && (entry.priority !== 'haute' || entry.e2eStatus === 'oui')) {
+        if (
+          this.priorityGapsOnly() &&
+          (entry.priority !== 'haute' ||
+            normalizeAdminQualityMatrixBucket(entry.managementBucket) === 'covered')
+        ) {
           return false;
         }
         if (!query) {
@@ -1462,40 +1486,11 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
         (entry) => entry.e2eStatus !== 'oui' && entry.priority === 'haute',
       ).length,
   );
-  readonly coveredCount = computed(
-    () => this.entries().filter((entry) => entry.managementBucket === 'covered').length,
-  );
-  readonly scopeLimitCount = computed(
-    () => this.entries().filter((entry) => entry.managementBucket === 'scope-limit').length,
-  );
-  readonly notEvaluatedCount = computed(
-    () => this.entries().filter((entry) => !entry.managementBucket).length,
-  );
-  readonly reactorState = computed<'stable' | 'attention' | 'critical' | 'excellent'>(() => {
-    const total = this.entries().length;
-    if (total === 0) return 'stable';
-
-    const highPriority = this.highPriorityGapCount();
-    const unresolved =
-      this.proofGapCount() +
-      this.productWorkCount() +
-      this.scopeLimitCount() +
-      this.notEvaluatedCount();
-    const unresolvedRatio = unresolved / total;
-    const highPriorityRatio = highPriority / total;
-    const notEvaluatedRatio = this.notEvaluatedCount() / total;
-
-    if (highPriorityRatio >= 0.25 || unresolvedRatio >= 0.5 || notEvaluatedRatio >= 0.25) {
-      return 'critical';
-    }
-    if (highPriority > 0 || unresolvedRatio >= 0.2 || this.notEvaluatedCount() > 0) {
-      return 'attention';
-    }
-    if (this.coveredCount() === total) {
-      return 'excellent';
-    }
-    return 'stable';
-  });
+  readonly reactorCounts = computed(() => countAdminQualityReactorCategories(this.entries()));
+  readonly coveredCount = computed(() => this.reactorCounts().covered);
+  readonly scopeLimitCount = computed(() => this.reactorCounts().scopeLimit);
+  readonly notEvaluatedCount = computed(() => this.reactorCounts().notEvaluated);
+  readonly reactorState = computed(() => resolveAdminQualityReactorState(this.reactorCounts()));
   readonly latestCompletedMissionDecisionByEntryId = computed(() => {
     const latestByEntryId = new Map<string, AdminQualityMissionDecisionRecord>();
 
@@ -1521,6 +1516,12 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
       .map((entry) => entry.id),
   );
   readonly matrixRefreshRequiredCount = computed(() => this.matrixRefreshRequiredEntryIds().length);
+  readonly reactorRefreshRequiredCount = computed(() => {
+    const now = this.aiOpsLiveNow();
+    return this.entries().filter((entry) =>
+      hasExpiredQualityReview(entry.reviewedAt, now) || this.entryNeedsMatrixRefresh(entry),
+    ).length;
+  });
   readonly filteredMatrixRefreshRequiredCount = computed(
     () => this.filteredEntries().filter((entry) => this.entryNeedsMatrixRefresh(entry)).length,
   );
@@ -2204,13 +2205,17 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
   }
 
   private loadMatrixSnapshot(markLoading = true): void {
+    this.matrixLoading.set(true);
     if (markLoading) {
       this.loading.set(true);
     }
 
     this.service
       .loadMatrix()
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.matrixLoading.set(false)),
+      )
       .subscribe({
         next: (snapshot) => {
           this.snapshot.set(snapshot);
@@ -2388,6 +2393,11 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
     this.selectedBucket.set('all');
     this.priorityGapsOnly.set(true);
     this.scrollMissionHudToSection('coverage');
+    if (this.isBrowser) {
+      afterNextRender(() => this.coverageSection?.nativeElement.focus({ preventScroll: true }), {
+        injector: this.renderInjector,
+      });
+    }
   }
 
   selectEntry(entry: AdminQualityMatrixEntry): void {
@@ -2650,7 +2660,8 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
 
     const element = this.resolveMissionHudSectionElement(section)?.nativeElement;
     if (element && typeof element.scrollIntoView === 'function') {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const reduceMotion = element.ownerDocument.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      element.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     }
   }
 
@@ -3737,6 +3748,8 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
         return 'Produit d abord';
       case 'scope-limit':
         return 'Hors scope courant';
+      case 'not-evaluated':
+        return this.translate.instant('admin.quality.reactor.categories.notEvaluated');
       default:
         return 'Preuve a renforcer';
     }
@@ -3773,6 +3786,7 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
       case 'product-gap':
         return 'border-indigo-200 bg-indigo-50 text-indigo-700';
       case 'scope-limit':
+      case 'not-evaluated':
         return 'border-slate-200 bg-slate-100 text-slate-700';
       default:
         return 'border-sky-200 bg-sky-50 text-sky-700';
@@ -5231,7 +5245,8 @@ export class AdminQualityPage implements OnInit, AfterViewInit {
       value === 'covered' ||
       value === 'proof-gap' ||
       value === 'product-gap' ||
-      value === 'scope-limit'
+      value === 'scope-limit' ||
+      value === 'not-evaluated'
     );
   }
 

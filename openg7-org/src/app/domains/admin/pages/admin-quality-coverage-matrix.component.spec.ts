@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminQualityCoverageMatrixComponent } from '@openg7/admin-quality';
 
 import { AdminQualityMatrixEntry } from '../data-access/admin-quality-matrix.service';
@@ -31,7 +32,7 @@ describe('AdminQualityCoverageMatrixComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminQualityCoverageMatrixComponent],
+      imports: [AdminQualityCoverageMatrixComponent, TranslateModule.forRoot()],
     }).compileComponents();
   });
 
@@ -58,6 +59,22 @@ describe('AdminQualityCoverageMatrixComponent', () => {
         shortLabel: 'E',
       }),
     );
+  });
+
+  it('labels an unevaluated focused domain without presenting it as a proof gap', () => {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('en', {
+      'admin.quality.reactor.categories.notEvaluated': 'Not evaluated',
+    });
+    translate.use('en');
+    const fixture = TestBed.createComponent(AdminQualityCoverageMatrixComponent);
+    fixture.componentRef.setInput('entries', [buildEntry({ managementBucket: 'not-evaluated' })]);
+    fixture.componentRef.setInput('selectedEntryId', 'advanced-discovery');
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.textContent).toContain('Not evaluated');
+    expect(root.textContent).not.toContain('Preuve QA suivante');
   });
 
   it('renders the latest delegation trace for an entry and highlights the selected signal', () => {
