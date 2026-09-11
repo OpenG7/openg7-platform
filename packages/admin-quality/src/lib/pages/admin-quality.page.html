@@ -226,18 +226,20 @@
     [actionCount]="totalRegisteredActions()"
   />
 
-  @if (!loading() && entries().length > 0) {
   <og7-admin-quality-reactor
-    [coveredCount]="coveredCount()"
-    [proofGapCount]="proofGapCount()"
-    [productGapCount]="productWorkCount()"
-    [notAlignedCount]="scopeLimitCount()"
-    [notEvaluatedCount]="notEvaluatedCount()"
+    [coveredCount]="reactorCounts().covered"
+    [proofGapCount]="reactorCounts().proofGap"
+    [productGapCount]="reactorCounts().productGap"
+    [notAlignedCount]="reactorCounts().scopeLimit"
+    [notEvaluatedCount]="reactorCounts().notEvaluated"
     [isAnalysisRunning]="recalculatingMatrix()"
+    [isLoading]="matrixLoading()"
+    [hasRefreshError]="error() !== null"
+    [refreshRequiredCount]="reactorRefreshRequiredCount()"
     [reactorState]="reactorState()"
     (viewPriorityGaps)="showPriorityGaps()"
   />
-  } @if (error(); as message) {
+  @if (error(); as message) {
   <p
     class="rounded-[20px] border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-100"
     data-og7-id="admin-quality-error"
@@ -1566,6 +1568,7 @@
     <div
       #coverageSection
       id="admin-quality-coverage"
+      tabindex="-1"
       class="flex min-w-0 flex-col gap-4"
       data-og7="admin-quality-scroll-section"
       data-og7-id="coverage"

@@ -7,12 +7,19 @@ import {
   NotificationStoreApi,
 } from '@app/core/observability/notification.store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AdminQualityBrowserService, AdminQualityPage } from '@openg7/admin-quality';
+import {
+  AdminQualityBrowserService,
+  AdminQualityPage,
+  AdminQualityReactorState,
+  countAdminQualityReactorCategories,
+  resolveAdminQualityReactorState,
+} from '@openg7/admin-quality';
 import { of, throwError } from 'rxjs';
 
 import { AdminOpsService } from '../data-access/admin-ops.service';
 import {
   AdminQualityMatrixRecalculationSnapshot,
+  AdminQualityMatrixEntry,
   AdminQualityMatrixService,
   AdminQualityMatrixSnapshot,
 } from '../data-access/admin-quality-matrix.service';
@@ -27,6 +34,68 @@ import {
   ADMIN_QUALITY_NOTIFICATIONS,
   ADMIN_QUALITY_OPS_PORT,
 } from '../data-access/admin-quality.ports';
+
+describe('Admin quality reactor classification', () => {
+  type Entry = Pick<AdminQualityMatrixEntry, 'managementBucket' | 'priority'>;
+
+  function portfolio(
+    gaps: number,
+    bucket: Entry['managementBucket'],
+    priority: Entry['priority'] = 'basse',
+  ): Entry[] {
+    return Array.from({ length: 100 }, (_, index) => ({
+      managementBucket: index < gaps ? bucket : 'covered',
+      priority: index < gaps ? priority : 'basse',
+    }));
+  }
+
+  it('keeps empty, fully covered and entirely unevaluated portfolios distinct', () => {
+    expect(resolveAdminQualityReactorState(countAdminQualityReactorCategories([]))).toBe('stable');
+    expect(
+      resolveAdminQualityReactorState(countAdminQualityReactorCategories(portfolio(0, 'proof-gap'))),
+    ).toBe('excellent');
+    const unevaluated = countAdminQualityReactorCategories(portfolio(100, 'not-evaluated'));
+    expect(unevaluated.notEvaluated).toBe(100);
+    expect(resolveAdminQualityReactorState(unevaluated)).toBe('critical');
+  });
+
+  it('counts malformed categories exactly once as not evaluated', () => {
+    const counts = countAdminQualityReactorCategories([
+      { managementBucket: undefined, priority: 'haute' },
+      { managementBucket: null, priority: 'basse' },
+      { managementBucket: 'invalid', priority: 'basse' },
+    ] as unknown as Entry[]);
+    expect(counts.notEvaluated).toBe(3);
+    expect(counts.highPriorityGap).toBe(1);
+    expect(counts.total).toBe(3);
+  });
+
+  const boundaries: readonly [number, Entry['managementBucket'], Entry['priority'], AdminQualityReactorState][] = [
+    [19, 'proof-gap', 'basse', 'stable'],
+    [20, 'proof-gap', 'basse', 'attention'],
+    [21, 'proof-gap', 'basse', 'attention'],
+    [49, 'proof-gap', 'basse', 'attention'],
+    [50, 'proof-gap', 'basse', 'critical'],
+    [51, 'proof-gap', 'basse', 'critical'],
+    [24, 'proof-gap', 'haute', 'attention'],
+    [25, 'proof-gap', 'haute', 'critical'],
+    [26, 'proof-gap', 'haute', 'critical'],
+    [1, 'not-evaluated', 'basse', 'attention'],
+    [24, 'not-evaluated', 'basse', 'attention'],
+    [25, 'not-evaluated', 'basse', 'critical'],
+    [26, 'not-evaluated', 'basse', 'critical'],
+  ];
+
+  for (const [gaps, bucket, priority, expected] of boundaries) {
+    it(`classifies ${gaps}% ${bucket} at priority ${priority} as ${expected}`, () => {
+      const counts = countAdminQualityReactorCategories(portfolio(gaps, bucket, priority));
+      expect(resolveAdminQualityReactorState(counts)).toBe(expected);
+      expect(
+        counts.covered + counts.proofGap + counts.productGap + counts.scopeLimit + counts.notEvaluated,
+      ).toBe(counts.total);
+    });
+  }
+});
 
 class AdminQualityMatrixServiceMock {
   readonly loadMatrix = jasmine.createSpy('loadMatrix').and.returnValue(
@@ -1156,6 +1225,81 @@ describe('AdminQualityPage', () => {
       ),
     }));
     expect(component.reactorState()).toBe('attention');
+  });
+
+  it('keeps reactor categories exclusive while preserving the product-work queue', () => {
+    const fixture = TestBed.createComponent(AdminQualityPage);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const base = component.entries()[0]!;
+    const entries: AdminQualityMatrixEntry[] = [
+      ...Array.from({ length: 9 }, (_, index) => ({
+        ...base,
+        id: `covered-${index}`,
+        priority: 'basse' as const,
+        managementBucket: 'covered' as const,
+        e2eStatus: 'oui' as const,
+      })),
+      { ...base, id: 'proof-gap', priority: 'basse', managementBucket: 'proof-gap' },
+      ...Array.from({ length: 4 }, (_, index) => ({
+        ...base,
+        id: `product-gap-${index}`,
+        priority: 'basse' as const,
+        managementBucket: 'product-gap' as const,
+        needsProductWorkFirst: true,
+      })),
+      {
+        ...base,
+        id: 'linkup-workflow',
+        priority: 'basse',
+        managementBucket: 'scope-limit',
+        needsProductWorkFirst: true,
+      },
+    ];
+    component.snapshot.update((snapshot) => ({ ...snapshot!, entries }));
+    fixture.detectChanges();
+
+    expect(component.reactorCounts()).toEqual({
+      total: 15,
+      covered: 9,
+      proofGap: 1,
+      productGap: 4,
+      scopeLimit: 1,
+      notEvaluated: 0,
+      highPriorityGap: 0,
+    });
+    expect(component.productWorkCount()).toBe(5);
+    expect(component.reactorState()).toBe('attention');
+    const reactor = fixture.debugElement.query(
+      (element) => element.name === 'og7-admin-quality-reactor',
+    ).componentInstance;
+    expect(reactor.totalCount()).toBe(15);
+    expect(reactor.coveragePercent()).toBe(60);
+  });
+
+  it('includes unclassified high-priority domains in reactor gaps even with a passing E2E status', () => {
+    const fixture = TestBed.createComponent(AdminQualityPage);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    component.snapshot.update((snapshot) => ({
+      ...snapshot!,
+      entries: snapshot!.entries.map((entry, index) => ({
+        ...entry,
+        priority: 'haute',
+        e2eStatus: 'oui',
+        managementBucket: index === 0 ? 'not-evaluated' : 'covered',
+      })),
+    }));
+    component.priorityGapsOnly.set(true);
+
+    expect(component.reactorCounts().highPriorityGap).toBe(1);
+    expect(component.notEvaluatedCount()).toBe(1);
+    expect(component.reactorState()).toBe('critical');
+    expect(component.filteredEntries().map((entry) => entry.id)).toEqual(['advanced-discovery']);
+    component.priorityGapsOnly.set(false);
+    component.selectedBucket.set('not-evaluated');
+    expect(component.filteredEntries().map((entry) => entry.id)).toEqual(['advanced-discovery']);
+    expect(component.bucketFilterOptions.some((option) => option.value === 'not-evaluated')).toBeTrue();
   });
 
   it('surfaces active filters as readable chips in the sticky rail', async () => {

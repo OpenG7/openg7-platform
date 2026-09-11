@@ -67,6 +67,91 @@ describe('AdminQualityMatrixService', () => {
     });
   });
 
+  for (const status of [401, 403, 404, 500]) {
+    it(`propagates HTTP ${status} without emitting an empty replacement matrix`, () => {
+      const next = jasmine.createSpy('next');
+      const error = jasmine.createSpy('error');
+      service.loadMatrix().subscribe({ next, error });
+
+      http.expectOne('/api/api/admin/quality/matrix').flush(
+        { message: 'Matrix unavailable' },
+        { status, statusText: 'Request failed' },
+      );
+
+      expect(next).not.toHaveBeenCalled();
+      expect(error).toHaveBeenCalledOnceWith(jasmine.objectContaining({ status }));
+    });
+  }
+
+  it('propagates network failures without emitting an empty replacement matrix', () => {
+    const next = jasmine.createSpy('next');
+    const error = jasmine.createSpy('error');
+    service.loadMatrix().subscribe({ next, error });
+
+    http.expectOne('/api/api/admin/quality/matrix').error(new ProgressEvent('error'));
+
+    expect(next).not.toHaveBeenCalled();
+    expect(error).toHaveBeenCalledOnceWith(jasmine.objectContaining({ status: 0 }));
+  });
+
+  it('preserves known categories and exposes absent or invalid categories as not evaluated', () => {
+    service.loadMatrix().subscribe((snapshot) => {
+      expect(snapshot.entries.map((entry) => entry.managementBucket)).toEqual([
+        'covered',
+        'proof-gap',
+        'product-gap',
+        'scope-limit',
+        'not-evaluated',
+        'not-evaluated',
+        'not-evaluated',
+        'not-evaluated',
+      ]);
+      expect(snapshot.entries.every((entry) => entry.reviewedAt === '')).toBeTrue();
+    });
+
+    http.expectOne('/api/api/admin/quality/matrix').flush({
+      data: {
+        generatedAt: '2026-09-08T00:00:00.000Z',
+        entries: [
+          'covered',
+          'proof-gap',
+          'product-gap',
+          'scope-limit',
+          'not-evaluated',
+          undefined,
+          null,
+          'unknown-category',
+        ].map((managementBucket, index) => ({
+          id: `domain-${index}`,
+          domain: `Domain ${index}`,
+          need: 'An explicit evaluation is required.',
+          managementBucket,
+        })),
+      },
+    });
+  });
+
+  it('preserves missing review dates and classification in recalculation snapshots', () => {
+    service.recalculateMatrix('all', null).subscribe((snapshot) => {
+      expect(snapshot.entries[0]?.current.managementBucket).toBe('not-evaluated');
+      expect(snapshot.entries[0]?.proposed?.managementBucket).toBe('not-evaluated');
+      expect(snapshot.entries[0]?.factualSignals.reviewedAt).toBeNull();
+    });
+
+    http.expectOne('/api/api/admin/quality/matrix/recalculate').flush({
+      data: {
+        entries: [
+          {
+            entryId: 'unreviewed-domain',
+            domain: 'Unreviewed domain',
+            current: {},
+            proposed: { managementBucket: 'not-evaluated' },
+          },
+        ],
+      },
+    });
+  });
+
   it('normalizes recalculation pilot commands', () => {
     service.recalculateMatrix('refresh-required', null).subscribe((result) => {
       const entry = result.entries[0];

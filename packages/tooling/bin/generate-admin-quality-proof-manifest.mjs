@@ -59,7 +59,7 @@ function uniqueSorted(values) {
     .sort();
 }
 
-function inferGitHubArtifactUrl() {
+function inferGitHubRunUrl() {
   const serverUrl = process.env.GITHUB_SERVER_URL;
   const repository = process.env.GITHUB_REPOSITORY;
   const runId = process.env.GITHUB_RUN_ID;
@@ -68,7 +68,7 @@ function inferGitHubArtifactUrl() {
     return null;
   }
 
-  return `${serverUrl}/${repository}/actions/runs/${runId}#artifacts`;
+  return `${serverUrl}/${repository}/actions/runs/${runId}`;
 }
 
 function buildManifest(parsed) {
@@ -90,21 +90,29 @@ function buildManifest(parsed) {
     process.env.GITHUB_RUN_NUMBER ??
     null;
   const workflow = firstArgument(parsed, 'workflow') ?? process.env.GITHUB_WORKFLOW ?? null;
+  const workflowRunUrl = firstArgument(parsed, 'workflow-run-url') ?? inferGitHubRunUrl();
   const artifactUrl =
-    firstArgument(parsed, 'artifact-url') ??
-    process.env.MATRIX_PROOF_ARTIFACT_URL ??
-    inferGitHubArtifactUrl();
+    firstArgument(parsed, 'artifact-url') ?? process.env.MATRIX_PROOF_ARTIFACT_URL ?? null;
+  const commitSha = firstArgument(parsed, 'commit-sha') ?? process.env.GITHUB_SHA ?? null;
+  const status = firstArgument(parsed, 'status', process.env.MATRIX_PROOF_STATUS ?? 'unknown');
+
+  if (status === 'success' && (!checks.length || !commitSha)) {
+    throw new Error(
+      'A successful proof manifest requires explicit executed checks and a commit SHA.',
+    );
+  }
 
   return {
-    commitSha: firstArgument(parsed, 'commit-sha') ?? process.env.GITHUB_SHA ?? null,
+    commitSha,
     workflowRunId,
+    workflowRunUrl,
     workflow,
     generatedAt: firstArgument(parsed, 'generated-at') ?? new Date().toISOString(),
     entryIds,
-    checks: checks.length ? checks : [workflow ?? 'admin-quality-proof-manifest'],
+    checks,
     specs,
     artifactUrl,
-    status: firstArgument(parsed, 'status', process.env.MATRIX_PROOF_STATUS ?? 'success'),
+    status,
   };
 }
 

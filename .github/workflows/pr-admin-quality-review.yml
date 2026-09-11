@@ -47,7 +47,7 @@ jobs:
         if: ${{ steps.impact.outputs.entry_count != '0' }}
         shell: bash
         run: |
-          node scripts/validate-admin-quality-matrix.mjs --warn
+          node scripts/validate-admin-quality-matrix.mjs
 
       - name: Check reviewedAt for impacted entries
         if: ${{ steps.impact.outputs.entry_count != '0' }}

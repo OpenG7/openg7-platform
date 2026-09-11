@@ -4783,7 +4783,7 @@
       "reactor": {
         "title": "Réacteur Qualité",
         "subtitle": "Cœur qualité OpenG7",
-        "analysisRunning": "Analyse en cours",
+        "analysisRunning": "Recalcul en cours",
         "stateTitle": "État du réacteur",
         "elementCount": "{{ count }} élément(s)",
         "viewPriorityGaps": "Voir les écarts prioritaires",
@@ -4797,7 +4797,7 @@
         "states": {
           "excellent": {
             "label": "Excellent",
-            "message": "La matrice est synchronisée, lisible et entièrement couverte."
+            "message": "Tous les domaines sont classés couverts selon les évaluations disponibles."
           },
           "critical": {
             "label": "Critique",
@@ -4808,13 +4808,28 @@
             "message": "Des écarts prioritaires demandent une action pour maintenir la résilience du système."
           },
           "scanning": {
-            "label": "Scan actif",
-            "message": "Le réacteur analyse les signaux de couverture et de preuve en temps réel."
+            "label": "Recalcul en cours",
+            "message": "Recalcul de la matrice en cours. Les chiffres affichés seront actualisés après sa réussite."
           },
           "stable": {
             "label": "Stable",
-            "message": "Les indicateurs restent dans les seuils de qualité attendus."
+            "message": "Les écarts recensés restent sous les seuils d’alerte du réacteur."
+          },
+          "loading": {
+            "label": "Chargement",
+            "message": "Chargement de la matrice. Les indicateurs ne sont pas encore disponibles."
+          },
+          "empty": {
+            "label": "Sans données",
+            "message": "Aucun domaine disponible. La couverture et le risque ne peuvent pas être évalués."
           }
+        },
+        "diagnostics": {
+          "refreshing": "Actualisation de la matrice en cours. Les derniers chiffres connus restent affichés.",
+          "refreshFailed": "L’actualisation a échoué. Les derniers chiffres connus sont conservés ; leur fraîcheur n’est pas confirmée.",
+          "loadFailed": "La matrice n’a pas pu être chargée. Aucun indicateur n’est disponible.",
+          "reviewRequired": "{{ count }} domaine(s) à revalider. Les classements affichés ne confirment pas la validité actuelle de leurs preuves.",
+          "incomplete": "{{ notEvaluatedCount }} domaine(s) non évalué(s). La matrice ne permet pas encore un diagnostic complet."
         },
         "metrics": {
           "trend": "Tendance",
@@ -4828,14 +4843,17 @@
           "degrading": "En dégradation",
           "watch": "Sous surveillance",
           "analyzing": "En analyse",
-          "stable": "Stable"
+          "stable": "Stable",
+          "unavailable": "Indisponible",
+          "unavailableReason": "Aucun historique comparable ne permet d’établir une tendance."
         },
         "risks": {
           "minimal": "Minimal",
           "low": "Faible",
           "moderate": "Modéré",
           "high": "Élevé",
-          "assessing": "En évaluation"
+          "assessing": "En évaluation",
+          "unavailable": "À confirmer"
         }
       },
       "workspace": {

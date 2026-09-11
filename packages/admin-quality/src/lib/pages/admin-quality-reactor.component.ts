@@ -53,6 +53,9 @@ export class AdminQualityReactorComponent {
   readonly notAlignedCount = input.required<number>();
   readonly notEvaluatedCount = input.required<number>();
   readonly isAnalysisRunning = input(false);
+  readonly isLoading = input(false);
+  readonly hasRefreshError = input(false);
+  readonly refreshRequiredCount = input(0);
   readonly reactorState = input<ReactorInputState>('stable');
   readonly viewPriorityGaps = output<void>();
 
@@ -88,10 +91,36 @@ export class AdminQualityReactorComponent {
   readonly visualState = computed<ReactorVisualState>(() => {
     const rawState = this.reactorState();
     const state: ReactorVisualState = rawState === 'ok' ? 'stable' : rawState;
-    return state === 'stable' && this.isAnalysisRunning() ? 'scanning' : state;
+    if (this.isLoading() || this.isAnalysisRunning()) {
+      return state === 'critical' || state === 'attention' ? state : 'scanning';
+    }
+    if (
+      (state === 'excellent' || state === 'stable') &&
+      (this.hasRefreshError() || this.refreshRequiredCount() > 0 || this.notEvaluatedCount() > 0)
+    ) {
+      return 'attention';
+    }
+    if (state === 'excellent' && this.coveredCount() !== this.totalCount()) {
+      return 'attention';
+    }
+    return this.totalCount() === 0 ? 'stable' : state;
   });
 
   readonly stateTone = computed<StateTone>(() => {
+    if (this.isLoading() && this.visualState() === 'scanning') {
+      return {
+        labelKey: 'admin.quality.reactor.states.loading.label',
+        color: '#67e8f9',
+        messageKey: 'admin.quality.reactor.states.loading.message',
+      };
+    }
+    if (this.totalCount() === 0 && !this.isAnalysisRunning()) {
+      return {
+        labelKey: 'admin.quality.reactor.states.empty.label',
+        color: '#cbd5e1',
+        messageKey: 'admin.quality.reactor.states.empty.message',
+      };
+    }
     switch (this.visualState()) {
       case 'excellent':
         return {
@@ -128,39 +157,51 @@ export class AdminQualityReactorComponent {
 
   readonly reactorStateLabelKey = computed(() => this.stateTone().labelKey);
   readonly reactorStateColorHex = computed(() => this.stateTone().color);
-  readonly reactorStateMessageKey = computed(() => this.stateTone().messageKey);
-
-  readonly trendTone = computed<MetricTone>(() => {
-    switch (this.visualState()) {
-      case 'excellent':
-        return {
-          labelKey: 'admin.quality.reactor.trends.improving',
-          className: 'tone-good',
-        };
-      case 'critical':
-        return {
-          labelKey: 'admin.quality.reactor.trends.degrading',
-          className: 'tone-danger',
-        };
-      case 'attention':
-        return {
-          labelKey: 'admin.quality.reactor.trends.watch',
-          className: 'tone-warm',
-        };
-      case 'scanning':
-        return {
-          labelKey: 'admin.quality.reactor.trends.analyzing',
-          className: 'tone-cyan',
-        };
-      default:
-        return {
-          labelKey: 'admin.quality.reactor.trends.stable',
-          className: 'tone-good',
-        };
+  readonly reactorStateMessageKey = computed(() => {
+    if (this.isLoading()) {
+      return this.totalCount() > 0
+        ? 'admin.quality.reactor.diagnostics.refreshing'
+        : 'admin.quality.reactor.states.loading.message';
     }
+    if (this.hasRefreshError()) {
+      return this.totalCount() > 0
+        ? 'admin.quality.reactor.diagnostics.refreshFailed'
+        : 'admin.quality.reactor.diagnostics.loadFailed';
+    }
+    if (this.isAnalysisRunning() || this.visualState() === 'scanning') {
+      return 'admin.quality.reactor.states.scanning.message';
+    }
+    if (this.totalCount() === 0) {
+      return 'admin.quality.reactor.states.empty.message';
+    }
+    if (this.refreshRequiredCount() > 0) {
+      return 'admin.quality.reactor.diagnostics.reviewRequired';
+    }
+    if (this.notEvaluatedCount() > 0) {
+      return 'admin.quality.reactor.diagnostics.incomplete';
+    }
+    return this.stateTone().messageKey;
   });
 
+  // A current classification cannot establish a change over time.
+  readonly trendTone = computed<MetricTone>(() => ({
+    labelKey: 'admin.quality.reactor.trends.unavailable',
+    className: 'tone-neutral',
+  }));
+
   readonly riskTone = computed<MetricTone>(() => {
+    if (
+      this.visualState() !== 'scanning' &&
+      (this.totalCount() === 0 ||
+        this.hasRefreshError() ||
+        this.refreshRequiredCount() > 0 ||
+        this.notEvaluatedCount() > 0)
+    ) {
+      return {
+        labelKey: 'admin.quality.reactor.risks.unavailable',
+        className: 'tone-neutral',
+      };
+    }
     switch (this.visualState()) {
       case 'excellent':
         return {

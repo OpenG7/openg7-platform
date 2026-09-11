@@ -25,21 +25,28 @@ function matchesPrefix(file, prefixes) {
 }
 
 export function resolveImpactWithMap(changedFiles, { allEntryIds, impactRules, globalPrefixes }) {
+  if (!changedFiles.length) {
+    return {
+      entryIds: [],
+      mode: 'none',
+      reason: 'No changed file provided.',
+      impactMapping: {},
+    };
+  }
+
   const matchedEntryIds = new Set();
   const impactMapping = {};
   let requiresGlobalRefresh = false;
-  let touchedProductCode = false;
+  let hasUnmappedProductFile = false;
 
   for (const file of changedFiles) {
     if (matchesPrefix(file, globalPrefixes)) {
       requiresGlobalRefresh = true;
     }
-    if (file.startsWith('openg7-org/src/') || file.startsWith('strapi/src/')) {
-      touchedProductCode = true;
-    }
-
+    let fileIsMapped = false;
     for (const rule of impactRules) {
-      if (matchesPrefix(file, rule.prefixes)) {
+      if (rule.entryIds.length && matchesPrefix(file, rule.prefixes)) {
+        fileIsMapped = true;
         rule.entryIds.forEach((entryId) => {
           matchedEntryIds.add(entryId);
           if (!impactMapping[entryId]) {
@@ -51,11 +58,20 @@ export function resolveImpactWithMap(changedFiles, { allEntryIds, impactRules, g
         });
       }
     }
+
+    if (
+      !fileIsMapped &&
+      (file.startsWith('openg7-org/src/') ||
+        file.startsWith('strapi/src/') ||
+        file.startsWith('packages/'))
+    ) {
+      hasUnmappedProductFile = true;
+    }
   }
 
-  if (requiresGlobalRefresh || (touchedProductCode && matchedEntryIds.size === 0)) {
+  if (requiresGlobalRefresh || hasUnmappedProductFile) {
     return {
-      entryIds: allEntryIds,
+      entryIds: Array.from(new Set(allEntryIds)).sort(),
       mode: 'global',
       reason: requiresGlobalRefresh
         ? 'Global matrix infrastructure changed.'
@@ -66,7 +82,7 @@ export function resolveImpactWithMap(changedFiles, { allEntryIds, impactRules, g
 
   return {
     entryIds: Array.from(matchedEntryIds).sort(),
-    mode: 'targeted',
+    mode: matchedEntryIds.size > 0 ? 'targeted' : 'none',
     reason:
       matchedEntryIds.size > 0
         ? 'Targeted impact map matched changed files.'

@@ -8,9 +8,18 @@
         "openg7-org/src/app/core/api/",
         "openg7-org/src/app/domains/admin/",
         "package.json",
+        "packages/admin-quality/",
         "packages/contracts/",
         "packages/tooling/",
-        "strapi/src/api/admin-quality-matrix/"
+        "scripts/admin-quality-matrix-model.mjs",
+        "scripts/export-admin-quality-matrix.mjs",
+        "scripts/generate-admin-quality-impact-map.mjs",
+        "scripts/repair-admin-quality-classifications.mjs",
+        "scripts/resolve-admin-quality-matrix-impact.mjs",
+        "scripts/validate-admin-quality-matrix.mjs",
+        "strapi/src/api/admin-quality-matrix/",
+        "tools/admin-quality-matrix-global-rules.json",
+        "tools/admin-quality-matrix-impact-map.json"
       ]
     }
   ]

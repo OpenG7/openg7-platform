@@ -14,6 +14,8 @@ const MATRIX_ACTIONS = [
   'api::admin-quality-matrix.admin-quality-matrix.applyProposal',
   'api::admin-quality-matrix.admin-quality-matrix.listNeedProposals',
   'api::admin-quality-matrix.admin-quality-matrix.patchNeedProposal',
+  'api::admin-quality-matrix.admin-quality-matrix.editMatrixEntry',
+  'api::admin-quality-matrix.admin-quality-matrix.exportMatrix',
 ];
 const MISSION_DECISION_UID = 'api::admin-quality-mission-decision.admin-quality-mission-decision';
 const NEED_PROPOSAL_UID = 'api::admin-quality-need-proposal.admin-quality-need-proposal';
@@ -228,6 +230,203 @@ async function createSignalGuidanceDecision(strapi, entryId, signalId, metadataO
       decidedByUserId: '1',
     },
   });
+}
+
+async function assertImpactResolverParity(app, baseUrl) {
+  const { buildImpactMapFromMatrix, loadMatrixSnapshot } = await import(
+    '../../scripts/admin-quality-matrix-model.mjs'
+  );
+  const { resolveImpactWithMap } = await import(
+    '../../scripts/resolve-admin-quality-matrix-impact.mjs'
+  );
+  const matrix = loadMatrixSnapshot();
+  const impactMap = buildImpactMapFromMatrix(matrix);
+  const entities = normalizeFindManyResult(
+    await app.entityService.findMany(MATRIX_ENTRY_UID, { limit: 500 }),
+  );
+  const allEntryIds = entities.map((entry) => entry.entryId).sort();
+  const context = {
+    allEntryIds,
+    impactRules: impactMap.rules,
+    globalPrefixes: impactMap.globalPrefixes,
+  };
+  const mappedFile =
+    'strapi/src/api/admin-quality-mission-decision/content-types/admin-quality-mission-decision/schema.json';
+  const cases = [
+    { files: [mappedFile], mode: 'targeted' },
+    { files: ['openg7-org/src/app/unmapped-quality-feature.ts'], mode: 'global' },
+    { files: ['packages/admin-quality/src/lib/pages/admin-quality-reactor.component.ts'], mode: 'global' },
+    { files: ['packages/admin-quality/src/lib/pages/admin-quality.page.ts'], mode: 'global' },
+    { files: ['packages/unmapped-quality-feature/src/index.ts'], mode: 'global' },
+    { files: [mappedFile, 'strapi/src/unmapped-quality-feature.ts'], mode: 'global' },
+    { files: ['LICENSE'], mode: 'none' },
+    { files: [], mode: 'none' },
+  ];
+
+  for (const [index, scenario] of cases.entries()) {
+    const expected = resolveImpactWithMap(scenario.files, context);
+    assert.equal(expected.mode, scenario.mode, `CI impact mode: ${scenario.files.join(', ')}`);
+    const commitSha = `impact-parity-${index}`;
+    const mergedAt = new Date(Date.now() + 120_000 + index * 1_000).toISOString();
+    const result = await requestJson(`${baseUrl}/api/admin/quality/matrix/ingest`, {
+      method: 'POST',
+      headers: authHeaders({ Authorization: 'Bearer matrix-ingest-test-token' }),
+      body: JSON.stringify({
+        mergedAt,
+        commitSha,
+        source: 'github-actions',
+        changedFiles: scenario.files,
+      }),
+    });
+    assert.equal(result.status, 200, `Impact ingestion: ${scenario.files.join(', ')}`);
+    assert.equal(result.body?.data?.impactMode, expected.mode);
+    assert.equal(result.body?.data?.impactReason, expected.reason);
+    assert.deepEqual(result.body?.data?.derivedEntryIds, expected.entryIds);
+    const knownImpactedIds = expected.entryIds.filter((entryId) => allEntryIds.includes(entryId));
+    assert.deepEqual(result.body?.data?.updatedEntryIds?.slice().sort(), knownImpactedIds);
+    assert.equal(result.body?.data?.recalculation?.scope, 'refresh-required');
+    assert.equal(result.body?.data?.recalculation?.summary?.analyzedCount, knownImpactedIds.length);
+    for (const entryId of knownImpactedIds) {
+      const updated = await findMatrixEntryByEntryId(app, entryId);
+      assert.equal(updated.lastRepoSignalCommit, commitSha);
+      assert.equal(updated.lastRepoSignalAt, mergedAt);
+      assert.equal(updated.lastRecalculationAutomatic, true);
+    }
+  }
+}
+
+async function assertProofManifestDoesNotPromoteCoverage(app, baseUrl, ownerJwt) {
+  const entryId = 'manifest-traceability-only';
+  await createMatrixEntry(app, entryId);
+  await createSignalGuidanceDecision(app, entryId, 'e2e', {
+    proofPullRequestNumber: 987,
+    proofBranch: 'codex/domain-proof-required',
+  });
+  const allEntryIds = normalizeFindManyResult(
+    await app.entityService.findMany(MATRIX_ENTRY_UID, { limit: 500 }),
+  ).map((entry) => entry.entryId);
+  const workflowRunUrl = 'https://example.test/actions/runs/manifest-scope';
+  const specs = ['openg7-org/src/app/domains/admin/pages/admin-quality-reactor.component.spec.ts'];
+  const checks = ['admin-quality reactor unit tests'];
+
+  for (const [status, expectedDecisionStatus] of [
+    ['success', 'proof-returned'],
+    ['failure', 'blocked'],
+    ['unknown', 'proposed'],
+  ]) {
+    const generatedAt = new Date(Date.now() + 180_000).toISOString();
+    const result = await requestJson(`${baseUrl}/api/admin/quality/matrix/ingest`, {
+      method: 'POST',
+      headers: authHeaders({ Authorization: 'Bearer matrix-ingest-test-token' }),
+      body: JSON.stringify({
+        mergedAt: generatedAt,
+        commitSha: `manifest-${status}`,
+        source: 'github-actions',
+        changedFiles: ['packages/admin-quality/src/lib/pages/admin-quality-reactor.component.ts'],
+        proofManifest: {
+          commitSha: `manifest-${status}`,
+          workflowRunId: `manifest-scope-${status}`,
+          workflowRunUrl,
+          workflow: 'Quality validation',
+          generatedAt,
+          entryIds: allEntryIds,
+          checks,
+          specs,
+          artifactUrl: 'https://example.test/artifacts/reactor-unit-tests',
+          status,
+        },
+      }),
+    });
+    assert.equal(result.status, 200, `Expected ${status} CI trace ingestion to succeed.`);
+    assert.equal(result.body?.data?.impactMode, 'global');
+    assert.ok(result.body?.data?.proofManifestEntryIds?.includes(entryId));
+    const plan = result.body?.data?.recalculation?.entries?.find((entry) => entry.entryId === entryId);
+    assert.equal(plan?.result, 'blocked-insufficient-proof');
+    assert.equal(plan?.proposed, null, 'Generic CI checks must not propose domain coverage upgrades.');
+    const updated = await findMatrixEntryByEntryId(app, entryId);
+    assert.equal(updated.e2eStatus, 'partiel');
+    assert.equal(updated.managementBucket, 'proof-gap');
+
+    const decision = normalizeFindManyResult(
+      await app.entityService.findMany(MISSION_DECISION_UID, {
+        filters: { recommendationId: `${entryId}::proof-manifest::manifest-scope-${status}` },
+        limit: 1,
+      }),
+    )[0];
+    assert.equal(decision.status, expectedDecisionStatus);
+    assert.equal(decision.metadata?.workflowRunUrl, workflowRunUrl);
+    assert.deepEqual(decision.metadata?.checks, checks);
+    assert.deepEqual(decision.metadata?.specs, specs);
+
+    if (status === 'success') {
+      // Historical manifests may already have been marked done by older code.
+      await app.entityService.update(MISSION_DECISION_UID, decision.id, { data: { status: 'done' } });
+      const legacyRecalc = await requestJson(`${baseUrl}/api/admin/quality/matrix/recalculate`, {
+        method: 'POST',
+        headers: authHeaders({ Authorization: `Bearer ${ownerJwt}` }),
+        body: JSON.stringify({ scope: 'selected-entry', entryId }),
+      });
+      assert.equal(legacyRecalc.status, 200);
+      assert.equal(legacyRecalc.body?.data?.entries?.[0]?.proposed, null);
+    }
+
+    const snapshot = await requestJson(`${baseUrl}/api/admin/quality/matrix`, {
+      headers: authHeaders({ Authorization: `Bearer ${ownerJwt}` }),
+    });
+    const entry = snapshot.body?.data?.entries?.find((item) => item.id === entryId);
+    assert.equal(entry?.signalDispatch?.e2e?.pending, true);
+    assert.equal(entry?.signalDispatch?.e2e?.confirmationSource, null);
+  }
+}
+
+async function assertReactorDataIntegrity(app, baseUrl, ownerJwt) {
+  const headers = authHeaders({ Authorization: `Bearer ${ownerJwt}` });
+  const entry = await app.entityService.create(MATRIX_ENTRY_UID, {
+    data: { entryId: 'reactor-unknown', domain: 'Unknown review', need: 'Preserve missing evaluations.' },
+  });
+  try {
+    const initial = await requestJson(`${baseUrl}/api/admin/quality/matrix`, { headers });
+    const unknown = initial.body.data.entries.find((row) => row.id === 'reactor-unknown');
+    assert.equal(unknown.managementBucket, 'not-evaluated');
+    assert.equal(unknown.reviewedAt, '');
+    assert.equal(initial.body.data.sourceStatus, 'fallback');
+
+    for (const patch of [
+      { managementBucket: 'typo' },
+      { managementBucket: 'covered', summaryStatus: 'non', reviewedAt: '2026-04-07' },
+      { managementBucket: 'covered', summaryStatus: 'oui', e2eStatus: 'partiel', reviewedAt: '2026-04-07' },
+      { managementBucket: 'proof-gap', e2eStatus: 'oui', reviewedAt: '2026-04-07' },
+      { reviewedAt: '2026-02-30' },
+    ]) {
+      const result = await requestJson(`${baseUrl}/api/admin/quality/matrix/entries/reactor-unknown`, {
+        method: 'PATCH', headers, body: JSON.stringify(patch),
+      });
+      assert.equal(result.status, 400, `Reject inconsistent patch: ${JSON.stringify(patch)}`);
+    }
+    const unchanged = await findMatrixEntryByEntryId(app, 'reactor-unknown');
+    assert.equal(unchanged.managementBucket, 'not-evaluated');
+    assert.equal(unchanged.summaryStatus, 'non');
+    const reviewed = await requestJson(`${baseUrl}/api/admin/quality/matrix/entries/reactor-unknown`, {
+      method: 'PATCH', headers, body: JSON.stringify({ managementBucket: 'proof-gap', reviewedAt: '2026-04-07' }),
+    });
+    assert.equal(reviewed.status, 200);
+    const stale = await requestJson(`${baseUrl}/api/admin/quality/matrix`, { headers });
+    assert.equal(stale.body.data.sourceStatus, 'stale');
+
+    const editorial = await requestJson(`${baseUrl}/api/admin/quality/matrix/entries/reactor-unknown`, {
+      method: 'PATCH', headers, body: JSON.stringify({ observedGap: 'Editorial update does not verify the evidence.' }),
+    });
+    assert.equal(editorial.status, 200);
+    assert.equal(editorial.body.data.reviewedAt, '2026-04-07');
+    const afterEdit = await requestJson(`${baseUrl}/api/admin/quality/matrix`, { headers });
+    assert.equal(afterEdit.body.data.sourceStatus, 'stale');
+
+    const exported = await requestJson(`${baseUrl}/api/admin/quality/matrix/export`, { headers });
+    assert.equal(exported.status, 200);
+    assert.equal(exported.body.data.entries.find((row) => row.id === 'reactor-unknown').reviewedAt, '2026-04-07');
+  } finally {
+    await app.entityService.delete(MATRIX_ENTRY_UID, entry.id);
+  }
 }
 
 async function run() {
@@ -504,12 +703,12 @@ async function run() {
     });
     assert.equal(
       snapshotAfterProofManifest.body?.data?.entries?.[0]?.signalDispatch?.e2e?.pending,
-      false,
-      'Expected proof manifest to confirm the pending e2e signal.',
+      true,
+      'A CI manifest must not confirm a domain-specific e2e signal.',
     );
     assert.equal(
       snapshotAfterProofManifest.body?.data?.entries?.[0]?.signalDispatch?.e2e?.confirmationSource,
-      'proof-returned',
+      null,
     );
 
     const proposalIngestUnauthorized = await requestJson(
@@ -868,6 +1067,10 @@ async function run() {
     });
     assert.equal(recalcAfterApply.status, 200, 'Expected recalculation after apply to succeed.');
     assert.equal(recalcAfterApply.body?.data?.summary?.proposalCount, 0);
+
+    await assertReactorDataIntegrity(app, baseUrl, ownerUser.jwt);
+    await assertProofManifestDoesNotPromoteCoverage(app, baseUrl, ownerUser.jwt);
+    await assertImpactResolverParity(app, baseUrl);
 
     console.log(
       'Admin quality matrix snapshot, ingest, and recalculation integration test passed.',

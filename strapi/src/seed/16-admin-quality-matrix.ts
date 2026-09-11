@@ -45,13 +45,14 @@ function normalizePriority(value: unknown): 'basse' | 'moyenne' | 'haute' {
   return value === 'basse' || value === 'moyenne' || value === 'haute' ? value : 'moyenne';
 }
 
-function normalizeBucket(value: unknown): 'covered' | 'proof-gap' | 'product-gap' | 'scope-limit' {
+function normalizeBucket(value: unknown): 'covered' | 'proof-gap' | 'product-gap' | 'scope-limit' | 'not-evaluated' {
   return value === 'covered' ||
     value === 'proof-gap' ||
     value === 'product-gap' ||
-    value === 'scope-limit'
+    value === 'scope-limit' ||
+    value === 'not-evaluated'
     ? value
-    : 'proof-gap';
+    : 'not-evaluated';
 }
 
 function normalizeConfidence(value: unknown): 'low' | 'medium' | 'high' {
@@ -126,7 +127,7 @@ export default async function seedAdminQualityMatrix() {
     const need = normalizeString(entry.need);
     const reviewedAt = normalizeString(entry.reviewedAt);
 
-    if (!entryId || !domain || !need || !reviewedAt) {
+    if (!entryId || !domain || !need) {
       continue;
     }
 

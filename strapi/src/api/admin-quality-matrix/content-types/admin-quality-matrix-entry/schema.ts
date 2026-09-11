@@ -2,7 +2,7 @@ import type { Struct } from '@strapi/strapi';
 
 const matrixStatus = ['oui', 'partiel', 'non', 'hors MVP'] as const;
 const matrixPriority = ['basse', 'moyenne', 'haute'] as const;
-const matrixBucket = ['covered', 'proof-gap', 'product-gap', 'scope-limit'] as const;
+const matrixBucket = ['covered', 'proof-gap', 'product-gap', 'scope-limit', 'not-evaluated'] as const;
 const matrixConfidence = ['low', 'medium', 'high'] as const;
 
 const schema = {
@@ -86,7 +86,7 @@ const schema = {
       type: 'enumeration',
       enum: matrixBucket,
       required: true,
-      default: 'proof-gap',
+      default: 'not-evaluated',
     },
     needsProductWorkFirst: {
       type: 'boolean',
@@ -104,7 +104,6 @@ const schema = {
     },
     reviewedAt: {
       type: 'date',
-      required: true,
     },
     lastRepoSignalAt: {
       type: 'datetime',

@@ -1,6 +1,20 @@
 export type AdminQualityMatrixStatus = 'oui' | 'partiel' | 'non' | 'hors MVP';
 export type AdminQualityMatrixPriority = 'basse' | 'moyenne' | 'haute';
-export type AdminQualityMatrixBucket = 'covered' | 'proof-gap' | 'product-gap' | 'scope-limit';
+export type AdminQualityMatrixBucket =
+  | 'covered'
+  | 'proof-gap'
+  | 'product-gap'
+  | 'scope-limit'
+  | 'not-evaluated';
+
+export function normalizeAdminQualityMatrixBucket(bucket: unknown): AdminQualityMatrixBucket {
+  return bucket === 'covered' ||
+    bucket === 'proof-gap' ||
+    bucket === 'product-gap' ||
+    bucket === 'scope-limit'
+    ? bucket
+    : 'not-evaluated';
+}
 export type AdminQualityMatrixSourceStatus = 'fresh' | 'stale' | 'fallback';
 export type AdminQualityMatrixSignalId =
   | 'summary'

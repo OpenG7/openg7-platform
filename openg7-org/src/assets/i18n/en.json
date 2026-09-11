@@ -4997,7 +4997,7 @@
       "reactor": {
         "title": "Quality Reactor",
         "subtitle": "OpenG7 Quality Core",
-        "analysisRunning": "Analysis in progress",
+        "analysisRunning": "Recalculation in progress",
         "stateTitle": "Reactor status",
         "elementCount": "{{ count }} item(s)",
         "viewPriorityGaps": "View priority gaps",
@@ -5011,7 +5011,7 @@
         "states": {
           "excellent": {
             "label": "Excellent",
-            "message": "The matrix is synchronized, readable, and fully covered."
+            "message": "All domains are classified as covered according to the available assessments."
           },
           "critical": {
             "label": "Critical",
@@ -5022,13 +5022,28 @@
             "message": "Priority gaps require action to maintain system resilience."
           },
           "scanning": {
-            "label": "Active scan",
-            "message": "The reactor is analyzing coverage and proof signals in real time."
+            "label": "Recalculating",
+            "message": "The matrix is being recalculated. Displayed figures will update after it succeeds."
           },
           "stable": {
             "label": "Stable",
-            "message": "Indicators remain within the expected quality thresholds."
+            "message": "Recorded gaps remain below the reactor’s alert thresholds."
+          },
+          "loading": {
+            "label": "Loading",
+            "message": "The matrix is loading. Indicators are not yet available."
+          },
+          "empty": {
+            "label": "No data",
+            "message": "No domains are available. Coverage and risk cannot be assessed."
           }
+        },
+        "diagnostics": {
+          "refreshing": "The matrix is refreshing. The last known figures remain visible.",
+          "refreshFailed": "The refresh failed. The last known figures are retained; their freshness is unconfirmed.",
+          "loadFailed": "The matrix could not be loaded. No indicators are available.",
+          "reviewRequired": "{{ count }} domain(s) require review. Displayed classifications do not confirm that their evidence remains valid.",
+          "incomplete": "{{ notEvaluatedCount }} domain(s) have not been assessed. The matrix does not yet support a complete diagnosis."
         },
         "metrics": {
           "trend": "Trend",
@@ -5042,14 +5057,17 @@
           "degrading": "Degrading",
           "watch": "Under watch",
           "analyzing": "Analyzing",
-          "stable": "Stable"
+          "stable": "Stable",
+          "unavailable": "Unavailable",
+          "unavailableReason": "No comparable history is available to establish a trend."
         },
         "risks": {
           "minimal": "Minimal",
           "low": "Low",
           "moderate": "Moderate",
           "high": "High",
-          "assessing": "Assessing"
+          "assessing": "Assessing",
+          "unavailable": "Unconfirmed"
         }
       },
       "workspace": {

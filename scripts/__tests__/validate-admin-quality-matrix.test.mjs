@@ -139,7 +139,7 @@ test('checkBucketConsistency — error: summaryStatus oui but not covered', () =
 test('checkBucketConsistency — error: covered but summaryStatus not oui', () => {
   const entry = { id: 'x', summaryStatus: 'non', managementBucket: 'covered', e2eStatus: 'partiel' };
   const errors = checkBucketConsistency(entry);
-  assert.equal(errors.length, 1);
+  assert.equal(errors.length, 2);
   assert.ok(errors[0].includes('managementBucket=covered'));
 });
 
@@ -200,4 +200,18 @@ test('validateMatrix — accumulates errors across entries', () => {
 test('validateMatrix — empty entries list returns no errors', () => {
   assert.deepEqual(validateMatrix({ entries: [] }), []);
   assert.deepEqual(validateMatrix({}), []);
+});
+
+test('an explicitly unevaluated entry does not invent a review date', () => {
+  assert.deepEqual(validateMatrix({ entries: [{
+    id: 'unknown', managementBucket: 'not-evaluated', summaryStatus: 'non', e2eStatus: 'non',
+    reviewedAt: null,
+  }] }), []);
+});
+
+test('invalid categories and impossible review dates are rejected', () => {
+  assert.ok(checkBucketConsistency({ id: 'unknown' }).some((error) => error.includes('managementBucket')));
+  assert.ok(checkBucketConsistency({ id: 'unknown', managementBucket: 'typo' }).length);
+  assert.ok(checkReviewedAt({ id: 'invalid-date', reviewedAt: '2026-02-30' }));
+  assert.ok(checkReviewedAt({ id: 'invalid-date', reviewedAt: 'not a date' }));
 });

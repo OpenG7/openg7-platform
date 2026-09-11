@@ -16,7 +16,7 @@ const MS_PER_DAY = 86_400_000;
 
 type MatrixStatus = 'oui' | 'partiel' | 'non' | 'hors MVP';
 type MatrixPriority = 'basse' | 'moyenne' | 'haute';
-type MatrixBucket = 'covered' | 'proof-gap' | 'product-gap' | 'scope-limit';
+type MatrixBucket = 'covered' | 'proof-gap' | 'product-gap' | 'scope-limit' | 'not-evaluated';
 type MatrixDiscoveryConfidence = 'low' | 'medium' | 'high';
 type MatrixSourceStatus = 'fresh' | 'stale' | 'fallback';
 type MatrixImpactMode = 'provided' | 'targeted' | 'global' | 'none';
@@ -95,6 +95,7 @@ interface MatrixIngestPayload {
 interface MatrixProofManifest {
   readonly commitSha: string | null;
   readonly workflowRunId: string | null;
+  readonly workflowRunUrl: string | null;
   readonly workflow: string | null;
   readonly generatedAt: string;
   readonly entryIds: readonly string[];
@@ -350,13 +351,33 @@ function normalizeBucket(value: unknown): MatrixBucket {
   return value === 'covered' ||
     value === 'proof-gap' ||
     value === 'product-gap' ||
-    value === 'scope-limit'
+    value === 'scope-limit' ||
+    value === 'not-evaluated'
     ? value
-    : 'proof-gap';
+    : 'not-evaluated';
 }
 
 function normalizeDiscoveryConfidence(value: unknown): MatrixDiscoveryConfidence {
   return value === 'low' || value === 'medium' || value === 'high' ? value : 'medium';
+}
+
+function matrixConsistencyError(entry: MatrixEntryEntity): string | null {
+  const bucket = normalizeBucket(entry.managementBucket);
+  const summary = normalizeStatus(entry.summaryStatus);
+  const e2e = normalizeStatus(entry.e2eStatus);
+  if ((bucket === 'covered') !== (summary === 'oui')) {
+    return 'Covered entries must have summaryStatus=oui, and only covered entries can have that summary.';
+  }
+  if (bucket === 'covered' && e2e !== 'oui') {
+    return 'Covered entries require e2eStatus=oui.';
+  }
+  if (bucket === 'proof-gap' && e2e === 'oui') {
+    return 'An entry with verified E2E coverage cannot be classified as proof-gap.';
+  }
+  if (bucket !== 'not-evaluated' && !normalizeDate(entry.reviewedAt)) {
+    return 'Evaluated entries require a valid reviewedAt date.';
+  }
+  return null;
 }
 
 function normalizeDate(value: unknown): string | null {
@@ -465,25 +486,32 @@ function resolveChangedFileImpact(
 
   const matchedEntryIds = new Set<string>();
   let requiresGlobalRefresh = false;
-  let touchedProductCode = false;
+  let hasUnmappedProductFile = false;
 
   for (const file of changedFiles) {
     if (matchesMatrixPrefix(file, MATRIX_IMPACT_MAP.globalPrefixes)) {
       requiresGlobalRefresh = true;
     }
 
-    if (file.startsWith('openg7-org/src/') || file.startsWith('strapi/src/')) {
-      touchedProductCode = true;
-    }
-
+    let fileIsMapped = false;
     for (const rule of MATRIX_IMPACT_MAP.rules) {
-      if (matchesMatrixPrefix(file, rule.prefixes)) {
+      if (rule.entryIds.length && matchesMatrixPrefix(file, rule.prefixes)) {
+        fileIsMapped = true;
         rule.entryIds.forEach((entryId) => matchedEntryIds.add(entryId));
       }
     }
+
+    if (
+      !fileIsMapped &&
+      (file.startsWith('openg7-org/src/') ||
+        file.startsWith('strapi/src/') ||
+        file.startsWith('packages/'))
+    ) {
+      hasUnmappedProductFile = true;
+    }
   }
 
-  if (requiresGlobalRefresh || (touchedProductCode && matchedEntryIds.size === 0)) {
+  if (requiresGlobalRefresh || hasUnmappedProductFile) {
     return {
       entryIds: uniqueSorted(knownEntryIds),
       mode: 'global',
@@ -583,7 +611,7 @@ function toMatrixEntryResponse(
     observedGap: normalizeString(entity.observedGap) ?? '',
     nextMove: normalizeString(entity.nextMove) ?? '',
     evidence: normalizeEvidence(entity.evidence),
-    reviewedAt: normalizeDate(entity.reviewedAt)?.slice(0, 10) ?? EMPTY_GENERATED_AT.slice(0, 10),
+    reviewedAt: normalizeDate(entity.reviewedAt)?.slice(0, 10) ?? '',
     repoSignalAt: normalizeDate(entity.lastRepoSignalAt),
     repoSignalCommit: normalizeString(entity.lastRepoSignalCommit),
     repoSignalSource: normalizeString(entity.lastRepoSignalSource),
@@ -645,6 +673,7 @@ function sanitizeProofManifest(value: unknown): MatrixProofManifest | null {
     commitSha: normalizeString(record.commitSha, 180),
     workflowRunId:
       normalizeString(record.workflowRunId, 120) ?? normalizeString(record.workflowRunNumber, 120),
+    workflowRunUrl: normalizeString(record.workflowRunUrl, 500),
     workflow: normalizeString(record.workflow, 180),
     generatedAt: normalizeDate(record.generatedAt) ?? new Date().toISOString(),
     entryIds,
@@ -1438,6 +1467,11 @@ function signalConfirmationReason(
   }
 }
 
+function isProofManifestDecision(decision: MissionDecisionEntity): boolean {
+  // CI manifests attest to executed checks, not to a domain's acceptance criteria.
+  return normalizeString(normalizeObject(decision.metadata).traceType, 80) === 'proof-manifest';
+}
+
 function buildLatestCompletedDecisionByEntryId(
   decisions: readonly MissionDecisionEntity[],
 ): Map<string, MissionDecisionEntity> {
@@ -1446,7 +1480,11 @@ function buildLatestCompletedDecisionByEntryId(
   for (const decision of decisions) {
     const entryId = normalizeString(decision.entryId, 180);
     const status = normalizeString(decision.status, 40);
-    if (!entryId || (status !== 'done' && status !== 'proof-returned')) {
+    if (
+      !entryId ||
+      (status !== 'done' && status !== 'proof-returned') ||
+      isProofManifestDecision(decision)
+    ) {
       continue;
     }
 
@@ -1504,7 +1542,11 @@ function buildLatestServerConfirmationByEntryId(
   for (const decision of decisions) {
     const entryId = normalizeString(decision.entryId, 180);
     const status = normalizeString(decision.status, 40);
-    if (!entryId || (status !== 'proof-returned' && status !== 'done')) {
+    if (
+      !entryId ||
+      (status !== 'proof-returned' && status !== 'done') ||
+      isProofManifestDecision(decision)
+    ) {
       continue;
     }
 
@@ -1781,7 +1823,7 @@ function buildRecalculationEntry(
   const proposedManagementBucket =
     proposedSummaryStatus === 'oui' && proposedBase.e2eStatus === 'oui'
       ? 'covered'
-      : proposedBase.needsProductWorkFirst && !repoSignalNewer
+      : proposedBase.e2eStatus === 'oui' || (proposedBase.needsProductWorkFirst && !repoSignalNewer)
         ? 'product-gap'
         : 'proof-gap';
   const proposed: MatrixCoverageState = {
@@ -1852,15 +1894,17 @@ async function persistRecalculationPlan(
   });
 }
 
-function proofManifestDecisionStatus(status: string): 'proof-returned' | 'blocked' | 'approved' {
-  const normalized = status.toLowerCase();
-  if (/\b(success|succeeded|passed|completed|green|ok)\b/.test(normalized)) {
+function proofManifestDecisionStatus(status: string): 'proof-returned' | 'blocked' | 'proposed' {
+  const normalized = status.trim().toLowerCase();
+  if (['success', 'succeeded', 'passed', 'completed', 'green', 'ok'].includes(normalized)) {
     return 'proof-returned';
   }
-  if (/\b(fail|failed|error|cancelled|canceled|red)\b/.test(normalized)) {
+  if (
+    ['fail', 'failed', 'failure', 'error', 'cancelled', 'canceled', 'red', 'timed_out', 'action_required'].includes(normalized)
+  ) {
     return 'blocked';
   }
-  return 'approved';
+  return 'proposed';
 }
 
 async function persistProofManifestDecisions(
@@ -1902,6 +1946,7 @@ async function persistProofManifestDecisions(
         traceType: 'proof-manifest',
         commitSha: manifest.commitSha ?? fallbackCommitSha,
         workflowRunId: manifest.workflowRunId,
+        workflowRunUrl: manifest.workflowRunUrl,
         workflow: manifest.workflow,
         generatedAt: manifest.generatedAt,
         checks: manifest.checks,
@@ -2021,20 +2066,6 @@ function sourceStatusFor(generatedAt: string): MatrixSourceStatus {
   return ageDays > STALE_AFTER_DAYS ? 'stale' : 'fresh';
 }
 
-function sourceMessageFor(generatedAt: string): string | null {
-  const generatedTime = new Date(generatedAt).getTime();
-  if (!Number.isFinite(generatedTime)) {
-    return 'La date de generation de la matrice QA est invalide.';
-  }
-
-  const ageDays = Math.floor((Date.now() - generatedTime) / MS_PER_DAY);
-  if (ageDays <= STALE_AFTER_DAYS) {
-    return null;
-  }
-
-  return `La matrice QA date de ${ageDays} jours; relancer l'audit ou la revue avant arbitrage final.`;
-}
-
 function resolveGeneratedAt(entries: readonly MatrixEntryEntity[]): string {
   const timestamps = entries
     .flatMap((entry) => [
@@ -2051,6 +2082,34 @@ function resolveGeneratedAt(entries: readonly MatrixEntryEntity[]): string {
   }
 
   return new Date(Math.max(...timestamps)).toISOString();
+}
+
+function reviewFreshnessFor(entries: readonly MatrixEntryEntity[]): {
+  sourceStatus: MatrixSourceStatus;
+  sourceMessage: string | null;
+} {
+  if (!entries.length || entries.some((entry) =>
+    normalizeBucket(entry.managementBucket) === 'not-evaluated' || !normalizeDate(entry.reviewedAt),
+  )) {
+    return { sourceStatus: 'fallback', sourceMessage: 'Certaines entrees ne disposent pas encore d une evaluation complete.' };
+  }
+  // updatedAt records synchronization and editorial work, not a new review of the evidence.
+  const oldestReview = new Date(Math.min(...entries.map((entry) =>
+    Date.parse(`${normalizeDate(entry.reviewedAt)!.slice(0, 10)}T23:59:59.999Z`),
+  ))).toISOString();
+  if (entries.some((entry) => {
+    const signal = normalizeDate(entry.lastRepoSignalAt);
+    return signal !== null && Date.parse(signal) > Date.parse(`${normalizeDate(entry.reviewedAt)!.slice(0, 10)}T23:59:59.999Z`);
+  })) {
+    return { sourceStatus: 'stale', sourceMessage: 'Des changements produit sont plus recents que la derniere revue des preuves.' };
+  }
+  const sourceStatus = sourceStatusFor(oldestReview);
+  return {
+    sourceStatus,
+    sourceMessage: sourceStatus === 'stale'
+      ? `Certaines preuves n ont pas ete revues depuis plus de ${STALE_AFTER_DAYS} jours.`
+      : null,
+  };
 }
 
 // ─── Chat agent helpers ───────────────────────────────────────────────────────
@@ -2297,6 +2356,28 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     const updatedAt = new Date().toISOString();
+    if (nextStatus === 'accepted' && normalizeNeedProposalType(existing.type) === 'suggest-narrative') {
+      const payload = normalizeObject(existing.payload);
+      const field = normalizeNarrativeField(payload.field);
+      const value = normalizeString(payload.suggestedValue, 4_000);
+      const target = await findEntryByEntryId(strapi, normalizeString(existing.entryId, 180) ?? '');
+      if (!field || value === null || !target?.id) {
+        ctx.badRequest('The suggestion does not reference a valid matrix entry and field.');
+        return;
+      }
+      if (field === 'managementBucket' && normalizeBucket(value) !== value) {
+        ctx.badRequest('Invalid managementBucket.');
+        return;
+      }
+      const error = matrixConsistencyError({
+        ...target,
+        [field]: field === 'needsProductWorkFirst' ? value === 'true' : value,
+      });
+      if (error) {
+        ctx.badRequest(error);
+        return;
+      }
+    }
     const history = [
       ...normalizeHistory(existing.history),
       {
@@ -2410,8 +2491,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     ctx.body = {
       data: {
         generatedAt,
-        sourceStatus: sourceStatusFor(generatedAt),
-        sourceMessage: sourceMessageFor(generatedAt),
+        ...reviewFreshnessFor(entries),
         entries: entries.map((entry) => {
           const entryId = normalizeString(entry.entryId, 180) ?? '';
           return toMatrixEntryResponse(
@@ -2555,6 +2635,13 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       }
 
       const appliedAt = new Date().toISOString();
+      const consistencyError = matrixConsistencyError({
+        ...entry, ...proposal.proposed, reviewedAt: appliedAt.slice(0, 10),
+      });
+      if (consistencyError) {
+        ctx.badRequest(consistencyError);
+        return;
+      }
       const updated = await strapi.entityService.update(MATRIX_ENTRY_UID, entry.id, {
         data: {
           summaryStatus: proposal.proposed.summaryStatus,
@@ -2755,14 +2842,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     let globalRules: unknown[] = [];
     let schemaVersion: unknown = 2;
     try {
-      const globalRulesPath = path.resolve(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        '..',
-        'tools',
+      const globalRulesPath = path.join(
+        path.dirname(matrixImpactMapPath()),
         'admin-quality-matrix-global-rules.json',
       );
       const globalRulesJson = JSON.parse(readFileSync(globalRulesPath, 'utf8'));
@@ -2771,7 +2852,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         : [];
       schemaVersion = globalRulesJson.schemaVersion ?? 2;
     } catch {
-      strapi.log?.warn?.('admin-quality-matrix-global-rules.json not found, exporting without globalImpactRules.');
+      ctx.internalServerError('Cannot export the matrix without its global impact rules.');
+      return;
     }
 
     ctx.body = {
@@ -2818,6 +2900,10 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         const val = normalizeString(raw as unknown, 4_000);
         if (val !== null) { updates[field] = val; changedFields.push(field); }
       } else if (field === 'managementBucket') {
+        if (!['covered', 'proof-gap', 'product-gap', 'scope-limit', 'not-evaluated'].includes(String(raw))) {
+          ctx.badRequest('Invalid managementBucket.');
+          return;
+        }
         const val = normalizeBucket(raw);
         if (val) { updates[field] = val; changedFields.push(field); }
       } else if (field === 'needsProductWorkFirst') {
@@ -2829,8 +2915,13 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     if (body.reviewedAt !== undefined) {
-      const val = normalizeDate(body.reviewedAt)?.slice(0, 10);
-      if (val) { updates.reviewedAt = val; changedFields.push('reviewedAt'); }
+      const val = normalizeDate(body.reviewedAt)?.slice(0, 10) ?? null;
+      if (body.reviewedAt !== null && (val !== body.reviewedAt || val > at.slice(0, 10))) {
+        ctx.badRequest('reviewedAt must be a valid review date, not in the future.');
+        return;
+      }
+      updates.reviewedAt = val;
+      changedFields.push('reviewedAt');
     }
     if (body.summaryStatus !== undefined) {
       updates.summaryStatus = normalizeStatus(body.summaryStatus); changedFields.push('summaryStatus');
@@ -2847,6 +2938,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     if (!changedFields.length) {
       ctx.badRequest('No valid fields to update.');
+      return;
+    }
+
+    const consistencyError = matrixConsistencyError({ ...entry, ...updates });
+    if (consistencyError) {
+      ctx.badRequest(consistencyError);
       return;
     }
 

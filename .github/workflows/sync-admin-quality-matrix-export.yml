@@ -55,7 +55,9 @@ jobs:
       - name: Validate exported snapshot
         if: ${{ steps.config.outputs.configured == 'true' && inputs.dry_run != 'true' }}
         shell: bash
-        run: node scripts/validate-admin-quality-matrix.mjs --warn
+        run: |
+          node scripts/validate-admin-quality-matrix.mjs
+          node scripts/generate-admin-quality-impact-map.mjs --check
 
       - name: Check for file changes
         if: ${{ steps.config.outputs.configured == 'true' && inputs.dry_run != 'true' }}

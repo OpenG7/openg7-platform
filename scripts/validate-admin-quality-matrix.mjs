@@ -39,8 +39,14 @@ export function collectEvidencePaths(entry) {
 }
 
 export function checkReviewedAt(entry) {
+  if (entry.managementBucket === 'not-evaluated' && !entry.reviewedAt) return null;
   if (typeof entry.reviewedAt !== 'string' || !entry.reviewedAt.trim()) {
     return `[${entry.id}] reviewedAt manquant.`;
+  }
+  const parsed = new Date(entry.reviewedAt);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewedAt) ||
+      !Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== entry.reviewedAt) {
+    return `[${entry.id}] reviewedAt invalide.`;
   }
   return null;
 }
@@ -64,6 +70,10 @@ export function checkBucketConsistency(entry) {
   const errors = [];
   const { id, summaryStatus, e2eStatus, managementBucket } = entry;
 
+  if (!['covered', 'proof-gap', 'product-gap', 'scope-limit', 'not-evaluated'].includes(managementBucket)) {
+    errors.push(`[${id}] managementBucket invalide ou manquant; utiliser not-evaluated pour une entree non evaluee.`);
+  }
+
   if (summaryStatus === 'oui' && managementBucket !== 'covered') {
     errors.push(
       `[${id}] summaryStatus=oui mais managementBucket=${managementBucket} (attendu: covered).`,
@@ -78,6 +88,9 @@ export function checkBucketConsistency(entry) {
     errors.push(
       `[${id}] e2eStatus=oui mais managementBucket=proof-gap — incohérent.`,
     );
+  }
+  if (managementBucket === 'covered' && e2eStatus !== 'oui') {
+    errors.push(`[${id}] managementBucket=covered mais e2eStatus=${e2eStatus} (attendu: oui).`);
   }
   return errors;
 }
@@ -112,7 +125,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   }
 
   if (!warnOnly) {
-    process.stderr.write(`\n${errors.length} erreur(s) de validation. Corrigez le JSON ou lancez avec --warn pour ignorer.\n`);
+    process.stderr.write(`\n${errors.length} erreur(s) de validation. Corrigez les entrees dans Strapi puis regenerez le snapshot avec yarn export:admin-quality-matrix.\n`);
     process.exit(1);
   }
 }
